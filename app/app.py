@@ -1353,6 +1353,8 @@ try:
     print("✅ Scheduler démarré", flush=True)
 except Exception as e:
     print(f"⚠️ Erreur scheduler: {e}", flush=True)
+# Afficher le port que Render a attribué
+print(f"🔌 PORT = {os.environ.get('PORT', 'non défini')}", flush=True)
 
 # ==================== INITIALISATION AU CHARGEMENT (pour Gunicorn) ====================
 print("🚀 Démarrage de l'application...", flush=True)
