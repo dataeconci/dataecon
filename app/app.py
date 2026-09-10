@@ -1344,11 +1344,28 @@ def init_db():
             print(f"ℹ️ {len(existing_courses)} cours existent déjà.")
 
 # ==================== PLANIFICATEUR DE TÂCHES ====================
-scheduler = BackgroundScheduler()
-scheduler.add_job(func=check_subscription_reminders, trigger="interval", hours=24, id='reminder_job')
-scheduler.add_job(func=downgrade_expired_subscriptions, trigger="interval", hours=24, id='downgrade_job')
-scheduler.start()
+# ==================== PLANIFICATEUR DE TÂCHES ====================
+try:
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(func=check_subscription_reminders, trigger="interval", hours=24, id='reminder_job')
+    scheduler.add_job(func=downgrade_expired_subscriptions, trigger="interval", hours=24, id='downgrade_job')
+    scheduler.start()
+    print("✅ Scheduler démarré", flush=True)
+except Exception as e:
+    print(f"⚠️ Erreur scheduler: {e}", flush=True)
+
+# ==================== INITIALISATION AU CHARGEMENT (pour Gunicorn) ====================
+print("🚀 Démarrage de l'application...", flush=True)
+try:
+    with app.app_context():
+        print("📡 Connexion à la base de données...", flush=True)
+        init_db()
+        print("✅ Base de données initialisée avec succès !", flush=True)
+except Exception as e:
+    import traceback
+    print(f"❌ ERREUR INITIALISATION BD: {e}", flush=True)
+    traceback.print_exc()
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)
