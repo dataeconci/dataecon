@@ -1365,6 +1365,20 @@ except Exception as e:
     import traceback
     print(f"❌ ERREUR INITIALISATION BD: {e}", flush=True)
     traceback.print_exc()
+# ==================== FORCER L'ENREGISTREMENT DES ROUTES ====================
+# S'assurer que toutes les routes sont bien enregistrées
+print(f"📋 Routes enregistrées: {len(list(app.url_map.iter_rules()))} routes", flush=True)
+for rule in app.url_map.iter_rules():
+    print(f"   - {rule.rule}", flush=True)
+
+# ==================== POINT D'ENTRÉE GUNICORN ====================
+# Gunicorn appellera cette fonction automatiquement au démarrage
+def create_app():
+    """Point d'entrée pour Gunicorn"""
+    return app
+
+# Alias pour Gunicorn (wsgi:application)
+application = app
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
