@@ -3,7 +3,7 @@ services:
     build: .
     container_name: dataecon_web
     ports:
-      - "5000:5000"
+      - "5000:10000"
     volumes:
       - ./app:/app
       - ./app/data:/app/data
