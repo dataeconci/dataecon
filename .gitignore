@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.env
+venv/
+.venv/
+app/data/pdfs/
+app/data/*.csv
+app/data/*.xlsx
+app/data/*.dta
+*.pdf

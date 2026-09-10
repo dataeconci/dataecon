@@ -1,0 +1,130 @@
+{% extends "layout.html" %}
+
+{% block title %}Jeux de données - DataEcon.Ci{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- En-tête -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold" style="color: var(--primary);">
+                <i class="fas fa-database"></i> Jeux de données
+            </h2>
+            <p class="text-muted">
+                Téléchargez, explorez et analysez des données économiques réelles
+            </p>
+        </div>
+        <div>
+            <span class="badge bg-primary p-2">
+                <i class="fas fa-file-csv"></i> {{ datasets|length }} fichiers disponibles
+            </span>
+        </div>
+    </div>
+
+    <!-- Upload de fichier -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-upload"></i> Importer un jeu de données
+            </h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('upload_dataset') }}" 
+                  enctype="multipart/form-data" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold">
+                        <i class="fas fa-tag"></i> Nom du jeu de données
+                    </label>
+                    <input type="text" name="name" class="form-control" 
+                           placeholder="Ex: Ventes 2024" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold">
+                        <i class="fas fa-align-left"></i> Description
+                    </label>
+                    <input type="text" name="description" class="form-control" 
+                           placeholder="Brève description...">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold">
+                        <i class="fas fa-file"></i> Fichier
+                    </label>
+                    <input type="file" name="file" class="form-control" 
+                           accept=".csv,.xlsx,.xls,.dta" required>
+                    <div class="form-text small">
+                        Formats acceptés : CSV, Excel, Stata (max 16MB)
+                    </div>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-upload"></i> Importer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Liste des datasets -->
+    {% if datasets %}
+        <div class="table-container">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-tag"></i> Nom</th>
+                        <th><i class="fas fa-align-left"></i> Description</th>
+                        <th><i class="fas fa-user"></i> Importé par</th>
+                        <th><i class="fas fa-calendar"></i> Date</th>
+                        <th><i class="fas fa-cog"></i> Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dataset in datasets %}
+                        <tr>
+                            <td>
+                                <strong>{{ dataset.name }}</strong>
+                                <br>
+                                <span class="badge bg-secondary small">
+                                    <i class="fas fa-file"></i> {{ dataset.file_name }}
+                                </span>
+                            </td>
+                            <td>{{ dataset.description or 'Aucune description' }}</td>
+                            <td>
+                                {% if dataset.uploaded_by %}
+                                    Utilisateur #{{ dataset.uploaded_by }}
+                                {% else %}
+                                    Inconnu
+                                {% endif %}
+                            </td>
+                            <td>{{ dataset.uploaded_at.strftime('%d/%m/%Y %H:%M') if dataset.uploaded_at else 'N/A' }}</td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a href="{{ url_for('view_dataset', dataset_id=dataset.id) }}" 
+                                       class="btn btn-primary btn-sm">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ url_for('download_dataset', dataset_id=dataset.id) }}" 
+                                       class="btn btn-success btn-sm">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                    <button class="btn btn-danger btn-sm delete-confirm"
+                                            data-confirm-message="Supprimer ce jeu de données ?">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <div style="font-size: 4rem; margin-bottom: 20px;">📊</div>
+            <h4 class="text-muted">Aucun jeu de données disponible</h4>
+            <p class="text-muted small">
+                Importez votre premier fichier de données pour commencer l'analyse !
+            </p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends "layout.html" %}
+
+{% block title %}Gestion des utilisateurs - DataEcon.Ci{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold" style="color: var(--primary);">
+                <i class="fas fa-users"></i> Gestion des utilisateurs
+            </h2>
+            <p class="text-muted">Gérez les abonnements et les droits des utilisateurs</p>
+        </div>
+        <a href="{{ url_for('admin_courses') }}" class="btn btn-outline-primary">
+            <i class="fas fa-book"></i> Gérer les cours
+        </a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body table-container">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom d'utilisateur</th>
+                        <th>Email</th>
+                        <th>Abonnement</th>
+                        <th>Admin</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>
+                                <strong>{{ user.username }}</strong>
+                                {% if user.id == current_user.id %}
+                                    <span class="badge bg-info">Vous</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ user.email }}</td>
+                            <td>
+                                <form method="POST" action="{{ url_for('update_subscription', user_id=user.id) }}" class="d-flex gap-2">
+                                    <select name="subscription_level" class="form-select form-select-sm" style="width: 140px;">
+                                        <option value="free" {% if user.subscription_level == 'free' %}selected{% endif %}>
+                                            🟢 Gratuit
+                                        </option>
+                                        <option value="premium" {% if user.subscription_level == 'premium' %}selected{% endif %}>
+                                            🟡 Premium
+                                        </option>
+                                        <option value="premium_pro" {% if user.subscription_level == 'premium_pro' %}selected{% endif %}>
+                                            🔴 Premium Pro
+                                        </option>
+                                    </select>
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-save"></i>
+                                    </button>
+                                </form>
+                            </td>
+                            <td>
+                                {% if user.is_admin %}
+                                    <span class="badge bg-danger">✅ Admin</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Utilisateur</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    {% if user.id != current_user.id %}
+                                        <form method="POST" action="{{ url_for('toggle_admin', user_id=user.id) }}" style="display: inline-block;">
+                                            <button type="submit" class="btn btn-sm {% if user.is_admin %}btn-warning{% else %}btn-outline-success{% endif %}" 
+                                                    onclick="return confirm('{{ "Retirer les droits admin à" if user.is_admin else "Donner les droits admin à" }} {{ user.username }} ?')">
+                                                <i class="fas {% if user.is_admin %}fa-user-minus{% else %}fa-user-plus{% endif %}"></i>
+                                                {% if user.is_admin %}Retirer Admin{% else %}Donner Admin{% endif %}
+                                            </button>
+                                        </form>
+                                    {% else %}
+                                        <span class="text-muted small">Vous-même</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="row g-3 mt-3">
+        <div class="col-md-3">
+            <div class="stat-card text-center">
+                <div class="stat-number">{{ users|length }}</div>
+                <div class="stat-label">Total utilisateurs</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card text-center" style="border-left-color: #28a745;">
+                <div class="stat-number">{{ users|selectattr('subscription_level', 'equalto', 'free')|list|length }}</div>
+                <div class="stat-label">Gratuit</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card text-center" style="border-left-color: #ffc107;">
+                <div class="stat-number">{{ users|selectattr('subscription_level', 'equalto', 'premium')|list|length }}</div>
+                <div class="stat-label">Premium</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card text-center" style="border-left-color: #dc3545;">
+                <div class="stat-number">{{ users|selectattr('subscription_level', 'equalto', 'premium_pro')|list|length }}</div>
+                <div class="stat-label">Premium Pro</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,155 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<!-- ============================================ -->
+<!-- HERO SECTION -->
+<!-- ============================================ -->
+<section class="hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="fade-in">
+                    Formez-vous à l'<span>Économétrie</span>
+                </h1>
+                <p class="subtitle fade-in" style="animation-delay: 0.2s;">
+                    Maîtrisez les outils statistiques et économétriques pour analyser les données comme un expert
+                </p>
+                <div class="d-flex gap-3 flex-wrap justify-content-center fade-in" style="animation-delay: 0.4s;">
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-primary-custom">
+                            <i class="fas fa-tachometer-alt"></i> Accéder au tableau de bord
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('register') }}" class="btn btn-primary-custom">
+                            <i class="fas fa-user-plus"></i> Commencer gratuitement
+                        </a>
+                        <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg rounded-pill px-4">
+                            <i class="fas fa-sign-in-alt"></i> Se connecter
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="mt-5 d-flex justify-content-center gap-5 fade-in" style="animation-delay: 0.6s;">
+                    <div>
+                        <strong class="d-block text-accent" style="font-size: 2rem;">3+</strong>
+                        <span class="text-light opacity-75">Cours</span>
+                    </div>
+                    <div>
+                        <strong class="d-block text-accent" style="font-size: 2rem;">50+</strong>
+                        <span class="text-light opacity-75">Étudiants</span>
+                    </div>
+                    <div>
+                        <strong class="d-block text-accent" style="font-size: 2rem;">30+</strong>
+                        <span class="text-light opacity-75">Jeux de données</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================ -->
+<!-- FEATURES -->
+<!-- ============================================ -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5" style="color: var(--primary); font-weight: 700;">
+            <i class="fas fa-star text-accent"></i> Pourquoi DataEcon.Ci ?
+        </h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 text-center shadow-hover">
+                    <div class="card-body">
+                        <div class="feature-icon">📚</div>
+                        <h5 class="card-title">Cours structurés</h5>
+                        <p class="card-text text-muted">
+                            Des cours progressifs, du débutant à l'avancé, avec des exercices pratiques.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center shadow-hover">
+                    <div class="card-body">
+                        <div class="feature-icon">📊</div>
+                        <h5 class="card-title">Données réelles</h5>
+                        <p class="card-text text-muted">
+                            Téléchargez et analysez de vrais jeux de données économiques.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 text-center shadow-hover">
+                    <div class="card-body">
+                        <div class="feature-icon">🧮</div>
+                        <h5 class="card-title">Modèles économétriques</h5>
+                        <p class="card-text text-muted">
+                            Lancez des régressions, séries temporelles et visualisations en un clic.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================ -->
+<!-- COURS RAPIDE -->
+<!-- ============================================ -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-4" style="color: var(--primary); font-weight: 700;">
+            <i class="fas fa-graduation-cap"></i> Derniers cours
+        </h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card shadow-hover">
+                    <div class="card-body">
+                        <span class="badge badge-debutant">Débutant</span>
+                        <h5 class="card-title mt-2">Introduction à l'Économétrie</h5>
+                        <p class="card-text text-muted small">
+                            Les fondements de l'économétrie : régression linéaire, hypothèses, interprétation.
+                        </p>
+                        <a href="#" class="btn btn-primary btn-sm rounded-pill">
+                            Voir le cours <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-hover">
+                    <div class="card-body">
+                        <span class="badge badge-intermediaire">Intermédiaire</span>
+                        <h5 class="card-title mt-2">Régression Linéaire Avancée</h5>
+                        <p class="card-text text-muted small">
+                            Modèles multi-variables, tests d'hypothèses, sélection de modèles.
+                        </p>
+                        <a href="#" class="btn btn-primary btn-sm rounded-pill">
+                            Voir le cours <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-hover">
+                    <div class="card-body">
+                        <span class="badge badge-avance">Avancé</span>
+                        <h5 class="card-title mt-2">Séries Temporelles</h5>
+                        <p class="card-text text-muted small">
+                            Analyse des séries temporelles : ARIMA, stationnarité, prévisions.
+                        </p>
+                        <a href="#" class="btn btn-primary btn-sm rounded-pill">
+                            Voir le cours <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-4">
+            <a href="{{ url_for('courses') }}" class="btn btn-outline-primary rounded-pill px-4">
+                Voir tous les cours <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

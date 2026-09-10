@@ -1,0 +1,10 @@
+app/data/pdfs/
+app/data/*.csv
+app/data/*.xlsx
+app/data/*.xls
+app/data/*.dta
+*.pdf
+*.pyc
+__pycache__/
+.git/
+.env

@@ -1,0 +1,36 @@
+services:
+  web:
+    build: .
+    container_name: dataecon_web
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./app:/app
+      - ./app/data:/app/data
+    environment:
+      - DATABASE_URL=postgresql://dataecon:dataecon123@db:5432/dataecon
+      - SECRET_KEY=your-secret-key-change-this
+    depends_on:
+      - db
+    networks:
+      - dataecon_network
+
+  db:
+    image: postgres:15
+    container_name: dataecon_db
+    environment:
+      - POSTGRES_USER=dataecon
+      - POSTGRES_PASSWORD=dataecon123
+      - POSTGRES_DB=dataecon
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - dataecon_network
+
+volumes:
+  postgres_data:
+
+networks:
+  dataecon_network:

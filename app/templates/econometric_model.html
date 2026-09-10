@@ -1,0 +1,263 @@
+{% extends "layout.html" %}
+
+{% block title %}Modèles économétriques - DataEcon.Ci{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- En-tête -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold" style="color: var(--primary);">
+                <i class="fas fa-calculator"></i> Modèles économétriques
+            </h2>
+            <p class="text-muted">
+                Lancez des régressions et analyses économétriques sur vos données
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Formulaire -->
+        <div class="col-lg-5">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-cog"></i> Configuration du modèle
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" class="needs-validation" novalidate>
+                        <!-- Sélection du dataset -->
+                        <div class="mb-3">
+                            <label for="dataset_id" class="form-label fw-bold">
+                                <i class="fas fa-database"></i> Jeu de données
+                            </label>
+                            <select name="dataset_id" id="dataset_id" class="form-select" required>
+                                <option value="">-- Sélectionnez un dataset --</option>
+                                {% for dataset in datasets %}
+                                    <option value="{{ dataset.id }}">{{ dataset.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="invalid-feedback">
+                                Veuillez sélectionner un jeu de données.
+                            </div>
+                            {% if not datasets %}
+                                <div class="form-text text-danger">
+                                    <i class="fas fa-exclamation-triangle"></i> 
+                                    Aucun jeu de données disponible. 
+                                    <a href="{{ url_for('datasets') }}">Importez-en un</a>.
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Variable dépendante -->
+                        <div class="mb-3">
+                            <label for="dependent" class="form-label fw-bold">
+                                <i class="fas fa-arrow-right"></i> Variable dépendante (Y)
+                            </label>
+                            <input type="text" 
+                                   name="dependent" 
+                                   id="dependent" 
+                                   class="form-control" 
+                                   placeholder="Ex: prix, ventes, revenu..."
+                                   required>
+                            <div class="invalid-feedback">
+                                Veuillez entrer une variable dépendante.
+                            </div>
+                            <div class="form-text">
+                                La variable que vous voulez expliquer / prédire.
+                            </div>
+                        </div>
+
+                        <!-- Variables indépendantes -->
+                        <div class="mb-3">
+                            <label for="independent" class="form-label fw-bold">
+                                <i class="fas fa-arrow-right"></i> Variables indépendantes (X)
+                            </label>
+                            <input type="text" 
+                                   name="independent" 
+                                   id="independent" 
+                                   class="form-control" 
+                                   placeholder="Ex: taille, surface, age..."
+                                   required>
+                            <div class="invalid-feedback">
+                                Veuillez entrer au moins une variable indépendante.
+                            </div>
+                            <div class="form-text">
+                                Séparées par des virgules. Ex: taille, surface, age
+                            </div>
+                        </div>
+
+                        <!-- Type de modèle -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-cubes"></i> Type de modèle
+                            </label>
+                            <div class="form-text mb-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="model_type" id="ols" value="ols" checked>
+                                    <label class="form-check-label" for="ols">
+                                        Régression linéaire (OLS)
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="model_type" id="logit" value="logit" disabled>
+                                    <label class="form-check-label text-muted" for="logit">
+                                        Logistique (bientôt disponible)
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="model_type" id="ts" value="ts" disabled>
+                                    <label class="form-check-label text-muted" for="ts">
+                                        Séries temporelles (bientôt disponible)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100" {% if not datasets %}disabled{% endif %}>
+                            <i class="fas fa-play"></i> Lancer la régression
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Résultats -->
+        <div class="col-lg-7">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar"></i> Résultats
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if model_info %}
+                        <!-- Résumé du modèle -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-6 col-md-3 text-center">
+                                <div class="p-2 bg-light rounded">
+                                    <div class="small text-muted">R²</div>
+                                    <strong>{{ model_info.r_squared }}</strong>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3 text-center">
+                                <div class="p-2 bg-light rounded">
+                                    <div class="small text-muted">R² ajusté</div>
+                                    <strong>{{ model_info.adj_r_squared }}</strong>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3 text-center">
+                                <div class="p-2 bg-light rounded">
+                                    <div class="small text-muted">F-stat</div>
+                                    <strong>{{ model_info.f_stat }}</strong>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3 text-center">
+                                <div class="p-2 bg-light rounded">
+                                    <div class="small text-muted">Observations</div>
+                                    <strong>{{ model_info.nobs }}</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Informations -->
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Variable dépendante :</strong> {{ model_info.dependent }}
+                            <br>
+                            <strong>Variables indépendantes :</strong> {{ model_info.independent|join(', ') }}
+                            <br>
+                            <strong>p-value F-stat :</strong> {{ model_info.f_pvalue }}
+                            {% if model_info.f_pvalue < 0.05 %}
+                                <span class="badge bg-success">Modèle significatif</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Modèle non significatif</span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Coefficients -->
+                        <div class="table-container">
+                            <h6 class="fw-bold"><i class="fas fa-table"></i> Coefficients</h6>
+                            {{ result_html|safe }}
+                        </div>
+
+                        <!-- Interprétation -->
+                        <div class="card mt-3 bg-light">
+                            <div class="card-body">
+                                <h6><i class="fas fa-lightbulb"></i> Interprétation</h6>
+                                <ul class="small mb-0">
+                                    <li>
+                                        <strong>R² = {{ model_info.r_squared }}</strong> : 
+                                        {% if model_info.r_squared > 0.8 %}
+                                            Le modèle explique plus de 80% de la variance.
+                                        {% elif model_info.r_squared > 0.5 %}
+                                            Le modèle explique entre 50% et 80% de la variance.
+                                        {% else %}
+                                            Le modèle explique moins de 50% de la variance.
+                                        {% endif %}
+                                    </li>
+                                    <li>
+                                        <strong>F-stat = {{ model_info.f_stat }}</strong> : 
+                                        {% if model_info.f_pvalue < 0.05 %}
+                                            Le modèle est statistiquement significatif (p < 0.05).
+                                        {% else %}
+                                            Le modèle n'est pas statistiquement significatif (p > 0.05).
+                                        {% endif %}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    {% elif request.method == 'POST' %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-exclamation-triangle text-warning" style="font-size: 3rem;"></i>
+                            <p class="text-muted mt-3">Aucun résultat disponible.</p>
+                            <p class="small text-muted">Vérifiez les variables et réessayez.</p>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <div style="font-size: 4rem; margin-bottom: 20px;">📊</div>
+                            <h4 class="text-muted">Prêt à analyser</h4>
+                            <p class="text-muted small">
+                                Sélectionnez un jeu de données et configurez votre modèle
+                                pour obtenir les résultats ici.
+                            </p>
+                            <p class="text-muted small">
+                                <i class="fas fa-info-circle"></i> 
+                                Les résultats afficheront les coefficients, R², et statistiques.
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Validation du formulaire
+    const form = document.querySelector('.needs-validation');
+    if (form) {
+        form.addEventListener('submit', function(event) {
+            if (!this.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            this.classList.add('was-validated');
+        });
+    }
+
+    // Mise à jour de l'affichage des variables indépendantes
+    const independentInput = document.getElementById('independent');
+    if (independentInput) {
+        independentInput.addEventListener('input', function() {
+            // Nettoyer l'entrée
+            let value = this.value;
+            value = value.replace(/[^a-zA-Z0-9_,\s]/g, '');
+            this.value = value;
+        });
+    }
+});
+</script>
+{% endblock %}

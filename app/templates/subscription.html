@@ -1,0 +1,161 @@
+{% extends "layout.html" %}
+
+{% block title %}Abonnements - DataEcon.Ci{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bold" style="color: var(--primary);">
+            <i class="fas fa-crown"></i> Choisissez votre formule
+        </h1>
+        <p class="text-muted">Accédez à tous les cours et fonctionnalités selon votre niveau</p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+        <!-- Formule Gratuite -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-lg border-0">
+                <div class="card-header text-center bg-secondary text-white">
+                    <h3 class="mb-0">Gratuit</h3>
+                </div>
+                <div class="card-body text-center">
+                    <div class="display-4 fw-bold mb-3">0 FCFA</div>
+                    <p class="text-muted">/ mois</p>
+                    <ul class="list-unstyled text-start">
+                        <li class="mb-2"><i class="fas fa-check-circle text-success"></i> Cours Débutant</li>
+                        <li class="mb-2 text-muted"><i class="fas fa-times-circle text-danger"></i> Cours Intermédiaire</li>
+                        <li class="mb-2 text-muted"><i class="fas fa-times-circle text-danger"></i> Cours Avancé</li>
+                        <li class="mb-2 text-muted"><i class="fas fa-times-circle text-danger"></i> Données</li>
+                        <li class="mb-2 text-muted"><i class="fas fa-times-circle text-danger"></i> Modèles</li>
+                    </ul>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary w-100 mt-3">
+                        <i class="fas fa-check"></i> Actuel
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formule Premium -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-lg border-0" style="border-top: 4px solid #1a2a6c;">
+                <div class="card-header text-center" style="background: linear-gradient(135deg, #1a2a6c, #3a4a9c); color: white;">
+                    <h3 class="mb-0">🌟 Premium</h3>
+                    <span class="badge bg-warning text-dark mt-2">Populaire</span>
+                </div>
+                <div class="card-body text-center">
+                    <div class="display-4 fw-bold" style="color: #1a2a6c;">2 000 FCFA</div>
+                    <p class="text-muted">/ mois</p>
+                    <ul class="list-unstyled text-start">
+                        <li class="mb-2"><i class="fas fa-check-circle text-success"></i> Cours Débutant</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success"></i> Cours Intermédiaire</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success"></i> Cours Avancé</li>
+                        <li class="mb-2 text-muted"><i class="fas fa-times-circle text-danger"></i> Données</li>
+                        <li class="mb-2 text-muted"><i class="fas fa-times-circle text-danger"></i> Modèles</li>
+                    </ul>
+
+                    <div class="mt-3">
+                        <p class="small text-muted mb-2">
+                            <i class="fas fa-qrcode"></i> Scannez ou cliquez pour payer
+                        </p>
+                        <div class="bg-light p-3 rounded mb-3">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://pay.wave.com/m/M_ci_BBSbYjlQgoxi/c/ci/&bgcolor=ffffff&color=1a2a6c"
+                                 alt="QR Code paiement Premium"
+                                 style="max-width: 130px; height: auto;">
+                        </div>
+                        <!-- BOUTON DIRECT VERS WAVE -->
+                        <a href="https://pay.wave.com/m/M_ci_BBSbYjlQgoxi/c/ci/"
+                           class="btn w-100"
+                           target="_blank"
+                           rel="noopener"
+                           style="background: #1a2a6c; color: white; border: none; padding: 14px; font-size: 1.05rem; border-radius: 50px; font-weight: 600;">
+                            <i class="fas fa-credit-card"></i> Payer avec Wave
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formule Premium Pro -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-lg border-0" style="border-top: 4px solid #fdbb2d;">
+                <div class="card-header text-center" style="background: linear-gradient(135deg, #fdbb2d, #f7971e); color: white;">
+                    <h3 class="mb-0">💎 Premium Pro</h3>
+                    <span class="badge bg-dark mt-2">Meilleure offre</span>
+                </div>
+                <div class="card-body text-center">
+                    <div class="display-4 fw-bold" style="color: #fdbb2d;">5 000 FCFA</div>
+                    <p class="text-muted">/ mois</p>
+                    <ul class="list-unstyled text-start">
+                        <li class="mb-2"><i class="fas fa-check-circle text-success"></i> Cours Débutant</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success"></i> Cours Intermédiaire</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success"></i> Cours Avancé</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success"></i> Données</li>
+                        <li class="mb-2"><i class="fas fa-check-circle text-success"></i> Modèles</li>
+                    </ul>
+
+                    <div class="mt-3">
+                        <p class="small text-muted mb-2">
+                            <i class="fas fa-qrcode"></i> Scannez ou cliquez pour payer
+                        </p>
+                        <div class="bg-light p-3 rounded mb-3">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://pay.wave.com/m/M_ci_BBSbYjlQgoxi/c/ci/&bgcolor=ffffff&color=1a2a6c"
+                                 alt="QR Code paiement Premium Pro"
+                                 style="max-width: 130px; height: auto;">
+                        </div>
+                        <!-- BOUTON DIRECT VERS WAVE -->
+                        <a href="https://pay.wave.com/m/M_ci_BBSbYjlQgoxi/c/ci/"
+                           class="btn w-100"
+                           target="_blank"
+                           rel="noopener"
+                           style="background: #28a745; color: white; border: none; padding: 14px; font-size: 1.05rem; border-radius: 50px; font-weight: 600;">
+                            <i class="fas fa-credit-card"></i> Payer avec Wave
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <p class="text-muted small"><i class="fas fa-lock"></i> Paiement sécurisé via Wave Mobile Money</p>
+        <p class="text-muted small"><i class="fas fa-undo"></i> Annulation possible à tout moment</p>
+    </div>
+
+    <!-- Abonnement actuel -->
+    <div class="card mt-4 bg-light">
+        <div class="card-body text-center">
+            <p class="mb-0">
+                <strong>Votre abonnement actuel :</strong>
+                <span class="badge 
+                    {% if current_user.subscription_level == 'premium_pro' %}bg-success
+                    {% elif current_user.subscription_level == 'premium' %}bg-primary
+                    {% else %}bg-secondary{% endif %}" 
+                    style="font-size: 1rem; padding: 8px 20px;">
+                    {{ current_user.get_subscription_name() }}
+                </span>
+            </p>
+            {% if current_user.subscription_level != 'free' %}
+                <form method="POST" action="{{ url_for('cancel_subscription') }}" style="display: inline-block;">
+                    <button type="submit" class="btn btn-outline-danger btn-sm mt-2" onclick="return confirm('Annuler votre abonnement ?')">
+                        <i class="fas fa-times"></i> Annuler l'abonnement
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="card mt-3 bg-light border-info">
+        <div class="card-body">
+            <h6><i class="fas fa-info-circle text-info"></i> Comment payer avec Wave ?</h6>
+            <ol class="small mb-0">
+                <li>Cliquez sur le bouton <strong>"Payer avec Wave"</strong> ci-dessus (ou scannez le QR code)</li>
+                <li>Vous êtes redirigé vers l'application/le site Wave</li>
+                <li>Confirmez le montant et le paiement sur votre téléphone</li>
+                <li>Une fois le paiement confirmé, revenez sur DataEcon.Ci</li>
+                <li><strong>Contactez l'admin</strong> ou attendez l'activation de votre abonnement</li>
+            </ol>
+        </div>
+    </div>
+</div>
+{% endblock %}

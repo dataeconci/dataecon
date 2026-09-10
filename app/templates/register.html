@@ -1,0 +1,98 @@
+<form method="POST" class="needs-validation" novalidate>
+    <!-- Nom d'utilisateur -->
+    <div class="mb-3">
+        <label for="username" class="form-label">
+            <i class="fas fa-user"></i> Nom d'utilisateur
+        </label>
+        <input type="text" class="form-control" id="username" name="username" placeholder="Ex: jean.dupont" required>
+        <div class="invalid-feedback">Veuillez choisir un nom d'utilisateur.</div>
+        <div class="form-text">Minimum 3 caractères, lettres et chiffres uniquement.</div>
+    </div>
+
+    <!-- Email -->
+    <div class="mb-3">
+        <label for="email" class="form-label">
+            <i class="fas fa-envelope"></i> Email
+        </label>
+        <input type="email" class="form-control" id="email" name="email" placeholder="exemple@email.com" required>
+        <div class="invalid-feedback">Veuillez entrer un email valide.</div>
+    </div>
+
+    <!-- Prénom -->
+    <div class="mb-3">
+        <label for="first_name" class="form-label">
+            <i class="fas fa-user-tag"></i> Prénom
+        </label>
+        <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Jean" required>
+        <div class="invalid-feedback">Veuillez entrer votre prénom.</div>
+    </div>
+
+    <!-- Nom -->
+    <div class="mb-3">
+        <label for="last_name" class="form-label">
+            <i class="fas fa-user-tag"></i> Nom
+        </label>
+        <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Dupont" required>
+        <div class="invalid-feedback">Veuillez entrer votre nom.</div>
+    </div>
+
+    <!-- TÉLÉPHONE (NOUVEAU) -->
+    <div class="mb-3">
+        <label for="phone" class="form-label">
+            <i class="fas fa-phone"></i> Téléphone
+        </label>
+        <input type="tel" class="form-control" id="phone" name="phone" placeholder="+225 01 XX XX XX XX">
+        <div class="form-text">Format recommandé : +225 01 XX XX XX XX</div>
+    </div>
+
+    <!-- Mot de passe -->
+    <div class="mb-3">
+        <label for="password" class="form-label">
+            <i class="fas fa-lock"></i> Mot de passe
+        </label>
+        <div class="input-group">
+            <input type="password" class="form-control" id="password" name="password" placeholder="••••••••" minlength="6" required>
+            <button class="btn btn-outline-secondary toggle-password" type="button" data-target="password">
+                👁️
+            </button>
+        </div>
+        <div class="invalid-feedback">Le mot de passe doit faire au moins 6 caractères.</div>
+        <div class="form-text">Utilisez au moins 6 caractères avec des lettres et des chiffres.</div>
+    </div>
+
+    <!-- Confirmation mot de passe -->
+    <div class="mb-3">
+        <label for="password_confirm" class="form-label">
+            <i class="fas fa-check-circle"></i> Confirmer le mot de passe
+        </label>
+        <div class="input-group">
+            <input type="password" class="form-control" id="password_confirm" name="password_confirm" placeholder="••••••••" required>
+            <button class="btn btn-outline-secondary toggle-password" type="button" data-target="password_confirm">
+                👁️
+            </button>
+        </div>
+        <div class="invalid-feedback">Veuillez confirmer votre mot de passe.</div>
+    </div>
+
+    <!-- Conditions -->
+    <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="terms" name="terms" required>
+        <label class="form-check-label" for="terms">
+            J'accepte les conditions d'utilisation et la politique de confidentialité
+        </label>
+        <div class="invalid-feedback">Vous devez accepter les conditions pour créer un compte.</div>
+    </div>
+
+    <!-- Bouton d'inscription -->
+    <button type="submit" class="btn btn-primary w-100">
+        <i class="fas fa-user-plus"></i> Créer mon compte
+    </button>
+
+    <!-- Lien vers connexion -->
+    <div class="text-center mt-3">
+        <p class="text-muted small">
+            Vous avez déjà un compte ? 
+            <a href="{{ url_for('login') }}" class="text-decoration-none fw-bold">Se connecter</a>
+        </p>
+    </div>
+</form>

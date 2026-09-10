@@ -1,0 +1,145 @@
+{% extends "layout.html" %}
+
+{% block title %}Modèles - DataEcon.Ci{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="fw-bold" style="color: var(--primary);">
+        <i class="fas fa-calculator"></i> Modèles Avancés
+    </h2>
+    <p class="text-muted">Sélectionnez un jeu de données et un modèle pour l'analyse</p>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-cog"></i> Configuration de l'analyse</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('models_analyze') }}" id="modelForm">
+                        <div class="mb-3">
+                            <label class="form-label">Jeu de données</label>
+                            <select name="dataset_id" class="form-select" required>
+                                <option value="">-- Sélectionnez un dataset --</option>
+                                {% for dataset in datasets %}
+                                    <option value="{{ dataset.id }}">{{ dataset.name }}</option>
+                                {% endfor %}
+                            </select>
+                            {% if not datasets %}
+                                <div class="form-text text-danger">
+                                    <i class="fas fa-exclamation-triangle"></i> 
+                                    Aucun jeu de données disponible. 
+                                    <a href="{{ url_for('datasets') }}">Importez-en un</a>.
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Type de modèle</label>
+                            <select name="model_type" class="form-select" id="modelType" required>
+                                <option value="">-- Choisissez un modèle --</option>
+                                <option value="time_series">📈 Séries Temporelles (ARIMA)</option>
+                                <option value="financial_series">💰 Séries Financières</option>
+                                <option value="regression">📊 Régression (Linéaire/Ridge/Lasso)</option>
+                                <option value="machine_learning">🤖 Machine Learning (Random Forest, Gradient Boosting)</option>
+                                <option value="deep_learning">🧠 Deep Learning (Neural Networks)</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Variable cible (Y)</label>
+                            <input type="text" name="target_col" class="form-control" placeholder="Nom de la colonne cible" required>
+                            <div class="form-text">La variable que vous voulez expliquer ou prédire.</div>
+                        </div>
+
+                        <div class="mb-3" id="featuresDiv">
+                            <label class="form-label">Variables explicatives (X) - séparées par des virgules</label>
+                            <input type="text" name="feature_cols" class="form-control" placeholder="ex: revenu, age, education">
+                            <div class="form-text">Laissez vide pour les modèles de séries temporelles.</div>
+                        </div>
+
+                        <div class="mb-3" id="forecastDiv" style="display:none;">
+                            <label class="form-label">Nombre de périodes de prévision</label>
+                            <input type="number" name="forecast_steps" class="form-control" value="12" min="1" max="100">
+                            <div class="form-text">Pour les modèles de séries temporelles uniquement.</div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" {% if not datasets %}disabled{% endif %}>
+                            <i class="fas fa-play"></i> Lancer l'analyse
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Informations</h5>
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted">
+                        <strong>📈 Séries Temporelles</strong><br>
+                        Analyse ARIMA avec tests de stationnarité et prévisions.
+                    </p>
+                    <p class="small text-muted">
+                        <strong>💰 Séries Financières</strong><br>
+                        Analyse des rendements, volatilité, VaR et ratio de Sharpe.
+                    </p>
+                    <p class="small text-muted">
+                        <strong>📊 Régression</strong><br>
+                        Régression linéaire, Ridge, Lasso avec interprétation économique.
+                    </p>
+                    <p class="small text-muted">
+                        <strong>🤖 Machine Learning</strong><br>
+                        Random Forest, Gradient Boosting pour des relations non-linéaires.
+                    </p>
+                    <p class="small text-muted">
+                        <strong>🧠 Deep Learning</strong><br>
+                        Réseaux de neurones pour des modèles complexes.
+                    </p>
+                    <hr>
+                    <p class="small text-muted">
+                        <i class="fas fa-file-word"></i> 
+                        <strong>Rapport automatique</strong><br>
+                        Un rapport Word structuré sera généré avec :
+                        <ul class="small">
+                            <li>Statistiques descriptives</li>
+                            <li>Résultats du modèle</li>
+                            <li>Interprétation économique</li>
+                            <li>Interprétation financière</li>
+                            <li>Décisions stratégiques</li>
+                        </ul>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const modelType = document.getElementById('modelType');
+    const featuresDiv = document.getElementById('featuresDiv');
+    const forecastDiv = document.getElementById('forecastDiv');
+
+    modelType.addEventListener('change', function() {
+        const value = this.value;
+        
+        // Afficher/masquer les variables explicatives
+        if (value === 'time_series' || value === 'financial_series') {
+            featuresDiv.style.display = 'none';
+        } else {
+            featuresDiv.style.display = 'block';
+        }
+        
+        // Afficher/masquer les prévisions
+        if (value === 'time_series') {
+            forecastDiv.style.display = 'block';
+        } else {
+            forecastDiv.style.display = 'none';
+        }
+    });
+});
+</script>
+{% endblock %}

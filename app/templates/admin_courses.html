@@ -1,0 +1,142 @@
+{% extends "layout.html" %}
+
+{% block title %}Gestion des cours - DataEcon.Ci{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold" style="color: var(--primary);">
+                <i class="fas fa-book"></i> Gestion des cours
+            </h2>
+            <p class="text-muted">Ajoutez, modifiez ou supprimez des cours avec fichiers PDF</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('admin_users') }}" class="btn btn-outline-primary">
+                <i class="fas fa-users"></i> Utilisateurs
+            </a>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Retour
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-plus"></i> Ajouter un cours</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('add_course') }}" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label class="form-label">Titre *</label>
+                            <input type="text" name="title" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="2"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Niveau</label>
+                            <select name="level" class="form-select">
+                                <option value="Débutant">Débutant</option>
+                                <option value="Intermédiaire">Intermédiaire</option>
+                                <option value="Avancé">Avancé</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Contenu (HTML)</label>
+                            <textarea name="content" class="form-control" rows="5" placeholder="<p>Contenu du cours...</p>"></textarea>
+                            <div class="form-text">Utilisez du HTML pour formater le contenu.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Fichier PDF</label>
+                            <input type="file" name="pdf_file" class="form-control" accept=".pdf">
+                            <div class="form-text">Téléchargez un fichier PDF pour ce cours (max 500MB).</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-save"></i> Ajouter le cours
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-list"></i> Cours existants</h5>
+                    <span class="badge bg-primary">{{ courses|length }} cours</span>
+                </div>
+                <div class="card-body">
+                    {% if courses %}
+                        <div class="list-group">
+                            {% for course in courses %}
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">{{ course.title }}</h6>
+                                            <div>
+                                                <span class="badge 
+                                                    {% if course.level == 'Débutant' %}badge-debutant
+                                                    {% elif course.level == 'Intermédiaire' %}badge-intermediaire
+                                                    {% else %}badge-avance{% endif %}">
+                                                    {{ course.level }}
+                                                </span>
+                                                {% if course.file_name %}
+                                                    <span class="badge bg-success">
+                                                        <i class="fas fa-file-pdf"></i> {{ course.file_name }}
+                                                    </span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">
+                                                        <i class="fas fa-file"></i> Sans PDF
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <a href="{{ url_for('course_detail', course_id=course.id) }}" 
+                                               class="btn btn-sm btn-primary" title="Voir">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <form method="POST" action="{{ url_for('delete_course', course_id=course.id) }}" 
+                                                  style="display:inline-block;">
+                                                <button type="submit" class="btn btn-sm btn-danger" 
+                                                        onclick="return confirm('Supprimer le cours "{{ course.title }}" ?')" title="Supprimer">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    {% if course.file_path %}
+                                        <div class="mt-1">
+                                            <small class="text-muted">
+                                                <i class="fas fa-folder"></i> {{ course.file_path }}
+                                            </small>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center mb-0">Aucun cours pour le moment.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="card mt-4 bg-light">
+        <div class="card-body">
+            <h6><i class="fas fa-info-circle text-info"></i> Format des fichiers acceptés</h6>
+            <ul class="small mb-0">
+                <li><strong>PDF</strong> - Cours et documents</li>
+                <li><strong>CSV, Excel (.xlsx), Stata (.dta)</strong> - Jeux de données</li>
+                <li>La taille maximale est de <strong>500MB</strong> par fichier</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

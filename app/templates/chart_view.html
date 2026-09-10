@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block title %}Graphique - DataEcon.Ci{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold" style="color: var(--primary);">
+                <i class="fas fa-chart-bar"></i> Graphique
+            </h2>
+            <p class="text-muted">{{ dataset.name }} - {{ chart_type }}</p>
+        </div>
+        <div>
+            <a href="{{ url_for('analytics') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Retour
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body text-center">
+            <img src="{{ plot_url }}" alt="Graphique" class="img-fluid" style="max-height: 600px;">
+        </div>
+        <div class="card-footer text-muted text-center">
+            <small>Graphique généré automatiquement à partir des données</small>
+        </div>
+    </div>
+</div>
+{% endblock %}

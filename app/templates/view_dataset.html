@@ -1,0 +1,114 @@
+{% extends "layout.html" %}
+
+{% block title %}Visualisation - {{ dataset.name }} - DataEcon.Ci{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Fil d'Ariane -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Accueil</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('datasets') }}">Données</a></li>
+            <li class="breadcrumb-item active">{{ dataset.name }}</li>
+        </ol>
+    </nav>
+
+    <!-- En-tête -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold" style="color: var(--primary);">
+                <i class="fas fa-chart-bar"></i> {{ dataset.name }}
+            </h2>
+            <p class="text-muted">{{ dataset.description or 'Aucune description' }}</p>
+        </div>
+        <div>
+            <a href="{{ url_for('download_dataset', dataset_id=dataset.id) }}" 
+               class="btn btn-success rounded-pill">
+                <i class="fas fa-download"></i> Télécharger
+            </a>
+            <a href="{{ url_for('datasets') }}" class="btn btn-outline-secondary rounded-pill">
+                <i class="fas fa-arrow-left"></i> Retour
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-6">
+            <div class="stat-card text-center">
+                <div class="stat-number">{{ rows }}</div>
+                <div class="stat-label">Lignes</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-card text-center" style="border-left-color: #28a745;">
+                <div class="stat-number">{{ cols }}</div>
+                <div class="stat-label">Colonnes</div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="stat-card">
+                <div class="stat-label mb-2">Colonnes disponibles</div>
+                <div class="d-flex flex-wrap gap-1">
+                    {% for col in columns %}
+                        <span class="badge bg-primary">{{ col }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Graphique -->
+    {% if plot_url %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-line"></i> Matrice de corrélation
+                </h5>
+            </div>
+            <div class="card-body text-center">
+                <img src="{{ plot_url }}" alt="Matrice de corrélation" class="img-fluid">
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Statistiques descriptives -->
+    {% if stats %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-calculator"></i> Statistiques descriptives
+                </h5>
+            </div>
+            <div class="card-body table-container">
+                {{ stats|safe }}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Aperçu des données -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="fas fa-table"></i> Aperçu des données (20 premières lignes)
+            </h5>
+            <span class="badge bg-secondary">
+                {{ rows }} lignes · {{ cols }} colonnes
+            </span>
+        </div>
+        <div class="card-body table-container">
+            {{ table|safe }}
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="d-flex gap-2 mt-4">
+        <a href="{{ url_for('econometric_model') }}" class="btn btn-warning rounded-pill">
+            <i class="fas fa-calculator"></i> Lancer un modèle économétrique
+        </a>
+        <a href="{{ url_for('analytics') }}" class="btn btn-info rounded-pill text-white">
+            <i class="fas fa-chart-pie"></i> Analyses avancées
+        </a>
+    </div>
+</div>
+{% endblock %}

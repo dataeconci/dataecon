@@ -1,0 +1,266 @@
+{% extends "layout.html" %}
+
+{% block title %}Analyses - DataEcon.Ci{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- En-tête -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold" style="color: var(--primary);">
+                <i class="fas fa-chart-pie"></i> Analyses statistiques
+            </h2>
+            <p class="text-muted">
+                Visualisez et analysez vos jeux de données
+            </p>
+        </div>
+    </div>
+
+    <!-- Résumé des datasets -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-database"></i> Vue d'ensemble des données
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if dataset_stats %}
+                        <div class="table-container">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Nom du dataset</th>
+                                        <th>Lignes</th>
+                                        <th>Colonnes</th>
+                                        <th>Colonnes numériques</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for ds in dataset_stats %}
+                                        <tr>
+                                            <td><strong>{{ ds.name }}</strong></td>
+                                            <td>{{ ds.rows }}</td>
+                                            <td>{{ ds.columns }}</td>
+                                            <td>{{ ds.numeric_cols }}</td>
+                                            <td>
+                                                <a href="{{ url_for('view_dataset', dataset_id=loop.index) }}" 
+                                                   class="btn btn-primary btn-sm">
+                                                    <i class="fas fa-eye"></i> Voir
+                                                </a>
+                                                <button class="btn btn-success btn-sm" 
+                                                        onclick="generateChart({{ loop.index0 }})">
+                                                    <i class="fas fa-chart-bar"></i> Graphique
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <p class="text-muted">
+                                <i class="fas fa-info-circle"></i> 
+                                Aucun jeu de données disponible pour l'analyse.
+                            </p>
+                            <a href="{{ url_for('datasets') }}" class="btn btn-primary">
+                                <i class="fas fa-upload"></i> Importer des données
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Outils d'analyse -->
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-calculator"></i> Analyse descriptive
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small">
+                        Obtenez des statistiques descriptives pour vos variables :
+                        moyenne, médiane, écart-type, quartiles, etc.
+                    </p>
+                    <ul class="list-unstyled small">
+                        <li><i class="fas fa-check-circle text-success"></i> Statistiques centrales</li>
+                        <li><i class="fas fa-check-circle text-success"></i> Mesures de dispersion</li>
+                        <li><i class="fas fa-check-circle text-success"></i> Distribution des données</li>
+                    </ul>
+                    <div class="d-grid">
+                        <a href="{{ url_for('datasets') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-right"></i> Choisir un dataset
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-line"></i> Visualisation
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small">
+                        Créez des graphiques pour visualiser vos données :
+                        histogrammes, boîtes à moustaches, nuages de points, etc.
+                    </p>
+                    <ul class="list-unstyled small">
+                        <li><i class="fas fa-check-circle text-success"></i> Histogrammes</li>
+                        <li><i class="fas fa-check-circle text-success"></i> Boîtes à moustaches</li>
+                        <li><i class="fas fa-check-circle text-success"></i> Nuages de points</li>
+                        <li><i class="fas fa-check-circle text-success"></i> Matrice de corrélation</li>
+                    </ul>
+                    <div class="d-grid">
+                        <a href="{{ url_for('models_list') }}" class="btn btn-outline-success">
+                            <i class="fas fa-arrow-right"></i> Visualiser avec les modèles
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-cubes"></i> Modèles économétriques
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small">
+                        Lancez des modèles économétriques sur vos données :
+                        régression linéaire, séries temporelles, etc.
+                    </p>
+                    <ul class="list-unstyled small">
+                        <li><i class="fas fa-check-circle text-success"></i> Régression OLS</li>
+                        <li><i class="fas fa-check-circle text-success"></i> Tests d'hypothèses</li>
+                        <li><i class="fas fa-check-circle text-success"></i> Séries temporelles</li>
+                        <li><i class="fas fa-check-circle text-success"></i> Prévisions</li>
+                    </ul>
+                    <div class="d-grid">
+                        <a href="{{ url_for('models_list') }}" class="btn btn-outline-warning">
+                            <i class="fas fa-arrow-right"></i> Lancer un modèle
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-file-export"></i> Export
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small">
+                        Exportez vos résultats et graphiques pour vos rapports.
+                    </p>
+                    <ul class="list-unstyled small">
+                        <li><i class="fas fa-check-circle text-success"></i> Export CSV</li>
+                        <li><i class="fas fa-check-circle text-success"></i> Export Excel</li>
+                        <li><i class="fas fa-check-circle text-success"></i> Export PDF</li>
+                        <li><i class="fas fa-check-circle text-success"></i> Graphiques en PNG</li>
+                    </ul>
+                    <div class="d-grid">
+                        <a href="{{ url_for('datasets') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-right"></i> Exporter des données
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Zone d'affichage des graphiques -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-chart-bar"></i> Visualisation des données
+            </h5>
+        </div>
+        <div class="card-body text-center" id="chart-container">
+            <p class="text-muted">
+                <i class="fas fa-info-circle"></i> 
+                Sélectionnez un dataset et cliquez sur "Graphique" pour afficher la visualisation.
+            </p>
+            <div class="row" id="chart-area">
+                <!-- Les graphiques seront affichés ici -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistiques rapides -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-lightbulb"></i> Astuces d'analyse
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="p-3 bg-light rounded">
+                        <h6><i class="fas fa-info-circle text-primary"></i> Nettoyage des données</h6>
+                        <p class="small text-muted">
+                            Vérifiez toujours la présence de valeurs manquantes et 
+                            les outliers avant d'analyser vos données.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-3 bg-light rounded">
+                        <h6><i class="fas fa-info-circle text-success"></i> Normalisation</h6>
+                        <p class="small text-muted">
+                            Pour les modèles comparant des variables avec des échelles 
+                            différentes, normalisez vos données.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-3 bg-light rounded">
+                        <h6><i class="fas fa-info-circle text-warning"></i> Interprétation</h6>
+                        <p class="small text-muted">
+                            Un coefficient statistiquement significatif n'implique 
+                            pas nécessairement une relation causale.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function generateChart(index) {
+    // Fonction pour générer un graphique (à implémenter avec Chart.js ou autre)
+    const chartArea = document.getElementById('chart-area');
+    chartArea.innerHTML = `
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="fas fa-chart-line"></i> 
+                Graphique pour le dataset sélectionné (à implémenter avec Chart.js)
+                <br>
+                <small>Utilisez Chart.js, Plotly ou Matplotlib pour les visualisations</small>
+            </div>
+            <div style="height: 400px; background: #f8f9fa; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                <p class="text-muted">Graphique à venir...</p>
+            </div>
+        </div>
+    `;
+}
+</script>
+{% endblock %}

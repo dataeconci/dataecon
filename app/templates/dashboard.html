@@ -1,0 +1,273 @@
+{% extends "layout.html" %}
+
+{% block title %}Tableau de bord - DataEcon.Ci{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- En-tête -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold" style="color: var(--primary);">
+                <i class="fas fa-tachometer-alt"></i> Tableau de bord
+            </h2>
+            <p class="text-muted">
+                Bienvenue, <strong>{{ current_user.first_name }} {{ current_user.last_name }}</strong> !
+                <span class="badge bg-success ms-2">
+                    <i class="fas fa-circle" style="font-size: 0.6rem;"></i> Connecté
+                </span>
+            </p>
+        </div>
+        <div>
+            <span class="badge bg-primary p-2">
+                <i class="fas fa-calendar-alt"></i> 
+                <span id="live-clock"></span>
+            </span>
+        </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3 col-6">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-number">{{ total_courses or 0 }}</div>
+                        <div class="stat-label">Total cours</div>
+                    </div>
+                    <div class="stat-icon">📚</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-card" style="border-left-color: #28a745;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-number">{{ completed_count or 0 }}</div>
+                        <div class="stat-label">Cours terminés</div>
+                    </div>
+                    <div class="stat-icon">✅</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-card" style="border-left-color: #ffc107;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-number">{{ datasets|length or 0 }}</div>
+                        <div class="stat-label">Jeux de données</div>
+                    </div>
+                    <div class="stat-icon">📊</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-card" style="border-left-color: #17a2b8;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-number">
+                            {% if total_courses and completed_count %}
+                                {{ (completed_count / total_courses * 100)|round|int }}%
+                            {% else %}
+                                0%
+                            {% endif %}
+                        </div>
+                        <div class="stat-label">Progression</div>
+                    </div>
+                    <div class="stat-icon">📈</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barre de progression globale -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between mb-2">
+                <span class="fw-bold">
+                    <i class="fas fa-chart-line"></i> Progression globale
+                </span>
+                <span>
+                    {% if total_courses and completed_count %}
+                        {{ (completed_count / total_courses * 100)|round|int }}%
+                    {% else %}
+                        0%
+                    {% endif %}
+                </span>
+            </div>
+            <div class="progress">
+                <div class="progress-bar" 
+                     role="progressbar" 
+                     style="width: {% if total_courses and completed_count %}{{ (completed_count / total_courses * 100) }}{% else %}0{% endif %}%;"
+                     aria-valuenow="{% if total_courses and completed_count %}{{ (completed_count / total_courses * 100) }}{% else %}0{% endif %}" 
+                     aria-valuemin="0" 
+                     aria-valuemax="100">
+                    {% if total_courses and completed_count %}
+                        {{ (completed_count / total_courses * 100)|round|int }}%
+                    {% else %}
+                        0%
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Mes cours -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-book"></i> Mes cours en cours
+                    </h5>
+                    <a href="{{ url_for('courses') }}" class="btn btn-sm btn-outline-light">
+                        Voir tous <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if courses %}
+                        {% for course in courses %}
+                            <div class="mb-3 pb-3 border-bottom">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="mb-1">
+                                            <a href="{{ url_for('course_detail', course_id=course.id) }}" 
+                                               class="text-decoration-none">
+                                                {{ course.title }}
+                                            </a>
+                                        </h6>
+                                        <p class="text-muted small mb-2">
+                                            {{ course.description|truncate(100) }}
+                                        </p>
+                                        <span class="badge 
+                                            {% if course.level == 'Débutant' %}badge-debutant
+                                            {% elif course.level == 'Intermédiaire' %}badge-intermediaire
+                                            {% else %}badge-avance{% endif %}">
+                                            {{ course.level }}
+                                        </span>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="small text-muted">
+                                            {% set prog = progress|selectattr('course_id', 'equalto', course.id)|list %}
+                                            {% if prog %}
+                                                {% set p = prog[0] %}
+                                                {% if p.completed %}
+                                                    <span class="text-success">✅ Terminé</span>
+                                                {% else %}
+                                                    {{ p.progress_percent }}%
+                                                {% endif %}
+                                            {% else %}
+                                                0%
+                                            {% endif %}
+                                        </div>
+                                        <div class="progress" style="width: 120px; height: 6px;">
+                                            {% set prog = progress|selectattr('course_id', 'equalto', course.id)|list %}
+                                            {% if prog %}
+                                                {% set p = prog[0] %}
+                                                <div class="progress-bar" 
+                                                     role="progressbar" 
+                                                     style="width: {{ p.progress_percent }}%;"
+                                                     aria-valuenow="{{ p.progress_percent }}" 
+                                                     aria-valuemin="0" 
+                                                     aria-valuemax="100">
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <p class="text-muted">
+                                <i class="fas fa-book-open fa-3x d-block mb-3"></i>
+                                Aucun cours en cours pour le moment.
+                            </p>
+                            <a href="{{ url_for('courses') }}" class="btn btn-primary">
+                                Explorer les cours
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Accès rapides -->
+        <div class="col-lg-4">
+            <!-- Actions rapides -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt"></i> Accès rapides
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('courses') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-book"></i> Voir les cours
+                        </a>
+                        <a href="{{ url_for('datasets') }}" class="btn btn-outline-success">
+                            <i class="fas fa-database"></i> Explorer les données
+                        </a>
+                        <a href="{{ url_for('econometric_model') }}" class="btn btn-outline-warning">
+                            <i class="fas fa-calculator"></i> Lancer un modèle
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dernières activités -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-clock"></i> Dernières activités
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if progress %}
+                        <ul class="list-unstyled mb-0">
+                            {% for p in progress|sort(attribute='last_accessed', reverse=True)|slice(5) %}
+                                {% if p.last_accessed %}
+                                    <li class="small mb-2">
+                                        <i class="fas fa-circle text-primary" style="font-size: 0.5rem;"></i>
+                                        Cours #{{ p.course_id }}
+                                        <span class="text-muted">
+                                            - {{ p.last_accessed.strftime('%d/%m/%Y %H:%M') }}
+                                        </span>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted text-center mb-0 small">
+                            Aucune activité récente.
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Horloge en temps réel
+    const clockElement = document.getElementById('live-clock');
+    if (clockElement) {
+        function updateClock() {
+            const now = new Date();
+            const options = {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            clockElement.textContent = now.toLocaleDateString('fr-FR', options);
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+    }
+});
+</script>
+{% endblock %}
