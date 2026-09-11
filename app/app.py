@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash, request, session, send_file
+﻿from flask import Flask, render_template, redirect, url_for, flash, request, session, send_file
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_mail import Mail, Message
@@ -28,11 +28,12 @@ import chardet
 import boto3
 from botocore.client import Config
 from botocore.exceptions import ClientError
+import psutil
 
 # ==================== FONCTIONS DE LECTURE DE FICHIERS ====================
 
 def detect_separator(file_path):
-    """Détecter automatiquement le séparateur d'un fichier CSV"""
+    """DÃ©tecter automatiquement le sÃ©parateur d'un fichier CSV"""
     try:
         with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
             first_line = f.readline()
@@ -40,7 +41,7 @@ def detect_separator(file_path):
         with open(file_path, 'r', encoding='latin-1', errors='ignore') as f:
             first_line = f.readline()
     
-    # Séparateurs possibles
+    # SÃ©parateurs possibles
     separators = [',', ';', '\t', '|', ' ']
     best_sep = ','
     max_count = 0
@@ -54,7 +55,7 @@ def detect_separator(file_path):
     return best_sep
 
 def detect_encoding(file_path):
-    """Détecter l'encodage d'un fichier"""
+    """DÃ©tecter l'encodage d'un fichier"""
     try:
         import chardet
         with open(file_path, 'rb') as f:
@@ -65,20 +66,20 @@ def detect_encoding(file_path):
         return 'utf-8'
 
 def read_data_file(file_path):
-    """Lire un fichier de données avec détection automatique du séparateur et de l'encodage"""
+    """Lire un fichier de donnÃ©es avec dÃ©tection automatique du sÃ©parateur et de l'encodage"""
     if file_path.endswith('.csv'):
         try:
-            # Détecter l'encodage
+            # DÃ©tecter l'encodage
             encoding = detect_encoding(file_path)
-            # Détecter le séparateur
+            # DÃ©tecter le sÃ©parateur
             sep = detect_separator(file_path)
             
-            # Première tentative de lecture
+            # PremiÃ¨re tentative de lecture
             df = pd.read_csv(file_path, sep=sep, encoding=encoding)
             
-            # Vérifier si toutes les données sont dans une seule colonne
+            # VÃ©rifier si toutes les donnÃ©es sont dans une seule colonne
             if len(df.columns) == 1:
-                # Essayer avec un autre séparateur
+                # Essayer avec un autre sÃ©parateur
                 for alt_sep in [';', ',', '\t', '|']:
                     if alt_sep != sep:
                         try:
@@ -95,8 +96,8 @@ def read_data_file(file_path):
             return df
             
         except Exception as e:
-            print(f"⚠️ Erreur lecture CSV: {e}", flush=True)
-            # Dernier essai avec séparateur automatique
+            print(f"âš ï¸ Erreur lecture CSV: {e}", flush=True)
+            # Dernier essai avec sÃ©parateur automatique
             try:
                 return pd.read_csv(file_path, sep=None, engine='python', encoding='utf-8')
             except:
@@ -109,7 +110,7 @@ def read_data_file(file_path):
         return pd.read_stata(file_path)
     
     else:
-        raise ValueError(f"Format de fichier non supporté: {file_path}")
+        raise ValueError(f"Format de fichier non supportÃ©: {file_path}")
 
 # ==================== CONFIGURATION ====================
 app = Flask(__name__)
@@ -118,7 +119,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgres
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = '/app/data'
 app.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024  # 500MB max
-app.config['SERVER_NAME'] = 'localhost:5000'
+# app.config['SERVER_NAME'] = 'localhost:5000'  # retire - bloquait l'acces via ngrok
 
 # ==================== FILTRE MARKDOWN ====================
 import mistune
@@ -142,7 +143,7 @@ app.config['MAIL_USERNAME'] = 'dataeconci@gmail.com'
 app.config['MAIL_PASSWORD'] = 'mptl yrfx pnvh fsqj'
 app.config['MAIL_DEFAULT_SENDER'] = 'dataeconci@gmail.com'
 
-# Sérializer pour les tokens
+# SÃ©rializer pour les tokens
 serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 ALLOWED_EXTENSIONS = {'csv', 'xlsx', 'xls', 'dta'}
 # ==================== CONFIGURATION CLOUDFLARE R2 ====================
@@ -152,7 +153,7 @@ R2_SECRET_KEY = os.environ.get('R2_SECRET_KEY')
 R2_BUCKET_NAME = os.environ.get('R2_BUCKET_NAME', 'dataecon-pdfs')
 
 def get_r2_client():
-    """Créer un client S3 compatible Cloudflare R2"""
+    """CrÃ©er un client S3 compatible Cloudflare R2"""
     if not R2_ENDPOINT or not R2_ACCESS_KEY or not R2_SECRET_KEY:
         return None
     
@@ -165,7 +166,7 @@ def get_r2_client():
     )
 
 def get_pdf_url(file_name):
-    """Générer une URL présignée pour un PDF depuis R2"""
+    """GÃ©nÃ©rer une URL prÃ©signÃ©e pour un PDF depuis R2"""
     client = get_r2_client()
     if not client:
         return None
@@ -178,7 +179,7 @@ def get_pdf_url(file_name):
         )
         return url
     except Exception as e:
-        print(f"❌ Erreur R2: {e}", flush=True)
+        print(f"âŒ Erreur R2: {e}", flush=True)
         return None
 
 # ==================== CONFIGURATION WAVE PAYMENT ====================
@@ -191,20 +192,20 @@ SUBSCRIPTION_PLANS = {
         'name': 'Gratuit',
         'price': 0,
         'currency': 'XOF',
-        'features': ['Cours Débutant']
+        'features': ['Cours DÃ©butant']
     },
     'premium': {
         'name': 'Premium',
         'price': 2000,
         'currency': 'XOF',
-        'features': ['Cours Débutant', 'Cours Intermédiaire', 'Cours Avancé'],
+        'features': ['Cours DÃ©butant', 'Cours IntermÃ©diaire', 'Cours AvancÃ©'],
         'wave_link': 'https://pay.wave.com/m/M_ci_BBSbYjlQgoxi/c/ci'
     },
     'premium_pro': {
         'name': 'Premium Pro',
         'price': 5000,
         'currency': 'XOF',
-        'features': ['Cours Débutant', 'Cours Intermédiaire', 'Cours Avancé', 'Données', 'Modèles'],
+        'features': ['Cours DÃ©butant', 'Cours IntermÃ©diaire', 'Cours AvancÃ©', 'DonnÃ©es', 'ModÃ¨les'],
         'wave_link': 'https://pay.wave.com/m/M_ci_BBSbYjlQgoxi/c/ci'
     }
 }
@@ -213,10 +214,10 @@ SUBSCRIPTION_PLANS = {
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
-login_manager.login_message = 'Veuillez vous connecter pour accéder à cette page.'
+login_manager.login_message = 'Veuillez vous connecter pour accÃ©der Ã  cette page.'
 mail = Mail(app)
 
-# ==================== MODÈLES ====================
+# ==================== MODÃˆLES ====================
 class User(UserMixin, db.Model):
     __tablename__ = 'user'
     __table_args__ = {'extend_existing': True}
@@ -249,7 +250,7 @@ class User(UserMixin, db.Model):
     def has_access(self, course_level):
         if self.is_admin:
             return True
-        if course_level == 'Débutant':
+        if course_level == 'DÃ©butant':
             return True
         if self.subscription_level in ['premium', 'premium_pro']:
             return True
@@ -320,8 +321,8 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def send_email(to, subject, template, **kwargs):
-    print(f"📧 TENTATIVE D'ENVOI EMAIL: {to}", flush=True)
-    print(f"📧 Sujet: {subject}", flush=True)
+    print(f"ðŸ“§ TENTATIVE D'ENVOI EMAIL: {to}", flush=True)
+    print(f"ðŸ“§ Sujet: {subject}", flush=True)
     
     try:
         msg = Message(
@@ -330,12 +331,12 @@ def send_email(to, subject, template, **kwargs):
             html=render_template(template, **kwargs),
             sender=app.config['MAIL_DEFAULT_SENDER']
         )
-        print(f"📧 Message créé, envoi en cours...", flush=True)
+        print(f"ðŸ“§ Message crÃ©Ã©, envoi en cours...", flush=True)
         mail.send(msg)
-        print(f"✅ EMAIL ENVOYÉ AVEC SUCCÈS à {to}", flush=True)
+        print(f"âœ… EMAIL ENVOYÃ‰ AVEC SUCCÃˆS Ã  {to}", flush=True)
         return True
     except Exception as e:
-        print(f"❌ ERREUR ENVOI EMAIL: {str(e)}", flush=True)
+        print(f"âŒ ERREUR ENVOI EMAIL: {str(e)}", flush=True)
         traceback.print_exc()
         return False
 
@@ -343,7 +344,7 @@ def send_confirmation_email(user):
     try:
         token = serializer.dumps(user.email, salt='email-confirm')
         confirm_url = url_for('confirm_email', token=token, _external=True)
-        print(f"🔗 URL de confirmation: {confirm_url}", flush=True)
+        print(f"ðŸ”— URL de confirmation: {confirm_url}", flush=True)
         
         return send_email(
             to=user.email,
@@ -353,7 +354,7 @@ def send_confirmation_email(user):
             confirm_url=confirm_url
         )
     except Exception as e:
-        print(f"❌ Erreur dans send_confirmation_email: {str(e)}", flush=True)
+        print(f"âŒ Erreur dans send_confirmation_email: {str(e)}", flush=True)
         traceback.print_exc()
         return False
 
@@ -361,17 +362,17 @@ def send_reset_email(user):
     try:
         token = serializer.dumps(user.email, salt='password-reset')
         reset_url = url_for('reset_password', token=token, _external=True)
-        print(f"🔗 URL de réinitialisation: {reset_url}", flush=True)
+        print(f"ðŸ”— URL de rÃ©initialisation: {reset_url}", flush=True)
         
         return send_email(
             to=user.email,
-            subject='Réinitialisation du mot de passe - DataEcon.Ci',
+            subject='RÃ©initialisation du mot de passe - DataEcon.Ci',
             template='emails/reset_password.html',
             user=user,
             reset_url=reset_url
         )
     except Exception as e:
-        print(f"❌ Erreur dans send_reset_email: {str(e)}", flush=True)
+        print(f"âŒ Erreur dans send_reset_email: {str(e)}", flush=True)
         traceback.print_exc()
         return False
 
@@ -383,11 +384,11 @@ def is_valid_email(email):
 def load_user(user_id):
     return db.session.get(User, int(user_id))
 
-# ==================== TÂCHES AUTOMATISÉES ====================
+# ==================== TÃ‚CHES AUTOMATISÃ‰ES ====================
 def check_subscription_reminders():
     """Envoyer un rappel 3 jours avant l'expiration"""
     with app.app_context():
-        print("🔔 Vérification des rappels d'abonnement...", flush=True)
+        print("ðŸ”” VÃ©rification des rappels d'abonnement...", flush=True)
         seuil = datetime.utcnow() + timedelta(days=3)
         users_to_remind = User.query.filter(
             User.subscription_level.in_(['premium', 'premium_pro']),
@@ -401,7 +402,7 @@ def check_subscription_reminders():
             try:
                 jours_restants = (user.subscription_expires_at - datetime.utcnow()).days
                 msg = Message(
-                    subject="Votre abonnement DataEcon.Ci expire bientôt",
+                    subject="Votre abonnement DataEcon.Ci expire bientÃ´t",
                     recipients=[user.email],
                     html=render_template(
                         'emails/subscription_reminder.html',
@@ -415,14 +416,14 @@ def check_subscription_reminders():
                 mail.send(msg)
                 user.reminder_sent = True
                 db.session.commit()
-                print(f"✅ Rappel envoyé à {user.email}", flush=True)
+                print(f"âœ… Rappel envoyÃ© Ã  {user.email}", flush=True)
             except Exception as e:
-                print(f"❌ Erreur envoi rappel à {user.email}: {e}", flush=True)
+                print(f"âŒ Erreur envoi rappel Ã  {user.email}: {e}", flush=True)
 
 def downgrade_expired_subscriptions():
-    """Repasser en Gratuit les abonnements expirés"""
+    """Repasser en Gratuit les abonnements expirÃ©s"""
     with app.app_context():
-        print("⏳ Vérification des abonnements expirés...", flush=True)
+        print("â³ VÃ©rification des abonnements expirÃ©s...", flush=True)
         expired_users = User.query.filter(
             User.subscription_level.in_(['premium', 'premium_pro']),
             User.is_subscription_active == True,
@@ -435,11 +436,11 @@ def downgrade_expired_subscriptions():
             user.subscription_expires_at = None
             user.reminder_sent = False
             db.session.commit()
-            print(f"⬇️ {user.username} repassé en Gratuit (abonnement expiré)", flush=True)
+            print(f"â¬‡ï¸ {user.username} repassÃ© en Gratuit (abonnement expirÃ©)", flush=True)
 
             try:
                 msg = Message(
-                    subject="Votre abonnement DataEcon.Ci a expiré",
+                    subject="Votre abonnement DataEcon.Ci a expirÃ©",
                     recipients=[user.email],
                     html=render_template(
                         'emails/subscription_expired.html',
@@ -450,7 +451,7 @@ def downgrade_expired_subscriptions():
                 )
                 mail.send(msg)
             except Exception as e:
-                print(f"❌ Erreur envoi email expiration à {user.email}: {e}", flush=True)
+                print(f"âŒ Erreur envoi email expiration Ã  {user.email}: {e}", flush=True)
 
 # ==================== ROUTES ====================
 @app.route('/')
@@ -467,7 +468,7 @@ def register():
         last_name = request.form.get('last_name')
         phone = request.form.get('phone')
 
-        print(f"📝 NOUVEL UTILISATEUR: {username} - {email}", flush=True)
+        print(f"ðŸ“ NOUVEL UTILISATEUR: {username} - {email}", flush=True)
 
         if not is_valid_email(email):
             flash('Veuillez entrer un email valide.', 'danger')
@@ -477,11 +478,11 @@ def register():
         email_exists = User.query.filter_by(email=email).first()
 
         if user_exists:
-            flash('Ce nom d\'utilisateur est déjà pris.', 'danger')
+            flash('Ce nom d\'utilisateur est dÃ©jÃ  pris.', 'danger')
             return render_template('register.html')
 
         if email_exists:
-            flash('Cet email est déjà utilisé.', 'danger')
+            flash('Cet email est dÃ©jÃ  utilisÃ©.', 'danger')
             return render_template('register.html')
 
         user = User(
@@ -497,13 +498,13 @@ def register():
         user.set_password(password)
         db.session.add(user)
         db.session.commit()
-        print(f"✅ Utilisateur {username} créé en base de données", flush=True)
+        print(f"âœ… Utilisateur {username} crÃ©Ã© en base de donnÃ©es", flush=True)
 
         email_sent = send_confirmation_email(user)
         if email_sent:
-            flash('Inscription réussie ! Un email de confirmation vous a été envoyé.', 'success')
+            flash('Inscription rÃ©ussie ! Un email de confirmation vous a Ã©tÃ© envoyÃ©.', 'success')
         else:
-            flash('Inscription réussie ! Mais l\'email de confirmation n\'a pas pu être envoyé.', 'warning')
+            flash('Inscription rÃ©ussie ! Mais l\'email de confirmation n\'a pas pu Ãªtre envoyÃ©.', 'warning')
 
         return redirect(url_for('login'))
 
@@ -514,7 +515,7 @@ def confirm_email(token):
     try:
         email = serializer.loads(token, salt='email-confirm', max_age=86400)
     except SignatureExpired:
-        flash('Le lien de confirmation a expiré. Veuillez vous réinscrire.', 'danger')
+        flash('Le lien de confirmation a expirÃ©. Veuillez vous rÃ©inscrire.', 'danger')
         return redirect(url_for('register'))
     except BadSignature:
         flash('Lien de confirmation invalide.', 'danger')
@@ -523,15 +524,15 @@ def confirm_email(token):
     user = User.query.filter_by(email=email).first()
     if user:
         if user.email_confirmed:
-            flash('Votre email est déjà confirmé. Vous pouvez vous connecter.', 'info')
+            flash('Votre email est dÃ©jÃ  confirmÃ©. Vous pouvez vous connecter.', 'info')
         else:
             user.email_confirmed = True
             user.email_confirmed_at = datetime.utcnow()
             db.session.commit()
-            flash('Votre email a été confirmé avec succès ! Vous pouvez maintenant vous connecter.', 'success')
+            flash('Votre email a Ã©tÃ© confirmÃ© avec succÃ¨s ! Vous pouvez maintenant vous connecter.', 'success')
         return redirect(url_for('login'))
     else:
-        flash('Utilisateur non trouvé.', 'danger')
+        flash('Utilisateur non trouvÃ©.', 'danger')
         return redirect(url_for('register'))
 
 @app.route('/reset_password_request', methods=['GET', 'POST'])
@@ -542,11 +543,11 @@ def reset_password_request():
 
         if user:
             if send_reset_email(user):
-                flash('Un email de réinitialisation a été envoyé à votre adresse.', 'success')
+                flash('Un email de rÃ©initialisation a Ã©tÃ© envoyÃ© Ã  votre adresse.', 'success')
             else:
-                flash('Erreur lors de l\'envoi de l\'email. Veuillez réessayer.', 'danger')
+                flash('Erreur lors de l\'envoi de l\'email. Veuillez rÃ©essayer.', 'danger')
         else:
-            flash('Si votre email est enregistré, vous recevrez un lien de réinitialisation.', 'info')
+            flash('Si votre email est enregistrÃ©, vous recevrez un lien de rÃ©initialisation.', 'info')
 
         return redirect(url_for('login'))
 
@@ -557,10 +558,10 @@ def reset_password(token):
     try:
         email = serializer.loads(token, salt='password-reset', max_age=3600)
     except SignatureExpired:
-        flash('Le lien de réinitialisation a expiré. Veuillez refaire une demande.', 'danger')
+        flash('Le lien de rÃ©initialisation a expirÃ©. Veuillez refaire une demande.', 'danger')
         return redirect(url_for('reset_password_request'))
     except BadSignature:
-        flash('Lien de réinitialisation invalide.', 'danger')
+        flash('Lien de rÃ©initialisation invalide.', 'danger')
         return redirect(url_for('reset_password_request'))
 
     if request.method == 'POST':
@@ -576,10 +577,10 @@ def reset_password(token):
             user.set_password(password)
             user.last_password_reset = datetime.utcnow()
             db.session.commit()
-            flash('Votre mot de passe a été réinitialisé avec succès !', 'success')
+            flash('Votre mot de passe a Ã©tÃ© rÃ©initialisÃ© avec succÃ¨s !', 'success')
             return redirect(url_for('login'))
         else:
-            flash('Utilisateur non trouvé.', 'danger')
+            flash('Utilisateur non trouvÃ©.', 'danger')
             return redirect(url_for('login'))
 
     return render_template('reset_password.html')
@@ -607,7 +608,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash('Vous êtes déconnecté.', 'info')
+    flash('Vous Ãªtes dÃ©connectÃ©.', 'info')
     return redirect(url_for('index'))
 
 @app.route('/dashboard')
@@ -643,7 +644,7 @@ def course_detail(course_id):
     course = Course.query.get_or_404(course_id)
     
     if not current_user.has_access(course.level):
-        flash('Vous devez avoir un abonnement Premium pour accéder à ce cours.', 'warning')
+        flash('Vous devez avoir un abonnement Premium pour accÃ©der Ã  ce cours.', 'warning')
         return redirect(url_for('subscription'))
     
     progress = Progress.query.filter_by(user_id=current_user.id, course_id=course_id).first()
@@ -663,7 +664,7 @@ def course_detail(course_id):
 @login_required
 def datasets():
     if not current_user.can_access_data():
-        flash('Vous devez avoir un abonnement Premium Pro pour accéder aux données.', 'warning')
+        flash('Vous devez avoir un abonnement Premium Pro pour accÃ©der aux donnÃ©es.', 'warning')
         return redirect(url_for('subscription'))
     
     datasets = Dataset.query.all()
@@ -673,11 +674,11 @@ def datasets():
 @login_required
 def upload_dataset():
     if not current_user.can_upload_data():
-        flash('Seul l\'administrateur peut ajouter des données.', 'danger')
+        flash('Seul l\'administrateur peut ajouter des donnÃ©es.', 'danger')
         return redirect(url_for('datasets'))
     
     if 'file' not in request.files:
-        flash('Aucun fichier sélectionné.', 'danger')
+        flash('Aucun fichier sÃ©lectionnÃ©.', 'danger')
         return redirect(url_for('datasets'))
 
     file = request.files['file']
@@ -685,7 +686,7 @@ def upload_dataset():
     description = request.form.get('description')
 
     if file.filename == '':
-        flash('Aucun fichier sélectionné.', 'danger')
+        flash('Aucun fichier sÃ©lectionnÃ©.', 'danger')
         return redirect(url_for('datasets'))
 
     if file and allowed_file(file.filename):
@@ -695,22 +696,22 @@ def upload_dataset():
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], new_filename)
         file.save(file_path)
         
-        # VÉRIFIER ET RÉPARER LE FICHIER AVEC LE BON SÉPARATEUR
+        # VÃ‰RIFIER ET RÃ‰PARER LE FICHIER AVEC LE BON SÃ‰PARATEUR
         try:
             # Tester la lecture
             df = read_data_file(file_path)
-            print(f"✅ Fichier importé: {filename}")
-            print(f"📊 Colonnes détectées: {list(df.columns)}")
-            print(f"📊 Nombre de lignes: {len(df)}")
+            print(f"âœ… Fichier importÃ©: {filename}")
+            print(f"ðŸ“Š Colonnes dÃ©tectÃ©es: {list(df.columns)}")
+            print(f"ðŸ“Š Nombre de lignes: {len(df)}")
             
-            # Si tout est bon, sauvegarder avec le séparateur standard (,) pour la compatibilité
+            # Si tout est bon, sauvegarder avec le sÃ©parateur standard (,) pour la compatibilitÃ©
             if len(df.columns) > 1:
-                # Sauvegarder avec le séparateur standard
+                # Sauvegarder avec le sÃ©parateur standard
                 df.to_csv(file_path, sep=',', index=False, encoding='utf-8')
-                print("✅ Fichier normalisé avec séparateur ,")
+                print("âœ… Fichier normalisÃ© avec sÃ©parateur ,")
             
         except Exception as e:
-            flash(f'⚠️ Erreur lors de la lecture du fichier: {str(e)}', 'danger')
+            flash(f'âš ï¸ Erreur lors de la lecture du fichier: {str(e)}', 'danger')
             os.remove(file_path)
             return redirect(url_for('datasets'))
 
@@ -724,9 +725,9 @@ def upload_dataset():
         db.session.add(dataset)
         db.session.commit()
 
-        flash('Fichier de données uploadé avec succès !', 'success')
+        flash('Fichier de donnÃ©es uploadÃ© avec succÃ¨s !', 'success')
     else:
-        flash('Format de fichier non supporté. Utilisez CSV, Excel ou Stata.', 'danger')
+        flash('Format de fichier non supportÃ©. Utilisez CSV, Excel ou Stata.', 'danger')
 
     return redirect(url_for('datasets'))
 
@@ -734,7 +735,7 @@ def upload_dataset():
 @login_required
 def view_dataset(dataset_id):
     if not current_user.can_access_data():
-        flash('Vous devez avoir un abonnement Premium Pro pour accéder aux données.', 'warning')
+        flash('Vous devez avoir un abonnement Premium Pro pour accÃ©der aux donnÃ©es.', 'warning')
         return redirect(url_for('subscription'))
     
     dataset = Dataset.query.get_or_404(dataset_id)
@@ -752,7 +753,7 @@ def view_dataset(dataset_id):
         df_numeric = df.select_dtypes(include=['float64', 'int64'])
         if len(df_numeric.columns) >= 2:
             sns.heatmap(df_numeric.corr(), annot=True, cmap='coolwarm', center=0)
-            plt.title('Matrice de corrélation')
+            plt.title('Matrice de corrÃ©lation')
             plot_path = '/tmp/plot.png'
             plt.savefig(plot_path, bbox_inches='tight')
             plt.close()
@@ -780,7 +781,7 @@ def view_dataset(dataset_id):
 @login_required
 def analytics():
     if not current_user.can_access_data():
-        flash('Vous devez avoir un abonnement Premium Pro pour accéder aux analyses.', 'warning')
+        flash('Vous devez avoir un abonnement Premium Pro pour accÃ©der aux analyses.', 'warning')
         return redirect(url_for('subscription'))
     
     datasets = Dataset.query.all()
@@ -804,7 +805,7 @@ def analytics():
 @login_required
 def econometric_model():
     if not current_user.can_access_models():
-        flash('Vous devez avoir un abonnement Premium Pro pour utiliser les modèles.', 'warning')
+        flash('Vous devez avoir un abonnement Premium Pro pour utiliser les modÃ¨les.', 'warning')
         return redirect(url_for('subscription'))
     
     result_html = None
@@ -855,7 +856,7 @@ def download_dataset(dataset_id):
     dataset = Dataset.query.get_or_404(dataset_id)
     
     if not current_user.can_download_data():
-        flash('Vous devez avoir un abonnement Premium Pro pour télécharger les données.', 'warning')
+        flash('Vous devez avoir un abonnement Premium Pro pour tÃ©lÃ©charger les donnÃ©es.', 'warning')
         return redirect(url_for('subscription'))
     
     return send_file(dataset.file_path, as_attachment=True)
@@ -868,7 +869,7 @@ def view_pdf(course_id):
     course = Course.query.get_or_404(course_id)
     
     if not current_user.has_access(course.level):
-        flash('Vous n\'avez pas accès à ce cours.', 'danger')
+        flash('Vous n\'avez pas accÃ¨s Ã  ce cours.', 'danger')
         return redirect(url_for('courses'))
     
     # Essayer R2
@@ -879,7 +880,7 @@ def view_pdf(course_id):
     
     # Local
     if not course.file_path or not os.path.exists(course.file_path):
-        flash('Fichier non trouvé.', 'danger')
+        flash('Fichier non trouvÃ©.', 'danger')
         return redirect(url_for('course_detail', course_id=course.id))
     
     return send_file(course.file_path, mimetype='application/pdf')
@@ -887,15 +888,15 @@ def view_pdf(course_id):
 @app.route('/download_course_pdf/<int:course_id>')
 @login_required
 def download_course_pdf(course_id):
-    """Télécharger un PDF"""
+    """TÃ©lÃ©charger un PDF"""
     course = Course.query.get_or_404(course_id)
     
     if not current_user.can_download_pdf():
-        flash('Vous devez avoir un abonnement Premium pour télécharger les PDF.', 'warning')
+        flash('Vous devez avoir un abonnement Premium pour tÃ©lÃ©charger les PDF.', 'warning')
         return redirect(url_for('subscription'))
     
     if not current_user.has_access(course.level):
-        flash('Vous n\'avez pas accès à ce cours.', 'danger')
+        flash('Vous n\'avez pas accÃ¨s Ã  ce cours.', 'danger')
         return redirect(url_for('courses'))
     
     # Essayer R2
@@ -911,11 +912,11 @@ def download_course_pdf(course_id):
                     mimetype='application/pdf'
                 )
             except ClientError as e:
-                print(f"❌ Erreur R2: {e}", flush=True)
+                print(f"âŒ Erreur R2: {e}", flush=True)
     
     # Local
     if not course.file_path or not os.path.exists(course.file_path):
-        flash('Fichier non trouvé.', 'danger')
+        flash('Fichier non trouvÃ©.', 'danger')
         return redirect(url_for('course_detail', course_id=course.id))
     
     return send_file(course.file_path, as_attachment=True, download_name=course.file_name or 'cours.pdf')# ==================== ROUTES DE PAIEMENT ====================
@@ -937,7 +938,7 @@ def payment_callback():
         current_user.reminder_sent = False
         db.session.commit()
         
-        flash(f'Paiement réussi ! Bienvenue sur le plan {SUBSCRIPTION_PLANS[plan]["name"]} 🎉', 'success')
+        flash(f'Paiement rÃ©ussi ! Bienvenue sur le plan {SUBSCRIPTION_PLANS[plan]["name"]} ðŸŽ‰', 'success')
     else:
         flash('Erreur lors du traitement du paiement.', 'danger')
     
@@ -946,7 +947,7 @@ def payment_callback():
 @app.route('/payment_cancel')
 @login_required
 def payment_cancel():
-    flash('Paiement annulé. Vous pouvez réessayer quand vous voulez.', 'warning')
+    flash('Paiement annulÃ©. Vous pouvez rÃ©essayer quand vous voulez.', 'warning')
     return redirect(url_for('subscription'))
 
 @app.route('/cancel_subscription', methods=['POST'])
@@ -958,7 +959,7 @@ def cancel_subscription():
     current_user.reminder_sent = False
     db.session.commit()
     
-    flash('Votre abonnement a été annulé.', 'info')
+    flash('Votre abonnement a Ã©tÃ© annulÃ©.', 'info')
     return redirect(url_for('dashboard'))
 
 # ==================== ROUTES ADMIN ====================
@@ -966,7 +967,7 @@ def cancel_subscription():
 @login_required
 def admin_courses():
     if not current_user.is_admin:
-        flash('Accès réservé aux administrateurs.', 'danger')
+        flash('AccÃ¨s rÃ©servÃ© aux administrateurs.', 'danger')
         return redirect(url_for('dashboard'))
     
     courses = Course.query.all()
@@ -1011,14 +1012,14 @@ def add_course():
     db.session.add(course)
     db.session.commit()
     
-    flash('Cours ajouté avec succès !', 'success')
+    flash('Cours ajoutÃ© avec succÃ¨s !', 'success')
     return redirect(url_for('admin_courses'))
 
 @app.route('/admin/delete_course/<int:course_id>', methods=['POST'])
 @login_required
 def delete_course(course_id):
     if not current_user.is_admin:
-        flash('Accès réservé aux administrateurs.', 'danger')
+        flash('AccÃ¨s rÃ©servÃ© aux administrateurs.', 'danger')
         return redirect(url_for('dashboard'))
     
     course = Course.query.get_or_404(course_id)
@@ -1029,7 +1030,7 @@ def delete_course(course_id):
     db.session.delete(course)
     db.session.commit()
     
-    flash('Cours supprimé avec succès.', 'success')
+    flash('Cours supprimÃ© avec succÃ¨s.', 'success')
     return redirect(url_for('admin_courses'))
 
 # ==================== ROUTES ADMIN UTILISATEURS ====================
@@ -1037,7 +1038,7 @@ def delete_course(course_id):
 @login_required
 def admin_users():
     if not current_user.is_admin:
-        flash('Accès réservé aux administrateurs.', 'danger')
+        flash('AccÃ¨s rÃ©servÃ© aux administrateurs.', 'danger')
         return redirect(url_for('dashboard'))
     
     users = User.query.all()
@@ -1047,7 +1048,7 @@ def admin_users():
 @login_required
 def update_subscription(user_id):
     if not current_user.is_admin:
-        flash('Accès réservé aux administrateurs.', 'danger')
+        flash('AccÃ¨s rÃ©servÃ© aux administrateurs.', 'danger')
         return redirect(url_for('dashboard'))
     
     user = User.query.get_or_404(user_id)
@@ -1064,7 +1065,7 @@ def update_subscription(user_id):
             user.subscription_expires_at = None
             user.reminder_sent = False
         db.session.commit()
-        flash(f'Abonnement de {user.username} mis à jour vers {SUBSCRIPTION_PLANS[new_level]["name"]}.', 'success')
+        flash(f'Abonnement de {user.username} mis Ã  jour vers {SUBSCRIPTION_PLANS[new_level]["name"]}.', 'success')
     else:
         flash('Niveau d\'abonnement invalide.', 'danger')
     
@@ -1074,7 +1075,7 @@ def update_subscription(user_id):
 @login_required
 def toggle_admin(user_id):
     if not current_user.is_admin:
-        flash('Accès réservé aux administrateurs.', 'danger')
+        flash('AccÃ¨s rÃ©servÃ© aux administrateurs.', 'danger')
         return redirect(url_for('dashboard'))
     
     if user_id == current_user.id:
@@ -1085,18 +1086,18 @@ def toggle_admin(user_id):
     user.is_admin = not user.is_admin
     db.session.commit()
     
-    status = 'donné' if user.is_admin else 'retiré'
-    flash(f'Droits admin {status} à {user.username}.', 'success')
+    status = 'donnÃ©' if user.is_admin else 'retirÃ©'
+    flash(f'Droits admin {status} Ã  {user.username}.', 'success')
     return redirect(url_for('admin_users'))
 
-# ==================== ROUTES MODÈLES ====================
+# ==================== ROUTES MODÃˆLES ====================
 
 @app.route('/models')
 @login_required
 def models_list():
-    """Page de sélection des modèles"""
+    """Page de sÃ©lection des modÃ¨les"""
     if not current_user.can_access_models():
-        flash('Vous devez avoir un abonnement Premium Pro pour accéder aux modèles.', 'warning')
+        flash('Vous devez avoir un abonnement Premium Pro pour accÃ©der aux modÃ¨les.', 'warning')
         return redirect(url_for('subscription'))
     
     datasets = Dataset.query.all()
@@ -1105,9 +1106,9 @@ def models_list():
 @app.route('/models/analyze', methods=['POST'])
 @login_required
 def models_analyze():
-    """Exécuter l'analyse choisie"""
+    """ExÃ©cuter l'analyse choisie"""
     if not current_user.can_access_models():
-        flash('Vous devez avoir un abonnement Premium Pro pour accéder aux modèles.', 'warning')
+        flash('Vous devez avoir un abonnement Premium Pro pour accÃ©der aux modÃ¨les.', 'warning')
         return redirect(url_for('subscription'))
     
     dataset_id = request.form.get('dataset_id')
@@ -1122,12 +1123,12 @@ def models_analyze():
         # Utiliser la fonction de lecture automatique
         df = read_data_file(dataset.file_path)
         
-        print(f"📊 Colonnes disponibles: {list(df.columns)}", flush=True)
+        print(f"ðŸ“Š Colonnes disponibles: {list(df.columns)}", flush=True)
         
-        # Initialiser les modèles
+        # Initialiser les modÃ¨les
         models = EconometricModels(df)
         
-        # Exécuter le modèle choisi
+        # ExÃ©cuter le modÃ¨le choisi
         features = [f.strip() for f in feature_cols.split(',') if f.strip()] if feature_cols else []
         
         if model_type == 'time_series':
@@ -1150,13 +1151,13 @@ def models_analyze():
         elif model_type == 'financial_series':
             results = models.financial_series_analysis(target_col)
         else:
-            flash('Type de modèle non reconnu.', 'danger')
+            flash('Type de modÃ¨le non reconnu.', 'danger')
             return redirect(url_for('models_list'))
         
-        # Vérifier les erreurs
+        # VÃ©rifier les erreurs
         if results.get('errors'):
             for error in results['errors']:
-                flash(f'⚠️ {error}', 'danger')
+                flash(f'âš ï¸ {error}', 'danger')
             return render_template('models_results.html', 
                                  results=results, 
                                  model_type=model_type,
@@ -1164,7 +1165,7 @@ def models_analyze():
                                  report_data=None,
                                  report_name=None)
         
-        # Générer le rapport Word
+        # GÃ©nÃ©rer le rapport Word
         report = create_econometric_report(
             data=df,
             model_results=results,
@@ -1199,9 +1200,9 @@ def models_analyze():
 @app.route('/models/download_report/<path:report_data>')
 @login_required
 def download_report(report_data):
-    """Télécharger le rapport Word"""
+    """TÃ©lÃ©charger le rapport Word"""
     if not current_user.can_access_models():
-        flash('Vous devez avoir un abonnement Premium Pro pour télécharger les rapports.', 'warning')
+        flash('Vous devez avoir un abonnement Premium Pro pour tÃ©lÃ©charger les rapports.', 'warning')
         return redirect(url_for('subscription'))
     
     try:
@@ -1213,14 +1214,14 @@ def download_report(report_data):
             mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         )
     except Exception as e:
-        flash(f'Erreur lors du téléchargement : {str(e)}', 'danger')
+        flash(f'Erreur lors du tÃ©lÃ©chargement : {str(e)}', 'danger')
         return redirect(url_for('models_list'))
 @app.route('/generate_chart/<int:dataset_id>/<chart_type>')
 @login_required
 def generate_chart(dataset_id, chart_type):
-    """Générer un graphique pour un dataset"""
+    """GÃ©nÃ©rer un graphique pour un dataset"""
     if not current_user.can_access_data():
-        flash('Vous devez avoir un abonnement Premium Pro pour accéder aux données.', 'warning')
+        flash('Vous devez avoir un abonnement Premium Pro pour accÃ©der aux donnÃ©es.', 'warning')
         return redirect(url_for('subscription'))
     
     dataset = Dataset.query.get_or_404(dataset_id)
@@ -1228,47 +1229,47 @@ def generate_chart(dataset_id, chart_type):
     try:
         df = read_data_file(dataset.file_path)
         
-        # Sélectionner les colonnes numériques
+        # SÃ©lectionner les colonnes numÃ©riques
         numeric_cols = df.select_dtypes(include=['float64', 'int64']).columns.tolist()
         
         if not numeric_cols:
-            flash('Aucune colonne numérique disponible pour les graphiques.', 'warning')
+            flash('Aucune colonne numÃ©rique disponible pour les graphiques.', 'warning')
             return redirect(url_for('analytics'))
         
         plt.figure(figsize=(12, 8))
         
         if chart_type == 'histogram':
-            # Histogramme de la première colonne numérique
+            # Histogramme de la premiÃ¨re colonne numÃ©rique
             col = numeric_cols[0]
             plt.hist(df[col].dropna(), bins=30, edgecolor='black', alpha=0.7)
             plt.title(f'Histogramme de {col}')
             plt.xlabel(col)
-            plt.ylabel('Fréquence')
+            plt.ylabel('FrÃ©quence')
             
         elif chart_type == 'boxplot':
-            # Boîte à moustaches
+            # BoÃ®te Ã  moustaches
             df[numeric_cols[:5]].boxplot()
-            plt.title('Boîtes à moustaches')
+            plt.title('BoÃ®tes Ã  moustaches')
             plt.xticks(rotation=45)
             
         elif chart_type == 'scatter':
-            # Nuage de points (2 premières colonnes)
+            # Nuage de points (2 premiÃ¨res colonnes)
             if len(numeric_cols) >= 2:
                 plt.scatter(df[numeric_cols[0]], df[numeric_cols[1]], alpha=0.5)
                 plt.xlabel(numeric_cols[0])
                 plt.ylabel(numeric_cols[1])
                 plt.title(f'Nuage de points : {numeric_cols[0]} vs {numeric_cols[1]}')
             else:
-                flash('Besoin d\'au moins 2 colonnes numériques pour un nuage de points.', 'warning')
+                flash('Besoin d\'au moins 2 colonnes numÃ©riques pour un nuage de points.', 'warning')
                 return redirect(url_for('analytics'))
                 
         elif chart_type == 'correlation':
-            # Matrice de corrélation
+            # Matrice de corrÃ©lation
             if len(numeric_cols) >= 2:
                 sns.heatmap(df[numeric_cols].corr(), annot=True, cmap='coolwarm', center=0)
-                plt.title('Matrice de corrélation')
+                plt.title('Matrice de corrÃ©lation')
             else:
-                flash('Besoin d\'au moins 2 colonnes numériques pour la corrélation.', 'warning')
+                flash('Besoin d\'au moins 2 colonnes numÃ©riques pour la corrÃ©lation.', 'warning')
                 return redirect(url_for('analytics'))
         
         # Sauvegarder le graphique
@@ -1283,7 +1284,7 @@ def generate_chart(dataset_id, chart_type):
         return render_template('chart_view.html', plot_url=plot_url, chart_type=chart_type, dataset=dataset)
         
     except Exception as e:
-        flash(f'Erreur lors de la génération du graphique : {str(e)}', 'danger')
+        flash(f'Erreur lors de la gÃ©nÃ©ration du graphique : {str(e)}', 'danger')
         return redirect(url_for('analytics'))
 
 # ==================== INITIALISATION ====================
@@ -1307,30 +1308,30 @@ def init_db():
             admin.set_password('admin123')
             db.session.add(admin)
             db.session.commit()
-            print("✅ Admin créé avec succès !")
+            print("âœ… Admin crÃ©Ã© avec succÃ¨s !")
 
         existing_courses = db.session.execute(db.select(Course)).scalars().all()
         
         if len(existing_courses) == 0:
-            print("📚 Ajout des cours par défaut...")
+            print("ðŸ“š Ajout des cours par dÃ©faut...")
             courses_data = [
                 {
-                    'title': "Introduction à l'Économétrie",
-                    'description': "Les fondements de l'économétrie : régression linéaire, hypothèses, interprétation.",
-                    'level': 'Débutant',
-                    'content': '<h2>Introduction à l\'Économétrie</h2><p>Les fondamentaux de l\'économétrie.</p>'
+                    'title': "Introduction Ã  l'Ã‰conomÃ©trie",
+                    'description': "Les fondements de l'Ã©conomÃ©trie : rÃ©gression linÃ©aire, hypothÃ¨ses, interprÃ©tation.",
+                    'level': 'DÃ©butant',
+                    'content': '<h2>Introduction Ã  l\'Ã‰conomÃ©trie</h2><p>Les fondamentaux de l\'Ã©conomÃ©trie.</p>'
                 },
                 {
-                    'title': 'Régression Linéaire Avancée',
-                    'description': "Modèles avec plusieurs variables, tests d'hypothèses.",
-                    'level': 'Intermédiaire',
-                    'content': '<h2>Régression Linéaire Avancée</h2><p>Modèles multi-variables.</p>'
+                    'title': 'RÃ©gression LinÃ©aire AvancÃ©e',
+                    'description': "ModÃ¨les avec plusieurs variables, tests d'hypothÃ¨ses.",
+                    'level': 'IntermÃ©diaire',
+                    'content': '<h2>RÃ©gression LinÃ©aire AvancÃ©e</h2><p>ModÃ¨les multi-variables.</p>'
                 },
                 {
-                    'title': 'Séries Temporelles',
-                    'description': 'ARIMA, stationnarité, prévisions.',
-                    'level': 'Avancé',
-                    'content': '<h2>Séries Temporelles</h2><p>ARIMA et prévisions.</p>'
+                    'title': 'SÃ©ries Temporelles',
+                    'description': 'ARIMA, stationnaritÃ©, prÃ©visions.',
+                    'level': 'AvancÃ©',
+                    'content': '<h2>SÃ©ries Temporelles</h2><p>ARIMA et prÃ©visions.</p>'
                 }
             ]
 
@@ -1339,44 +1340,44 @@ def init_db():
                 db.session.add(course)
             
             db.session.commit()
-            print("✅ Cours ajoutés avec succès !")
+            print("âœ… Cours ajoutÃ©s avec succÃ¨s !")
         else:
-            print(f"ℹ️ {len(existing_courses)} cours existent déjà.")
+            print(f"â„¹ï¸ {len(existing_courses)} cours existent dÃ©jÃ .")
 
-# ==================== PLANIFICATEUR DE TÂCHES ====================
-# ==================== PLANIFICATEUR DE TÂCHES ====================
+# ==================== PLANIFICATEUR DE TÃ‚CHES ====================
+# ==================== PLANIFICATEUR DE TÃ‚CHES ====================
 try:
     scheduler = BackgroundScheduler()
     scheduler.add_job(func=check_subscription_reminders, trigger="interval", hours=24, id='reminder_job')
     scheduler.add_job(func=downgrade_expired_subscriptions, trigger="interval", hours=24, id='downgrade_job')
     scheduler.start()
-    print("✅ Scheduler démarré", flush=True)
+    print("âœ… Scheduler dÃ©marrÃ©", flush=True)
 except Exception as e:
-    print(f"⚠️ Erreur scheduler: {e}", flush=True)
-# Afficher le port que Render a attribué
-print(f"🔌 PORT = {os.environ.get('PORT', 'non défini')}", flush=True)
+    print(f"âš ï¸ Erreur scheduler: {e}", flush=True)
+# Afficher le port que Render a attribuÃ©
+print(f"ðŸ”Œ PORT = {os.environ.get('PORT', 'non dÃ©fini')}", flush=True)
 
 # ==================== INITIALISATION AU CHARGEMENT (pour Gunicorn) ====================
-print("🚀 Démarrage de l'application...", flush=True)
+print("ðŸš€ DÃ©marrage de l'application...", flush=True)
 try:
     with app.app_context():
-        print("📡 Connexion à la base de données...", flush=True)
+        print("ðŸ“¡ Connexion Ã  la base de donnÃ©es...", flush=True)
         init_db()
-        print("✅ Base de données initialisée avec succès !", flush=True)
+        print("âœ… Base de donnÃ©es initialisÃ©e avec succÃ¨s !", flush=True)
 except Exception as e:
     import traceback
-    print(f"❌ ERREUR INITIALISATION BD: {e}", flush=True)
+    print(f"âŒ ERREUR INITIALISATION BD: {e}", flush=True)
     traceback.print_exc()
 # ==================== FORCER L'ENREGISTREMENT DES ROUTES ====================
-# S'assurer que toutes les routes sont bien enregistrées
-print(f"📋 Routes enregistrées: {len(list(app.url_map.iter_rules()))} routes", flush=True)
+# S'assurer que toutes les routes sont bien enregistrÃ©es
+print(f"ðŸ“‹ Routes enregistrÃ©es: {len(list(app.url_map.iter_rules()))} routes", flush=True)
 for rule in app.url_map.iter_rules():
     print(f"   - {rule.rule}", flush=True)
 
-# ==================== POINT D'ENTRÉE GUNICORN ====================
-# Gunicorn appellera cette fonction automatiquement au démarrage
+# ==================== POINT D'ENTRÃ‰E GUNICORN ====================
+# Gunicorn appellera cette fonction automatiquement au dÃ©marrage
 def create_app():
-    """Point d'entrée pour Gunicorn"""
+    """Point d'entrÃ©e pour Gunicorn"""
     return app
 
 # Alias pour Gunicorn (wsgi:application)
