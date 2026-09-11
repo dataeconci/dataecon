@@ -119,8 +119,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgres
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = '/app/data'
 app.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024  # 500MB max
-# app.config['SERVER_NAME'] = 'localhost:5000'  # retire - bloquait l'acces via ngrok
-
+app.config['SERVER_NAME'] = os.environ.get('SERVER_NAME')  # None en production, pas de restriction de domaine
 # ==================== FILTRE MARKDOWN ====================
 import mistune
 from markupsafe import Markup
