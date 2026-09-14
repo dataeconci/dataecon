@@ -278,6 +278,7 @@ class User(UserMixin, db.Model):
     last_password_reset = db.Column(db.DateTime)
     reset_code = db.Column(db.String(5))
     reset_code_expires = db.Column(db.DateTime)
+    profile_picture = db.Column(db.String(200))
     subscription_level = db.Column(db.String(20), default='free')
     subscription_expires_at = db.Column(db.DateTime)
     wave_payment_id = db.Column(db.String(100))
@@ -739,6 +740,82 @@ def login():
         flash('Identifiants incorrects.', 'danger')
 
     return render_template('login.html')
+@app.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    """Page de profil utilisateur"""
+    if request.method == 'POST':
+        # Récupérer les données du formulaire
+        first_name = request.form.get('first_name', '').strip()
+        last_name = request.form.get('last_name', '').strip()
+        phone = request.form.get('phone', '').strip()
+        new_email = request.form.get('email', '').strip().lower()
+        
+        # Validation
+        if not first_name or not last_name:
+            flash('Le prénom et le nom sont obligatoires.', 'danger')
+            return redirect(url_for('profile'))
+        
+        if not is_valid_email(new_email):
+            flash('Email invalide.', 'danger')
+            return redirect(url_for('profile'))
+        
+        # Vérifier si l'email est déjà utilisé par un autre utilisateur
+        if new_email != current_user.email:
+            email_exists = User.query.filter_by(email=new_email).first()
+            if email_exists:
+                flash('Cet email est déjà utilisé par un autre compte.', 'danger')
+                return redirect(url_for('profile'))
+        
+        # Mettre à jour les infos
+        current_user.first_name = first_name
+        current_user.last_name = last_name
+        current_user.phone = phone
+        current_user.email = new_email
+        
+        # Gestion de la photo de profil
+        file = request.files.get('profile_picture')
+        if file and file.filename:
+            allowed_ext = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+            ext = file.filename.rsplit('.', 1)[1].lower() if '.' in file.filename else ''
+            
+            if ext in allowed_ext:
+                # Créer le dossier si nécessaire
+                upload_dir = '/app/data/profiles'
+                os.makedirs(upload_dir, exist_ok=True)
+                
+                # Nom unique
+                filename = secure_filename(f"user_{current_user.id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.{ext}")
+                filepath = os.path.join(upload_dir, filename)
+                file.save(filepath)
+                
+                # Supprimer l'ancienne photo
+                if current_user.profile_picture and os.path.exists(current_user.profile_picture):
+                    try:
+                        os.remove(current_user.profile_picture)
+                    except:
+                        pass
+                
+                current_user.profile_picture = filepath
+            else:
+                flash('Format d\'image non supporté. Utilisez PNG, JPG, JPEG, GIF ou WEBP.', 'warning')
+        
+        db.session.commit()
+        flash('Votre profil a été mis à jour avec succès !', 'success')
+        return redirect(url_for('profile'))
+    
+    return render_template('profile.html', user=current_user)
+
+
+@app.route('/profile/picture')
+@login_required
+def profile_picture():
+    """Servir la photo de profil de l'utilisateur connecté"""
+    if current_user.profile_picture and os.path.exists(current_user.profile_picture):
+        return send_file(current_user.profile_picture)
+    # Image par défaut (avatar générique)
+    return redirect('https://ui-avatars.com/api/?name=' + current_user.first_name + '+' + current_user.last_name + '&size=200&background=1a2a6c&color=fff')
+
 
 @app.route('/logout')
 @login_required
@@ -1458,6 +1535,7 @@ def init_db():
         try:
             db.session.execute(text('ALTER TABLE "user" ADD COLUMN IF NOT EXISTS reset_code VARCHAR(5)'))
             db.session.execute(text('ALTER TABLE "user" ADD COLUMN IF NOT EXISTS reset_code_expires TIMESTAMP'))
+            db.session.execute(text('ALTER TABLE "user" ADD COLUMN IF NOT EXISTS profile_picture VARCHAR(200)'))
             db.session.commit()
             print("✅ Migration des colonnes reset_code réussie", flush=True)
         except Exception as e:

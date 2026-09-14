@@ -1,0 +1,575 @@
+{% extends "layout.html" %}
+
+{% block title %}Mon profil - DataEcon.Ci{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+    <div class="container py-5">
+        
+        <!-- En-tête -->
+        <div class="profile-header">
+            <h1><i class="fas fa-user-circle"></i> Mon profil</h1>
+            <p>Gérez vos informations personnelles</p>
+        </div>
+
+        <div class="row">
+            <!-- Colonne gauche : Carte utilisateur -->
+            <div class="col-lg-4 mb-4">
+                <div class="profile-card">
+                    <div class="profile-card-header">
+                        <div class="profile-avatar">
+                            {% if user.profile_picture %}
+                                <img src="{{ url_for('profile_picture') }}" alt="Photo de profil">
+                            {% else %}
+                                <div class="avatar-initials">
+                                    {{ user.first_name[0]|upper if user.first_name else user.username[0]|upper }}{{ user.last_name[0]|upper if user.last_name else '' }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="profile-card-body">
+                        <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+                        <p class="profile-username">@{{ user.username }}</p>
+                        
+                        <div class="profile-badges">
+                            {% if user.is_admin %}
+                                <span class="badge-admin"><i class="fas fa-shield-alt"></i> Admin</span>
+                            {% endif %}
+                            {% if user.subscription_level == 'premium' %}
+                                <span class="badge-premium"><i class="fas fa-star"></i> Premium</span>
+                            {% elif user.subscription_level == 'premium_pro' %}
+                                <span class="badge-premium-pro"><i class="fas fa-crown"></i> Premium Pro</span>
+                            {% else %}
+                                <span class="badge-free">Gratuit</span>
+                            {% endif %}
+                        </div>
+
+                        <hr>
+
+                        <div class="profile-info-line">
+                            <i class="fas fa-envelope"></i>
+                            <span>{{ user.email }}</span>
+                        </div>
+                        <div class="profile-info-line">
+                            <i class="fas fa-phone"></i>
+                            <span>{{ user.phone or 'Non renseigné' }}</span>
+                        </div>
+                        <div class="profile-info-line">
+                            <i class="fas fa-calendar"></i>
+                            <span>Inscrit le {{ user.created_at.strftime('%d/%m/%Y') if user.created_at else 'N/A' }}</span>
+                        </div>
+                        <div class="profile-info-line">
+                            <i class="fas fa-check-circle"></i>
+                            <span>
+                                {% if user.email_confirmed %}
+                                    Email confirmé
+                                {% else %}
+                                    Email non confirmé
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Colonne droite : Formulaire de modification -->
+            <div class="col-lg-8">
+                <div class="profile-form-card">
+                    <div class="profile-form-header">
+                        <h3><i class="fas fa-edit"></i> Modifier mes informations</h3>
+                    </div>
+                    <div class="profile-form-body">
+                        <form method="POST" enctype="multipart/form-data">
+                            
+                            <!-- Photo de profil -->
+                            <div class="form-section">
+                                <h5><i class="fas fa-camera"></i> Photo de profil</h5>
+                                <div class="photo-upload-area">
+                                    <div class="photo-preview" id="photoPreview">
+                                        {% if user.profile_picture %}
+                                            <img src="{{ url_for('profile_picture') }}" alt="Aperçu">
+                                        {% else %}
+                                            <div class="preview-placeholder">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="photo-upload-info">
+                                        <label for="profile_picture" class="btn-upload">
+                                            <i class="fas fa-upload"></i> Choisir une photo
+                                        </label>
+                                        <input type="file" 
+                                               id="profile_picture" 
+                                               name="profile_picture" 
+                                               accept="image/*"
+                                               style="display: none;"
+                                               onchange="previewPhoto(this)">
+                                        <p class="upload-hint">
+                                            Formats acceptés : JPG, PNG, GIF, WEBP<br>
+                                            Taille max : 5 Mo
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <!-- Informations personnelles -->
+                            <div class="form-section">
+                                <h5><i class="fas fa-user"></i> Informations personnelles</h5>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Prénom *</label>
+                                        <input type="text" 
+                                               class="form-control" 
+                                               name="first_name" 
+                                               value="{{ user.first_name or '' }}"
+                                               required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Nom *</label>
+                                        <input type="text" 
+                                               class="form-control" 
+                                               name="last_name" 
+                                               value="{{ user.last_name or '' }}"
+                                               required>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        <i class="fas fa-envelope"></i> Email *
+                                    </label>
+                                    <input type="email" 
+                                           class="form-control" 
+                                           name="email" 
+                                           value="{{ user.email }}"
+                                           required>
+                                    <div class="form-text">
+                                        Attention : changer l'email peut affecter vos connexions futures.
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        <i class="fas fa-phone"></i> Téléphone
+                                    </label>
+                                    <input type="tel" 
+                                           class="form-control" 
+                                           name="phone" 
+                                           value="{{ user.phone or '' }}"
+                                           placeholder="+225 01 XX XX XX XX">
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <!-- Nom d'utilisateur (lecture seule) -->
+                            <div class="form-section">
+                                <h5><i class="fas fa-at"></i> Nom d'utilisateur</h5>
+                                <div class="mb-3">
+                                    <input type="text" 
+                                           class="form-control" 
+                                           value="{{ user.username }}"
+                                           disabled>
+                                    <div class="form-text">
+                                        Le nom d'utilisateur ne peut pas être modifié.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Boutons d'action -->
+                            <div class="form-actions">
+                                <button type="submit" class="btn-save">
+                                    <i class="fas fa-save"></i> Enregistrer les modifications
+                                </button>
+                                <a href="{{ url_for('dashboard') }}" class="btn-cancel">
+                                    <i class="fas fa-times"></i> Annuler
+                                </a>
+                            </div>
+                        </form>
+
+                        <!-- Section changement de mot de passe -->
+                        <hr>
+                        <div class="form-section">
+                            <h5><i class="fas fa-lock"></i> Sécurité</h5>
+                            <p class="text-muted small">
+                                Pour changer votre mot de passe, utilisez la page de réinitialisation.
+                            </p>
+                            <a href="{{ url_for('reset_password_request') }}" class="btn-password">
+                                <i class="fas fa-key"></i> Changer mon mot de passe
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.profile-page {
+    background: #f4f6f9;
+    min-height: 100vh;
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.profile-header h1 {
+    color: #1a2a6c;
+    font-weight: 800;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.profile-header p {
+    color: #7a8aaa;
+    font-size: 1.1rem;
+}
+
+/* Carte utilisateur */
+.profile-card {
+    background: white;
+    border-radius: 25px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    position: sticky;
+    top: 100px;
+}
+
+.profile-card-header {
+    background: linear-gradient(135deg, #1a2a6c 0%, #2d3561 100%);
+    padding: 40px 20px 60px;
+    text-align: center;
+    position: relative;
+}
+
+.profile-avatar {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    border: 5px solid white;
+    margin: 0 auto;
+    overflow: hidden;
+    background: #fdbb2d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    bottom: -65px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-initials {
+    font-size: 3rem;
+    font-weight: 800;
+    color: white;
+    letter-spacing: 3px;
+}
+
+.profile-card-body {
+    padding: 80px 30px 30px;
+    text-align: center;
+}
+
+.profile-card-body h3 {
+    color: #1a2a6c;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.profile-username {
+    color: #7a8aaa;
+    margin-bottom: 15px;
+}
+
+.profile-badges {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.badge-admin, .badge-premium, .badge-premium-pro, .badge-free {
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.badge-admin {
+    background: #dc3545;
+    color: white;
+}
+
+.badge-premium {
+    background: #ffc107;
+    color: #333;
+}
+
+.badge-premium-pro {
+    background: linear-gradient(135deg, #fdbb2d, #f7971e);
+    color: white;
+}
+
+.badge-free {
+    background: #e8eaf0;
+    color: #555;
+}
+
+.profile-info-line {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    text-align: left;
+    color: #555;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #f0f2f5;
+}
+
+.profile-info-line:last-child {
+    border-bottom: none;
+}
+
+.profile-info-line i {
+    color: #1a2a6c;
+    width: 20px;
+    flex-shrink: 0;
+}
+
+/* Formulaire */
+.profile-form-card {
+    background: white;
+    border-radius: 25px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.profile-form-header {
+    background: linear-gradient(135deg, #1a2a6c 0%, #2d3561 100%);
+    color: white;
+    padding: 25px 35px;
+}
+
+.profile-form-header h3 {
+    margin: 0;
+    font-weight: 700;
+}
+
+.profile-form-body {
+    padding: 35px;
+}
+
+.form-section {
+    margin-bottom: 25px;
+}
+
+.form-section h5 {
+    color: #1a2a6c;
+    font-weight: 700;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #2d3436;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+
+.form-control {
+    border: 2px solid #e8eaf0;
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f8f9fc;
+}
+
+.form-control:focus {
+    border-color: #1a2a6c;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(26, 42, 108, 0.1);
+    outline: none;
+}
+
+.form-control:disabled {
+    background: #f0f2f5;
+    color: #7a8aaa;
+    cursor: not-allowed;
+}
+
+.form-text {
+    font-size: 0.82rem;
+    color: #7a8aaa;
+    margin-top: 5px;
+}
+
+/* Upload photo */
+.photo-upload-area {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    padding: 20px;
+    background: #f8f9fc;
+    border-radius: 15px;
+}
+
+.photo-preview {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #1a2a6c;
+    flex-shrink: 0;
+    border: 3px solid white;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.photo-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.preview-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2.5rem;
+}
+
+.photo-upload-info {
+    flex-grow: 1;
+}
+
+.btn-upload {
+    display: inline-block;
+    background: #1a2a6c;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    font-size: 0.95rem;
+}
+
+.btn-upload:hover {
+    background: #2d3561;
+    transform: translateY(-2px);
+}
+
+.upload-hint {
+    margin: 10px 0 0;
+    font-size: 0.82rem;
+    color: #7a8aaa;
+}
+
+/* Boutons d'action */
+.form-actions {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+.btn-save {
+    background: linear-gradient(135deg, #1a2a6c 0%, #2d3561 100%);
+    color: white;
+    border: none;
+    padding: 14px 30px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex-grow: 1;
+}
+
+.btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 40px rgba(26, 42, 108, 0.4);
+}
+
+.btn-cancel {
+    background: #f0f2f5;
+    color: #555;
+    padding: 14px 30px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel:hover {
+    background: #e8eaf0;
+    color: #333;
+}
+
+.btn-password {
+    display: inline-block;
+    background: #fdbb2d;
+    color: #1a2a6c;
+    padding: 12px 25px;
+    border-radius: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-password:hover {
+    background: #f7971e;
+    transform: translateY(-2px);
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #e8eaf0;
+    margin: 30px 0;
+}
+
+@media (max-width: 991px) {
+    .profile-card {
+        position: static;
+        margin-bottom: 30px;
+    }
+    .profile-form-body {
+        padding: 25px 20px;
+    }
+}
+</style>
+
+<script>
+function previewPhoto(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('photoPreview');
+            preview.innerHTML = '<img src="' + e.target.result + '" alt="Aperçu">';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+{% endblock %}
