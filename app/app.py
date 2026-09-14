@@ -1323,6 +1323,110 @@ def admin_fix_encoding():
     flash(f'✅ Encodage corrigé ! {fixed} cours mis à jour.', 'success')
     return redirect(url_for('admin_courses'))
 
+@app.route('/admin/fix_encoding_v2')
+@login_required
+def admin_fix_encoding_v2():
+    """Correction avancée : remplacer les ? par é ou ' selon le contexte"""
+    if not current_user.is_admin:
+        flash('Accès réservé aux administrateurs.', 'danger')
+        return redirect(url_for('dashboard'))
+    
+    import re
+    
+    def smart_fix(text):
+        if not text or '?' not in text:
+            return text
+        
+        result = text
+        
+        # 1. Cas : consonne?consonne → consonneéconsonne (ex: math?matique → mathématique)
+        result = re.sub(r'([bcdfghjklmnpqrstvwxz])\?([bcdfghjklmnpqrstvwxz])', r'\1é\2', result, flags=re.IGNORECASE)
+        
+        # 2. Cas : consonne?voyelle en début de mot → consonne'voyelle (ex: l?optimisation → l'optimisation)
+        # Mais on veut plutôt l'apostrophe pour les articles
+        result = re.sub(r"\b([ldnmtsj])\?([aeiouyéèàâêîôû])", r"\1'\2", result, flags=re.IGNORECASE)
+        
+        # 3. Cas : consonne?voyelle → consonneévoyelle (ex: prat?que → pratique... mais c'est pas ça)
+        # On essaie é en priorité
+        result = re.sub(r'([bcdfghjklmnpqrstvwxz])\?([aeiouyéèàâêîôû])', r'\1é\2', result, flags=re.IGNORECASE)
+        
+        # 4. Cas : voyelle?consonne → voyelleéconsonne 
+        result = re.sub(r'([aeiouyéèàâêîôû])\?([bcdfghjklmnpqrstvwxz])', r'\1é\2', result, flags=re.IGNORECASE)
+        
+        # 5. Correction de mots spécifiques restants
+        specific_fixes = {
+            'conom?trie': 'conométrie',
+            '?conom?trie': 'économétrie',
+            'conom?trique': 'conométrique',
+            'math?matique': 'mathématique',
+            'math?matiques': 'mathématiques',
+            'l?optimisation': "l'optimisation",
+            'l?analyse': "l'analyse",
+            'l?information': "l'information",
+            'l?environnement': "l'environnement",
+            'l?application': "l'application",
+            'd?conom': 'd\'économ',
+            'd?un': "d'un",
+            'd?une': "d'une",
+            'qu?un': "qu'un",
+            'qu?une': "qu'une",
+            '?conom?trie': 'économétrie',
+        }
+        
+        for broken, correct in specific_fixes.items():
+            result = result.replace(broken, correct)
+        
+        # 6. Dernier recours : remplacer les ? restants par é
+        result = result.replace('?', 'é')
+        
+        return result
+    
+    courses = Course.query.all()
+    fixed = 0
+    for course in courses:
+        changed = False
+        
+        # Titre
+        new_title = smart_fix(course.title)
+        if new_title != course.title:
+            print(f"  Titre: {course.title!r} → {new_title!r}", flush=True)
+            course.title = new_title
+            changed = True
+        
+        # Description
+        new_desc = smart_fix(course.description)
+        if new_desc != course.description:
+            print(f"  Desc: {course.description!r} → {new_desc!r}", flush=True)
+            course.description = new_desc
+            changed = True
+        
+        # Niveau
+        level = smart_fix(course.level)
+        if 'butant' in level.lower():
+            level = 'Débutant'
+        elif 'interm' in level.lower():
+            level = 'Intermédiaire'
+        elif 'avanc' in level.lower():
+            level = 'Avancé'
+        if level != course.level:
+            course.level = level
+            changed = True
+        
+        # Nom de fichier
+        if course.file_name:
+            new_fname = smart_fix(course.file_name)
+            if new_fname != course.file_name:
+                print(f"  Fichier: {course.file_name!r} → {new_fname!r}", flush=True)
+                course.file_name = new_fname
+                changed = True
+        
+        if changed:
+            fixed += 1
+    
+    db.session.commit()
+    flash(f'✅ Correction V2 terminée ! {fixed} cours mis à jour.', 'success')
+    return redirect(url_for('admin_courses'))
+
 
 @app.route('/admin/users')
 @login_required
