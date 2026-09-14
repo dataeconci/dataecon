@@ -441,7 +441,7 @@ def load_user(user_id):
 def check_subscription_reminders():
     """Envoyer un rappel 3 jours avant l'expiration"""
     with app.app_context():
-        print("ðŸ”” VÃ©rification des rappels d'abonnement...", flush=True)
+        print("🔔 Vérification des rappels d'abonnement...", flush=True)
         seuil = datetime.utcnow() + timedelta(days=3)
         users_to_remind = User.query.filter(
             User.subscription_level.in_(['premium', 'premium_pro']),
@@ -454,7 +454,7 @@ def check_subscription_reminders():
         for user in users_to_remind:
             try:
                 jours_restants = (user.subscription_expires_at - datetime.utcnow()).days
-                                html_content = render_template(
+                html_content = render_template(
                     'emails/subscription_reminder.html',
                     user=user,
                     jours_restants=jours_restants,
@@ -467,11 +467,15 @@ def check_subscription_reminders():
                     subject="Votre abonnement DataEcon.Ci expire bientôt",
                     html_content=html_content
                 )
-
+                user.reminder_sent = True
+                db.session.commit()
+                print(f"✅ Rappel envoyé à {user.email}", flush=True)
+            except Exception as e:
+                print(f"❌ Erreur envoi rappel à {user.email}: {e}", flush=True)
 def downgrade_expired_subscriptions():
-    """Repasser en Gratuit les abonnements expirÃ©s"""
+    """Repasser en Gratuit les abonnements expirés"""
     with app.app_context():
-        print("â³ VÃ©rification des abonnements expirÃ©s...", flush=True)
+        print("⏳ Vérification des abonnements expirés...", flush=True)
         expired_users = User.query.filter(
             User.subscription_level.in_(['premium', 'premium_pro']),
             User.is_subscription_active == True,
@@ -484,10 +488,10 @@ def downgrade_expired_subscriptions():
             user.subscription_expires_at = None
             user.reminder_sent = False
             db.session.commit()
-            print(f"â¬‡ï¸ {user.username} repassÃ© en Gratuit (abonnement expirÃ©)", flush=True)
+            print(f"⬇️ {user.username} repassé en Gratuit (abonnement expiré)", flush=True)
 
             try:
-                               html_content = render_template(
+                html_content = render_template(
                     'emails/subscription_expired.html',
                     user=user,
                     subscription_url=url_for('subscription', _external=True)
@@ -498,6 +502,8 @@ def downgrade_expired_subscriptions():
                     subject="Votre abonnement DataEcon.Ci a expiré",
                     html_content=html_content
                 )
+            except Exception as e:
+                print(f"❌ Erreur envoi email expiration à {user.email}: {e}", flush=True)
 # ==================== ROUTES ====================
 @app.route('/')
 def index():
