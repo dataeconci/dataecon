@@ -28,17 +28,17 @@
                         </a>
                     {% endif %}
                 </div>
-                <div class="mt-5 d-flex justify-content-center gap-5 fade-in" style="animation-delay: 0.6s;">
+                               <div class="mt-5 d-flex justify-content-center gap-5 fade-in" style="animation-delay: 0.6s;">
                     <div>
-                        <strong class="d-block text-accent" style="font-size: 2rem;">3+</strong>
+                        <strong class="d-block text-accent" style="font-size: 2rem;">{{ total_courses }}+</strong>
                         <span class="text-light opacity-75">Cours</span>
                     </div>
                     <div>
-                        <strong class="d-block text-accent" style="font-size: 2rem;">50+</strong>
+                        <strong class="d-block text-accent" style="font-size: 2rem;">{{ total_users }}+</strong>
                         <span class="text-light opacity-75">Étudiants</span>
                     </div>
                     <div>
-                        <strong class="d-block text-accent" style="font-size: 2rem;">30+</strong>
+                        <strong class="d-block text-accent" style="font-size: 2rem;">{{ total_datasets }}+</strong>
                         <span class="text-light opacity-75">Jeux de données</span>
                     </div>
                 </div>
@@ -101,19 +101,35 @@
         <h2 class="text-center mb-4" style="color: var(--primary); font-weight: 700;">
             <i class="fas fa-graduation-cap"></i> Derniers cours
         </h2>
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="card shadow-hover">
-                    <div class="card-body">
-                        <span class="badge badge-debutant">Débutant</span>
-                        <h5 class="card-title mt-2">Introduction à l'Économétrie</h5>
-                        <p class="card-text text-muted small">
-                            Les fondements de l'économétrie : régression linéaire, hypothèses, interprétation.
-                        </p>
-                        <a href="#" class="btn btn-primary btn-sm rounded-pill">
-                            Voir le cours <i class="fas fa-arrow-right"></i>
-                        </a>
+              <div class="row g-4">
+            {% if latest_courses %}
+                {% for course in latest_courses %}
+                <div class="col-md-4">
+                    <div class="card shadow-hover">
+                        <div class="card-body">
+                            <span class="badge 
+                                {% if course.level == 'Débutant' %}badge-debutant
+                                {% elif course.level == 'Intermédiaire' %}badge-intermediaire
+                                {% else %}badge-avance{% endif %}">
+                                {{ course.level }}
+                            </span>
+                            <h5 class="card-title mt-2">{{ course.title }}</h5>
+                            <p class="card-text text-muted small">
+                                {{ course.description|truncate(100) if course.description else 'Aucune description' }}
+                            </p>
+                            <a href="{{ url_for('course_detail', course_id=course.id) }}" class="btn btn-primary btn-sm rounded-pill">
+                                Voir le cours <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
                     </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 text-center">
+                    <p class="text-muted">Aucun cours disponible pour le moment.</p>
+                </div>
+            {% endif %}
+        </div>
                 </div>
             </div>
             <div class="col-md-4">

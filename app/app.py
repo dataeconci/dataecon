@@ -553,7 +553,30 @@ def downgrade_expired_subscriptions():
 # ==================== ROUTES ====================
 @app.route('/')
 def index():
-    return render_template('index.html')
+    """Page d'accueil avec statistiques dynamiques"""
+    try:
+        total_courses = Course.query.count()
+        total_users = User.query.count()
+        total_datasets = Dataset.query.count()
+    except Exception as e:
+        print(f"⚠️ Erreur stats: {e}", flush=True)
+        total_courses = 0
+        total_users = 0
+        total_datasets = 0
+    
+    # Récupérer les 3 derniers cours
+    try:
+        latest_courses = Course.query.order_by(Course.created_at.desc()).limit(3).all()
+    except:
+        latest_courses = []
+    
+    return render_template(
+        'index.html',
+        total_courses=total_courses,
+        total_users=total_users,
+        total_datasets=total_datasets,
+        latest_courses=latest_courses
+    )
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
