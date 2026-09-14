@@ -114,6 +114,25 @@ def read_data_file(file_path):
     
     else:
         raise ValueError(f"Format de fichier non supportÃ©: {file_path}")
+def read_dataset_file(dataset):
+    """Lire un dataset depuis R2 ou localement selon sa clé
+    
+    Args:
+        dataset: Objet Dataset (avec file_path)
+    
+    Returns:
+        DataFrame pandas ou None en cas d'erreur
+    """
+    if not dataset or not dataset.file_path:
+        return None
+    
+    # Si c'est une clé R2 (commence par 'datasets/')
+    if dataset.file_path.startswith('datasets/'):
+        return read_data_from_r2(dataset.file_path)
+    else:
+        # Ancien dataset stocké localement
+        return read_data_file(dataset.file_path)
+
 
 # ==================== CONFIGURATION ====================
 app = Flask(__name__)
@@ -223,6 +242,66 @@ def get_pdf_url(file_name):
     except Exception as e:
         print(f"âŒ Erreur R2: {e}", flush=True)
         return None
+def upload_file_to_r2(local_path, r2_key):
+    """Uploader un fichier vers Cloudflare R2"""
+    client = get_r2_client()
+    if not client:
+        return False
+    try:
+        client.upload_file(local_path, R2_BUCKET_NAME, r2_key)
+        print(f"✅ Fichier uploadé vers R2: {r2_key}", flush=True)
+        return True
+    except Exception as e:
+        print(f"❌ Erreur upload R2: {e}", flush=True)
+        return False
+
+
+def download_file_from_r2(r2_key, local_path):
+    """Télécharger un fichier depuis R2 vers un chemin local temporaire"""
+    client = get_r2_client()
+    if not client:
+        return False
+    try:
+        os.makedirs(os.path.dirname(local_path), exist_ok=True)
+        client.download_file(R2_BUCKET_NAME, r2_key, local_path)
+        print(f"✅ Fichier téléchargé depuis R2: {r2_key}", flush=True)
+        return True
+    except Exception as e:
+        print(f"❌ Erreur download R2: {e}", flush=True)
+        return False
+
+
+def read_data_from_r2(r2_key):
+    """Télécharger un dataset depuis R2 et le lire dans un DataFrame"""
+    import pandas as pd
+    client = get_r2_client()
+    if not client:
+        return None
+    try:
+        # Télécharger le fichier dans un buffer mémoire
+        from io import BytesIO
+        response = client.get_object(Bucket=R2_BUCKET_NAME, Key=r2_key)
+        file_content = response['Body'].read()
+        buffer = BytesIO(file_content)
+        
+        # Lire selon l'extension
+        if r2_key.lower().endswith('.csv'):
+            # Détecter le séparateur
+            buffer.seek(0)
+            first_line = buffer.read(1000).decode('utf-8', errors='ignore')
+            sep = ';' if first_line.count(';') > first_line.count(',') else ','
+            buffer.seek(0)
+            return pd.read_csv(buffer, sep=sep, encoding='utf-8')
+        elif r2_key.lower().endswith(('.xlsx', '.xls')):
+            return pd.read_excel(buffer)
+        elif r2_key.lower().endswith('.dta'):
+            return pd.read_stata(buffer)
+        else:
+            return None
+    except Exception as e:
+        print(f"❌ Erreur lecture R2: {e}", flush=True)
+        return None
+
 
 # ==================== CONFIGURATION WAVE PAYMENT ====================
 WAVE_API_URL = "https://pay.wave.com/api/v1"
@@ -923,11 +1002,11 @@ def datasets():
 @login_required
 def upload_dataset():
     if not current_user.can_upload_data():
-        flash('Seul l\'administrateur peut ajouter des donnÃ©es.', 'danger')
+        flash('Seul l\'administrateur peut ajouter des données.', 'danger')
         return redirect(url_for('datasets'))
-    
+
     if 'file' not in request.files:
-        flash('Aucun fichier sÃ©lectionnÃ©.', 'danger')
+        flash('Aucun fichier sélectionné.', 'danger')
         return redirect(url_for('datasets'))
 
     file = request.files['file']
@@ -935,48 +1014,57 @@ def upload_dataset():
     description = request.form.get('description')
 
     if file.filename == '':
-        flash('Aucun fichier sÃ©lectionnÃ©.', 'danger')
+        flash('Aucun fichier sélectionné.', 'danger')
         return redirect(url_for('datasets'))
 
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         new_filename = f"{timestamp}_{filename}"
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], new_filename)
-        file.save(file_path)
         
-        # VÃ‰RIFIER ET RÃ‰PARER LE FICHIER AVEC LE BON SÃ‰PARATEUR
+        # Sauvegarder localement (temporaire)
+        local_dir = '/tmp/uploads'
+        os.makedirs(local_dir, exist_ok=True)
+        local_path = os.path.join(local_dir, new_filename)
+        file.save(local_path)
+        
+        # Vérifier que le fichier est lisible
         try:
-            # Tester la lecture
-            df = read_data_file(file_path)
-            print(f"âœ… Fichier importÃ©: {filename}")
-            print(f"ðŸ“Š Colonnes dÃ©tectÃ©es: {list(df.columns)}")
-            print(f"ðŸ“Š Nombre de lignes: {len(df)}")
-            
-            # Si tout est bon, sauvegarder avec le sÃ©parateur standard (,) pour la compatibilitÃ©
-            if len(df.columns) > 1:
-                # Sauvegarder avec le sÃ©parateur standard
-                df.to_csv(file_path, sep=',', index=False, encoding='utf-8')
-                print("âœ… Fichier normalisÃ© avec sÃ©parateur ,")
-            
+            df = read_data_file(local_path)
+            print(f"✅ Fichier validé: {filename} ({len(df)} lignes, {len(df.columns)} colonnes)", flush=True)
         except Exception as e:
-            flash(f'âš ï¸ Erreur lors de la lecture du fichier: {str(e)}', 'danger')
-            os.remove(file_path)
+            flash(f'Erreur lors de la lecture du fichier: {str(e)}', 'danger')
+            if os.path.exists(local_path):
+                os.remove(local_path)
             return redirect(url_for('datasets'))
-
-        dataset = Dataset(
-            name=name or filename,
-            description=description,
-            file_path=file_path,
-            file_name=filename,
-            uploaded_by=current_user.id
-        )
-        db.session.add(dataset)
-        db.session.commit()
-
-        flash('Fichier de donnÃ©es uploadÃ© avec succÃ¨s !', 'success')
+        
+        # Uploader vers Cloudflare R2
+        r2_key = f"datasets/{new_filename}"
+        if upload_file_to_r2(local_path, r2_key):
+            # Supprimer le fichier local
+            try:
+                os.remove(local_path)
+            except:
+                pass
+            
+            # Sauvegarder dans la base avec la clé R2
+            dataset = Dataset(
+                name=name or filename,
+                description=description,
+                file_path=r2_key,  # On stocke la clé R2
+                file_name=filename,
+                uploaded_by=current_user.id
+            )
+            db.session.add(dataset)
+            db.session.commit()
+            
+            flash(f'Fichier "{filename}" importé avec succès sur le cloud !', 'success')
+        else:
+            flash('Erreur lors de l\'upload vers le cloud. Vérifiez la configuration R2.', 'danger')
+            if os.path.exists(local_path):
+                os.remove(local_path)
     else:
-        flash('Format de fichier non supportÃ©. Utilisez CSV, Excel ou Stata.', 'danger')
+        flash('Format de fichier non supporté. Utilisez CSV, Excel ou Stata.', 'danger')
 
     return redirect(url_for('datasets'))
 
@@ -984,14 +1072,18 @@ def upload_dataset():
 @login_required
 def view_dataset(dataset_id):
     if not current_user.can_access_data():
-        flash('Vous devez avoir un abonnement Premium Pro pour accÃ©der aux donnÃ©es.', 'warning')
+        flash('Vous devez avoir un abonnement Premium Pro pour accéder aux données.', 'warning')
         return redirect(url_for('subscription'))
     
     dataset = Dataset.query.get_or_404(dataset_id)
 
     try:
-        # Utiliser la fonction de lecture automatique
-        df = read_data_file(dataset.file_path)
+        # Lire le dataset (depuis R2 ou local selon le stockage)
+        df = read_dataset_file(dataset)
+        
+        if df is None:
+            flash('Erreur lors de la lecture du fichier.', 'danger')
+            return redirect(url_for('datasets'))
 
         table_html = df.head(20).to_html(classes='table table-striped')
         columns = list(df.columns)
@@ -1002,7 +1094,7 @@ def view_dataset(dataset_id):
         df_numeric = df.select_dtypes(include=['float64', 'int64'])
         if len(df_numeric.columns) >= 2:
             sns.heatmap(df_numeric.corr(), annot=True, cmap='coolwarm', center=0)
-            plt.title('Matrice de corrÃ©lation')
+            plt.title('Matrice de corrélation')
             plot_path = '/tmp/plot.png'
             plt.savefig(plot_path, bbox_inches='tight')
             plt.close()
@@ -1024,9 +1116,7 @@ def view_dataset(dataset_id):
 
     except Exception as e:
         flash(f'Erreur lors de la lecture du fichier: {str(e)}', 'danger')
-        return redirect(url_for('datasets'))
-
-@app.route('/analytics')
+        return redirect(url_for('datasets'))@app.route('/analytics')
 @login_required
 def analytics():
     if not current_user.can_access_data():
@@ -1038,7 +1128,7 @@ def analytics():
 
     for ds in datasets:
         try:
-            df = read_data_file(ds.file_path)
+            df = read_dataset_file(ds)
             dataset_stats.append({
                 'name': ds.name,
                 'rows': len(df),
@@ -1068,7 +1158,7 @@ def econometric_model():
         dataset = Dataset.query.get(int(dataset_id))
         if dataset:
             try:
-                df = read_data_file(dataset.file_path)
+                df = read_dataset_file(dataset)
 
                 indep_vars = [v.strip() for v in independent.split(',')]
                 X = df[indep_vars]
@@ -1103,12 +1193,32 @@ def econometric_model():
 @login_required
 def download_dataset(dataset_id):
     dataset = Dataset.query.get_or_404(dataset_id)
-    
+
     if not current_user.can_download_data():
-        flash('Vous devez avoir un abonnement Premium Pro pour tÃ©lÃ©charger les donnÃ©es.', 'warning')
+        flash('Vous devez avoir un abonnement Premium Pro pour télécharger les données.', 'warning')
         return redirect(url_for('subscription'))
-    
-    return send_file(dataset.file_path, as_attachment=True)
+
+    # Si c'est un dataset R2 (clé commence par 'datasets/')
+    if dataset.file_path and dataset.file_path.startswith('datasets/'):
+        client = get_r2_client()
+        if not client:
+            flash('Erreur de connexion au stockage cloud.', 'danger')
+            return redirect(url_for('datasets'))
+        try:
+            response = client.get_object(Bucket=R2_BUCKET_NAME, Key=dataset.file_path)
+            file_data = response['Body'].read()
+            return send_file(
+                BytesIO(file_data),
+                as_attachment=True,
+                download_name=dataset.file_name or 'dataset.csv',
+                mimetype='application/octet-stream'
+            )
+        except Exception as e:
+            flash(f'Erreur lors du téléchargement: {str(e)}', 'danger')
+            return redirect(url_for('datasets'))
+    else:
+        # Ancien dataset stocké localement
+        return send_file(dataset.file_path, as_attachment=True)
 
 # ==================== ROUTES PDF ====================
 @app.route('/view_pdf/<int:course_id>')
@@ -1645,7 +1755,7 @@ def models_analyze():
     
     try:
         # Utiliser la fonction de lecture automatique
-        df = read_data_file(dataset.file_path)
+        df = read_dataset_file(dataset)
         
         print(f"ðŸ“Š Colonnes disponibles: {list(df.columns)}", flush=True)
         
@@ -1751,7 +1861,7 @@ def generate_chart(dataset_id, chart_type):
     dataset = Dataset.query.get_or_404(dataset_id)
     
     try:
-        df = read_data_file(dataset.file_path)
+        df = read_dataset_file(dataset)
         
         # SÃ©lectionner les colonnes numÃ©riques
         numeric_cols = df.select_dtypes(include=['float64', 'int64']).columns.tolist()
