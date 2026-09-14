@@ -1219,6 +1219,41 @@ def download_dataset(dataset_id):
     else:
         # Ancien dataset stocké localement
         return send_file(dataset.file_path, as_attachment=True)
+@app.route('/delete_dataset/<int:dataset_id>', methods=['POST'])
+@login_required
+def delete_dataset(dataset_id):
+    """Supprimer un dataset (admin uniquement)"""
+    if not current_user.is_admin:
+        flash('Seul l\'administrateur peut supprimer des données.', 'danger')
+        return redirect(url_for('datasets'))
+    
+    dataset = Dataset.query.get_or_404(dataset_id)
+    dataset_name = dataset.name
+    
+    # Supprimer le fichier sur R2
+    if dataset.file_path and dataset.file_path.startswith('datasets/'):
+        try:
+            client = get_r2_client()
+            if client:
+                client.delete_object(Bucket=R2_BUCKET_NAME, Key=dataset.file_path)
+                print(f"✅ Fichier supprimé de R2: {dataset.file_path}", flush=True)
+        except Exception as e:
+            print(f"⚠️ Erreur suppression R2: {e}", flush=True)
+    # Sinon, supprimer le fichier local
+    elif dataset.file_path and os.path.exists(dataset.file_path):
+        try:
+            os.remove(dataset.file_path)
+        except:
+            pass
+    
+    # Supprimer de la base
+    db.session.delete(dataset)
+    db.session.commit()
+    
+    flash(f'Le jeu de données "{dataset_name}" a été supprimé avec succès.', 'success')
+    return redirect(url_for('datasets'))
+
+
 
 # ==================== ROUTES PDF ====================
 @app.route('/view_pdf/<int:course_id>')
