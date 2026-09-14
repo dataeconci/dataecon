@@ -1270,6 +1270,60 @@ def delete_course(course_id):
     return redirect(url_for('admin_courses'))
 
 # ==================== ROUTES ADMIN UTILISATEURS ====================
+@app.route('/admin/fix_encoding')
+@login_required
+def admin_fix_encoding():
+    """Corriger l'encodage UTF-8 cassé (à usage unique)"""
+    if not current_user.is_admin:
+        flash('Accès réservé aux administrateurs.', 'danger')
+        return redirect(url_for('dashboard'))
+    
+    import re
+    
+    def fix_text(text):
+        if not text:
+            return text
+        replacements = {
+            'Ã©': 'é', 'Ã¨': 'è', 'Ã ': 'à', 'Ã¢': 'â', 'Ãª': 'ê', 'Ã®': 'î',
+            'Ã´': 'ô', 'Ã¹': 'ù', 'Ã»': 'û', 'Ã§': 'ç', 'Ã«': 'ë', 'Ã¯': 'ï',
+            'Ã¼': 'ü', 'Ã¶': 'ö', 'Ã¤': 'ä', 'Ã‰': 'É', 'Ã€': 'À', 'Ã‡': 'Ç',
+            'â€™': "'", 'â€œ': '"', 'â€': '"',
+        }
+        result = text
+        for broken, correct in replacements.items():
+            result = result.replace(broken, correct)
+        # Remplacer ? par é dans les mots
+        result = re.sub(r'(\w)\?\?(\w)', r'\1é\2', result)
+        return result
+    
+    courses = Course.query.all()
+    fixed = 0
+    for course in courses:
+        # Titre
+        new_title = fix_text(course.title)
+        if new_title != course.title:
+            course.title = new_title
+        # Description
+        new_desc = fix_text(course.description)
+        if new_desc != course.description:
+            course.description = new_desc
+        # Niveau (normaliser)
+        level = fix_text(course.level)
+        if 'butant' in level.lower():
+            level = 'Débutant'
+        elif 'interm' in level.lower():
+            level = 'Intermédiaire'
+        elif 'avanc' in level.lower():
+            level = 'Avancé'
+        if level != course.level:
+            course.level = level
+            fixed += 1
+    
+    db.session.commit()
+    flash(f'✅ Encodage corrigé ! {fixed} cours mis à jour.', 'success')
+    return redirect(url_for('admin_courses'))
+
+
 @app.route('/admin/users')
 @login_required
 def admin_users():
