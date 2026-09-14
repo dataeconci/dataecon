@@ -1,0 +1,511 @@
+{% extends "layout.html" %}
+
+{% block title %}Modifier - {{ course.title }} - DataEcon.Ci{% endblock %}
+
+{% block content %}
+<div class="edit-page">
+    <div class="container py-5">
+        
+        <!-- En-tête -->
+        <div class="edit-header">
+            <a href="{{ url_for('admin_courses') }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Retour aux cours
+            </a>
+            <h1><i class="fas fa-edit"></i> Modifier le cours</h1>
+            <p>Modifiez les informations du cours <strong>{{ course.title }}</strong></p>
+        </div>
+
+        <div class="row">
+            <!-- Colonne gauche : Formulaire -->
+            <div class="col-lg-8">
+                <div class="edit-card">
+                    <div class="edit-card-header">
+                        <h3><i class="fas fa-info-circle"></i> Informations du cours</h3>
+                    </div>
+                    <div class="edit-card-body">
+                        <form method="POST" enctype="multipart/form-data">
+                            
+                            <!-- Titre -->
+                            <div class="form-group-modern">
+                                <label for="title">
+                                    <i class="fas fa-heading"></i> Titre du cours *
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="title" 
+                                       name="title" 
+                                       value="{{ course.title }}"
+                                       placeholder="Ex: Introduction à l'économétrie"
+                                       required>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="form-group-modern">
+                                <label for="description">
+                                    <i class="fas fa-align-left"></i> Description
+                                </label>
+                                <textarea class="form-control" 
+                                          id="description" 
+                                          name="description" 
+                                          rows="4"
+                                          placeholder="Décrivez brièvement le contenu du cours...">{{ course.description or '' }}</textarea>
+                                <div class="form-hint">
+                                    Une courte description qui apparaîtra dans la liste des cours.
+                                </div>
+                            </div>
+
+                            <!-- Niveau -->
+                            <div class="form-group-modern">
+                                <label for="level">
+                                    <i class="fas fa-layer-group"></i> Niveau *
+                                </label>
+                                <select class="form-select" id="level" name="level" required>
+                                    <option value="Débutant" {% if course.level == 'Débutant' %}selected{% endif %}>
+                                        🌱 Débutant
+                                    </option>
+                                    <option value="Intermédiaire" {% if course.level == 'Intermédiaire' %}selected{% endif %}>
+                                        📈 Intermédiaire
+                                    </option>
+                                    <option value="Avancé" {% if course.level == 'Avancé' %}selected{% endif %}>
+                                        🚀 Avancé
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Contenu -->
+                            <div class="form-group-modern">
+                                <label for="content">
+                                    <i class="fas fa-file-alt"></i> Contenu du cours (HTML)
+                                </label>
+                                <textarea class="form-control code-area" 
+                                          id="content" 
+                                          name="content" 
+                                          rows="10"
+                                          placeholder="<h2>Titre</h2>&#10;<p>Contenu...</p>">{{ course.content or '' }}</textarea>
+                                <div class="form-hint">
+                                    Vous pouvez utiliser du HTML pour formater le contenu.
+                                </div>
+                            </div>
+
+                            <!-- Fichier PDF -->
+                            <div class="form-group-modern">
+                                <label for="pdf_file">
+                                    <i class="fas fa-file-pdf"></i> Fichier PDF
+                                </label>
+                                {% if course.file_name %}
+                                    <div class="current-file">
+                                        <i class="fas fa-file-pdf"></i>
+                                        <span>Fichier actuel : <strong>{{ course.file_name }}</strong></span>
+                                    </div>
+                                {% endif %}
+                                <input type="file" 
+                                       class="form-control" 
+                                       id="pdf_file" 
+                                       name="pdf_file" 
+                                       accept=".pdf">
+                                <div class="form-hint">
+                                    Laissez vide pour conserver le fichier actuel, ou sélectionnez un nouveau PDF pour le remplacer.
+                                </div>
+                            </div>
+
+                            <!-- Boutons d'action -->
+                            <div class="form-actions">
+                                <button type="submit" class="btn-save">
+                                    <i class="fas fa-save"></i> Enregistrer les modifications
+                                </button>
+                                <a href="{{ url_for('admin_courses') }}" class="btn-cancel">
+                                    <i class="fas fa-times"></i> Annuler
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Colonne droite : Aperçu / Infos -->
+            <div class="col-lg-4">
+                <div class="info-card">
+                    <div class="info-card-header">
+                        <h5><i class="fas fa-chart-bar"></i> Statistiques</h5>
+                    </div>
+                    <div class="info-card-body">
+                        <div class="stat-row">
+                            <span class="stat-label">ID</span>
+                            <span class="stat-value">#{{ course.id }}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Niveau actuel</span>
+                            <span class="stat-value">{{ course.level }}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Créé le</span>
+                            <span class="stat-value">{{ course.created_at.strftime('%d/%m/%Y') if course.created_at else 'N/A' }}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Fichier PDF</span>
+                            <span class="stat-value">
+                                {% if course.file_name %}
+                                    <i class="fas fa-check-circle text-success"></i> Oui
+                                {% else %}
+                                    <i class="fas fa-times-circle text-muted"></i> Non
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-card mt-3">
+                    <div class="info-card-header">
+                        <h5><i class="fas fa-lightbulb"></i> Conseils</h5>
+                    </div>
+                    <div class="info-card-body">
+                        <ul class="tips-list">
+                            <li>Utilisez un titre clair et descriptif</li>
+                            <li>La description aide les étudiants à choisir</li>
+                            <li>Le HTML permet de structurer le contenu</li>
+                            <li>Vous pouvez remplacer le PDF à tout moment</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info-card mt-3 danger-card">
+                    <div class="info-card-header">
+                        <h5><i class="fas fa-exclamation-triangle"></i> Zone de danger</h5>
+                    </div>
+                    <div class="info-card-body">
+                        <p class="small text-muted">
+                            La suppression d'un cours est définitive et irréversible.
+                        </p>
+                        <form method="POST" 
+                              action="{{ url_for('delete_course', course_id=course.id) }}"
+                              onsubmit="return confirm('⚠️ ATTENTION : Supprimer définitivement le cours \'{{ course.title }}\' ? Cette action est irréversible.')">
+                            <button type="submit" class="btn-delete">
+                                <i class="fas fa-trash"></i> Supprimer ce cours
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.edit-page {
+    background: #f4f6f9;
+    min-height: 100vh;
+}
+
+.edit-header {
+    margin-bottom: 30px;
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #1a2a6c;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 10px;
+    transition: all 0.3s;
+    margin-bottom: 15px;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.btn-back:hover {
+    background: #1a2a6c;
+    color: white;
+    transform: translateX(-3px);
+}
+
+.edit-header h1 {
+    color: #1a2a6c;
+    font-weight: 800;
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+.edit-header h1 i {
+    color: #fdbb2d;
+}
+
+.edit-header p {
+    color: #7a8aaa;
+    font-size: 1rem;
+}
+
+.edit-header strong {
+    color: #1a2a6c;
+}
+
+/* Carte principale */
+.edit-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.edit-card-header {
+    background: linear-gradient(135deg, #1a2a6c 0%, #2d3561 100%);
+    color: white;
+    padding: 25px 30px;
+}
+
+.edit-card-header h3 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.edit-card-header h3 i {
+    color: #fdbb2d;
+    margin-right: 8px;
+}
+
+.edit-card-body {
+    padding: 35px 30px;
+}
+
+/* Formulaires */
+.form-group-modern {
+    margin-bottom: 25px;
+}
+
+.form-group-modern label {
+    display: block;
+    color: #2d3436;
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+}
+
+.form-group-modern label i {
+    color: #1a2a6c;
+    margin-right: 6px;
+}
+
+.form-control, .form-select {
+    border: 2px solid #e8eaf0;
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f8f9fc;
+    width: 100%;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #1a2a6c;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(26, 42, 108, 0.1);
+    outline: none;
+}
+
+.code-area {
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+}
+
+.form-hint {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: #7a8aaa;
+}
+
+.current-file {
+    background: #f0f7ff;
+    border: 2px solid #b8d4ff;
+    border-radius: 12px;
+    padding: 12px 18px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #1a2a6c;
+    font-size: 0.9rem;
+}
+
+.current-file i {
+    color: #dc3545;
+    font-size: 1.2rem;
+}
+
+/* Actions */
+.form-actions {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 1px solid #e8eaf0;
+}
+
+.btn-save {
+    background: linear-gradient(135deg, #1a2a6c 0%, #2d3561 100%);
+    color: white;
+    border: none;
+    padding: 14px 30px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex-grow: 1;
+}
+
+.btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 40px rgba(26, 42, 108, 0.4);
+}
+
+.btn-save i {
+    margin-right: 8px;
+}
+
+.btn-cancel {
+    background: #f0f2f5;
+    color: #555;
+    padding: 14px 30px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-cancel:hover {
+    background: #e8eaf0;
+    color: #333;
+}
+
+.btn-cancel i {
+    margin-right: 8px;
+}
+
+/* Cartes info */
+.info-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+}
+
+.info-card-header {
+    background: #f8f9fc;
+    padding: 18px 25px;
+    border-bottom: 1px solid #e8eaf0;
+}
+
+.info-card-header h5 {
+    margin: 0;
+    color: #1a2a6c;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.info-card-header h5 i {
+    color: #fdbb2d;
+    margin-right: 6px;
+}
+
+.info-card-body {
+    padding: 20px 25px;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f2f5;
+    font-size: 0.9rem;
+}
+
+.stat-row:last-child {
+    border-bottom: none;
+}
+
+.stat-label {
+    color: #7a8aaa;
+}
+
+.stat-value {
+    color: #1a2a6c;
+    font-weight: 600;
+}
+
+.tips-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.88rem;
+    color: #555;
+}
+
+.tips-list li {
+    padding: 8px 0;
+    padding-left: 20px;
+    position: relative;
+    line-height: 1.5;
+}
+
+.tips-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #28a745;
+    font-weight: bold;
+}
+
+.danger-card .info-card-header {
+    background: #fff5f5;
+    border-bottom-color: #ffd4d4;
+}
+
+.danger-card .info-card-header h5 {
+    color: #dc3545;
+}
+
+.danger-card .info-card-header h5 i {
+    color: #dc3545;
+}
+
+.btn-delete {
+    width: 100%;
+    background: transparent;
+    color: #dc3545;
+    border: 2px solid #dc3545;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 0.9rem;
+}
+
+.btn-delete:hover {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-delete i {
+    margin-right: 6px;
+}
+
+@media (max-width: 991px) {
+    .edit-card-body {
+        padding: 25px 20px;
+    }
+    .edit-header h1 {
+        font-size: 1.6rem;
+    }
+}
+</style>
+{% endblock %}

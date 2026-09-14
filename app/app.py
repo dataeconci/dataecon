@@ -1250,6 +1250,58 @@ def add_course():
     
     flash('Cours ajoutÃ© avec succÃ¨s !', 'success')
     return redirect(url_for('admin_courses'))
+@app.route('/admin/edit_course/<int:course_id>', methods=['GET', 'POST'])
+@login_required
+def edit_course(course_id):
+    """Modifier un cours existant (admin uniquement)"""
+    if not current_user.is_admin:
+        flash('Accès réservé aux administrateurs.', 'danger')
+        return redirect(url_for('dashboard'))
+    
+    course = Course.query.get_or_404(course_id)
+    
+    if request.method == 'POST':
+        # Récupérer les données du formulaire
+        course.title = request.form.get('title', '').strip()
+        course.description = request.form.get('description', '').strip()
+        course.level = request.form.get('level', '').strip()
+        course.content = request.form.get('content', '').strip()
+        
+        # Validation
+        if not course.title:
+            flash('Le titre est obligatoire.', 'danger')
+            return redirect(url_for('edit_course', course_id=course.id))
+        
+        # Gestion du fichier PDF (remplacement optionnel)
+        file = request.files.get('pdf_file')
+        if file and file.filename:
+            filename = secure_filename(file.filename)
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            new_filename = f"{timestamp}_{filename}"
+            
+            pdf_dir = '/app/data/pdfs'
+            os.makedirs(pdf_dir, exist_ok=True)
+            
+            file_path = os.path.join(pdf_dir, new_filename)
+            file.save(file_path)
+            
+            # Supprimer l'ancien PDF si existe
+            if course.file_path and os.path.exists(course.file_path):
+                try:
+                    os.remove(course.file_path)
+                except:
+                    pass
+            
+            course.file_name = filename
+            course.file_path = file_path
+        
+        db.session.commit()
+        flash(f'Le cours "{course.title}" a été modifié avec succès !', 'success')
+        return redirect(url_for('admin_courses'))
+    
+    # GET : afficher le formulaire d'édition
+    return render_template('admin_edit_course.html', course=course)
+
 
 @app.route('/admin/delete_course/<int:course_id>', methods=['POST'])
 @login_required
