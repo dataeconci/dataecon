@@ -276,7 +276,8 @@ class User(UserMixin, db.Model):
     email_confirmed = db.Column(db.Boolean, default=False)
     email_confirmed_at = db.Column(db.DateTime)
     last_password_reset = db.Column(db.DateTime)
-    
+    reset_code = db.Column(db.String(5))
+    reset_code_expires = db.Column(db.DateTime)
     subscription_level = db.Column(db.String(20), default='free')
     subscription_expires_at = db.Column(db.DateTime)
     wave_payment_id = db.Column(db.String(100))
@@ -427,6 +428,50 @@ def send_reset_email(user):
         )
     except Exception as e:
         print(f"❌ Erreur dans send_reset_email: {str(e)}", flush=True)
+        traceback.print_exc()
+        return False
+def generate_reset_code():
+    """Générer un code aléatoire à 5 chiffres"""
+    import random
+    return str(random.randint(10000, 99999))
+
+def send_reset_code_email(user, code):
+    """Envoyer un email avec le code de réinitialisation via Brevo"""
+    try:
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+        </head>
+        <body style="font-family: Arial, sans-serif; background: #f4f6f9; padding: 40px;">
+            <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.08);">
+                <h1 style="color: #1a2a6c; text-align: center;">📊 DataEcon.Ci</h1>
+                <h2 style="color: #1a2a6c;">Réinitialisation du mot de passe 🔑</h2>
+                <p>Bonjour {user.first_name or user.username},</p>
+                <p>Vous avez demandé la réinitialisation de votre mot de passe. Voici votre code de vérification :</p>
+                <div style="text-align: center; margin: 30px 0;">
+                    <div style="display: inline-block; background: #1a2a6c; color: white; padding: 20px 40px; border-radius: 12px; font-size: 2.5rem; font-weight: bold; letter-spacing: 10px;">
+                        {code}
+                    </div>
+                </div>
+                <p style="color: #555;">Ce code est valable pendant <strong>15 minutes</strong>.</p>
+                <p style="color: #555;">Si vous n'avez pas demandé cette réinitialisation, ignorez cet email.</p>
+                <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+                <p style="color: #999; font-size: 12px; text-align: center;">© 2026 DataEcon.Ci - Tous droits réservés</p>
+            </div>
+        </body>
+        </html>
+        """
+        
+        return brevo_send_email(
+            to_email=user.email,
+            to_name=user.first_name or user.username,
+            subject='Votre code de réinitialisation - DataEcon.Ci',
+            html_content=html_content
+        )
+    except Exception as e:
+        print(f"❌ Erreur envoi code: {e}", flush=True)
         traceback.print_exc()
         return False
 def is_valid_email(email):
@@ -588,31 +633,68 @@ def confirm_email(token):
 
 @app.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
+    """Demander un code de réinitialisation par email"""
     if request.method == 'POST':
         email = request.form.get('email')
         user = User.query.filter_by(email=email).first()
 
         if user:
-            if send_reset_email(user):
-                flash('Un email de rÃ©initialisation a Ã©tÃ© envoyÃ© Ã  votre adresse.', 'success')
+            # Générer un code à 5 chiffres
+            code = generate_reset_code()
+            user.reset_code = code
+            user.reset_code_expires = datetime.utcnow() + timedelta(minutes=15)
+            db.session.commit()
+
+            # Envoyer le code par email
+            if send_reset_code_email(user, code):
+                flash('Un code de vérification à 5 chiffres vous a été envoyé par email.', 'success')
+                return redirect(url_for('verify_code', email=email))
             else:
-                flash('Erreur lors de l\'envoi de l\'email. Veuillez rÃ©essayer.', 'danger')
+                flash('Erreur lors de l\'envoi du code. Veuillez réessayer.', 'danger')
         else:
-            flash('Si votre email est enregistrÃ©, vous recevrez un lien de rÃ©initialisation.', 'info')
+            flash('Si votre email est enregistré, vous recevrez un code de vérification.', 'info')
 
         return redirect(url_for('login'))
 
     return render_template('reset_password_request.html')
 
-@app.route('/reset_password/<token>', methods=['GET', 'POST'])
-def reset_password(token):
-    try:
-        email = serializer.loads(token, salt='password-reset', max_age=3600)
-    except SignatureExpired:
-        flash('Le lien de rÃ©initialisation a expirÃ©. Veuillez refaire une demande.', 'danger')
+
+@app.route('/verify_code/<email>', methods=['GET', 'POST'])
+def verify_code(email):
+    """Vérifier le code à 5 chiffres"""
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        flash('Utilisateur non trouvé.', 'danger')
         return redirect(url_for('reset_password_request'))
-    except BadSignature:
-        flash('Lien de rÃ©initialisation invalide.', 'danger')
+
+    if request.method == 'POST':
+        code_saisi = request.form.get('code', '').strip()
+
+        # Vérifier le code et sa validité
+        if not user.reset_code:
+            flash('Aucun code actif. Veuillez refaire une demande.', 'danger')
+            return redirect(url_for('reset_password_request'))
+
+        if user.reset_code_expires and user.reset_code_expires < datetime.utcnow():
+            flash('Le code a expiré. Veuillez refaire une demande.', 'danger')
+            return redirect(url_for('reset_password_request'))
+
+        if code_saisi != user.reset_code:
+            flash('Code incorrect. Veuillez réessayer.', 'danger')
+            return render_template('verify_code.html', email=email)
+
+        # Code correct → rediriger vers la page du nouveau mot de passe
+        return redirect(url_for('set_new_password', email=email))
+
+    return render_template('verify_code.html', email=email)
+
+
+@app.route('/set_new_password/<email>', methods=['GET', 'POST'])
+def set_new_password(email):
+    """Définir un nouveau mot de passe après validation du code"""
+    user = User.query.filter_by(email=email).first()
+    if not user or not user.reset_code:
+        flash('Session invalide. Veuillez recommencer.', 'danger')
         return redirect(url_for('reset_password_request'))
 
     if request.method == 'POST':
@@ -621,20 +703,23 @@ def reset_password(token):
 
         if password != password_confirm:
             flash('Les mots de passe ne correspondent pas.', 'danger')
-            return render_template('reset_password.html')
+            return render_template('set_new_password.html', email=email)
 
-        user = User.query.filter_by(email=email).first()
-        if user:
-            user.set_password(password)
-            user.last_password_reset = datetime.utcnow()
-            db.session.commit()
-            flash('Votre mot de passe a Ã©tÃ© rÃ©initialisÃ© avec succÃ¨s !', 'success')
-            return redirect(url_for('login'))
-        else:
-            flash('Utilisateur non trouvÃ©.', 'danger')
-            return redirect(url_for('login'))
+        if len(password) < 6:
+            flash('Le mot de passe doit faire au moins 6 caractères.', 'danger')
+            return render_template('set_new_password.html', email=email)
 
-    return render_template('reset_password.html')
+        # Mettre à jour le mot de passe
+        user.set_password(password)
+        user.last_password_reset = datetime.utcnow()
+        user.reset_code = None
+        user.reset_code_expires = None
+        db.session.commit()
+
+        flash('Votre mot de passe a été réinitialisé avec succès ! Connectez-vous.', 'success')
+        return redirect(url_for('login'))
+
+    return render_template('set_new_password.html', email=email)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -1368,7 +1453,16 @@ def generate_chart(dataset_id, chart_type):
 def init_db():
     with app.app_context():
         db.create_all()
-
+                # Migration automatique : ajouter les nouvelles colonnes si elles n'existent pas
+        from sqlalchemy import text
+        try:
+            db.session.execute(text('ALTER TABLE "user" ADD COLUMN IF NOT EXISTS reset_code VARCHAR(5)'))
+            db.session.execute(text('ALTER TABLE "user" ADD COLUMN IF NOT EXISTS reset_code_expires TIMESTAMP'))
+            db.session.commit()
+            print("✅ Migration des colonnes reset_code réussie", flush=True)
+        except Exception as e:
+            print(f"ℹ️ Colonnes reset_code déjà présentes ou erreur: {e}", flush=True)
+            db.session.rollback()
         admin = User.query.filter_by(username='admin').first()
         if not admin:
             admin = User(

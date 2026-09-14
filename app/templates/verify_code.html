@@ -1,0 +1,272 @@
+{% extends "layout.html" %}
+
+{% block title %}Vérification du code - DataEcon.Ci{% endblock %}
+
+{% block content %}
+<div class="verify-page">
+    <div class="container">
+        <div class="row justify-content-center align-items-center min-vh-100 py-5">
+            <div class="col-lg-5 col-md-7">
+                <div class="verify-card">
+                    <div class="verify-card-header">
+                        <div class="verify-icon">📧</div>
+                        <h2>Vérification du code</h2>
+                        <p>Un code à 5 chiffres a été envoyé à <strong>{{ email }}</strong></p>
+                    </div>
+
+                    <div class="verify-card-body">
+                        <form method="POST" class="needs-validation" novalidate>
+                            <div class="form-group-modern">
+                                <label for="code">
+                                    <i class="fas fa-key"></i> Code de vérification
+                                </label>
+                                <input type="text" 
+                                       class="form-control form-control-modern code-input" 
+                                       id="code" 
+                                       name="code" 
+                                       placeholder="00000"
+                                       maxlength="5"
+                                       pattern="[0-9]{5}"
+                                       inputmode="numeric"
+                                       autocomplete="one-time-code"
+                                       required
+                                       autofocus>
+                                <div class="form-hint">
+                                    Entrez le code à 5 chiffres reçu par email.
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-verify">
+                                <i class="fas fa-check-circle"></i> Vérifier le code
+                            </button>
+
+                            <div class="verify-links">
+                                <a href="{{ url_for('reset_password_request') }}">
+                                    <i class="fas fa-redo"></i> Renvoyer un code
+                                </a>
+                                <span class="separator">•</span>
+                                <a href="{{ url_for('login') }}">
+                                    <i class="fas fa-arrow-left"></i> Retour à la connexion
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="verify-card-footer">
+                        <span><i class="fas fa-clock"></i> Code valable 15 minutes</span>
+                        <span><i class="fas fa-shield-alt"></i> Sécurisé</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.verify-page {
+    background: linear-gradient(135deg, #1a2a6c 0%, #2d3561 50%, #4a4a8a 100%);
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.verify-page::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 600px;
+    height: 600px;
+    background: rgba(253, 187, 45, 0.08);
+    border-radius: 50%;
+    animation: float 20s ease-in-out infinite;
+}
+
+.verify-card {
+    background: white;
+    border-radius: 25px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    animation: slideUp 0.6s ease;
+    position: relative;
+    z-index: 1;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(30px, -30px) scale(1.1); }
+}
+
+.verify-card-header {
+    background: linear-gradient(135deg, #1a2a6c 0%, #2d3561 100%);
+    color: white;
+    padding: 40px 35px 30px;
+    text-align: center;
+}
+
+.verify-icon {
+    font-size: 4rem;
+    margin-bottom: 15px;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.verify-card-header h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.verify-card-header p {
+    margin: 0;
+    opacity: 0.85;
+    font-size: 0.95rem;
+}
+
+.verify-card-header strong {
+    color: #fdbb2d;
+}
+
+.verify-card-body {
+    padding: 40px 35px;
+}
+
+.form-group-modern {
+    margin-bottom: 25px;
+}
+
+.form-group-modern label {
+    display: block;
+    color: #2d3436;
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+}
+
+.form-group-modern label i {
+    color: #1a2a6c;
+    margin-right: 6px;
+}
+
+.form-control-modern {
+    border: 2px solid #e8eaf0;
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f8f9fc;
+    width: 100%;
+    text-align: center;
+}
+
+.code-input {
+    font-size: 2rem !important;
+    letter-spacing: 12px;
+    font-weight: 700;
+    color: #1a2a6c;
+    padding: 20px !important;
+}
+
+.form-control-modern:focus {
+    border-color: #1a2a6c;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(26, 42, 108, 0.1);
+    outline: none;
+}
+
+.form-hint {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: #7a8aaa;
+    text-align: center;
+}
+
+.btn-verify {
+    width: 100%;
+    background: linear-gradient(135deg, #1a2a6c 0%, #2d3561 100%);
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.btn-verify:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 40px rgba(26, 42, 108, 0.4);
+}
+
+.btn-verify i {
+    margin-right: 8px;
+}
+
+.verify-links {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #7a8aaa;
+}
+
+.verify-links a {
+    color: #1a2a6c;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.verify-links a:hover {
+    color: #fdbb2d;
+}
+
+.verify-links a i {
+    margin-right: 4px;
+}
+
+.separator {
+    margin: 0 10px;
+    color: #ccc;
+}
+
+.verify-card-footer {
+    background: #f8f9fc;
+    padding: 18px 35px;
+    border-top: 1px solid #e8eaf0;
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    font-size: 0.85rem;
+    color: #7a8aaa;
+}
+
+.verify-card-footer span i {
+    color: #28a745;
+    margin-right: 5px;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-submit quand 5 chiffres saisis
+    const codeInput = document.getElementById('code');
+    if (codeInput) {
+        codeInput.addEventListener('input', function() {
+            // Ne garder que les chiffres
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+    }
+});
+</script>
+{% endblock %}
