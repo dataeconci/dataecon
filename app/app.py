@@ -1478,6 +1478,45 @@ def admin_fix_encoding_v2():
     db.session.commit()
     flash(f'✅ Correction V2 terminée ! {fixed} cours mis à jour.', 'success')
     return redirect(url_for('admin_courses'))
+@app.route('/admin/check_levels')
+@login_required
+def admin_check_levels():
+    """Diagnostic : afficher tous les niveaux en base"""
+    if not current_user.is_admin:
+        flash('Accès réservé aux administrateurs.', 'danger')
+        return redirect(url_for('dashboard'))
+    
+    courses = Course.query.all()
+    levels_info = {}
+    for course in courses:
+        level = course.level
+        if level not in levels_info:
+            levels_info[level] = []
+        levels_info[level].append(f"#{course.id} {course.title[:40]}")
+    
+    # Afficher les résultats
+    result = "<h2>📊 Niveaux en base de données</h2><ul>"
+    for level, course_list in levels_info.items():
+        result += f"<li><strong>'{level}'</strong> ({len(course_list)} cours)<ul>"
+        for c in course_list[:3]:
+            result += f"<li>{c}</li>"
+        result += "</ul></li>"
+    result += "</ul>"
+    
+    # Afficher aussi l'utilisateur connecté et ses droits
+    result += f"<h3>👤 Utilisateur : {current_user.username}</h3>"
+    result += f"<ul><li>Admin: {current_user.is_admin}</li>"
+    result += f"<li>Abonnement: {current_user.subscription_level}</li></ul>"
+    
+    # Tester la fonction has_access pour chaque niveau
+    result += "<h3>🔍 Test has_access()</h3><ul>"
+    for level in levels_info.keys():
+        access = current_user.has_access(level)
+        result += f"<li>has_access('{level}') = {access}</li>"
+    result += "</ul>"
+    
+    return result
+
 
 
 @app.route('/admin/users')
