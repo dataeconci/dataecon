@@ -120,6 +120,14 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = '/app/data'
 app.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024  # 500MB max
 app.config['SERVER_NAME'] = os.environ.get('SERVER_NAME')  # None en production, pas de restriction de domaine
+
+# Interdire le cache navigateur et Cloudflare pour les pages dynamiques
+@app.after_request
+def add_no_cache_headers(response):
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
 # ==================== FILTRE MARKDOWN ====================
 import mistune
 from markupsafe import Markup
