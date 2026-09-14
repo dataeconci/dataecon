@@ -75,6 +75,14 @@
                                                 {% if user.is_admin %}Retirer Admin{% else %}Donner Admin{% endif %}
                                             </button>
                                         </form>
+                                        {% if not user.is_admin %}
+                                        <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}" style="display: inline-block;">
+                                            <button type="submit" class="btn btn-sm btn-danger"
+                                                    onclick="return confirm('⚠️ ATTENTION : Supprimer définitivement l\'utilisateur {{ user.username }} ? Cette action est irréversible.')">
+                                                <i class="fas fa-trash"></i> Supprimer
+                                            </button>
+                                        </form>
+                                        {% endif %}
                                     {% else %}
                                         <span class="text-muted small">Vous-même</span>
                                     {% endif %}

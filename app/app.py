@@ -1077,6 +1077,32 @@ def update_subscription(user_id):
         flash('Niveau d\'abonnement invalide.', 'danger')
     
     return redirect(url_for('admin_users'))
+@app.route('/admin/delete_user/<int:user_id>', methods=['POST'])
+@login_required
+def delete_user(user_id):
+    """Supprimer un utilisateur (sauf les admins)"""
+    if not current_user.is_admin:
+        flash('Accès réservé aux administrateurs.', 'danger')
+        return redirect(url_for('dashboard'))
+    
+    # Empêcher la suppression de son propre compte
+    if user_id == current_user.id:
+        flash('Vous ne pouvez pas supprimer votre propre compte.', 'warning')
+        return redirect(url_for('admin_users'))
+    
+    user = User.query.get_or_404(user_id)
+    
+    # Empêcher la suppression d'un autre admin
+    if user.is_admin:
+        flash('Impossible de supprimer un administrateur.', 'danger')
+        return redirect(url_for('admin_users'))
+    
+    username = user.username
+    db.session.delete(user)
+    db.session.commit()
+    
+    flash(f'L\'utilisateur {username} a été supprimé avec succès.', 'success')
+    return redirect(url_for('admin_users'))
 
 @app.route('/admin/toggle_admin/<int:user_id>', methods=['POST'])
 @login_required
