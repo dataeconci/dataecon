@@ -5,6 +5,9 @@ from flask_mail import Mail, Message
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
+import sib_api_v3_sdk
+from sib_api_v3_sdk.rest import ApiException
+from sib_api_v3_sdk import TransactionalEmailsApi, SendSmtpEmail, ApiClient, Configuration
 import os
 import requests
 import json
@@ -153,6 +156,38 @@ app.config['MAIL_DEFAULT_SENDER'] = 'dataeconci@gmail.com'
 # SÃ©rializer pour les tokens
 serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 ALLOWED_EXTENSIONS = {'csv', 'xlsx', 'xls', 'dta'}
+
+# ==================== CONFIGURATION BREVO API ====================
+BREVO_API_KEY = os.environ.get('BREVO_API_KEY')
+
+def brevo_send_email(to_email, to_name, subject, html_content):
+    """Envoyer un email via l'API HTTP de Brevo (contourne le blocage SMTP de Render)"""
+    if not BREVO_API_KEY:
+        print("❌ BREVO_API_KEY non configurée", flush=True)
+        return False
+    
+    try:
+        configuration = Configuration()
+        configuration.api_key['api-key'] = BREVO_API_KEY
+        
+        api_instance = TransactionalEmailsApi(ApiClient(configuration))
+        
+        email = SendSmtpEmail(
+            to=[{"email": to_email, "name": to_name}],
+            sender={"email": "dataeconci@gmail.com", "name": "DataEcon.Ci"},
+            subject=subject,
+            html_content=html_content
+        )
+        
+        api_instance.send_transac_email(email)
+        print(f"✅ Email envoyé à {to_email} via Brevo", flush=True)
+        return True
+    except ApiException as e:
+        print(f"❌ Erreur Brevo API: {e}", flush=True)
+        return False
+    except Exception as e:
+        print(f"❌ Erreur générale Brevo: {e}", flush=True)
+        return False
 # ==================== CONFIGURATION CLOUDFLARE R2 ====================
 R2_ENDPOINT = os.environ.get('R2_ENDPOINT')
 R2_ACCESS_KEY = os.environ.get('R2_ACCESS_KEY')
@@ -348,41 +383,52 @@ def send_email(to, subject, template, **kwargs):
         return False
 
 def send_confirmation_email(user):
+    """Envoyer un email de confirmation d'inscription via Brevo"""
     try:
         token = serializer.dumps(user.email, salt='email-confirm')
         confirm_url = url_for('confirm_email', token=token, _external=True)
-        print(f"ðŸ”— URL de confirmation: {confirm_url}", flush=True)
+        print(f"🔗 URL de confirmation: {confirm_url}", flush=True)
         
-        return send_email(
-            to=user.email,
-            subject='Confirmez votre email - DataEcon.Ci',
-            template='emails/confirm_email.html',
+        html_content = render_template(
+            'emails/confirm_email.html',
             user=user,
             confirm_url=confirm_url
         )
+        
+        return brevo_send_email(
+            to_email=user.email,
+            to_name=user.first_name or user.username,
+            subject='Confirmez votre email - DataEcon.Ci',
+            html_content=html_content
+        )
     except Exception as e:
-        print(f"âŒ Erreur dans send_confirmation_email: {str(e)}", flush=True)
+        print(f"❌ Erreur dans send_confirmation_email: {str(e)}", flush=True)
         traceback.print_exc()
         return False
 
 def send_reset_email(user):
+    """Envoyer un email de réinitialisation de mot de passe via Brevo"""
     try:
         token = serializer.dumps(user.email, salt='password-reset')
         reset_url = url_for('reset_password', token=token, _external=True)
-        print(f"ðŸ”— URL de rÃ©initialisation: {reset_url}", flush=True)
+        print(f"🔗 URL de réinitialisation: {reset_url}", flush=True)
         
-        return send_email(
-            to=user.email,
-            subject='RÃ©initialisation du mot de passe - DataEcon.Ci',
-            template='emails/reset_password.html',
+        html_content = render_template(
+            'emails/reset_password.html',
             user=user,
             reset_url=reset_url
         )
+        
+        return brevo_send_email(
+            to_email=user.email,
+            to_name=user.first_name or user.username,
+            subject='Réinitialisation du mot de passe - DataEcon.Ci',
+            html_content=html_content
+        )
     except Exception as e:
-        print(f"âŒ Erreur dans send_reset_email: {str(e)}", flush=True)
+        print(f"❌ Erreur dans send_reset_email: {str(e)}", flush=True)
         traceback.print_exc()
         return False
-
 def is_valid_email(email):
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     return re.match(pattern, email) is not None
@@ -408,24 +454,19 @@ def check_subscription_reminders():
         for user in users_to_remind:
             try:
                 jours_restants = (user.subscription_expires_at - datetime.utcnow()).days
-                msg = Message(
-                    subject="Votre abonnement DataEcon.Ci expire bientÃ´t",
-                    recipients=[user.email],
-                    html=render_template(
-                        'emails/subscription_reminder.html',
-                        user=user,
-                        jours_restants=jours_restants,
-                        expire_date=user.subscription_expires_at.strftime('%d/%m/%Y'),
-                        subscription_url=url_for('subscription', _external=True)
-                    ),
-                    sender=app.config['MAIL_DEFAULT_SENDER']
+                                html_content = render_template(
+                    'emails/subscription_reminder.html',
+                    user=user,
+                    jours_restants=jours_restants,
+                    expire_date=user.subscription_expires_at.strftime('%d/%m/%Y'),
+                    subscription_url=url_for('subscription', _external=True)
                 )
-                mail.send(msg)
-                user.reminder_sent = True
-                db.session.commit()
-                print(f"âœ… Rappel envoyÃ© Ã  {user.email}", flush=True)
-            except Exception as e:
-                print(f"âŒ Erreur envoi rappel Ã  {user.email}: {e}", flush=True)
+                brevo_send_email(
+                    to_email=user.email,
+                    to_name=user.first_name or user.username,
+                    subject="Votre abonnement DataEcon.Ci expire bientôt",
+                    html_content=html_content
+                )
 
 def downgrade_expired_subscriptions():
     """Repasser en Gratuit les abonnements expirÃ©s"""
@@ -446,20 +487,17 @@ def downgrade_expired_subscriptions():
             print(f"â¬‡ï¸ {user.username} repassÃ© en Gratuit (abonnement expirÃ©)", flush=True)
 
             try:
-                msg = Message(
-                    subject="Votre abonnement DataEcon.Ci a expirÃ©",
-                    recipients=[user.email],
-                    html=render_template(
-                        'emails/subscription_expired.html',
-                        user=user,
-                        subscription_url=url_for('subscription', _external=True)
-                    ),
-                    sender=app.config['MAIL_DEFAULT_SENDER']
+                               html_content = render_template(
+                    'emails/subscription_expired.html',
+                    user=user,
+                    subscription_url=url_for('subscription', _external=True)
                 )
-                mail.send(msg)
-            except Exception as e:
-                print(f"âŒ Erreur envoi email expiration Ã  {user.email}: {e}", flush=True)
-
+                brevo_send_email(
+                    to_email=user.email,
+                    to_name=user.first_name or user.username,
+                    subject="Votre abonnement DataEcon.Ci a expiré",
+                    html_content=html_content
+                )
 # ==================== ROUTES ====================
 @app.route('/')
 def index():
