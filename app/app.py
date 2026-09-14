@@ -292,12 +292,25 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
     
     def has_access(self, course_level):
+        """Vérifier si l'utilisateur a accès à un cours (tolérant aux variations d'encodage)"""
         if self.is_admin:
             return True
-        if course_level == 'DÃ©butant':
+        
+        # Normaliser le niveau : minuscules, sans espaces
+        if not course_level:
+            return False
+        
+        level_normalized = course_level.lower().strip()
+        
+        # Détecter "débutant" quel que soit l'encodage
+        # Cela couvre : débutant, debutant, dÃ©butant, DÃ©butant, DEBUTANT, etc.
+        if 'butant' in level_normalized or 'butant' in course_level:
             return True
+        
+        # Intermédiaire et Avancé nécessitent un abonnement Premium
         if self.subscription_level in ['premium', 'premium_pro']:
             return True
+        
         return False
     
     def can_download_pdf(self):
