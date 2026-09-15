@@ -1897,8 +1897,7 @@ def models_analyze():
         flash(f'Erreur lors de l\'analyse : {str(e)}', 'danger')
         return redirect(url_for('models_list'))
 
-@app.route('/models/download_report/<path:report_data>')
-@login_required
+
 @app.route('/models/download_report')
 @login_required
 def download_report():
