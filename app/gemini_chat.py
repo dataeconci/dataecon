@@ -89,7 +89,7 @@ def chat_with_gemini(user_message, conversation_history=None):
         
         # Créer le modèle avec le contexte système
         model = genai.GenerativeModel(
-            model_name='gemini-flash-latest',
+            model_name='gemini-3.5-flash-lite',
             system_instruction=SYSTEM_CONTEXT
         )
         
