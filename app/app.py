@@ -1949,7 +1949,9 @@ def download_latex():
         as_attachment=True,
         download_name=f'{report_name}.tex',
         mimetype='application/x-tex'
-    )@app.route('/generate_chart/<int:dataset_id>/<chart_type>')
+    )
+
+@app.route('/generate_chart/<int:dataset_id>/<chart_type>')
 @login_required
 def generate_chart(dataset_id, chart_type):
     """GÃ©nÃ©rer un graphique pour un dataset"""
