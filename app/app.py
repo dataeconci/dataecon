@@ -9,6 +9,7 @@ import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
 from sib_api_v3_sdk import TransactionalEmailsApi, SendSmtpEmail, ApiClient, Configuration
 import os
+import uuid
 import requests
 import json
 import pandas as pd
@@ -25,7 +26,7 @@ import sys
 import traceback
 from apscheduler.schedulers.background import BackgroundScheduler
 from models.models import EconometricModels
-from models.report_generator import create_econometric_report
+from models.report_generator import create_econometric_report, create_latex_report
 import tempfile
 import chardet
 import boto3
@@ -1836,6 +1837,7 @@ def models_analyze():
                                  report_name=None)
         
         # GÃ©nÃ©rer le rapport Word
+                # Générer le rapport Word
         report = create_econometric_report(
             data=df,
             model_results=results,
@@ -1843,10 +1845,38 @@ def models_analyze():
             variable_names=[target_col] + features
         )
         
-        # Sauvegarder le rapport
-        temp_dir = tempfile.mkdtemp()
-        report_path = os.path.join(temp_dir, f'rapport_{model_type}_{datetime.now().strftime("%Y%m%d_%H%M%S")}.docx')
+        # Sauvegarder dans un fichier unique
+        report_id = str(uuid.uuid4())
+        report_dir = '/tmp/reports'
+        os.makedirs(report_dir, exist_ok=True)
+        report_filename = f"{report_id}.docx"
+        report_path = os.path.join(report_dir, report_filename)
         report.save(report_path)
+        
+        # Générer aussi le LaTeX
+        try:
+            latex_content = create_latex_report(
+                data=df,
+                model_results=results,
+                model_type=model_type,
+                variable_names=[target_col] + features
+            )
+            latex_path = os.path.join(report_dir, f"{report_id}.tex")
+            with open(latex_path, 'w', encoding='utf-8') as f:
+                f.write(latex_content)
+        except Exception as e:
+            print(f"⚠️ Erreur génération LaTeX: {e}", flush=True)
+        
+        # Stocker le chemin dans la session
+        session['report_id'] = report_id
+        session['report_name'] = f'rapport_{model_type}_{datetime.now().strftime("%Y%m%d_%H%M%S")}'
+        
+        return render_template('models_results.html', 
+                             results=results, 
+                             model_type=model_type,
+                             dataset=dataset,
+                             has_report=True,
+                             report_name=session['report_name'])
         
         # Lire le fichier pour l'envoi
         with open(report_path, 'rb') as f:
@@ -1869,24 +1899,58 @@ def models_analyze():
 
 @app.route('/models/download_report/<path:report_data>')
 @login_required
-def download_report(report_data):
-    """TÃ©lÃ©charger le rapport Word"""
+@app.route('/models/download_report')
+@login_required
+def download_report():
+    """Télécharger le rapport Word"""
     if not current_user.can_access_models():
-        flash('Vous devez avoir un abonnement Premium Pro pour tÃ©lÃ©charger les rapports.', 'warning')
+        flash('Vous devez avoir un abonnement Premium Pro.', 'warning')
         return redirect(url_for('subscription'))
     
-    try:
-        report_binary = base64.b64decode(report_data)
-        return send_file(
-            BytesIO(report_binary),
-            as_attachment=True,
-            download_name='rapport_analyse.docx',
-            mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-        )
-    except Exception as e:
-        flash(f'Erreur lors du tÃ©lÃ©chargement : {str(e)}', 'danger')
+    report_id = session.get('report_id')
+    if not report_id:
+        flash('Aucun rapport disponible. Lancez une analyse d\'abord.', 'warning')
         return redirect(url_for('models_list'))
-@app.route('/generate_chart/<int:dataset_id>/<chart_type>')
+    
+    report_path = f'/tmp/reports/{report_id}.docx'
+    if not os.path.exists(report_path):
+        flash('Rapport introuvable. Veuillez relancer l\'analyse.', 'warning')
+        return redirect(url_for('models_list'))
+    
+    report_name = session.get('report_name', 'rapport')
+    return send_file(
+        report_path,
+        as_attachment=True,
+        download_name=f'{report_name}.docx',
+        mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    )
+
+
+@app.route('/models/download_latex')
+@login_required
+def download_latex():
+    """Télécharger le rapport LaTeX"""
+    if not current_user.can_access_models():
+        flash('Vous devez avoir un abonnement Premium Pro.', 'warning')
+        return redirect(url_for('subscription'))
+    
+    report_id = session.get('report_id')
+    if not report_id:
+        flash('Aucun rapport disponible. Lancez une analyse d\'abord.', 'warning')
+        return redirect(url_for('models_list'))
+    
+    latex_path = f'/tmp/reports/{report_id}.tex'
+    if not os.path.exists(latex_path):
+        flash('Rapport LaTeX introuvable. Veuillez relancer l\'analyse.', 'warning')
+        return redirect(url_for('models_list'))
+    
+    report_name = session.get('report_name', 'rapport')
+    return send_file(
+        latex_path,
+        as_attachment=True,
+        download_name=f'{report_name}.tex',
+        mimetype='application/x-tex'
+    )@app.route('/generate_chart/<int:dataset_id>/<chart_type>')
 @login_required
 def generate_chart(dataset_id, chart_type):
     """GÃ©nÃ©rer un graphique pour un dataset"""

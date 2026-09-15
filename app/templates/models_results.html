@@ -19,9 +19,12 @@
                 <a href="{{ url_for('models_list') }}" class="btn btn-outline-secondary">
                     <i class="fas fa-arrow-left"></i> Nouvelle analyse
                 </a>
-                {% if report_data %}
-                    <a href="{{ url_for('download_report', report_data=report_data) }}" class="btn btn-success">
-                        <i class="fas fa-file-word"></i> Rapport Word
+                                {% if has_report %}
+                    <a href="{{ url_for('download_report') }}" class="btn btn-success">
+                        <i class="fas fa-file-word"></i> Télécharger le rapport Word
+                    </a>
+                    <a href="{{ url_for('download_latex') }}" class="btn btn-danger">
+                        <i class="fas fa-file-code"></i> Télécharger LaTeX
                     </a>
                 {% endif %}
             </div>
