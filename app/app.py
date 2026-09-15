@@ -1,4 +1,4 @@
-﻿from flask import Flask, render_template, redirect, url_for, flash, request, session, send_file
+from flask import Flask, render_template, redirect, url_for, flash, request, session, send_file, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_mail import Mail, Message
@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
 from sib_api_v3_sdk import TransactionalEmailsApi, SendSmtpEmail, ApiClient, Configuration
-from chatbot import find_best_response, get_whatsapp_link
+from gemini_chat import chat_with_gemini, get_whatsapp_link
 import os
 import uuid
 import requests
@@ -935,7 +935,7 @@ def profile_picture():
 
 @app.route('/api/chat', methods=['POST'])
 def api_chat():
-    """API du chatbot - Répond aux questions des utilisateurs"""
+    """API du chatbot - Utilise Gemini IA générative"""
     try:
         data = request.get_json()
         user_message = data.get('message', '').strip()
@@ -947,25 +947,28 @@ def api_chat():
                 'needs_whatsapp': False
             })
         
-        # Trouver la meilleure réponse
-        response, confidence, needs_whatsapp = find_best_response(user_message)
+        # Appeler Gemini pour une réponse intelligente
+        response_text, needs_whatsapp = chat_with_gemini(user_message)
         
         return jsonify({
             'success': True,
-            'response': response,
+            'response': response_text,
             'needs_whatsapp': needs_whatsapp,
-            'whatsapp_link': get_whatsapp_link() if needs_whatsapp else None,
-            'confidence': round(confidence, 2)
+            'whatsapp_link': get_whatsapp_link() if needs_whatsapp else None
         })
     
     except Exception as e:
         print(f"❌ Erreur chatbot: {e}", flush=True)
+        import traceback
+        traceback.print_exc()
         return jsonify({
             'success': False,
-            'response': 'Une erreur est survenue. Veuillez réessayer.',
+            'response': 'Une erreur est survenue. Veuillez réessayer ou contacter l\'admin.',
             'needs_whatsapp': True,
             'whatsapp_link': get_whatsapp_link()
         })
+
+
 
 
 
