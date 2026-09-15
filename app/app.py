@@ -1116,7 +1116,8 @@ def view_dataset(dataset_id):
 
     except Exception as e:
         flash(f'Erreur lors de la lecture du fichier: {str(e)}', 'danger')
-        return redirect(url_for('datasets'))@app.route('/analytics')
+        return redirect(url_for('datasets'))
+@app.route('/analytics')
 @login_required
 def analytics():
     if not current_user.can_access_data():
