@@ -13,7 +13,8 @@
     
     <!-- CSS personnalisé -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    
+        <!-- CSS Chatbot -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
     
@@ -187,5 +188,56 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     {% block extra_js %}{% endblock %}
+    <!-- ============================================ -->
+    <!-- CHATBOT DataEcon.Ci -->
+    <!-- ============================================ -->
+    
+    <!-- Bouton flottant -->
+    <button id="chatbotToggle" class="chatbot-toggle" title="Poser une question">
+        <i class="fas fa-comments"></i>
+        <span id="chatbotBadge" class="chatbot-badge">1</span>
+    </button>
+
+    <!-- Fenêtre du chatbot -->
+    <div id="chatbotWindow" class="chatbot-window">
+        <!-- En-tête -->
+        <div class="chatbot-header">
+            <div class="chatbot-avatar">🤖</div>
+            <div class="chatbot-info">
+                <h4>EconBot</h4>
+                <p>Assistant DataEcon.Ci</p>
+            </div>
+            <button id="chatbotClose" class="chatbot-close" title="Fermer">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Zone des messages -->
+        <div id="chatbotMessages" class="chatbot-messages"></div>
+
+        <!-- Suggestions rapides -->
+        <div id="chatbotSuggestions" class="chatbot-suggestions"></div>
+
+        <!-- Zone de saisie -->
+        <div class="chatbot-input-area">
+            <input 
+                type="text" 
+                id="chatbotInput" 
+                class="chatbot-input" 
+                placeholder="Posez votre question..."
+                autocomplete="off">
+            <button id="chatbotSend" class="chatbot-send" title="Envoyer">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+
+        <!-- Footer -->
+        <div class="chatbot-footer">
+            <i class="fas fa-shield-alt"></i> Réponses instantanées 24/7
+        </div>
+    </div>
+
+    <!-- Script Chatbot -->
+    <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
 </body>
 </html>

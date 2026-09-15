@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
 from sib_api_v3_sdk import TransactionalEmailsApi, SendSmtpEmail, ApiClient, Configuration
+from chatbot import find_best_response, get_whatsapp_link
 import os
 import uuid
 import requests
@@ -931,6 +932,41 @@ def profile_picture():
         return send_file(current_user.profile_picture)
     # Image par défaut (avatar générique)
     return redirect('https://ui-avatars.com/api/?name=' + current_user.first_name + '+' + current_user.last_name + '&size=200&background=1a2a6c&color=fff')
+
+@app.route('/api/chat', methods=['POST'])
+def api_chat():
+    """API du chatbot - Répond aux questions des utilisateurs"""
+    try:
+        data = request.get_json()
+        user_message = data.get('message', '').strip()
+        
+        if not user_message:
+            return jsonify({
+                'success': False,
+                'response': 'Veuillez entrer un message.',
+                'needs_whatsapp': False
+            })
+        
+        # Trouver la meilleure réponse
+        response, confidence, needs_whatsapp = find_best_response(user_message)
+        
+        return jsonify({
+            'success': True,
+            'response': response,
+            'needs_whatsapp': needs_whatsapp,
+            'whatsapp_link': get_whatsapp_link() if needs_whatsapp else None,
+            'confidence': round(confidence, 2)
+        })
+    
+    except Exception as e:
+        print(f"❌ Erreur chatbot: {e}", flush=True)
+        return jsonify({
+            'success': False,
+            'response': 'Une erreur est survenue. Veuillez réessayer.',
+            'needs_whatsapp': True,
+            'whatsapp_link': get_whatsapp_link()
+        })
+
 
 
 @app.route('/logout')
