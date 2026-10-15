@@ -2166,6 +2166,93 @@ def create_app():
 
 # Alias pour Gunicorn (wsgi:application)
 application = app
+# ==================== FORMATION PRATIQUE ====================
+@app.route('/formations')
+def formations():
+    """Page de formation pratique avec instructeur IA"""
+    return render_template('formations.html')
+
+
+# Client Groq (initialisé une seule fois)
+try:
+    from openai import OpenAI
+    groq_client = OpenAI(
+        base_url="https://api.groq.com/openai/v1",
+        api_key=os.environ.get("GROQ_API_KEY")
+    )
+    print("✅ Client Groq initialisé", flush=True)
+except Exception as e:
+    groq_client = None
+    print(f"⚠️ Erreur initialisation Groq: {e}", flush=True)
+
+
+SYSTEM_PROMPT_TUTOR = """Tu es EconBot, un instructeur IA pour DataEcon.Ci, une plateforme ivoirienne de formation en économétrie et data science.
+
+Ton rôle :
+- Enseigner R, Python, SQL et Tableau aux apprenants
+- Expliquer les concepts de manière claire, pédagogique et progressive
+- Donner des exemples concrets avec des données fictives (souvent des données économiques de la Côte d'Ivoire)
+- Proposer des exercices pratiques
+- Si l'apprenant se trompe, l'encourager à réessayer en donnant un indice (ne jamais donner la réponse directement)
+- Féliciter les bonnes réponses
+- Adapter ton langage au niveau de l'apprenant (débutant / intermédiaire / avancé)
+
+Style :
+- Réponses courtes (3-5 phrases max sauf si explication complexe)
+- Utilise des emojis avec modération 🎯
+- Tutoiement amical mais professionnel
+- Si on te pose une question hors sujet (politique, religion, etc.), ramène poliment vers l'apprentissage
+
+Réponds toujours en français."""
+
+
+@app.route('/api/tutor', methods=['POST'])
+def api_tutor():
+    """Endpoint pour l'instructeur IA de la formation"""
+    if not groq_client:
+        return jsonify({
+            "reponse": "⚠️ L'instructeur IA n'est pas disponible. Contactez l'administrateur."
+        }), 503
+    
+    try:
+        data = request.get_json()
+        message = data.get('message', '').strip()
+        outil = data.get('outil', 'general')
+        niveau = data.get('niveau', 'debutant')
+        
+        if not message:
+            return jsonify({"reponse": "Veuillez poser une question."}), 400
+        
+        # Contexte pour l'IA
+        context = f"""Contexte de la session :
+- Outil sélectionné : {outil}
+- Niveau de l'apprenant : {niveau}
+
+Question de l'apprenant : {message}"""
+        
+        # Appel à l'API Groq
+        completion = groq_client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT_TUTOR},
+                {"role": "user", "content": context}
+            ],
+            temperature=0.7,
+            max_tokens=800
+        )
+        
+        reponse = completion.choices[0].message.content
+        return jsonify({"reponse": reponse})
+        
+    except Exception as e:
+        print(f"❌ Erreur tutor: {e}", flush=True)
+        import traceback
+        traceback.print_exc()
+        return jsonify({
+            "reponse": "❌ Désolé, une erreur technique est survenue. Réessayez dans quelques instants."
+        }), 500
+
+# ==================== FIN FORMATION PRATIQUE ====================
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))

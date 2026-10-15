@@ -29,3 +29,5 @@ sib-api-v3-sdk==7.6.0
 google-generativeai==0.7.2
 pyparsing>=3.1
 httplib2>=0.31.2
+psycopg[binary]==3.2.3
+openai>=1.0.0

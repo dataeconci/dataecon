@@ -1,0 +1,113 @@
+{% extends "layout.html" %}
+
+{% block title %}Formation Pratique - DataEcon.Ci{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/formations.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="formations-page">
+
+    <!-- Bannière -->
+    <section class="formations-hero">
+        <div class="container">
+            <div class="formations-hero-content">
+                <span class="formations-hero-badge">
+                    <i class="fas fa-laptop-code"></i> Formation pratique
+                </span>
+                <h1>Apprenez en <span>pratiquant</span></h1>
+                <p>R, Python, SQL, Tableau — avec un instructeur IA à vos côtés</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="container formations-container">
+
+        <!-- Choix de l'outil -->
+        <section class="outils-section">
+            <h2><i class="fas fa-tools"></i> Choisissez votre outil</h2>
+            <div class="outils-grid">
+                <button class="outil-card" data-outil="python" onclick="chargerOutil('python')">
+                    <i class="fab fa-python"></i>
+                    <h3>Python</h3>
+                    <p>Pandas, NumPy, Matplotlib</p>
+                </button>
+                <button class="outil-card" data-outil="r" onclick="chargerOutil('r')">
+                    <i class="fab fa-r-project"></i>
+                    <h3>R / RStudio</h3>
+                    <p>tidyverse, ggplot2</p>
+                </button>
+                <button class="outil-card" data-outil="sql" onclick="chargerOutil('sql')">
+                    <i class="fas fa-database"></i>
+                    <h3>SQL</h3>
+                    <p>Requêtes, jointures</p>
+                </button>
+                <button class="outil-card" data-outil="tableau" onclick="chargerOutil('tableau')">
+                    <i class="fas fa-chart-bar"></i>
+                    <h3>Tableau</h3>
+                    <p>Visualisation de données</p>
+                </button>
+            </div>
+        </section>
+
+        <!-- Choix du niveau -->
+        <section class="niveau-section">
+            <h2><i class="fas fa-layer-group"></i> Choisissez votre niveau</h2>
+            <div class="niveau-grid">
+                <button class="niveau-btn active" data-niveau="debutant" onclick="changerNiveau('debutant')">
+                    🌱 Débutant
+                </button>
+                <button class="niveau-btn" data-niveau="intermediaire" onclick="changerNiveau('intermediaire')">
+                    🚀 Intermédiaire
+                </button>
+                <button class="niveau-btn" data-niveau="avance" onclick="changerNiveau('avance')">
+                    🎯 Avancé
+                </button>
+            </div>
+        </section>
+
+        <!-- Zone de pratique + Instructeur IA -->
+        <section class="pratique-section">
+            <div class="pratique-grid">
+
+                <!-- Éditeur -->
+                <div class="editeur-panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-code"></i> Zone de pratique</h3>
+                        <span id="outil-actif-label">Python - Débutant</span>
+                    </div>
+                    <div class="editeur-content" id="editeur">
+                        <div class="placeholder">
+                            <i class="fas fa-hand-pointer"></i>
+                            <p>Sélectionnez un outil ci-dessus pour commencer</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Instructeur IA -->
+                <div class="ia-panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-robot"></i> Instructeur IA</h3>
+                        <span class="status-online">● En ligne</span>
+                    </div>
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="msg-ia">
+                            <strong>🤖 EconBot</strong>
+                            <p>Bonjour ! Je suis votre instructeur IA. Choisissez un outil et un niveau, puis posez-moi vos questions. Je vous expliquerai les concepts et vous proposerai des exercices pratiques.</p>
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" id="question-ia" placeholder="Posez votre question..." onkeypress="if(event.key==='Enter') envoyerQuestion()">
+                        <button onclick="envoyerQuestion()"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/formations.js') }}"></script>
+{% endblock %}
