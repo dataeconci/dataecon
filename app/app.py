@@ -2232,7 +2232,7 @@ Question de l'apprenant : {message}"""
         
         # Appel à l'API Groq
         completion = groq_client.chat.completions.create(
-            model="llama-3.1-8b-instant",
+            model="openai/gpt-oss-20b",
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT_TUTOR},
                 {"role": "user", "content": context}
