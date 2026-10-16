@@ -30,16 +30,33 @@ function chargerOutil(outil) {
                     allow="cross-origin-isolated">
             </iframe>`;
     } 
-    else if (outil === 'r') {
+        else if (outil === 'r') {
         editeur.innerHTML = `
-            <div class="placeholder">
-                <i class="fas fa-r-project"></i>
-                <p>R / RStudio - En cours d'intégration</p>
-                <small style="margin-top:10px; color:#aaa;">
-                    L'environnement R sera disponible prochainement.
-                    En attendant, posez vos questions à l'instructeur IA !
-                </small>
+            <div class="r-editor-wrapper">
+                <div class="r-toolbar">
+                    <span class="r-label">📝 Éditeur R (WebR)</span>
+                    <button class="r-run-btn" onclick="executerR()">
+                        <i class="fas fa-play"></i> Exécuter
+                    </button>
+                </div>
+                <textarea id="r-input" class="r-textarea" placeholder="-- Écrivez votre code R ici"># Exemple : statistiques descriptives
+ventes <- data.frame(
+  produit = c('Cacao', 'Café', 'Anacarde', 'Coton', 'Cacao'),
+  quantite = c(120, 85, 150, 95, 200),
+  prix = c(1500, 1200, 800, 950, 1520)
+)
+ventes$total <- ventes$quantite * ventes$prix
+summary(ventes$total)
+mean(ventes$total)</textarea>
+                <div class="r-result-header">
+                    <span>📊 Console R</span>
+                    <span id="r-status" class="r-status"></span>
+                </div>
+                <div id="r-result" class="r-result">
+                    <p class="r-placeholder">Cliquez sur "Exécuter" pour lancer le code.</p>
+                </div>
             </div>`;
+        chargerWebR();
     }
         else if (outil === 'sql') {
         editeur.innerHTML = `
@@ -339,3 +356,111 @@ function executerSQL() {
     }
 }
 
+
+
+
+// ============================================
+// R - MOTEUR WEBR DANS LE NAVIGATEUR
+// ============================================
+
+let webRInstance = null;
+let webRLoaded = false;
+
+async function chargerWebR() {
+    if (webRLoaded && webRInstance) {
+        return;
+    }
+    
+    const status = document.getElementById('r-status');
+    if (status) status.textContent = '⏳ Chargement de R...';
+    
+    try {
+        // Charger le script WebR depuis le CDN
+        if (!window.WebR) {
+            await new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://webr.r-wasm.org/latest/webr.mjs';
+                script.type = 'module';
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
+        
+        // Import dynamique du module WebR
+        const { WebR } = await import('https://webr.r-wasm.org/latest/webr.mjs');
+        webRInstance = new WebR();
+        await webRInstance.init();
+        
+        webRLoaded = true;
+        if (status) status.textContent = '✅ R prêt';
+        console.log('✅ WebR initialisé');
+        
+        const resultDiv = document.getElementById('r-result');
+        if (resultDiv) {
+            resultDiv.innerHTML = '<p style="color:#27ae60;">✅ R est prêt. Cliquez sur "Exécuter" pour lancer votre code.</p>';
+        }
+        
+    } catch (error) {
+        console.error('Erreur WebR:', error);
+        const status = document.getElementById('r-status');
+        if (status) status.textContent = '❌ Erreur';
+        const resultDiv = document.getElementById('r-result');
+        if (resultDiv) {
+            resultDiv.innerHTML = '<p style="color:#d33;">❌ Impossible de charger R. Vérifiez votre connexion internet.</p>';
+        }
+    }
+}
+
+async function executerR() {
+    const resultDiv = document.getElementById('r-result');
+    const status = document.getElementById('r-status');
+    
+    if (!webRInstance) {
+        resultDiv.innerHTML = '<p style="color:#d33;">⏳ R est en cours de chargement. Patientez quelques secondes.</p>';
+        return;
+    }
+    
+    const input = document.getElementById('r-input').value.trim();
+    if (!input) return;
+    
+    const start = performance.now();
+    resultDiv.innerHTML = '<p class="r-placeholder">⏳ Exécution en cours...</p>';
+    status.textContent = '';
+    
+    try {
+        const result = await webRInstance.evalR(input);
+        const output = await result.toJs();
+        const duree = (performance.now() - start).toFixed(0);
+        
+        let html = '';
+        
+        // Sortie texte
+        if (output.output && output.output.length > 0) {
+            output.output.forEach(item => {
+                if (item.type === 'stdout' || item.type === 'stderr') {
+                    html += `<pre class="r-output">${escapeHtml(item.data)}</pre>`;
+                }
+            });
+        }
+        
+        // Résultat (valeurs)
+        if (output.result !== undefined && output.result !== null) {
+            const resultStr = Array.isArray(output.result) 
+                ? output.result.join(', ') 
+                : String(output.result);
+            html += `<pre class="r-output r-value">[1] ${escapeHtml(resultStr)}</pre>`;
+        }
+        
+        if (!html) {
+            html = '<p style="color:#666;">✅ Code exécuté (aucun résultat affiché).</p>';
+        }
+        
+        resultDiv.innerHTML = html;
+        status.textContent = `✅ ${duree} ms`;
+        
+    } catch (error) {
+        resultDiv.innerHTML = `<p style="color:#d33;">❌ Erreur R : ${escapeHtml(error.message)}</p>`;
+        status.textContent = '';
+    }
+}
