@@ -81,15 +81,50 @@ SELECT * FROM ventes LIMIT 5;">SELECT * FROM ventes LIMIT 5;</textarea>
             </div>`;
         chargerSQLJS();
     }
-    else if (outil === 'tableau') {
+       else if (outil === 'tableau') {
         editeur.innerHTML = `
-            <div class="placeholder">
-                <i class="fas fa-chart-bar"></i>
-                <p>Tableau - En cours d'intégration</p>
-                <small style="margin-top:10px; color:#aaa;">
-                    Les tableaux de bord Tableau seront disponibles prochainement.
-                </small>
+            <div class="tableau-wrapper">
+                <div class="tableau-toolbar">
+                    <span class="tableau-label">📊 Mini-Tableau interactif</span>
+                    <div class="tableau-controls">
+                        <select id="tableau-type" class="tableau-select">
+                            <option value="bar">Barres</option>
+                            <option value="line">Lignes</option>
+                            <option value="pie">Camembert</option>
+                            <option value="doughnut">Anneau</option>
+                            <option value="scatter">Nuage de points</option>
+                        </select>
+                        <button class="tableau-run-btn" onclick="genererGraphique()">
+                            <i class="fas fa-chart-line"></i> Générer
+                        </button>
+                    </div>
+                </div>
+                <div class="tableau-config">
+                    <div class="tableau-config-item">
+                        <label>📌 Dimension (Axe X)</label>
+                        <select id="tableau-dim" class="tableau-select">
+                            <option value="ville">Ville</option>
+                            <option value="produit">Produit</option>
+                            <option value="date">Date</option>
+                        </select>
+                    </div>
+                    <div class="tableau-config-item">
+                        <label>📈 Mesure (Axe Y)</label>
+                        <select id="tableau-mesure" class="tableau-select">
+                            <option value="quantite">Quantité totale</option>
+                            <option value="prix_unitaire">Prix unitaire moyen</option>
+                            <option value="chiffre_affaires">Chiffre d'affaires</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="tableau-canvas-container">
+                    <canvas id="tableau-canvas"></canvas>
+                </div>
+                <div class="tableau-tip">
+                    💡 <strong>Astuce :</strong> dans Tableau, on glisse une <strong>dimension</strong> sur l'axe X et une <strong>mesure</strong> sur l'axe Y. Ici, on simule ce workflow avec les menus ci-dessus.
+                </div>
             </div>`;
+        setTimeout(initialiserTableau, 100);
     }
 }
 
@@ -506,4 +541,151 @@ function formaterValeurR(jsValue) {
     
     // Cas par défaut
     return String(jsValue);
+}
+
+
+
+// ============================================
+// MINI-TABLEAU INTERACTIF (Chart.js)
+// ============================================
+
+let tableauChart = null;
+let chartJsLoaded = false;
+
+const TABLEAU_DATA = [
+    { ville: 'Abidjan',   produit: 'Cacao',    date: '2024-01', quantite: 120, prix_unitaire: 1500 },
+    { ville: 'Abidjan',   produit: 'Café',     date: '2024-01', quantite: 85,  prix_unitaire: 1200 },
+    { ville: 'San-Pédro', produit: 'Cacao',    date: '2024-02', quantite: 200, prix_unitaire: 1520 },
+    { ville: 'Bouaké',    produit: 'Anacarde', date: '2024-02', quantite: 150, prix_unitaire: 800  },
+    { ville: 'Daloa',     produit: 'Café',     date: '2024-02', quantite: 60,  prix_unitaire: 1180 },
+    { ville: 'Abidjan',   produit: 'Cacao',    date: '2024-03', quantite: 180, prix_unitaire: 1550 },
+    { ville: 'Korhogo',   produit: 'Anacarde', date: '2024-03', quantite: 220, prix_unitaire: 820  },
+    { ville: 'Bouaké',    produit: 'Coton',    date: '2024-03', quantite: 95,  prix_unitaire: 950  },
+    { ville: 'San-Pédro', produit: 'Cacao',    date: '2024-04', quantite: 250, prix_unitaire: 1600 },
+    { ville: 'Man',       produit: 'Café',     date: '2024-04', quantite: 110, prix_unitaire: 1250 },
+    { ville: 'Korhogo',   produit: 'Coton',    date: '2024-05', quantite: 130, prix_unitaire: 980  },
+    { ville: 'Bouaké',    produit: 'Anacarde', date: '2024-05', quantite: 175, prix_unitaire: 850  },
+    { ville: 'Abidjan',   produit: 'Cacao',    date: '2024-06', quantite: 300, prix_unitaire: 1650 },
+    { ville: 'Daloa',     produit: 'Café',     date: '2024-06', quantite: 90,  prix_unitaire: 1220 },
+    { ville: 'Korhogo',   produit: 'Coton',    date: '2024-07', quantite: 140, prix_unitaire: 1000 }
+];
+
+function chargerChartJS(callback) {
+    if (chartJsLoaded && window.Chart) {
+        callback();
+        return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js';
+    script.onload = function() {
+        chartJsLoaded = true;
+        callback();
+    };
+    script.onerror = function() {
+        console.error('Impossible de charger Chart.js');
+    };
+    document.head.appendChild(script);
+}
+
+function initialiserTableau() {
+    chargerChartJS(function() {
+        genererGraphique();
+    });
+}
+
+function genererGraphique() {
+    const canvas = document.getElementById('tableau-canvas');
+    if (!canvas) return;
+    
+    const type = document.getElementById('tableau-type').value;
+    const dimension = document.getElementById('tableau-dim').value;
+    const mesure = document.getElementById('tableau-mesure').value;
+    
+    // Agréger les données
+    const agreg = {};
+    TABLEAU_DATA.forEach(row => {
+        const key = row[dimension];
+        if (!agreg[key]) agreg[key] = { quantite: 0, prix_unitaire: 0, chiffre_affaires: 0, count: 0 };
+        
+        agreg[key].quantite += row.quantite;
+        agreg[key].prix_unitaire += row.prix_unitaire;
+        agreg[key].chiffre_affaires += row.quantite * row.prix_unitaire;
+        agreg[key].count += 1;
+    });
+    
+    // Calculer la valeur finale selon la mesure
+    const labels = Object.keys(agreg).sort();
+    const data = labels.map(label => {
+        if (mesure === 'prix_unitaire') {
+            return Math.round(agreg[label].prix_unitaire / agreg[label].count);
+        }
+        return agreg[label][mesure];
+    });
+    
+    // Couleurs
+    const couleurs = [
+        '#2a5298', '#27ae60', '#e67e22', '#e74c3c', '#9b59b6',
+        '#3498db', '#16a085', '#f39c12', '#c0392b', '#8e44ad'
+    ];
+    
+    // Détruire l'ancien graphique
+    if (tableauChart) tableauChart.destroy();
+    
+    // Créer le graphique
+    const ctx = canvas.getContext('2d');
+    tableauChart = new Chart(ctx, {
+        type: type === 'doughnut' ? 'doughnut' : type,
+        data: {
+            labels: labels,
+            datasets: [{
+                label: getLabelMesure(mesure),
+                data: data,
+                backgroundColor: type === 'line' ? 'rgba(42, 82, 152, 0.2)' : couleurs,
+                borderColor: type === 'line' ? '#2a5298' : couleurs,
+                borderWidth: 2,
+                fill: type === 'line',
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: type === 'pie' || type === 'doughnut',
+                    position: 'bottom'
+                },
+                title: {
+                    display: true,
+                    text: `${getLabelMesure(mesure)} par ${getLabelDimension(dimension)}`,
+                    font: { size: 14, weight: 'bold' },
+                    color: '#1e3c72'
+                }
+            },
+            scales: (type === 'pie' || type === 'doughnut') ? {} : {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value.toLocaleString('fr-FR');
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function getLabelMesure(mesure) {
+    const labels = {
+        quantite: 'Quantité totale',
+        prix_unitaire: 'Prix unitaire moyen (FCFA)',
+        chiffre_affaires: 'Chiffre d\'affaires (FCFA)'
+    };
+    return labels[mesure] || mesure;
+}
+
+function getLabelDimension(dim) {
+    const labels = { ville: 'ville', produit: 'produit', date: 'date' };
+    return labels[dim] || dim;
 }
