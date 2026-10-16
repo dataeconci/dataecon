@@ -665,3 +665,414 @@
     color: #8a6d3b;
     line-height: 1.5;
 }
+
+/* ============================================
+   MODE COURS GUIDÉ - BOUTON
+   ============================================ */
+
+.cours-section {
+    margin-bottom: 30px;
+}
+
+.cours-cta {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 25px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 4px 15px rgba(30, 60, 114, 0.2);
+    flex-wrap: wrap;
+}
+
+.cours-cta-text h3 {
+    margin: 0 0 8px;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.cours-cta-text h3 i {
+    margin-right: 8px;
+    color: #ffc107;
+}
+
+.cours-cta-text p {
+    margin: 0;
+    font-size: 0.95rem;
+    opacity: 0.9;
+}
+
+.btn-commencer-cours {
+    background: #ffc107;
+    color: #1e3c72;
+    border: none;
+    border-radius: 8px;
+    padding: 14px 26px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-commencer-cours:hover {
+    background: #ffca28;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 193, 7, 0.4);
+}
+
+.btn-commencer-cours i {
+    font-size: 1.2rem;
+}
+
+
+/* ============================================
+   MODE COURS GUIDÉ - INTERFACE
+   ============================================ */
+
+.cours-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 500px;
+    color: #2a5298;
+    gap: 15px;
+}
+
+.cours-loading i {
+    font-size: 2.5rem;
+}
+
+.cours-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 550px;
+    background: #fafafa;
+}
+
+/* Header avec progression */
+.cours-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: #1e3c72;
+    color: white;
+}
+
+.cours-progression {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.cours-etape {
+    font-size: 0.85rem;
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+.cours-barre {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    overflow: hidden;
+    max-width: 300px;
+}
+
+.cours-barre-fill {
+    height: 100%;
+    background: #ffc107;
+    border-radius: 3px;
+    transition: width 0.4s ease;
+}
+
+.cours-quit {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.cours-quit:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Corps du cours */
+.cours-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.cours-concept-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 18px;
+    background: linear-gradient(135deg, #e8f0fe 0%, #f0f5ff 100%);
+    border-left: 4px solid #2a5298;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.cours-emoji {
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.cours-concept-header h3 {
+    margin: 0 0 6px;
+    color: #1e3c72;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.cours-objectif {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #555;
+    font-style: italic;
+}
+
+/* Sections */
+.cours-section-explication,
+.cours-section-image,
+.cours-section-code,
+.cours-section-reflexion,
+.cours-section-exercice {
+    margin-bottom: 22px;
+    padding: 15px 18px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.cours-section-explication h4,
+.cours-section-image h4,
+.cours-section-code h4,
+.cours-section-reflexion h4,
+.cours-section-exercice h4 {
+    margin: 0 0 10px;
+    font-size: 1rem;
+    color: #2a5298;
+    font-weight: 700;
+}
+
+.cours-texte {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #333;
+}
+
+.cours-texte code {
+    background: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: #c0392b;
+}
+
+.cours-texte strong {
+    color: #1e3c72;
+}
+
+/* Image SVG */
+.cours-image-container {
+    display: flex;
+    justify-content: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.cours-image-container svg {
+    max-width: 100%;
+    height: auto;
+    max-height: 200px;
+}
+
+/* Bloc code */
+.cours-code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.cours-copy-btn {
+    background: #2a5298;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.cours-copy-btn:hover {
+    background: #1e3c72;
+}
+
+.cours-copy-btn i {
+    margin-right: 4px;
+}
+
+.cours-code {
+    background: #1e2a3a;
+    color: #e8f0fe;
+    padding: 15px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: 'Courier New', Consolas, monospace;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    margin: 0;
+    white-space: pre;
+}
+
+.cours-code code {
+    color: inherit;
+}
+
+/* Question de réflexion */
+.cours-section-reflexion {
+    background: #fff9e6;
+    border-left: 4px solid #ffc107;
+}
+
+.cours-section-reflexion p {
+    margin: 8px 0;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.cours-section-reflexion small {
+    color: #8a6d3b;
+    font-size: 0.82rem;
+    font-style: italic;
+}
+
+/* Exercice */
+.cours-section-exercice {
+    background: #e8f5e9;
+    border-left: 4px solid #27ae60;
+}
+
+.cours-exercice-box p {
+    margin: 8px 0;
+    font-size: 0.95rem;
+    color: #333;
+    line-height: 1.6;
+}
+
+.cours-indice {
+    margin: 10px 0;
+    padding: 10px 15px;
+    background: rgba(255, 193, 7, 0.15);
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.cours-indice summary {
+    font-weight: 600;
+    color: #8a6d3b;
+    cursor: pointer;
+}
+
+.cours-indice p {
+    margin: 8px 0 0;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+.cours-consigne {
+    padding: 10px;
+    background: rgba(39, 174, 96, 0.1);
+    border-radius: 6px;
+    font-size: 0.9rem !important;
+}
+
+.cours-validate-btn {
+    background: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cours-validate-btn:hover {
+    background: #219a52;
+    transform: translateY(-1px);
+}
+
+/* Navigation */
+.cours-navigation {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 15px 0;
+    border-top: 1px solid #e0e0e0;
+    margin-top: 10px;
+}
+
+.cours-nav-btn {
+    background: white;
+    border: 2px solid #2a5298;
+    color: #2a5298;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cours-nav-btn:hover:not(:disabled) {
+    background: #2a5298;
+    color: white;
+}
+
+.cours-nav-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.cours-nav-next {
+    background: #2a5298;
+    color: white;
+    margin-left: auto;
+}
+
+.cours-nav-next:hover:not(:disabled) {
+    background: #1e3c72;
+}

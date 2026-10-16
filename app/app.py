@@ -2253,6 +2253,43 @@ Question de l'apprenant : {message}"""
         }), 500
 
 # ==================== FIN FORMATION PRATIQUE ====================
+# ==================== API LEÇONS FORMATION ====================
+@app.route('/api/lesson/<outil>/<niveau>')
+def api_lesson(outil, niveau):
+    """Retourne la leçon JSON pour un outil et un niveau donnés"""
+    import json as json_module
+    import os as os_module
+    
+    # Sécuriser les paramètres
+    if outil not in ['python', 'r', 'sql', 'tableau']:
+        return jsonify({"error": "Outil non supporté"}), 400
+    if niveau not in ['debutant', 'intermediaire', 'avance']:
+        return jsonify({"error": "Niveau non supporté"}), 400
+    
+    # Chercher le fichier de leçon
+    chemin = os_module.path.join(
+        os_module.path.dirname(__file__),
+        'data', 'lessons',
+        f'{outil}_{niveau}.json'
+    )
+    
+    if not os_module.path.exists(chemin):
+        return jsonify({
+            "error": "Leçon non disponible",
+            "message": f"La leçon {outil} / {niveau} n'est pas encore disponible."
+        }), 404
+    
+    try:
+        with open(chemin, 'r', encoding='utf-8') as f:
+            lecon = json_module.load(f)
+        return jsonify(lecon)
+    except Exception as e:
+        print(f"❌ Erreur lecture leçon: {e}", flush=True)
+        return jsonify({"error": "Erreur lecture leçon"}), 500
+
+# ==================== FIN API LEÇONS ====================
+
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))

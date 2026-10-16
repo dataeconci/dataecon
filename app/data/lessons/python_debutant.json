@@ -1,0 +1,72 @@
+{
+  "outil": "python",
+  "niveau": "debutant",
+  "titre": "Les bases de Python",
+  "description": "Apprenez les variables, les types de données, les opérations et les conditions en Python.",
+  "concepts": [
+    {
+      "id": "python_deb_1",
+      "titre": "Les variables",
+      "emoji": "📦",
+      "objectif": "Comprendre ce qu'est une variable et comment en créer une",
+      "explication": "Une **variable** est comme une boîte dans laquelle on range une valeur. On lui donne un nom pour pouvoir la réutiliser plus tard.\n\nEn Python, on crée une variable avec le signe `=`. Par exemple, `age = 25` crée une variable nommée `age` qui contient la valeur `25`.\n\n⚠️ **Important** : le nom d'une variable ne peut pas contenir d'espaces ni commencer par un chiffre.",
+      "image_svg": "<svg viewBox='0 0 400 200' xmlns='http://www.w3.org/2000/svg'><rect x='50' y='50' width='120' height='100' fill='#e3f2fd' stroke='#2a5298' stroke-width='3' rx='10'/><text x='110' y='90' text-anchor='middle' font-size='16' font-weight='bold' fill='#2a5298'>age</text><text x='110' y='115' text-anchor='middle' font-size='24' fill='#27ae60'>25</text><text x='280' y='105' text-anchor='middle' font-size='14' fill='#555'>La variable range la valeur</text><path d='M175 100 L245 100' stroke='#555' stroke-width='2' marker-end='url(#arrow)'/><defs><marker id='arrow' markerWidth='10' markerHeight='10' refX='9' refY='3' orient='auto'><polygon points='0,0 10,3 0,6' fill='#555'/></marker></defs></svg>",
+      "code_exemple": "# Créer une variable\nage = 25\nprenom = 'Awa'\nprix = 1500.50\n\n# Afficher les valeurs\nprint(age)\nprint(prenom)\nprint(prix)",
+      "question_reflexion": "Que se passerait-il si on écrivait `2age = 25` ?",
+      "exercice": {
+        "enonce": "Crée une variable `ville` contenant la valeur 'Abidjan' et une variable `population` contenant 5635000. Affiche les deux.",
+        "indice": "Utilise le signe `=` pour assigner, puis `print()` pour afficher.",
+        "solution_attendue": "ville = 'Abidjan'\npopulation = 5635000\nprint(ville)\nprint(population)",
+        "mots_cles": ["ville", "Abidjan", "population", "5635000", "print"]
+      }
+    },
+    {
+      "id": "python_deb_2",
+      "titre": "Les types de données",
+      "emoji": "🔢",
+      "objectif": "Découvrir les types de base : int, float, str, bool",
+      "explication": "Python distingue plusieurs **types** de données :\n\n- `int` : nombres entiers (ex : `25`)\n- `float` : nombres décimaux (ex : `1500.50`)\n- `str` : chaînes de caractères, entre guillemets (ex : `'Awa'`)\n- `bool` : booléens, `True` ou `False`\n\nOn peut vérifier le type d'une variable avec la fonction `type()`.",
+      "image_svg": "<svg viewBox='0 0 500 180' xmlns='http://www.w3.org/2000/svg'><rect x='20' y='40' width='100' height='80' fill='#e3f2fd' stroke='#2a5298' stroke-width='2' rx='8'/><text x='70' y='70' text-anchor='middle' font-size='14' font-weight='bold' fill='#2a5298'>int</text><text x='70' y='95' text-anchor='middle' font-size='14' fill='#333'>25</text><rect x='135' y='40' width='100' height='80' fill='#fff3e0' stroke='#e67e22' stroke-width='2' rx='8'/><text x='185' y='70' text-anchor='middle' font-size='14' font-weight='bold' fill='#e67e22'>float</text><text x='185' y='95' text-anchor='middle' font-size='14' fill='#333'>1500.5</text><rect x='250' y='40' width='100' height='80' fill='#e8f5e9' stroke='#27ae60' stroke-width='2' rx='8'/><text x='300' y='70' text-anchor='middle' font-size='14' font-weight='bold' fill='#27ae60'>str</text><text x='300' y='95' text-anchor='middle' font-size='14' fill='#333'>'Awa'</text><rect x='365' y='40' width='100' height='80' fill='#fce4ec' stroke='#e74c3c' stroke-width='2' rx='8'/><text x='415' y='70' text-anchor='middle' font-size='14' font-weight='bold' fill='#e74c3c'>bool</text><text x='415' y='95' text-anchor='middle' font-size='14' fill='#333'>True</text></svg>",
+      "code_exemple": "age = 25\nprix = 1500.50\nprenom = 'Awa'\nest_etudiant = True\n\nprint(type(age))\nprint(type(prix))\nprint(type(prenom))\nprint(type(est_etudiant))",
+      "question_reflexion": "Quel est le type de la valeur `3.14` ? Et celui de `'3.14'` ?",
+      "exercice": {
+        "enonce": "Crée 4 variables : un entier, un décimal, une chaîne et un booléen. Affiche le type de chacune avec `type()`.",
+        "indice": "Un booléen s'écrit `True` ou `False` avec une majuscule.",
+        "solution_attendue": "a = 10\nb = 3.14\nc = 'Bonjour'\nd = False\nprint(type(a))\nprint(type(b))\nprint(type(c))\nprint(type(d))",
+        "mots_cles": ["type", "True", "False", "print"]
+      }
+    },
+    {
+      "id": "python_deb_3",
+      "titre": "Les opérations",
+      "emoji": "➕",
+      "objectif": "Maîtriser les opérations arithmétiques de base",
+      "explication": "Python permet de faire tous les calculs classiques :\n\n- `+` addition\n- `-` soustraction\n- `*` multiplication\n- `/` division (renvoie un float)\n- `//` division entière\n- `%` modulo (reste)\n- `**` puissance\n\n⚠️ Attention à la **priorité des opérations** : `*` et `/` sont prioritaires sur `+` et `-`. Utilise des parenthèses pour clarifier.",
+      "image_svg": "<svg viewBox='0 0 500 120' xmlns='http://www.w3.org/2000/svg'><text x='250' y='30' text-anchor='middle' font-size='16' font-weight='bold' fill='#2a5298'>Les 7 opérateurs Python</text><text x='60' y='70' font-size='14' fill='#333'>+  -  *  /  //  %  **</text><text x='60' y='95' font-size='12' fill='#888'>addition · soustraction · multiplication · division · division entière · reste · puissance</text></svg>",
+      "code_exemple": "a = 10\nb = 3\n\nprint(a + b)   # 13\nprint(a - b)   # 7\nprint(a * b)   # 30\nprint(a / b)   # 3.3333...\nprint(a // b)  # 3\nprint(a % b)   # 1\nprint(a ** b)  # 1000",
+      "question_reflexion": "Que renvoie `10 / 2` ? Et `10 // 3` ?",
+      "exercice": {
+        "enonce": "Un commerçant achète 15 sacs de riz à 12000 FCFA l'unité. Il revend chaque sac à 15000 FCFA. Calcule et affiche son bénéfice total.",
+        "indice": "Bénéfice = (prix de vente - prix d'achat) × quantité.",
+        "solution_attendue": "prix_achat = 12000\nprix_vente = 15000\nquantite = 15\nbenefice = (prix_vente - prix_achat) * quantite\nprint(benefice)",
+        "mots_cles": ["benefice", "12000", "15000", "15", "print"]
+      }
+    },
+    {
+      "id": "python_deb_4",
+      "titre": "Les conditions (if / else)",
+      "emoji": "🔀",
+      "objectif": "Prendre des décisions dans un programme",
+      "explication": "Une **condition** permet d'exécuter du code uniquement si une situation est vraie.\n\nLa structure est :\n- `if` (si)\n- `elif` (sinon si)\n- `else` (sinon)\n\n⚠️ **Indentation obligatoire** : le code dans le `if` doit être décalé de 4 espaces.",
+      "image_svg": "<svg viewBox='0 0 400 180' xmlns='http://www.w3.org/2000/svg'><rect x='150' y='20' width='100' height='40' fill='#e3f2fd' stroke='#2a5298' stroke-width='2' rx='8'/><text x='200' y='46' text-anchor='middle' font-size='13' fill='#2a5298'>if age &gt;= 18</text><path d='M200 60 L200 80' stroke='#555' stroke-width='2'/><path d='M200 80 L100 80 L100 100' stroke='#27ae60' stroke-width='2' marker-end='url(#a2)'/><path d='M200 80 L300 80 L300 100' stroke='#e74c3c' stroke-width='2' marker-end='url(#a3)'/><defs><marker id='a2' markerWidth='10' markerHeight='10' refX='5' refY='9' orient='auto'><polygon points='0,0 10,0 5,10' fill='#27ae60'/></marker><marker id='a3' markerWidth='10' markerHeight='10' refX='5' refY='9' orient='auto'><polygon points='0,0 10,0 5,10' fill='#e74c3c'/></marker></defs><text x='100' y='115' text-anchor='middle' font-size='12' fill='#27ae60'>True (majeur)</text><text x='300' y='115' text-anchor='middle' font-size='12' fill='#e74c3c'>False (mineur)</text><rect x='50' y='130' width='100' height='35' fill='#e8f5e9' stroke='#27ae60' stroke-width='2' rx='6'/><text x='100' y='152' text-anchor='middle' font-size='11' fill='#333'>Accepter</text><rect x='250' y='130' width='100' height='35' fill='#fce4ec' stroke='#e74c3c' stroke-width='2' rx='6'/><text x='300' y='152' text-anchor='middle' font-size='11' fill='#333'>Refuser</text></svg>",
+      "code_exemple": "age = 20\n\nif age >= 18:\n    print('Majeur')\nelse:\n    print('Mineur')",
+      "question_reflexion": "Que se passe-t-il si on écrit `if age = 20:` au lieu de `if age == 20:` ?",
+      "exercice": {
+        "enonce": "Crée une variable `note` avec une valeur entre 0 et 20. Si elle est supérieure ou égale à 10, affiche 'Admis', sinon affiche 'Recalé'.",
+        "indice": "Utilise `>=` pour la comparaison et n'oublie pas l'indentation de 4 espaces.",
+        "solution_attendue": "note = 15\nif note >= 10:\n    print('Admis')\nelse:\n    print('Recalé')",
+        "mots_cles": ["note", "if", "else", "Admis", "Recalé"]
+      }
+    }
+  ]
+}

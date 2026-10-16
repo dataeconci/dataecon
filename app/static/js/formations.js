@@ -689,3 +689,248 @@ function getLabelDimension(dim) {
     const labels = { ville: 'ville', produit: 'produit', date: 'date' };
     return labels[dim] || dim;
 }
+
+
+// ============================================
+// MODE COURS GUIDÉ
+// ============================================
+
+let leconActuelle = null;
+let conceptIndex = 0;
+let exerciceValide = false;
+
+async function demarrerCours() {
+    // Vérifier qu'un outil et un niveau sont sélectionnés
+    if (!outilActif) {
+        alert('👆 Choisissez d\'abord un outil (Python, R, SQL ou Tableau).');
+        return;
+    }
+    
+    const editeur = document.getElementById('editeur');
+    editeur.innerHTML = `
+        <div class="cours-loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Chargement du cours ${outilActif} / ${niveauActif}...</p>
+        </div>`;
+    
+    try {
+        const response = await fetch(`/api/lesson/${outilActif}/${niveauActif}`);
+        const data = await response.json();
+        
+        if (!response.ok) {
+            editeur.innerHTML = `
+                <div class="placeholder">
+                    <i class="fas fa-info-circle"></i>
+                    <p>${data.message || 'Cours non disponible pour le moment.'}</p>
+                    <small style="margin-top:10px; color:#aaa;">
+                        Le cours ${outilActif} / ${niveauActif} sera bientôt disponible. En attendant, utilisez l'instructeur IA à droite.
+                    </small>
+                </div>`;
+            return;
+        }
+        
+        leconActuelle = data;
+        conceptIndex = 0;
+        exerciceValide = false;
+        
+        afficherConcept();
+        
+        // Message de bienvenue de l'IA
+        ajouterMessageIA(`📚 **${data.titre}**\n\nNous allons parcourir ensemble **${data.concepts.length} concepts**. Je vous explique chaque notion, puis vous pratiquez dans l'éditeur. Prêt ? C'est parti ! 🚀`);
+        
+    } catch (error) {
+        console.error('Erreur chargement leçon:', error);
+        editeur.innerHTML = `
+            <div class="placeholder">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>❌ Impossible de charger le cours.</p>
+            </div>`;
+    }
+}
+
+function afficherConcept() {
+    if (!leconActuelle) return;
+    
+    const concept = leconActuelle.concepts[conceptIndex];
+    const total = leconActuelle.concepts.length;
+    const editeur = document.getElementById('editeur');
+    
+    editeur.innerHTML = `
+        <div class="cours-wrapper">
+            <div class="cours-header">
+                <div class="cours-progression">
+                    <span class="cours-etape">Concept ${conceptIndex + 1}/${total}</span>
+                    <div class="cours-barre">
+                        <div class="cours-barre-fill" style="width:${((conceptIndex + 1) / total) * 100}%"></div>
+                    </div>
+                </div>
+                <button class="cours-quit" onclick="quitterCours()" title="Quitter le cours">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="cours-body">
+                <div class="cours-concept-header">
+                    <span class="cours-emoji">${concept.emoji}</span>
+                    <div>
+                        <h3>${concept.titre}</h3>
+                        <p class="cours-objectif">🎯 ${concept.objectif}</p>
+                    </div>
+                </div>
+                
+                <div class="cours-section-explication">
+                    <h4>📖 Explication</h4>
+                    <div class="cours-texte">${formaterMarkdown(concept.explication)}</div>
+                </div>
+                
+                <div class="cours-section-image">
+                    <h4>🖼️ Illustration</h4>
+                    <div class="cours-image-container">${concept.image_svg}</div>
+                </div>
+                
+                <div class="cours-section-code">
+                    <div class="cours-code-header">
+                        <h4>💻 Exemple de code</h4>
+                        <button class="cours-copy-btn" onclick="copierCodeExemple()">
+                            <i class="fas fa-copy"></i> Copier dans l'éditeur
+                        </button>
+                    </div>
+                    <pre class="cours-code"><code>${escapeHtml(concept.code_exemple)}</code></pre>
+                </div>
+                
+                <div class="cours-section-reflexion">
+                    <h4>🤔 Question de réflexion</h4>
+                    <p>${concept.question_reflexion}</p>
+                    <small>💬 Posez votre réponse à l'instructeur IA à droite, il vous corrigera.</small>
+                </div>
+                
+                <div class="cours-section-exercice">
+                    <h4>✏️ Exercice pratique</h4>
+                    <div class="cours-exercice-box">
+                        <p><strong>Énoncé :</strong> ${concept.exercice.enonce}</p>
+                        <details class="cours-indice">
+                            <summary>💡 Voir un indice</summary>
+                            <p>${concept.exercice.indice}</p>
+                        </details>
+                        <p class="cours-consigne">
+                            👉 Écrivez votre code ci-dessus, testez-le, puis cliquez sur <strong>"Valider mon exercice"</strong>.
+                        </p>
+                        <button class="cours-validate-btn" onclick="validerExercice()">
+                            <i class="fas fa-check-circle"></i> Valider mon exercice
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="cours-navigation">
+                    <button class="cours-nav-btn" onclick="conceptPrecedent()" ${conceptIndex === 0 ? 'disabled' : ''}>
+                        <i class="fas fa-arrow-left"></i> Précédent
+                    </button>
+                    <button class="cours-nav-btn cours-nav-next" onclick="conceptSuivant()" ${conceptIndex === total - 1 ? 'disabled' : ''}>
+                        Suivant <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>`;
+    
+    // Message de l'IA pour accompagner le concept
+    ajouterMessageIA(`${concept.emoji} **Concept ${conceptIndex + 1}/${total} : ${concept.titre}**\n\n${concept.objectif}\n\nLisez l'explication et testez le code. Posez-moi toutes vos questions !`);
+}
+
+// Formater le markdown basique (**gras**, `code`)
+function formaterMarkdown(texte) {
+    return texte
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/\n/g, '<br>');
+}
+
+function copierCodeExemple() {
+    if (!leconActuelle) return;
+    const concept = leconActuelle.concepts[conceptIndex];
+    const editeur = document.getElementById('editeur');
+    
+    // Si on est sur Python, on remplit un textarea temporaire
+    // Sinon, on affiche le code dans un message IA
+    ajouterMessageIA(`📋 Voici le code à tester :\n\n\`\`\`\n${concept.code_exemple}\n\`\`\`\n\nCopiez-le dans l'éditeur à gauche pour l'exécuter.`);
+}
+
+function conceptSuivant() {
+    if (!leconActuelle) return;
+    if (conceptIndex < leconActuelle.concepts.length - 1) {
+        conceptIndex++;
+        exerciceValide = false;
+        afficherConcept();
+    }
+}
+
+function conceptPrecedent() {
+    if (!leconActuelle) return;
+    if (conceptIndex > 0) {
+        conceptIndex--;
+        exerciceValide = false;
+        afficherConcept();
+    }
+}
+
+function quitterCours() {
+    if (confirm('Voulez-vous vraiment quitter le cours ? Votre progression sera perdue.')) {
+        leconActuelle = null;
+        conceptIndex = 0;
+        const editeur = document.getElementById('editeur');
+        editeur.innerHTML = `
+            <div class="placeholder">
+                <i class="fas fa-hand-pointer"></i>
+                <p>Sélectionnez un outil ou recommencez le cours</p>
+            </div>`;
+        ajouterMessageIA('👋 Cours quitté. N\'hésitez pas à revenir quand vous voulez !');
+    }
+}
+
+function validerExercice() {
+    if (!leconActuelle) return;
+    const concept = leconActuelle.concepts[conceptIndex];
+    
+    // Récupérer le code depuis l'éditeur selon l'outil
+    let codeUtilisateur = '';
+    
+    // Chercher dans les différents textareas
+    const sqlInput = document.getElementById('sql-input');
+    const rInput = document.getElementById('r-input');
+    const pythonFrame = document.querySelector('#editeur iframe');
+    
+    if (sqlInput) {
+        codeUtilisateur = sqlInput.value.trim();
+    } else if (rInput) {
+        codeUtilisateur = rInput.value.trim();
+    } else {
+        // Pour Python (iframe JupyterLite), on ne peut pas lire directement
+        // On demande à l'utilisateur de décrire ou on envoie le code à l'IA
+        ajouterMessageIA('💡 Pour valider votre exercice Python, **copiez votre code dans le chat à droite** et je vous dirai si c\'est correct.');
+        return;
+    }
+    
+    if (!codeUtilisateur) {
+        ajouterMessageIA('⚠️ Écrivez votre code dans l\'éditeur avant de valider.');
+        return;
+    }
+    
+    // Vérification basique par mots-clés
+    const motsCles = concept.exercice.mots_cles || [];
+    const codeLower = codeUtilisateur.toLowerCase();
+    const motsTrouves = motsCles.filter(mot => codeLower.includes(mot.toLowerCase()));
+    const score = (motsTrouves.length / motsCles.length) * 100;
+    
+    if (score >= 70) {
+        exerciceValide = true;
+        ajouterMessageIA(`🎉 **Bravo !** Votre exercice semble correct (${motsTrouves.length}/${motsCles.length} critères validés).\n\n✅ Vous pouvez passer au concept suivant !`);
+        
+        // Mettre à jour le bouton "Suivant"
+        const nextBtn = document.querySelector('.cours-nav-next');
+        if (nextBtn) {
+            nextBtn.style.background = '#27ae60';
+            nextBtn.innerHTML = '✅ Concept validé — Suivant <i class="fas fa-arrow-right"></i>';
+        }
+    } else {
+        ajouterMessageIA(`🤔 **Presque !** ${motsTrouves.length}/${motsCles.length} critères validés.\n\n💡 **Indice :** ${concept.exercice.indice}\n\nReprenez votre code et réessayez. Posez-moi une question si vous bloquez !`);
+    }
+}
