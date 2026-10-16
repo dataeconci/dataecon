@@ -64,7 +64,6 @@ SELECT * FROM ventes LIMIT 5;">SELECT * FROM ventes LIMIT 5;</textarea>
             </div>`;
         chargerSQLJS();
     }
-    }
     else if (outil === 'tableau') {
         editeur.innerHTML = `
             <div class="placeholder">
