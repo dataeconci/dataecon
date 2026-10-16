@@ -375,26 +375,23 @@ async function chargerWebR() {
     if (status) status.textContent = '⏳ Chargement de R...';
     
     try {
-        // Charger le script WebR depuis le CDN
-        if (!window.WebR) {
-            await new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                script.src = 'https://webr.r-wasm.org/latest/webr.mjs';
-                script.type = 'module';
-                script.onload = resolve;
-                script.onerror = reject;
-                document.head.appendChild(script);
-            });
-        }
+        // Utilisation d'une version spécifique et stable
+        const webRVersion = 'v0.4.2';
+        const webRUrl = `https://webr.r-wasm.org/${webRVersion}/webr.mjs`;
         
         // Import dynamique du module WebR
-        const { WebR } = await import('https://webr.r-wasm.org/latest/webr.mjs');
-        webRInstance = new WebR();
+        const { WebR } = await import(webRUrl);
+        
+        // Forcer le channel PostMessage pour éviter les problèmes de SharedArrayBuffer
+        webRInstance = new WebR({
+            channelType: 'PostMessage'
+        });
+        
         await webRInstance.init();
         
         webRLoaded = true;
         if (status) status.textContent = '✅ R prêt';
-        console.log('✅ WebR initialisé');
+        console.log('✅ WebR initialisé (version ' + webRVersion + ')');
         
         const resultDiv = document.getElementById('r-result');
         if (resultDiv) {
@@ -411,7 +408,6 @@ async function chargerWebR() {
         }
     }
 }
-
 async function executerR() {
     const resultDiv = document.getElementById('r-result');
     const status = document.getElementById('r-status');
