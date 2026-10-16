@@ -429,27 +429,34 @@ async function executerR() {
     status.textContent = '';
     
     try {
-        const result = await webRInstance.evalR(input);
-        const output = await result.toJs();
-        const duree = (performance.now() - start).toFixed(0);
-        
+        // Utiliser Shelter pour capturer stdout + résultat
+        const shelter = await new webRInstance.Shelter();
         let html = '';
+        let duration;
         
-        // Sortie texte
-        if (output.output && output.output.length > 0) {
-            output.output.forEach(item => {
-                if (item.type === 'stdout' || item.type === 'stderr') {
-                    html += `<pre class="r-output">${escapeHtml(item.data)}</pre>`;
+        try {
+            const captured = await shelter.captureR(input);
+            duration = (performance.now() - start).toFixed(0);
+            
+            // Sortie console (print, cat, etc.)
+            if (captured.output && captured.output.length > 0) {
+                captured.output.forEach(item => {
+                    if (item.type === 'stdout' || item.type === 'stderr') {
+                        html += `<pre class="r-output">${escapeHtml(item.data)}</pre>`;
+                    }
+                });
+            }
+            
+            // Valeur de retour du code R
+            if (captured.result) {
+                const jsValue = await captured.result.toJs();
+                const valueStr = formaterValeurR(jsValue);
+                if (valueStr) {
+                    html += `<pre class="r-output r-value">${escapeHtml(valueStr)}</pre>`;
                 }
-            });
-        }
-        
-        // Résultat (valeurs)
-        if (output.result !== undefined && output.result !== null) {
-            const resultStr = Array.isArray(output.result) 
-                ? output.result.join(', ') 
-                : String(output.result);
-            html += `<pre class="r-output r-value">[1] ${escapeHtml(resultStr)}</pre>`;
+            }
+        } finally {
+            shelter.purge();
         }
         
         if (!html) {
@@ -457,10 +464,50 @@ async function executerR() {
         }
         
         resultDiv.innerHTML = html;
-        status.textContent = `✅ ${duree} ms`;
+        status.textContent = `✅ ${duration} ms`;
         
     } catch (error) {
+        console.error('Erreur R:', error);
         resultDiv.innerHTML = `<p style="color:#d33;">❌ Erreur R : ${escapeHtml(error.message)}</p>`;
         status.textContent = '';
     }
+}
+
+// Formater les valeurs retournées par R
+function formaterValeurR(jsValue) {
+    if (jsValue === null || jsValue === undefined) return null;
+    
+    // Cas simple : valeur unique
+    if (typeof jsValue === 'number' || typeof jsValue === 'boolean' || typeof jsValue === 'string') {
+        return `[1] ${jsValue}`;
+    }
+    
+    // Cas avec structure { type, names, values }
+    if (jsValue.values) {
+        const values = jsValue.values;
+        const names = jsValue.names || [];
+        
+        // Tableau de valeurs
+        if (Array.isArray(values)) {
+            // Cas data frame
+            if (values.length > 0 && Array.isArray(values[0])) {
+                let output = '';
+                values.forEach((col, i) => {
+                    const colName = names[i] || `Col${i + 1}`;
+                    output += `${colName}: ${col.join(', ')}\n`;
+                });
+                return output.trim();
+            }
+            // Cas vecteur simple
+            return `[1] ${values.join(' ')}`;
+        }
+        
+        // Objet
+        if (typeof values === 'object') {
+            return JSON.stringify(values, null, 2);
+        }
+    }
+    
+    // Cas par défaut
+    return String(jsValue);
 }
