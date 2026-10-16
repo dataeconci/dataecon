@@ -41,15 +41,29 @@ function chargerOutil(outil) {
                 </small>
             </div>`;
     }
-    else if (outil === 'sql') {
+        else if (outil === 'sql') {
         editeur.innerHTML = `
-            <div class="placeholder">
-                <i class="fas fa-database"></i>
-                <p>SQL - En cours d'intégration</p>
-                <small style="margin-top:10px; color:#aaa;">
-                    L'éditeur SQL sera disponible prochainement.
-                </small>
+            <div class="sql-editor-wrapper">
+                <div class="sql-toolbar">
+                    <span class="sql-label">📝 Éditeur SQL (SQLite)</span>
+                    <button class="sql-run-btn" onclick="executerSQL()">
+                        <i class="fas fa-play"></i> Exécuter
+                    </button>
+                </div>
+                <textarea id="sql-input" class="sql-textarea" placeholder="-- Écrivez votre requête SQL ici
+-- Exemple : SELECT * FROM ventes LIMIT 5;
+
+SELECT * FROM ventes LIMIT 5;">SELECT * FROM ventes LIMIT 5;</textarea>
+                <div class="sql-result-header">
+                    <span>📊 Résultat</span>
+                    <span id="sql-status" class="sql-status"></span>
+                </div>
+                <div id="sql-result" class="sql-result">
+                    <p class="sql-placeholder">Cliquez sur "Exécuter" pour lancer la requête.</p>
+                </div>
             </div>`;
+        chargerSQLJS();
+    }
     }
     else if (outil === 'tableau') {
         editeur.innerHTML = `
@@ -198,3 +212,258 @@ function escapeHtml(text) {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('📚 Section Formation chargée');
 });
+
+// ============================================
+// SQL.JS - MOTEUR SQL DANS LE NAVIGATEUR
+// ============================================
+
+let sqlDb = null;
+let sqlJsLoaded = false;
+
+function chargerSQLJS() {
+    if (sqlJsLoaded) {
+        return;
+    }
+    
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.js';
+    script.onload = initialiserBaseSQL;
+    script.onerror = function() {
+        document.getElementById('sql-result').innerHTML = 
+            '<p style="color:#d33;">❌ Impossible de charger SQL.js. Vérifiez votre connexion.</p>';
+    };
+    document.head.appendChild(script);
+    sqlJsLoaded = true;
+}
+
+function initialiserBaseSQL() {
+    const SQL = window.initSqlJs;
+    
+    SQL({
+        locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/${file}`
+    }).then(function(SQLModule) {
+        sqlDb = new SQLModule.Database();
+        
+        // Création de la table ventes avec données fictives ivoiriennes
+        sqlDb.run(`
+            CREATE TABLE ventes (
+                id INTEGER PRIMARY KEY,
+                date TEXT,
+                produit TEXT,
+                quantite INTEGER,
+                prix_unitaire REAL,
+                ville TEXT
+            );
+        `);
+        
+        // Insertion de 20 lignes de données fictives
+        sqlDb.run(`
+            INSERT INTO ventes VALUES
+            (1, '2024-01-15', 'Cacao', 120, 1500.00, 'Abidjan'),
+            (2, '2024-01-20', 'Café', 85, 1200.00, 'Abidjan'),
+            (3, '2024-02-05', 'Cacao', 200, 1520.00, 'San-Pédro'),
+            (4, '2024-02-12', 'Anacarde', 150, 800.00, 'Bouaké'),
+            (5, '2024-02-18', 'Café', 60, 1180.00, 'Daloa'),
+            (6, '2024-03-02', 'Cacao', 180, 1550.00, 'Abidjan'),
+            (7, '2024-03-10', 'Anacarde', 220, 820.00, 'Korhogo'),
+            (8, '2024-03-22', 'Coton', 95, 950.00, 'Bouaké'),
+            (9, '2024-04-05', 'Cacao', 250, 1600.00, 'San-Pédro'),
+            (10, '2024-04-14', 'Café', 110, 1250.00, 'Man'),
+            (11, '2024-05-03', 'Coton', 130, 980.00, 'Korhogo'),
+            (12, '2024-05-19', 'Anacarde', 175, 850.00, 'Bouaké'),
+            (13, '2024-06-08', 'Cacao', 300, 1650.00, 'Abidjan'),
+            (14, '2024-06-25', 'Café', 90, 1220.00, 'Daloa'),
+            (15, '2024-07-11', 'Coton', 140, 1000.00, 'Korhogo'),
+            (16, '2024-07-28', 'Cacao', 210, 1680.00, 'San-Pédro'),
+            (17, '2024-08-15', 'Anacarde', 190, 870.00, 'Bouaké'),
+            (18, '2024-09-02', 'Café', 75, 1150.00, 'Man'),
+            (19, '2024-09-20', 'Cacao', 280, 1700.00, 'Abidjan'),
+            (20, '2024-10-05', 'Coton', 160, 1020.00, 'Bouaké');
+        `);
+        
+        console.log('✅ Base SQL initialisée avec 20 lignes dans la table "ventes"');
+        
+    }).catch(function(err) {
+        console.error('Erreur SQL.js:', err);
+    });
+}
+
+function executerSQL() {
+    if (!sqlDb) {
+        document.getElementById('sql-result').innerHTML = 
+            '<p style="color:#d33;">⏳ La base de données est en cours de chargement. Réessayez dans quelques secondes.</p>';
+        return;
+    }
+    
+    const input = document.getElementById('sql-input').value.trim();
+    if (!input) return;
+    
+    const status = document.getElementById('sql-status');
+    const resultDiv = document.getElementById('sql-result');
+    const start = performance.now();
+    
+    try {
+        const resultats = sqlDb.exec(input);
+        const duree = (performance.now() - start).toFixed(1);
+        
+        if (resultats.length === 0) {
+            resultDiv.innerHTML = '<p style="color:#666;">✅ Requête exécutée (aucun résultat retourné).</p>';
+            status.textContent = `⚡ ${duree} ms`;
+            return;
+        }
+        
+        // Construire le tableau HTML
+        let html = '';
+        resultats.forEach(function(resultat) {
+            html += '<table class="sql-table"><thead><tr>';
+            resultat.columns.forEach(function(col) {
+                html += `<th>${escapeHtml(col)}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+            
+            resultat.values.forEach(function(row) {
+                html += '<tr>';
+                row.forEach(function(cell) {
+                    html += `<td>${cell === null ? '<em>NULL</em>' : escapeHtml(String(cell))}</td>`;
+                });
+                html += '</tr>';
+            });
+            html += '</tbody></table>';
+        });
+        
+        resultDiv.innerHTML = html;
+        status.textContent = `✅ ${resultats[0].values.length} ligne(s) en ${duree} ms`;
+        
+    } catch (error) {
+        resultDiv.innerHTML = `<p style="color:#d33;">❌ Erreur SQL : ${escapeHtml(error.message)}</p>`;
+        status.textContent = '';
+    }
+}
+
+/* ============================================
+   ÉDITEUR SQL
+   ============================================ */
+
+.sql-editor-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 550px;
+    background: #fafafa;
+}
+
+.sql-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: #2c3e50;
+    color: white;
+}
+
+.sql-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.sql-run-btn {
+    background: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.sql-run-btn:hover {
+    background: #219a52;
+}
+
+.sql-run-btn i {
+    margin-right: 5px;
+}
+
+.sql-textarea {
+    width: 100%;
+    min-height: 130px;
+    padding: 15px;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    font-family: 'Courier New', Consolas, monospace;
+    font-size: 0.9rem;
+    resize: vertical;
+    outline: none;
+    background: #fff;
+    color: #2c3e50;
+    line-height: 1.5;
+}
+
+.sql-textarea:focus {
+    background: #fefefe;
+    box-shadow: inset 0 0 0 2px #3498db;
+}
+
+.sql-result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 15px;
+    background: #ecf0f1;
+    border-bottom: 1px solid #ddd;
+    font-size: 0.85rem;
+    color: #555;
+    font-weight: 600;
+}
+
+.sql-status {
+    color: #27ae60;
+    font-weight: 600;
+}
+
+.sql-result {
+    flex: 1;
+    overflow: auto;
+    padding: 15px;
+    background: white;
+}
+
+.sql-placeholder {
+    color: #999;
+    font-style: italic;
+    text-align: center;
+    padding: 30px;
+}
+
+.sql-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+}
+
+.sql-table th {
+    background: #2c3e50;
+    color: white;
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+}
+
+.sql-table td {
+    padding: 6px 12px;
+    border-bottom: 1px solid #eee;
+    color: #333;
+}
+
+.sql-table tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+.sql-table tr:hover {
+    background: #e8f4fd;
+}
