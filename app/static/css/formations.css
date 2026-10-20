@@ -1076,3 +1076,105 @@
 .cours-nav-next:hover:not(:disabled) {
     background: #1e3c72;
 }
+
+
+/* ============================================
+   ÉDITEUR D'EXERCICE INTÉGRÉ
+   ============================================ */
+
+.exercice-editeur {
+    margin-top: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.exercice-editeur label {
+    display: block;
+    font-weight: 600;
+    color: #1e3c72;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.exercice-textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-family: 'Courier New', Consolas, monospace;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    resize: vertical;
+    outline: none;
+    background: white;
+    color: #2c3e50;
+}
+
+.exercice-textarea:focus {
+    border-color: #2a5298;
+    box-shadow: 0 0 0 2px rgba(42, 82, 152, 0.15);
+}
+
+.exercice-boutons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.exercice-run-btn {
+    background: #2a5298;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 18px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.exercice-run-btn:hover {
+    background: #1e3c72;
+}
+
+.exercice-submit-btn {
+    background: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 18px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.exercice-submit-btn:hover {
+    background: #219a52;
+}
+
+.exercice-resultat {
+    margin-top: 12px;
+    padding: 0;
+}
+
+.exercice-resultat pre {
+    background: #f5f5f5;
+    border-left: 3px solid #2a5298;
+    padding: 10px 15px;
+    margin: 8px 0;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}

@@ -10,6 +10,7 @@
     environment:
       - DATABASE_URL=postgresql://dataecon:dataecon123@db:5432/dataecon
       - SECRET_KEY=e0dcf3318668ef9c17aabdbcb5ba041d76b01e97c13567f6a24de8686c9a3411
+      - GROQ_API_KEY=${GROQ_API_KEY}
     depends_on:
       - db
     networks:

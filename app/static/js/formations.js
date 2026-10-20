@@ -185,10 +185,18 @@ async function envoyerQuestion() {
         const response = await fetch('/api/tutor', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
+                        body: JSON.stringify({
                 message: question,
                 outil: outilActif || 'general',
-                niveau: niveauActif
+                niveau: niveauActif,
+                concept: (leconActuelle && leconActuelle.concepts[conceptIndex]) ? {
+                    titre: leconActuelle.concepts[conceptIndex].titre,
+                    objectif: leconActuelle.concepts[conceptIndex].objectif,
+                    explication: leconActuelle.concepts[conceptIndex].explication,
+                    exercice: leconActuelle.concepts[conceptIndex].exercice.enonce,
+                    solution: leconActuelle.concepts[conceptIndex].exercice.solution_attendue,
+                    indice: leconActuelle.concepts[conceptIndex].exercice.indice
+                } : null
             })
         });
         
@@ -804,7 +812,7 @@ function afficherConcept() {
                     <small>💬 Posez votre réponse à l'instructeur IA à droite, il vous corrigera.</small>
                 </div>
                 
-                <div class="cours-section-exercice">
+                            <div class="cours-section-exercice">
                     <h4>✏️ Exercice pratique</h4>
                     <div class="cours-exercice-box">
                         <p><strong>Énoncé :</strong> ${concept.exercice.enonce}</p>
@@ -812,12 +820,20 @@ function afficherConcept() {
                             <summary>💡 Voir un indice</summary>
                             <p>${concept.exercice.indice}</p>
                         </details>
-                        <p class="cours-consigne">
-                            👉 Écrivez votre code ci-dessus, testez-le, puis cliquez sur <strong>"Valider mon exercice"</strong>.
-                        </p>
-                        <button class="cours-validate-btn" onclick="validerExercice()">
-                            <i class="fas fa-check-circle"></i> Valider mon exercice
-                        </button>
+                        
+                        <div class="exercice-editeur">
+                            <label>📝 Votre code :</label>
+                            <textarea id="exercice-code" class="exercice-textarea" placeholder="Écrivez votre code ici..."></textarea>
+                            <div class="exercice-boutons">
+                                <button class="exercice-run-btn" onclick="executerCodeExercice()">
+                                    <i class="fas fa-play"></i> Exécuter
+                                </button>
+                                <button class="exercice-submit-btn" onclick="soumettreExerciceIA()">
+                                    <i class="fas fa-paper-plane"></i> Soumettre à l'IA
+                                </button>
+                            </div>
+                            <div id="exercice-resultat" class="exercice-resultat"></div>
+                        </div>
                     </div>
                 </div>
                 
@@ -932,5 +948,179 @@ function validerExercice() {
         }
     } else {
         ajouterMessageIA(`🤔 **Presque !** ${motsTrouves.length}/${motsCles.length} critères validés.\n\n💡 **Indice :** ${concept.exercice.indice}\n\nReprenez votre code et réessayez. Posez-moi une question si vous bloquez !`);
+    }
+}
+
+
+// ============================================
+// EXERCICES INTÉGRÉS - EXÉCUTION ET SOUMISSION
+// ============================================
+
+let pyodideInstance = null;
+let pyodideLoading = false;
+
+async function executerCodeExercice() {
+    const code = document.getElementById('exercice-code').value.trim();
+    const resultat = document.getElementById('exercice-resultat');
+    
+    if (!code) {
+        resultat.innerHTML = '<p style="color:#e67e22;">⚠️ Écrivez du code avant d\'exécuter.</p>';
+        return;
+    }
+    
+    resultat.innerHTML = '<p style="color:#2a5298;">⏳ Exécution en cours...</p>';
+    const start = performance.now();
+    
+    try {
+        let output = '';
+        
+        if (outilActif === 'sql') {
+            if (!sqlDb) {
+                resultat.innerHTML = '<p style="color:#e67e22;">⚠️ La base SQL n\'est pas encore prête. Réessayez dans quelques secondes.</p>';
+                return;
+            }
+            const res = sqlDb.exec(code);
+            if (res.length === 0) {
+                output = '✅ Requête exécutée (aucun résultat).';
+            } else {
+                let html = '<table class="sql-table"><thead><tr>';
+                res[0].columns.forEach(c => html += `<th>${c}</th>`);
+                html += '</tr></thead><tbody>';
+                res[0].values.forEach(row => {
+                    html += '<tr>';
+                    row.forEach(cell => html += `<td>${cell === null ? 'NULL' : cell}</td>`);
+                    html += '</tr>';
+                });
+                html += '</tbody></table>';
+                output = html;
+            }
+        } 
+        else if (outilActif === 'r') {
+            if (!webRInstance) {
+                resultat.innerHTML = '<p style="color:#e67e22;">⚠️ R n\'est pas encore prêt. Attendez "✅ R prêt".</p>';
+                return;
+            }
+            const shelter = await new webRInstance.Shelter();
+            try {
+                const captured = await shelter.captureR(code);
+                output = '';
+                if (captured.output) {
+                    captured.output.forEach(item => {
+                        if (item.type === 'stdout' || item.type === 'stderr') {
+                            output += `<pre class="r-output">${escapeHtml(item.data)}</pre>`;
+                        }
+                    });
+                }
+                if (captured.result) {
+                    const jsVal = await captured.result.toJs();
+                    const valStr = formaterValeurR(jsVal);
+                    if (valStr) output += `<pre class="r-output r-value">${escapeHtml(valStr)}</pre>`;
+                }
+                if (!output) output = '✅ Code exécuté (aucun résultat).';
+            } finally {
+                shelter.purge();
+            }
+        }
+        else if (outilActif === 'python') {
+            if (!pyodideInstance && !pyodideLoading) {
+                resultat.innerHTML = '<p style="color:#2a5298;">⏳ Premier chargement de Python (10-20 sec)...</p>';
+                pyodideLoading = true;
+                await new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = 'https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js';
+                    script.onload = resolve;
+                    script.onerror = reject;
+                    document.head.appendChild(script);
+                });
+                pyodideInstance = await loadPyodide({
+                    indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.2/full/'
+                });
+                pyodideLoading = false;
+            }
+            // Rediriger stdout
+            pyodideInstance.setStdout({ batched: (s) => { output += s + '\n'; } });
+            pyodideInstance.setStderr({ batched: (s) => { output += '❌ ' + s + '\n'; } });
+            try {
+                await pyodideInstance.runPythonAsync(code);
+                if (!output) output = '✅ Code exécuté (aucune sortie).';
+            } catch (e) {
+                output = '❌ ' + e.message;
+            }
+        }
+        
+        const duree = (performance.now() - start).toFixed(0);
+        resultat.innerHTML = (typeof output === 'string' && output.startsWith('<')) 
+            ? output 
+            : `<pre class="r-output">${escapeHtml(output)}</pre><p style="color:#27ae60; font-size:0.8rem; margin:5px 0 0;">✅ Exécuté en ${duree} ms</p>`;
+        
+    } catch (e) {
+        resultat.innerHTML = `<p style="color:#d33;">❌ Erreur : ${escapeHtml(e.message)}</p>`;
+    }
+}
+
+async function soumettreExerciceIA() {
+    if (!leconActuelle) return;
+    
+    const code = document.getElementById('exercice-code').value.trim();
+    if (!code) {
+        ajouterMessageIA('⚠️ Écrivez d\'abord votre code dans l\'éditeur d\'exercice avant de soumettre.');
+        return;
+    }
+    
+    const concept = leconActuelle.concepts[conceptIndex];
+    const message = `Voici ma réponse à l'exercice :\n\n\`\`\`\n${code}\n\`\`\`\n\nEst-ce correct ? Si non, donne-moi un indice sans la solution.`;
+    
+    // Ajouter au chat
+    ajouterMessageUtilisateur(`📤 Soumission de l'exercice :\n${code}`);
+    
+    const loadingId = ajouterMessageIA('⏳ Analyse de votre réponse...', true);
+    
+    try {
+        const response = await fetch('/api/tutor', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                message: message,
+                outil: outilActif,
+                niveau: niveauActif,
+                concept: {
+                    titre: concept.titre,
+                    objectif: concept.objectif,
+                    explication: concept.explication,
+                    exercice: concept.exercice.enonce,
+                    solution: concept.exercice.solution_attendue,
+                    indice: concept.exercice.indice
+                }
+            })
+        });
+        
+        const data = await response.json();
+        document.getElementById(loadingId).remove();
+        ajouterMessageIA(data.reponse);
+        
+        // Détecter si l'IA valide (mots-clés positifs)
+        const reponseLower = data.reponse.toLowerCase();
+        const estValide = reponseLower.includes('bravo') || 
+                          reponseLower.includes('correct') || 
+                          reponseLower.includes('bien') ||
+                          reponseLower.includes('exact') ||
+                          reponseLower.includes('parfait') ||
+                          reponseLower.includes('peut passer');
+        
+        if (estValide) {
+            const resultat = document.getElementById('exercice-resultat');
+            resultat.innerHTML = '<p style="color:#27ae60; font-weight:600;">✅ Exercice validé ! Vous pouvez passer au concept suivant.</p>';
+            
+            const nextBtn = document.querySelector('.cours-nav-next');
+            if (nextBtn) {
+                nextBtn.style.background = '#27ae60';
+                nextBtn.style.borderColor = '#27ae60';
+                nextBtn.innerHTML = '✅ Concept validé — Suivant <i class="fas fa-arrow-right"></i>';
+            }
+        }
+        
+    } catch (e) {
+        document.getElementById(loadingId).remove();
+        ajouterMessageIA('❌ Erreur lors de la soumission. Réessayez.');
     }
 }

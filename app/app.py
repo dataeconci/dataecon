@@ -2219,12 +2219,36 @@ def api_tutor():
         message = data.get('message', '').strip()
         outil = data.get('outil', 'general')
         niveau = data.get('niveau', 'debutant')
-        
+        concept = data.get('concept', None)
         if not message:
             return jsonify({"reponse": "Veuillez poser une question."}), 400
         
         # Contexte pour l'IA
-        context = f"""Contexte de la session :
+                # Contexte pour l'IA
+        if concept:
+            context = f"""Contexte de la session :
+- Outil sélectionné : {outil}
+- Niveau de l'apprenant : {niveau}
+
+📚 LEÇON EN COURS :
+- Concept : {concept.get('titre', '')}
+- Objectif : {concept.get('objectif', '')}
+- Explication donnée : {concept.get('explication', '')}
+
+✏️ EXERCICE EN COURS :
+- Énoncé : {concept.get('exercice', '')}
+- Solution attendue : {concept.get('solution', '')}
+- Indice disponible : {concept.get('indice', '')}
+
+Question de l'apprenant : {message}
+
+⚠️ INSTRUCTIONS IMPORTANTES :
+1. Si l'apprenant propose une réponse à l'exercice, compare-la à la solution attendue.
+2. S'il a juste (même partiellement), félicite-le et confirme-lui qu'il peut passer au concept suivant.
+3. S'il a faux, NE DONNE PAS la solution directement. Donne un indice et encourage-le à réessayer.
+4. Si sa question porte sur le concept, réponds de façon précise et pédagogique."""
+        else:
+            context = f"""Contexte de la session :
 - Outil sélectionné : {outil}
 - Niveau de l'apprenant : {niveau}
 
