@@ -1,5 +1,5 @@
 /* ============================================
-   PAGE À PROPOS
+   PAGE À PROPOS - DESIGN PROFESSIONNEL
    ============================================ */
 
 .about-page {
@@ -35,49 +35,18 @@
     margin-top: 40px;
 }
 
-/* Bannière de motivation */
-.motivation-banner {
-    background: white;
-    border-left: 5px solid #ffc107;
-    border-radius: 10px;
-    padding: 25px 30px;
-    margin-bottom: 40px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-}
-
-.motivation-icon {
-    font-size: 2.5rem;
-}
-
-.motivation-content h3 {
-    margin: 0 0 8px;
-    color: #1e3c72;
-    font-size: 1.1rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.motivation-content p {
-    margin: 0;
-    font-size: 1.15rem;
-    font-style: italic;
-    color: #444;
-    line-height: 1.5;
-}
-
-/* Section CEO */
+/* ============================================
+   SECTION CEO (Regroupée)
+   ============================================ */
 .ceo-section {
     background: white;
     border-radius: 15px;
     padding: 40px;
     display: flex;
     gap: 40px;
-    align-items: center;
+    align-items: flex-start;
     box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    margin-bottom: 50px;
 }
 
 .ceo-image-container {
@@ -88,9 +57,13 @@
     width: 280px;
     height: 280px;
     object-fit: cover;
-    border-radius: 50%; /* Image ronde */
+    border-radius: 50%;
     border: 5px solid #e3f2fd;
     box-shadow: 0 8px 20px rgba(30,60,114,0.2);
+}
+
+.ceo-text {
+    flex-grow: 1;
 }
 
 .ceo-text h2 {
@@ -113,35 +86,251 @@
     color: #555;
     line-height: 1.8;
     font-size: 1rem;
+    margin-bottom: 25px;
 }
 
 .ceo-bio strong {
     color: #1e3c72;
 }
 
+/* Discours du CEO intégré */
+.ceo-message {
+    background: #f8f9fa;
+    border-left: 5px solid #ffc107;
+    padding: 20px 25px;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 25px;
+}
+
+.ceo-message h3 {
+    color: #1e3c72;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.ceo-message p {
+    font-style: italic;
+    color: #444;
+    font-size: 1.05rem;
+    margin: 0;
+    line-height: 1.6;
+}
+
 .ceo-actions {
-    margin-top: 25px;
     display: flex;
     gap: 15px;
 }
 
-.btn-primary, .btn-secondary {
-    padding: 12px 25px;
+/* ============================================
+   TITRES DE SECTION
+   ============================================ */
+.section-title {
+    text-align: center;
+    color: #1e3c72;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 60px 0 30px;
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background: #ffc107;
+    margin: 15px auto 0;
+    border-radius: 2px;
+}
+
+/* ============================================
+   MISSION
+   ============================================ */
+.mission-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.mission-card {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border-top: 4px solid #2a5298;
+}
+
+.mission-card h3 {
+    color: #1e3c72;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+.mission-card p {
+    color: #555;
+    line-height: 1.6;
+    font-size: 0.95rem;
+    text-align: justify;
+}
+
+/* ============================================
+   ACTIVITÉS
+   ============================================ */
+.activities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.activity-card {
+    background: white;
+    border-left: 4px solid #2a5298;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.activity-card i {
+    font-size: 2rem;
+    color: #2a5298;
+    margin-bottom: 15px;
+}
+
+.activity-card h3 {
+    color: #1e3c72;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+.activity-card p {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* ============================================
+   TARIFS
+   ============================================ */
+.tarifs-subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 40px;
+}
+
+.tarifs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    align-items: stretch;
+}
+
+.tarif-card {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid #f0f0f0;
+    transition: all 0.3s ease;
+}
+
+.tarif-card:hover {
+    border-color: #2a5298;
+}
+
+.tarif-card.popular {
+    border-color: #ffc107;
+    transform: scale(1.02);
+    box-shadow: 0 10px 30px rgba(255, 193, 7, 0.2);
+}
+
+.badge-popular {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ffc107;
+    color: #1e3c72;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.tarif-card h3 {
+    text-align: center;
+    color: #1e3c72;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+}
+
+.tarif-prix {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2a5298;
+    margin-bottom: 20px;
+}
+
+.tarif-prix span {
+    font-size: 1rem;
+    color: #666;
+    font-weight: 400;
+}
+
+.tarif-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 25px 0;
+    flex-grow: 1;
+}
+
+.tarif-card li {
+    padding: 8px 0;
+    color: #555;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.tarif-card li i {
+    color: #27ae60;
+    font-size: 0.9rem;
+}
+
+.tarif-card li:last-child {
+    border-bottom: none;
+}
+
+/* Boutons */
+.btn-primary, .btn-secondary, .btn-outline {
+    display: block;
+    text-align: center;
+    padding: 12px;
     border-radius: 8px;
     font-weight: 600;
     text-decoration: none;
-    transition: all 0.3s ease;
+    transition: all 0.3s;
     font-size: 0.95rem;
 }
 
 .btn-primary {
     background: #2a5298;
     color: white;
+    border: 2px solid #2a5298;
 }
 
 .btn-primary:hover {
     background: #1e3c72;
-    transform: translateY(-2px);
+    border-color: #1e3c72;
 }
 
 .btn-secondary {
@@ -152,24 +341,91 @@
 
 .btn-secondary:hover {
     background: #f0f5ff;
-    transform: translateY(-2px);
 }
 
-/* Responsive (Mobiles) */
+.btn-outline {
+    border: 2px solid #2a5298;
+    color: #2a5298;
+    background: transparent;
+}
+
+.btn-outline:hover {
+    background: #f0f5ff;
+}
+
+/* ============================================
+   CONTACT
+   ============================================ */
+.contact-section {
+    text-align: center;
+    padding-bottom: 50px;
+}
+
+.contact-text {
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 1.1rem;
+}
+
+.contact-card {
+    background: white;
+    display: inline-block;
+    padding: 40px 60px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    border-top: 4px solid #2a5298;
+}
+
+.contact-card i {
+    font-size: 2.5rem;
+    color: #2a5298;
+    margin-bottom: 15px;
+}
+
+.contact-card h3 {
+    color: #1e3c72;
+    margin-bottom: 10px;
+}
+
+.contact-card a {
+    color: #2a5298;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.contact-card a:hover {
+    text-decoration: underline;
+}
+
+.contact-note {
+    color: #999;
+    font-size: 0.85rem;
+    margin-top: 10px;
+}
+
+/* ============================================
+   RESPONSIVE (Mobiles)
+   ============================================ */
 @media (max-width: 768px) {
     .ceo-section {
         flex-direction: column;
+        align-items: center;
         text-align: center;
         padding: 30px 20px;
     }
-    
+
     .ceo-actions {
         flex-direction: column;
-        align-items: center;
+        width: 100%;
     }
-    
-    .motivation-banner {
-        flex-direction: column;
-        text-align: center;
+
+    .tarif-card.popular {
+        transform: none;
+    }
+
+    .contact-card {
+        padding: 30px 20px;
+        width: 100%;
     }
 }

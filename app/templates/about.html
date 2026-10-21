@@ -19,16 +19,7 @@
 
     <div class="container about-container">
         
-        <!-- Message de la semaine (Généré par Python) -->
-        <section class="motivation-banner">
-            <div class="motivation-icon">💡</div>
-            <div class="motivation-content">
-                <h3>Le mot du CEO - Cette semaine</h3>
-                <p>"{{ message_semaine }}"</p>
-            </div>
-        </section>
-
-        <!-- Profil du CEO -->
+        <!-- Section CEO regroupée (Photo + Présentation + Discours) -->
         <section class="ceo-section">
             <div class="ceo-image-container">
                 <img src="{{ url_for('static', filename='images/ceo.jpg') }}" alt="Kadoh Innocent G." class="ceo-image">
@@ -44,16 +35,125 @@
                         j'ai fondé DataEcon.Ci avec une conviction profonde : l'Afrique a besoin de professionnels 
                         capables de transformer les données brutes en décisions stratégiques.
                     </p>
-                    <p>
-                        À travers cette plateforme, nous formons la nouvelle génération d'analystes et nous accompagnons 
-                        les entreprises dans l'exploitation de leurs données pour maximiser leur croissance.
-                    </p>
+                </div>
+
+                <!-- Discours de la semaine intégré ici -->
+                <div class="ceo-message">
+                    <h3>Le mot du CEO - Cette semaine</h3>
+                    <p>"{{ message_semaine }}"</p>
                 </div>
 
                 <div class="ceo-actions">
                     <a href="{{ url_for('courses') }}" class="btn-primary">Découvrir nos formations</a>
-                    <a href="#" class="btn-secondary" onclick="alert('Contactez-nous sur WhatsApp pour une assistance immédiate !')">Travailler avec nous</a>
+                    <a href="#contact" class="btn-secondary">Travailler avec nous</a>
                 </div>
+            </div>
+        </section>
+
+        <!-- Notre Mission -->
+        <section class="mission-section">
+            <h2 class="section-title">Notre Mission & Objectifs</h2>
+            <div class="mission-grid">
+                <div class="mission-card">
+                    <h3>Notre Mission</h3>
+                    <p>Rendre l'économétrie et la science des données accessibles à tous les étudiants, chercheurs et professionnels en Afrique, pour une prise de décision basée sur les faits.</p>
+                </div>
+                <div class="mission-card">
+                    <h3>Notre Objectif</h3>
+                    <p>Former plus de 10 000 analystes de données en Côte d'Ivoire d'ici 2030 et devenir la référence n°1 de la formation en data science appliquée à l'économie.</p>
+                </div>
+                <div class="mission-card">
+                    <h3>Notre Cible</h3>
+                    <p>Étudiants en économie/statistique, professionnels des banques et assurances, ONG, entreprises privées et administrations publiques cherchant à exploiter leurs données.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Nos Activités -->
+        <section class="activities-section">
+            <h2 class="section-title">Nos Activités</h2>
+            <div class="activities-grid">
+                <div class="activity-card">
+                    <i class="fas fa-laptop-code"></i>
+                    <h3>Formations en ligne</h3>
+                    <p>Cours interactifs en R, Python, SQL et Tableau avec un instructeur IA pour pratiquer en direct.</p>
+                </div>
+                <div class="activity-card">
+                    <i class="fas fa-chart-pie"></i>
+                    <h3>Analyse de données</h3>
+                    <p>Accompagnement des entreprises dans la collecte, le traitement et l'analyse de leurs données.</p>
+                </div>
+                <div class="activity-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Modélisation & Prévisions</h3>
+                    <p>Création de modèles prédictifs (séries temporelles, machine learning) pour anticiper les tendances.</p>
+                </div>
+                <div class="activity-card">
+                    <i class="fas fa-file-alt"></i>
+                    <h3>Rapports & Visualisation</h3>
+                    <p>Production de rapports d'analyse détaillés et de tableaux de bord interactifs pour vos décisions.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tarifs -->
+        <section class="tarifs-section">
+            <h2 class="section-title">Nos Tarifs</h2>
+            <p class="tarifs-subtitle">Choisissez le plan qui correspond à vos ambitions.</p>
+            <div class="tarifs-grid">
+                <div class="tarif-card">
+                    <h3>Gratuit</h3>
+                    <div class="tarif-prix">0 <span>FCFA</span></div>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Accès aux cours de niveau Débutant</li>
+                        <li><i class="fas fa-check"></i> Instructeur IA (limité)</li>
+                        <li><i class="fas fa-check"></i> Accès à la bibliothèque de données publiques</li>
+                    </ul>
+                    <a href="{{ url_for('register') }}" class="btn-outline">Commencer</a>
+                </div>
+                <div class="tarif-card">
+                    <h3>Standard</h3>
+                    <div class="tarif-prix">5 000 <span>FCFA / mois</span></div>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Accès à tous les niveaux (Débutant, Intermédiaire)</li>
+                        <li><i class="fas fa-check"></i> Instructeur IA complet</li>
+                        <li><i class="fas fa-check"></i> Téléchargement des datasets</li>
+                    </ul>
+                    <a href="{{ url_for('subscription') }}" class="btn-primary">Choisir</a>
+                </div>
+                <div class="tarif-card popular">
+                    <div class="badge-popular">Le plus choisi</div>
+                    <h3>Premium</h3>
+                    <div class="tarif-prix">15 000 <span>FCFA / mois</span></div>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Accès à tous les niveaux (Débutant, Intermédiaire, Avancé)</li>
+                        <li><i class="fas fa-check"></i> Accès à tous les modèles d'économétrie avancée</li>
+                        <li><i class="fas fa-check"></i> Support prioritaire</li>
+                    </ul>
+                    <a href="{{ url_for('subscription') }}" class="btn-primary">Choisir</a>
+                </div>
+                <div class="tarif-card">
+                    <h3>Entreprise</h3>
+                    <div class="tarif-prix">Sur devis</div>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Formations sur mesure pour vos équipes</li>
+                        <li><i class="fas fa-check"></i> Accompagnement à l'analyse de vos données</li>
+                        <li><i class="fas fa-check"></i> Rapports personnalisés</li>
+                    </ul>
+                    <a href="#contact" class="btn-outline">Nous contacter</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact -->
+        <section id="contact" class="contact-section">
+            <h2 class="section-title">Contactez-nous</h2>
+            <p class="contact-text">Une question ? Un projet ? Envie de collaborer ? N'hésitez pas à nous écrire.</p>
+            <div class="contact-card">
+                <i class="fas fa-envelope"></i>
+                <h3>Par Email</h3>
+                <p><a href="mailto:dataeconci@gmail.com">dataeconci@gmail.com</a></p>
+                <p class="contact-note">Réponse sous 24h ouvrées.</p>
             </div>
         </section>
 
