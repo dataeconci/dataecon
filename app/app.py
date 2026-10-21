@@ -2313,6 +2313,30 @@ def api_lesson(outil, niveau):
 
 # ==================== FIN API LEÇONS ====================
 
+# ==================== PAGE À PROPOS ====================
+@app.route('/about')
+def about():
+    import datetime
+    
+    # Liste des messages motivants (tu peux en ajouter autant que tu veux)
+    messages_hebdo = [
+        "L'économie de demain se construit avec les données d'aujourd'hui. Formez-vous dès maintenant !",
+        "La data n'est pas réservée aux experts. C'est l'outil le plus puissant pour développer votre entreprise.",
+        "Investir dans la formation, c'est investir dans l'avenir de l'Afrique. Ne restez pas spectateur du changement.",
+        "Chaque ligne de code, chaque modèle statistique, est un pas de plus vers la souveraineté économique.",
+        "Les entreprises qui exploitent leurs données dominent leur marché. Faites appel à nos experts pour passer au niveau supérieur.",
+        "Le talent sans la pratique n'est rien. C'est en forgeant qu'on devient Data Scientist."
+    ]
+    
+    # Calcul du numéro de la semaine actuelle (1 à 52)
+    semaine_actuelle = datetime.date.today().isocalendar()[1]
+    
+    # Sélection du message (le modulo permet de tourner en boucle sur la liste)
+    message_semaine = messages_hebdo[semaine_actuelle % len(messages_hebdo)]
+    
+    return render_template('about.html', message_semaine=message_semaine)
+# ==================== FIN PAGE À PROPOS ====================
+
 
 
 if __name__ == '__main__':

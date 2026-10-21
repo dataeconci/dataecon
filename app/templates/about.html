@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block title %}À Propos - DataEcon.Ci{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/about.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="about-page">
+    
+    <!-- En-tête -->
+    <section class="about-hero">
+        <div class="container text-center">
+            <h1>À propos de <span>DataEcon.Ci</span></h1>
+            <p>Notre mission : démocratiser la data et l'économétrie en Côte d'Ivoire et en Afrique.</p>
+        </div>
+    </section>
+
+    <div class="container about-container">
+        
+        <!-- Message de la semaine (Généré par Python) -->
+        <section class="motivation-banner">
+            <div class="motivation-icon">💡</div>
+            <div class="motivation-content">
+                <h3>Le mot du CEO - Cette semaine</h3>
+                <p>"{{ message_semaine }}"</p>
+            </div>
+        </section>
+
+        <!-- Profil du CEO -->
+        <section class="ceo-section">
+            <div class="ceo-image-container">
+                <img src="{{ url_for('static', filename='images/ceo.jpg') }}" alt="Kadoh Innocent G." class="ceo-image">
+            </div>
+            <div class="ceo-text">
+                <h2>Kadoh Innocent G.</h2>
+                <p class="ceo-title">Data Scientist | Développeur | Data Analyst</p>
+                
+                <div class="ceo-bio">
+                    <p>
+                        Diplômé de l'<strong>Université Jean Lorougnon Guédé de Daloa</strong>, 
+                        en spécialité <strong>Modélisation Statistique, Économique et Financière</strong>, 
+                        j'ai fondé DataEcon.Ci avec une conviction profonde : l'Afrique a besoin de professionnels 
+                        capables de transformer les données brutes en décisions stratégiques.
+                    </p>
+                    <p>
+                        À travers cette plateforme, nous formons la nouvelle génération d'analystes et nous accompagnons 
+                        les entreprises dans l'exploitation de leurs données pour maximiser leur croissance.
+                    </p>
+                </div>
+
+                <div class="ceo-actions">
+                    <a href="{{ url_for('courses') }}" class="btn-primary">Découvrir nos formations</a>
+                    <a href="#" class="btn-secondary" onclick="alert('Contactez-nous sur WhatsApp pour une assistance immédiate !')">Travailler avec nous</a>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</div>
+{% endblock %}

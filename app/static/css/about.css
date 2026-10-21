@@ -1,0 +1,175 @@
+/* ============================================
+   PAGE À PROPOS
+   ============================================ */
+
+.about-page {
+    background-color: #f8f9fa;
+    padding-bottom: 50px;
+}
+
+.about-hero {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    padding: 60px 0;
+    text-align: center;
+}
+
+.about-hero h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.about-hero h1 span {
+    color: #ffc107;
+}
+
+.about-hero p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.about-container {
+    margin-top: 40px;
+}
+
+/* Bannière de motivation */
+.motivation-banner {
+    background: white;
+    border-left: 5px solid #ffc107;
+    border-radius: 10px;
+    padding: 25px 30px;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.motivation-icon {
+    font-size: 2.5rem;
+}
+
+.motivation-content h3 {
+    margin: 0 0 8px;
+    color: #1e3c72;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.motivation-content p {
+    margin: 0;
+    font-size: 1.15rem;
+    font-style: italic;
+    color: #444;
+    line-height: 1.5;
+}
+
+/* Section CEO */
+.ceo-section {
+    background: white;
+    border-radius: 15px;
+    padding: 40px;
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.ceo-image-container {
+    flex-shrink: 0;
+}
+
+.ceo-image {
+    width: 280px;
+    height: 280px;
+    object-fit: cover;
+    border-radius: 50%; /* Image ronde */
+    border: 5px solid #e3f2fd;
+    box-shadow: 0 8px 20px rgba(30,60,114,0.2);
+}
+
+.ceo-text h2 {
+    color: #1e3c72;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.ceo-title {
+    color: #2a5298;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.ceo-bio {
+    color: #555;
+    line-height: 1.8;
+    font-size: 1rem;
+}
+
+.ceo-bio strong {
+    color: #1e3c72;
+}
+
+.ceo-actions {
+    margin-top: 25px;
+    display: flex;
+    gap: 15px;
+}
+
+.btn-primary, .btn-secondary {
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.btn-primary {
+    background: #2a5298;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #1e3c72;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: white;
+    color: #2a5298;
+    border: 2px solid #2a5298;
+}
+
+.btn-secondary:hover {
+    background: #f0f5ff;
+    transform: translateY(-2px);
+}
+
+/* Responsive (Mobiles) */
+@media (max-width: 768px) {
+    .ceo-section {
+        flex-direction: column;
+        text-align: center;
+        padding: 30px 20px;
+    }
+    
+    .ceo-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .motivation-banner {
+        flex-direction: column;
+        text-align: center;
+    }
+}
