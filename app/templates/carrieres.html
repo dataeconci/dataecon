@@ -1,0 +1,101 @@
+{% extends "layout.html" %}
+
+{% block title %}Carrières - DataEcon.Ci{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/carrieres.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="carrieres-page">
+    
+    <!-- En-tête -->
+    <section class="carrieres-hero">
+        <div class="container text-center">
+            <h1>Rejoignez <span>DataEcon.Ci</span></h1>
+            <p>Nous sommes toujours à la recherche de talents passionnés pour construire l'avenir de la data en Afrique.</p>
+        </div>
+    </section>
+
+    <div class="container carrieres-container">
+        
+        <!-- Pourquoi nous rejoindre -->
+        <section class="pourquoi-nous">
+            <h2 class="section-title">Pourquoi nous rejoindre ?</h2>
+            <div class="avantages-grid">
+                <div class="avantage-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Impact réel</h3>
+                    <p>Participez à la transformation numérique de l'économie africaine.</p>
+                </div>
+                <div class="avantage-card">
+                    <i class="fas fa-users"></i>
+                    <h3>Équipe passionnée</h3>
+                    <p>Travaillez avec des experts en data science et en économétrie.</p>
+                </div>
+                <div class="avantage-card">
+                    <i class="fas fa-laptop-house"></i>
+                    <h3>Flexibilité</h3>
+                    <p>Possibilité de télétravail et d'horaires adaptés à votre rythme.</p>
+                </div>
+                <div class="avantage-card">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h3>Formation continue</h3>
+                    <p>Accédez gratuitement à toutes nos formations en ligne.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Liste des offres -->
+        <section class="offres-section">
+            <h2 class="section-title">Nos offres d'emploi</h2>
+            
+            {% if offres %}
+                <div class="offres-list">
+                    {% for offre in offres %}
+                    <div class="offre-card">
+                        <div class="offre-header">
+                            <div>
+                                <h3 class="offre-titre">{{ offre.titre }}</h3>
+                                <span class="offre-type">{{ offre.type }}</span>
+                            </div>
+                            <div class="offre-lieu">
+                                <i class="fas fa-map-marker-alt"></i> {{ offre.lieu }}
+                            </div>
+                        </div>
+                        
+                        <p class="offre-description">{{ offre.description }}</p>
+                        
+                        <div class="offre-competences">
+                            {% for comp in offre.competences %}
+                                <span class="competence-tag">{{ comp }}</span>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="offre-footer">
+                            <a href="mailto:dataeconci@gmail.com?subject=Candidature : {{ offre.titre }}" class="btn-postuler">
+                                Postuler à cette offre
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="aucune-offre">
+                    <p>Il n'y a actuellement aucune offre d'emploi disponible. Revenez bientôt !</p>
+                </div>
+            {% endif %}
+            
+            <!-- Candidature spontanée -->
+            <div class="candidature-spontanee">
+                <h3>Vous ne trouvez pas l'offre qui vous correspond ?</h3>
+                <p>Envoyez-nous une candidature spontanée. Nous étudions toutes les propositions avec attention.</p>
+                <a href="mailto:dataeconci@gmail.com?subject=Candidature spontanée" class="btn-spontanee">
+                    Envoyer une candidature spontanée
+                </a>
+            </div>
+        </section>
+
+    </div>
+</div>
+{% endblock %}

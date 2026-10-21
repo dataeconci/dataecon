@@ -2337,7 +2337,38 @@ def about():
     return render_template('about.html', message_semaine=message_semaine)
 # ==================== FIN PAGE À PROPOS ====================
 
-
+# ==================== PAGE CARRIÈRES ====================
+@app.route('/carrieres')
+def carrieres():
+    # Liste des offres d'emploi (tu peux en ajouter/supprimer ici)
+    offres = [
+        {
+            'id': 1,
+            'titre': 'Data Analyst Junior',
+            'type': 'CDI',
+            'lieu': 'Abidjan, Côte d\'Ivoire',
+            'description': 'Nous recherchons un Data Analyst passionné pour rejoindre notre équipe. Vous travaillerez sur des projets d\'analyse de données économiques et financières pour nos clients.',
+            'competences': ['SQL', 'Python', 'Tableau', 'Statistiques']
+        },
+        {
+            'id': 2,
+            'titre': 'Data Scientist',
+            'type': 'CDI',
+            'lieu': 'Abidjan, Côte d\'Ivoire',
+            'description': 'En tant que Data Scientist, vous serez responsable de la conception et du déploiement de modèles prédictifs (Machine Learning, séries temporelles) pour répondre aux besoins de nos partenaires.',
+            'competences': ['Python', 'R', 'Machine Learning', 'Économétrie']
+        },
+        {
+            'id': 3,
+            'titre': 'Formateur en Économétrie',
+            'type': 'Freelance / Temps partiel',
+            'lieu': 'À distance',
+            'description': 'Vous êtes passionné par la transmission du savoir ? Rejoignez-nous pour animer des sessions de formation en ligne et accompagner nos apprenants dans leur progression.',
+            'competences': ['R', 'Python', 'Pédagogie', 'Économétrie appliquée']
+        }
+    ]
+    return render_template('carrieres.html', offres=offres)
+# ==================== FIN PAGE CARRIÈRES ====================
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
