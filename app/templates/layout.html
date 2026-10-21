@@ -84,15 +84,20 @@
                             </a>
                         </li>
                         
-                        <!-- ADMIN -->
+                                               <!-- ADMIN -->
                         {% if current_user.is_admin %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ url_for('admin_courses') }}" style="color: #fdbb2d !important;">
                                     <i class="fas fa-cog"></i> Administration
                                 </a>
                             </li>
-                        {% endif %}
-                        
+                            <!-- NOUVEAU LIEN ICI -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('admin_candidatures') }}" style="color: #fdbb2d !important;">
+                                    <i class="fas fa-users"></i> Candidatures
+                                </a>
+                            </li>
+                        {% endif %}                        
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
                                 <i class="fas fa-user-circle"></i> {{ current_user.username }}

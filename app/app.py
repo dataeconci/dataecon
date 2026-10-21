@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash, request, session, send_file, jsonify
+from flask import Flask, render_template, redirect, url_for, flash, request, session, send_file, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_mail import Mail, Message
@@ -454,6 +454,18 @@ class Progress(db.Model):
     progress_percent = db.Column(db.Integer, default=0)
     last_accessed = db.Column(db.DateTime, default=datetime.utcnow)
 
+class Candidature(db.Model):
+    __tablename__ = 'candidatures'
+    id = db.Column(db.Integer, primary_key=True)
+    offre_id = db.Column(db.Integer, nullable=False)
+    offre_titre = db.Column(db.String(200), nullable=False)
+    nom = db.Column(db.String(100), nullable=False)
+    prenom = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    cv_filename = db.Column(db.String(255), nullable=False)
+    lettre_filename = db.Column(db.String(255), nullable=False)
+    date_postule = db.Column(db.DateTime, default=datetime.utcnow)
+    statut = db.Column(db.String(50), default='En attente')
 # ==================== FONCTIONS ====================
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -2336,39 +2348,187 @@ def about():
     
     return render_template('about.html', message_semaine=message_semaine)
 # ==================== FIN PAGE À PROPOS ====================
-
 # ==================== PAGE CARRIÈRES ====================
+
+# Liste des offres avec les détails complets pour la fiche de poste
+offres_data = [
+    {
+        'id': 1,
+        'titre': 'Data Analyst Junior',
+        'type': 'CDI',
+        'lieu': 'Abidjan, Côte d\'Ivoire',
+        'description': 'Nous recherchons un Data Analyst passionné pour rejoindre notre équipe. Vous travaillerez sur des projets d\'analyse de données économiques et financières pour nos clients.',
+        'missions': [
+            'Collecter, nettoyer et structurer les données',
+            'Créer des tableaux de bord interactifs',
+            'Rédiger des rapports d\'analyse clairs',
+            'Collaborer avec les équipes métier'
+        ],
+        'profil': [
+            'Bac+3/5 en statistique, économie ou informatique',
+            'Maîtrise de SQL et Python',
+            'Connaissance de Tableau ou PowerBI',
+            'Bon sens de l\'analyse et de la communication'
+        ],
+        'competences': ['SQL', 'Python', 'Tableau', 'Statistiques']
+    },
+    {
+        'id': 2,
+        'titre': 'Data Scientist',
+        'type': 'CDI',
+        'lieu': 'Abidjan, Côte d\'Ivoire',
+        'description': 'En tant que Data Scientist, vous serez responsable de la conception et du déploiement de modèles prédictifs pour répondre aux besoins de nos partenaires.',
+        'missions': [
+            'Développer des modèles de Machine Learning',
+            'Analyser de grands volumes de données',
+            'Optimiser les algorithmes existants',
+            'Présenter les résultats aux clients'
+        ],
+        'profil': [
+            'Bac+5 en Data Science, Mathématiques ou Économétrie',
+            'Maîtrise de Python et R',
+            'Expérience avérée en Machine Learning',
+            'Esprit critique et rigueur scientifique'
+        ],
+        'competences': ['Python', 'R', 'Machine Learning', 'Économétrie']
+    },
+    {
+        'id': 3,
+        'titre': 'Formateur en Économétrie',
+        'type': 'Freelance / Temps partiel',
+        'lieu': 'À distance',
+        'description': 'Vous êtes passionné par la transmission du savoir ? Rejoignez-nous pour animer des sessions de formation en ligne et accompagner nos apprenants.',
+        'missions': [
+            'Animer des cours en ligne interactifs',
+            'Créer des supports pédagogiques',
+            'Corriger les exercices et projets',
+            'Accompagner les apprenants dans leur progression'
+        ],
+        'profil': [
+            'Bac+5 en Économie, Statistique ou Économétrie',
+            'Expérience en enseignement ou formation',
+            'Maîtrise des outils numériques',
+            'Pédagogie, patience et écoute'
+        ],
+        'competences': ['R', 'Python', 'Pédagogie', 'Économétrie appliquée']
+    }
+]
+
 @app.route('/carrieres')
 def carrieres():
-    # Liste des offres d'emploi (tu peux en ajouter/supprimer ici)
-    offres = [
-        {
-            'id': 1,
-            'titre': 'Data Analyst Junior',
-            'type': 'CDI',
-            'lieu': 'Abidjan, Côte d\'Ivoire',
-            'description': 'Nous recherchons un Data Analyst passionné pour rejoindre notre équipe. Vous travaillerez sur des projets d\'analyse de données économiques et financières pour nos clients.',
-            'competences': ['SQL', 'Python', 'Tableau', 'Statistiques']
-        },
-        {
-            'id': 2,
-            'titre': 'Data Scientist',
-            'type': 'CDI',
-            'lieu': 'Abidjan, Côte d\'Ivoire',
-            'description': 'En tant que Data Scientist, vous serez responsable de la conception et du déploiement de modèles prédictifs (Machine Learning, séries temporelles) pour répondre aux besoins de nos partenaires.',
-            'competences': ['Python', 'R', 'Machine Learning', 'Économétrie']
-        },
-        {
-            'id': 3,
-            'titre': 'Formateur en Économétrie',
-            'type': 'Freelance / Temps partiel',
-            'lieu': 'À distance',
-            'description': 'Vous êtes passionné par la transmission du savoir ? Rejoignez-nous pour animer des sessions de formation en ligne et accompagner nos apprenants dans leur progression.',
-            'competences': ['R', 'Python', 'Pédagogie', 'Économétrie appliquée']
-        }
-    ]
-    return render_template('carrieres.html', offres=offres)
+    # On passe la liste des offres à la page principale des carrières
+    return render_template('carrieres.html', offres=offres_data)
+
+@app.route('/carrieres/<int:offre_id>')
+def offre_detail(offre_id):
+    # On cherche l'offre correspondant à l'ID cliqué
+    offre = next((o for o in offres_data if o['id'] == offre_id), None)
+    if not offre:
+        flash("Offre introuvable.", "danger")
+        return redirect(url_for('carrieres'))
+    
+    # On affiche la fiche détaillée
+    return render_template('offre_detail.html', offre=offre)
+
+@app.route('/carrieres/<int:offre_id>/postuler', methods=['GET', 'POST'])
+def postuler(offre_id):
+    offre = next((o for o in offres_data if o['id'] == offre_id), None)
+    if not offre:
+        flash("Offre introuvable.", "danger")
+        return redirect(url_for('carrieres'))
+
+    if request.method == 'POST':
+        nom = request.form.get('nom')
+        prenom = request.form.get('prenom')
+        email = request.form.get('email')
+        
+        cv = request.files.get('cv')
+        lettre = request.files.get('lettre')
+        
+        # Vérification basique
+        if not (nom and prenom and email and cv and lettre):
+            flash("Veuillez remplir tous les champs et joindre les fichiers.", "danger")
+            return redirect(request.url)
+            
+        # Sécuriser les noms de fichiers
+        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        cv_filename = f"CV_{timestamp}_{secure_filename(cv.filename)}"
+        lettre_filename = f"LM_{timestamp}_{secure_filename(lettre.filename)}"
+        
+        # Dossier de sauvegarde
+        upload_dir = os.path.join(app.root_path, 'data', 'candidatures')
+        os.makedirs(upload_dir, exist_ok=True)
+        
+        # Sauvegarde physique des fichiers
+        cv.save(os.path.join(upload_dir, cv_filename))
+        lettre.save(os.path.join(upload_dir, lettre_filename))
+        
+        # Enregistrement en base de données
+        nouvelle_candidature = Candidature(
+            offre_id=offre['id'],
+            offre_titre=offre['titre'],
+            nom=nom,
+            prenom=prenom,
+            email=email,
+            cv_filename=cv_filename,
+            lettre_filename=lettre_filename
+        )
+        db.session.add(nouvelle_candidature)
+        db.session.commit()
+        
+        flash("Votre candidature a bien été envoyée ! Nous vous contacterons bientôt.", "success")
+        return redirect(url_for('carrieres'))
+
+    return render_template('postuler.html', offre=offre)
 # ==================== FIN PAGE CARRIÈRES ====================
+
+# ==================== ADMINISTRATION DES CANDIDATURES ====================
+@app.route('/admin/candidatures')
+@login_required
+def admin_candidatures():
+    # Vérifier que l'utilisateur est bien un administrateur
+    if not current_user.is_admin:
+        flash("Accès refusé. Réservé aux administrateurs.", "danger")
+        return redirect(url_for('index'))
+    
+    # Récupérer toutes les candidatures, de la plus récente à la plus ancienne
+    candidatures = Candidature.query.order_by(Candidature.date_postule.desc()).all()
+    return render_template('admin_candidatures.html', candidatures=candidatures)
+
+@app.route('/admin/candidature/<int:cand_id>/statut/<string:nouveau_statut>')
+@login_required
+def changer_statut_candidature(cand_id, nouveau_statut):
+    if not current_user.is_admin:
+        return redirect(url_for('index'))
+    
+    cand = Candidature.query.get_or_404(cand_id)
+    cand.statut = nouveau_statut
+    db.session.commit()
+    
+    flash(f"Le statut de la candidature a été mis à jour : {nouveau_statut}", "success")
+    return redirect(url_for('admin_candidatures'))
+
+@app.route('/admin/candidature/<int:cand_id>/fichier/<string:type_fichier>')
+@login_required
+def voir_fichier_candidature(cand_id, type_fichier):
+    if not current_user.is_admin:
+        return redirect(url_for('index'))
+        
+    cand = Candidature.query.get_or_404(cand_id)
+    
+    # Choisir le bon fichier selon le type demandé (cv ou lettre)
+    if type_fichier == 'cv':
+        filename = cand.cv_filename
+    elif type_fichier == 'lettre':
+        filename = cand.lettre_filename
+    else:
+        flash("Fichier introuvable.", "danger")
+        return redirect(url_for('admin_candidatures'))
+        
+    # Envoyer le fichier depuis le dossier sécurisé
+    dossier = os.path.join(app.root_path, 'data', 'candidatures')
+    return send_from_directory(dossier, filename)
+# ==================== FIN ADMINISTRATION DES CANDIDATURES ====================
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))

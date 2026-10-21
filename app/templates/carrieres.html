@@ -71,10 +71,9 @@
                                 <span class="competence-tag">{{ comp }}</span>
                             {% endfor %}
                         </div>
-                        
                         <div class="offre-footer">
-                            <a href="mailto:dataeconci@gmail.com?subject=Candidature : {{ offre.titre }}" class="btn-postuler">
-                                Postuler à cette offre
+                            <a href="{{ url_for('offre_detail', offre_id=offre.id) }}" class="btn-postuler">
+                                Voir l'offre
                             </a>
                         </div>
                     </div>

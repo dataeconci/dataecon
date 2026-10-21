@@ -1,0 +1,125 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ offre.titre }} - DataEcon.Ci{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/carrieres.css') }}">
+<style>
+    .detail-hero {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        color: white;
+        padding: 40px 0;
+    }
+    .detail-hero .back-link {
+        color: #ffc107;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+    .detail-hero h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+    .detail-meta {
+        display: flex;
+        gap: 20px;
+        font-size: 0.95rem;
+        opacity: 0.9;
+    }
+    .detail-card {
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        margin-top: -30px; /* Pour remonter la carte sur le bandeau */
+        position: relative;
+    }
+    .detail-card h2 {
+        color: #1e3c72;
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-top: 30px;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 10px;
+    }
+    .detail-card h2:first-child {
+        margin-top: 0;
+    }
+    .detail-card p, .detail-card li {
+        color: #444;
+        line-height: 1.7;
+        font-size: 0.95rem;
+    }
+    .detail-card ul {
+        padding-left: 20px;
+    }
+    .detail-card ul li {
+        margin-bottom: 8px;
+    }
+    .detail-cta {
+        text-align: center;
+        margin-top: 40px;
+        padding-top: 30px;
+        border-top: 1px solid #eee;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="carrieres-page">
+    
+    <!-- Bandeau supérieur -->
+    <section class="detail-hero">
+        <div class="container">
+            <a href="{{ url_for('carrieres') }}" class="back-link">
+                &larr; Retour aux offres
+            </a>
+            <h1>{{ offre.titre }}</h1>
+            <div class="detail-meta">
+                <span><i class="fas fa-briefcase"></i> {{ offre.type }}</span>
+                <span><i class="fas fa-map-marker-alt"></i> {{ offre.lieu }}</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contenu de la fiche de poste -->
+    <div class="container" style="max-width: 900px; margin-bottom: 60px;">
+        <div class="detail-card">
+            
+            <h2>Description du poste</h2>
+            <p>{{ offre.description }}</p>
+
+            <h2>Missions principales</h2>
+            <ul>
+                {% for mission in offre.missions %}
+                <li>{{ mission }}</li>
+                {% endfor %}
+            </ul>
+
+            <h2>Profil recherché</h2>
+            <ul>
+                {% for p in offre.profil %}
+                <li>{{ p }}</li>
+                {% endfor %}
+            </ul>
+
+            <h2>Compétences clés</h2>
+            <div class="offre-competences">
+                {% for comp in offre.competences %}
+                    <span class="competence-tag">{{ comp }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="detail-cta">
+                <a href="{{ url_for('postuler', offre_id=offre.id) }}" class="btn-postuler" style="font-size: 1.1rem; padding: 15px 40px; display: inline-block;">
+                    Postuler à cette offre
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

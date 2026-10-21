@@ -1,0 +1,84 @@
+{% extends "layout.html" %}
+
+{% block title %}Candidatures Reçues - Admin{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 40px; margin-bottom: 50px;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 style="color: #1e3c72; font-weight: 700; margin: 0;">Gestion des Candidatures</h2>
+        <a href="{{ url_for('carrieres') }}" class="btn-postuler" style="text-decoration: none; font-size: 0.9rem; padding: 10px 20px; background: #2a5298; color: white; border-radius: 6px; font-weight: 600;">Voir les offres en ligne</a>
+    </div>
+
+    <!-- Messages Flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" style="padding: 15px; border-radius: 6px; margin-bottom: 20px; background: {% if category == 'success' %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if category == 'success' %}#155724{% else %}#721c24{% endif %};">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div style="background: white; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; min-width: 800px;">
+            <thead style="background: #2a5298; color: white;">
+                <tr>
+                    <th style="padding: 15px; text-align: left;">Date</th>
+                    <th style="padding: 15px; text-align: left;">Candidat</th>
+                    <th style="padding: 15px; text-align: left;">Poste</th>
+                    <th style="padding: 15px; text-align: left;">Fichiers (CV / LM)</th>
+                    <th style="padding: 15px; text-align: left;">Statut</th>
+                    <th style="padding: 15px; text-align: left;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cand in candidatures %}
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 15px; font-size: 0.9rem; color: #555;">
+                        {{ cand.date_postule.strftime('%d/%m/%Y') }}
+                    </td>
+                    <td style="padding: 15px;">
+                        <strong style="color: #1e3c72;">{{ cand.prenom }} {{ cand.nom }}</strong><br>
+                        <a href="mailto:{{ cand.email }}" style="font-size: 0.85rem; color: #2a5298;">{{ cand.email }}</a>
+                    </td>
+                    <td style="padding: 15px; font-weight: 600; color: #444;">
+                        {{ cand.offre_titre }}
+                    </td>
+                    <td style="padding: 15px;">
+                        <a href="{{ url_for('voir_fichier_candidature', cand_id=cand.id, type_fichier='cv') }}" target="_blank" style="display: block; color: #e74c3c; font-weight: 600; margin-bottom: 5px; text-decoration: none;">
+                            <i class="fas fa-file-pdf"></i> Voir CV
+                        </a>
+                        <a href="{{ url_for('voir_fichier_candidature', cand_id=cand.id, type_fichier='lettre') }}" target="_blank" style="display: block; color: #2a5298; font-weight: 600; text-decoration: none;">
+                            <i class="fas fa-file-alt"></i> Voir Lettre
+                        </a>
+                    </td>
+                    <td style="padding: 15px;">
+                        <span style="padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; 
+                            background: {% if cand.statut == 'Retenu' %}#d4edda{% elif cand.statut == 'Refusé' %}#f8d7da{% else %}#fff3cd{% endif %};
+                            color: {% if cand.statut == 'Retenu' %}#155724{% elif cand.statut == 'Refusé' %}#721c24{% else %}#856404{% endif %};">
+                            {{ cand.statut }}
+                        </span>
+                    </td>
+                    <td style="padding: 15px;">
+                        <select onchange="window.location.href=this.value" style="padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 0.85rem; cursor: pointer; outline: none;">
+                            <option value="">Changer le statut...</option>
+                            <option value="{{ url_for('changer_statut_candidature', cand_id=cand.id, nouveau_statut='En attente') }}">En attente</option>
+                            <option value="{{ url_for('changer_statut_candidature', cand_id=cand.id, nouveau_statut='Retenu') }}">Retenir</option>
+                            <option value="{{ url_for('changer_statut_candidature', cand_id=cand.id, nouveau_statut='Refusé') }}">Refuser</option>
+                        </select>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" style="padding: 40px; text-align: center; color: #666; font-size: 1.1rem;">
+                        Aucune candidature reçue pour le moment.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
