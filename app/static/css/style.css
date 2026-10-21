@@ -508,3 +508,67 @@ footer small {
         transform: translateY(0);
     }
 }
+/* ============================================
+   AMÉLIORATION DE LA BARRE DE NAVIGATION
+   ============================================ */
+
+/* Rendre la navbar plus fine */
+.navbar {
+    padding: 0.4rem 1rem !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Taille du logo */
+.navbar-brand {
+    font-size: 1.25rem !important;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/* Espacement et taille des liens */
+.navbar-nav .nav-link {
+    font-size: 0.85rem !important; /* Texte plus petit */
+    padding: 0.5rem 0.8rem !important; /* Espacement réduit */
+    white-space: nowrap !important; /* Empêche le texte de passer à la ligne */
+    display: flex;
+    align-items: center;
+    gap: 6px; /* Espace entre l'icône et le texte */
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+/* Taille des icônes dans le menu */
+.navbar-nav .nav-link i {
+    font-size: 0.9rem !important;
+}
+
+/* Effet de survol élégant */
+.navbar-nav .nav-link:hover {
+    color: #ffc107 !important;
+    transform: translateY(-1px);
+}
+
+/* Style spécifique pour le bouton Abonnement (Couleur Or) */
+.navbar-nav .nav-link[href*="subscription"] {
+    color: #ffc107 !important;
+    font-weight: 600;
+}
+
+/* Style du menu déroulant utilisateur */
+.dropdown-menu {
+    font-size: 0.85rem;
+    border: none;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.dropdown-item {
+    padding: 0.5rem 1rem;
+}
+
+/* Ajustement pour les écrans mobiles */
+@media (max-width: 991px) {
+    .navbar-nav .nav-link {
+        white-space: normal !important; /* Sur mobile, on autorise le retour à la ligne */
+        padding: 0.5rem 0 !important;
+    }
+}
