@@ -572,3 +572,45 @@ footer small {
         padding: 0.5rem 0 !important;
     }
 }
+/* ============================================
+   MENUS DÉROULANTS DE LA NAVBAR
+   ============================================ */
+
+/* Style des menus déroulants */
+.dropdown-menu {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    padding: 10px 0;
+    margin-top: 10px;
+}
+
+.dropdown-item {
+    font-size: 0.9rem;
+    padding: 10px 20px;
+    color: #333;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.dropdown-item:hover {
+    background-color: #f0f5ff;
+    color: #2a5298;
+}
+
+.dropdown-item i {
+    width: 20px;
+    text-align: center;
+    margin-right: 8px;
+    color: #2a5298;
+}
+
+/* Alignement vertical parfait dans la navbar */
+.navbar-nav {
+    align-items: center;
+}
+
+.navbar-nav .nav-item {
+    display: flex;
+    align-items: center;
+}
