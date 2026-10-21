@@ -1,0 +1,88 @@
+{
+  "outil": "tableau",
+  "niveau": "debutant",
+  "titre": "Les bases de Tableau",
+  "description": "Découvrez les dimensions, les mesures et les types de graphiques dans Tableau.",
+  "concepts": [
+    {
+      "id": "tab_deb_1",
+      "titre": "Dimensions et mesures",
+      "objectif": "Distinguer les dimensions (catégories) des mesures (nombres)",
+      "explication": "Dans Tableau, les données se divisent en deux catégories :\n\n- **Dimensions**  : ce sont les catégories (texte, date). Ex : `Ville`, `Produit`, `Date`.\n- **Mesures**  : ce sont les nombres qu'on peut calculer. Ex : `Quantité`, `Prix`, `Chiffre d'affaires`.\n\nRègle simple :\n- Une dimension sert à **regrouper** ou **filtrer** (axe X)\n- Une mesure sert à **calculer** (axe Y)\n\n Si tu mets une mesure sur l'axe X et une dimension sur l'axe Y, ton graphique sera incohérent.",
+      "image_svg": "<svg viewBox='0 0 500 180' xmlns='http://www.w3.org/2000/svg'><rect x='30' y='40' width='200' height='100' fill='#e3f2fd' stroke='#276dc3' stroke-width='2' rx='8'/><text x='130' y='65' text-anchor='middle' font-size='15' font-weight='bold' fill='#276dc3'> Dimensions</text><text x='130' y='90' text-anchor='middle' font-size='13' fill='#333'>Ville</text><text x='130' y='110' text-anchor='middle' font-size='13' fill='#333'>Produit</text><text x='130' y='130' text-anchor='middle' font-size='13' fill='#333'>Date</text><rect x='270' y='40' width='200' height='100' fill='#fff3e0' stroke='#e67e22' stroke-width='2' rx='8'/><text x='370' y='65' text-anchor='middle' font-size='15' font-weight='bold' fill='#e67e22'> Mesures</text><text x='370' y='90' text-anchor='middle' font-size='13' fill='#333'>Quantité</text><text x='370' y='110' text-anchor='middle' font-size='13' fill='#333'>Prix</text><text x='370' y='130' text-anchor='middle' font-size='13' fill='#333'>Chiffre d'affaires</text></svg>",
+      "code_exemple": "# Dans Tableau :\n# - Glisser 'Ville' sur l'axe X (dimension)\n# - Glisser 'Quantité' sur l'axe Y (mesure)\n#\n# Résultat : un graphique en barres montrant\n# la quantité vendue par ville.\n\n# Ici dans l'exercice, vous utiliserez le sélecteur\n# 'Dimension' et 'Mesure' du Mini-Tableau pour\n# reproduire ce comportement.",
+      "question_reflexion": "Pourquoi 'Ville' est une dimension et 'Quantité' est une mesure ?",
+      "exercice": {
+        "enonce": "Dans le Mini-Tableau (à droite de la page), choisissez la dimension 'Ville' et la mesure 'Quantité totale', puis cliquez sur 'Générer'. Décrivez ce que vous voyez : quelle ville a la plus grande quantité ?",
+        "indice": "Cliquez sur l'onglet Tableau, puis sélectionnez Dimension = Ville et Mesure = Quantité totale. La réponse est 'Abidjan'.",
+        "solution_attendue": "Abidjan a la plus grande quantité totale.",
+        "mots_cles": [
+          "abidjan",
+          "quantité",
+          "ville"
+        ]
+      }
+    },
+    {
+      "id": "tab_deb_2",
+      "titre": "Les graphiques en barres",
+      "objectif": "Comprendre quand utiliser un graphique en barres",
+      "explication": "Un **graphique en barres** est idéal pour **comparer** des catégories entre elles.\n\nQuand l'utiliser ?\n- Comparer les ventes par ville\n- Comparer les salaires par poste\n- Comparer les performances par équipe\n\nChaque barre = une catégorie (dimension)\nHauteur = la valeur calculée (mesure)\n\n À éviter : mettre trop de catégories (au-delà de 10-15), sinon le graphique devient illisible.",
+      "image_svg": "<svg viewBox='0 0 400 180' xmlns='http://www.w3.org/2000/svg'><line x1='50' y1='150' x2='370' y2='150' stroke='#333' stroke-width='2'/><line x1='50' y1='20' x2='50' y2='150' stroke='#333' stroke-width='2'/><rect x='80' y='70' width='50' height='80' fill='#276dc3'/><rect x='150' y='90' width='50' height='60' fill='#27ae60'/><rect x='220' y='40' width='50' height='110' fill='#e67e22'/><rect x='290' y='100' width='50' height='50' fill='#9b59b6'/><text x='105' y='168' text-anchor='middle' font-size='11' fill='#333'>Abidjan</text><text x='175' y='168' text-anchor='middle' font-size='11' fill='#333'>Bouaké</text><text x='245' y='168' text-anchor='middle' font-size='11' fill='#333'>San-Pédro</text><text x='315' y='168' text-anchor='middle' font-size='11' fill='#333'>Korhogo</text></svg>",
+      "code_exemple": "# Un graphique en barres représente :\n# X = dimension (Ville, Produit, etc.)\n# Y = mesure (Quantité, Prix, CA)\n#\n# Dans le Mini-Tableau :\n# 1. Type = Barres\n# 2. Dimension = Ville\n# 3. Mesure = Quantité totale\n# 4. Cliquer 'Générer'",
+      "question_reflexion": "Quand vaut-il mieux utiliser un graphique en barres qu'un camembert ?",
+      "exercice": {
+        "enonce": "Générez un graphique en barres avec la dimension 'Produit' et la mesure 'Chiffre d'affaires'. Quel produit a le plus gros chiffre d'affaires ?",
+        "indice": "Sélectionnez Type = Barres, Dimension = Produit, Mesure = Chiffre d'affaires. Le Cacao domine.",
+        "solution_attendue": "Le Cacao a le plus gros chiffre d'affaires.",
+        "mots_cles": [
+          "cacao",
+          "chiffre",
+          "affaires",
+          "produit"
+        ]
+      }
+    },
+    {
+      "id": "tab_deb_3",
+      "titre": "Le camembert (pie chart)",
+      "objectif": "Comprendre la répartition en pourcentages",
+      "explication": "Un **camembert** (ou pie chart) montre la **répartition** d'un total entre plusieurs catégories.\n\nQuand l'utiliser ?\n- Montrer la part de chaque produit dans le CA total\n- Visualiser la répartition des ventes par région\n\n **Limites** :\n- Ne pas dépasser 5-7 parts (sinon illisible)\n- Ne pas utiliser si les parts sont très proches\n- Préférer les barres pour comparer précisément",
+      "image_svg": "<svg viewBox='0 0 400 200' xmlns='http://www.w3.org/2000/svg'><circle cx='150' cy='100' r='70' fill='#276dc3'/><path d='M150 100 L150 30 A70 70 0 0 1 210 145 Z' fill='#27ae60'/><path d='M150 100 L210 145 A70 70 0 0 1 100 160 Z' fill='#e67e22'/><path d='M150 100 L100 160 A70 70 0 0 1 150 30 Z' fill='#9b59b6'/><text x='300' y='80' font-size='13' fill='#276dc3'> Cacao (45%)</text><text x='300' y='105' font-size='13' fill='#27ae60'> Café (25%)</text><text x='300' y='130' font-size='13' fill='#e67e22'> Anacarde (20%)</text><text x='300' y='155' font-size='13' fill='#9b59b6'> Coton (10%)</text></svg>",
+      "code_exemple": "# Un camembert montre la répartition :\n# - Le total = 100%\n# - Chaque part = un pourcentage\n#\n# Dans le Mini-Tableau :\n# 1. Type = Camembert\n# 2. Dimension = Produit\n# 3. Mesure = Chiffre d'affaires\n# 4. Cliquer 'Générer'",
+      "question_reflexion": "Que se passe-t-il si on a 20 catégories différentes dans un camembert ?",
+      "exercice": {
+        "enonce": "Générez un camembert avec la dimension 'Produit' et la mesure 'Chiffre d'affaires'. Combien de parts voyez-vous ?",
+        "indice": "Il y a 4 produits : Cacao, Café, Anacarde, Coton. Donc 4 parts.",
+        "solution_attendue": "Je vois 4 parts dans le camembert.",
+        "mots_cles": [
+          "4",
+          "cacao",
+          "café",
+          "anacarde",
+          "coton"
+        ]
+      }
+    },
+    {
+      "id": "tab_deb_4",
+      "titre": "Les graphiques en lignes",
+      "objectif": "Visualiser l'évolution dans le temps",
+      "explication": "Un **graphique en lignes** montre une **évolution** (souvent dans le temps).\n\nQuand l'utiliser ?\n- Évolution des ventes par mois\n- Cours d'une action\n- Température quotidienne\n\nRègle d'or :\n- Axe X = **temps** (date, mois, année)\n- Axe Y = **mesure** (quantité, prix)\n\n Ne pas utiliser de lignes pour comparer des catégories (ex : villes), ce serait trompeur.",
+      "image_svg": "<svg viewBox='0 0 400 180' xmlns='http://www.w3.org/2000/svg'><line x1='50' y1='150' x2='370' y2='150' stroke='#333' stroke-width='2'/><line x1='50' y1='20' x2='50' y2='150' stroke='#333' stroke-width='2'/><polyline points='70,120 130,90 190,70 250,60 310,40 350,50' fill='none' stroke='#276dc3' stroke-width='3'/><circle cx='70' cy='120' r='4' fill='#276dc3'/><circle cx='130' cy='90' r='4' fill='#276dc3'/><circle cx='190' cy='70' r='4' fill='#276dc3'/><circle cx='250' cy='60' r='4' fill='#276dc3'/><circle cx='310' cy='40' r='4' fill='#276dc3'/><circle cx='350' cy='50' r='4' fill='#276dc3'/><text x='70' y='168' text-anchor='middle' font-size='10' fill='#333'>Jan</text><text x='130' y='168' text-anchor='middle' font-size='10' fill='#333'>Fév</text><text x='190' y='168' text-anchor='middle' font-size='10' fill='#333'>Mar</text><text x='250' y='168' text-anchor='middle' font-size='10' fill='#333'>Avr</text><text x='310' y='168' text-anchor='middle' font-size='10' fill='#333'>Mai</text><text x='350' y='168' text-anchor='middle' font-size='10' fill='#333'>Juin</text></svg>",
+      "code_exemple": "# Un graphique en lignes montre une évolution :\n# X = temps (date, mois)\n# Y = mesure (quantité, prix)\n#\n# Dans le Mini-Tableau :\n# 1. Type = Lignes\n# 2. Dimension = Date\n# 3. Mesure = Chiffre d'affaires\n# 4. Cliquer 'Générer'",
+      "question_reflexion": "Pourquoi les lignes ne sont-elles pas adaptées pour comparer des villes ?",
+      "exercice": {
+        "enonce": "Générez un graphique en lignes avec la dimension 'Date' et la mesure 'Chiffre d'affaires'. La tendance est-elle à la hausse ou à la baisse ?",
+        "indice": "Sélectionnez Type = Lignes, Dimension = Date, Mesure = Chiffre d'affaires. Observez la pente.",
+        "solution_attendue": "La tendance est à la hausse.",
+        "mots_cles": [
+          "hausse",
+          "augmentation",
+          "croissance",
+          "hausse"
+        ]
+      }
+    }
+  ]
+}

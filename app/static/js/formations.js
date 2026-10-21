@@ -415,7 +415,7 @@ async function chargerWebR() {
     }
     
     const status = document.getElementById('r-status');
-    if (status) status.textContent = '⏳ Chargement de R...';
+    if (status) status.textContent = 'Chargement de R...';
     
     try {
         // Utilisation d'une version spécifique et stable
@@ -433,7 +433,7 @@ async function chargerWebR() {
         await webRInstance.init();
         
         webRLoaded = true;
-        if (status) status.textContent = '✅ R prêt';
+        if (status) status.textContent = 'R prêt';
         console.log('✅ WebR initialisé (version ' + webRVersion + ')');
         
         const resultDiv = document.getElementById('r-result');
@@ -744,7 +744,7 @@ async function demarrerCours() {
         afficherConcept();
         
         // Message de bienvenue de l'IA
-        ajouterMessageIA(`📚 **${data.titre}**\n\nNous allons parcourir ensemble **${data.concepts.length} concepts**. Je vous explique chaque notion, puis vous pratiquez dans l'éditeur. Prêt ? C'est parti ! 🚀`);
+        ajouterMessageIA(` **${data.titre}**\n\nNous allons parcourir ensemble **${data.concepts.length} concepts**. Je vous explique chaque notion, puis vous pratiquez dans l'éditeur. Prêt ? C'est parti ! 🚀`);
         
     } catch (error) {
         console.error('Erreur chargement leçon:', error);
@@ -787,18 +787,18 @@ function afficherConcept() {
                 </div>
                 
                 <div class="cours-section-explication">
-                    <h4>📖 Explication</h4>
+                    <h4>Explication</h4>
                     <div class="cours-texte">${formaterMarkdown(concept.explication)}</div>
                 </div>
                 
                 <div class="cours-section-image">
-                    <h4>🖼️ Illustration</h4>
+                    <h4>Illustration</h4>
                     <div class="cours-image-container">${concept.image_svg}</div>
                 </div>
                 
                 <div class="cours-section-code">
                     <div class="cours-code-header">
-                        <h4>💻 Exemple de code</h4>
+                        <h4>Exemple de code</h4>
                         <button class="cours-copy-btn" onclick="copierCodeExemple()">
                             <i class="fas fa-copy"></i> Copier dans l'éditeur
                         </button>
@@ -807,7 +807,7 @@ function afficherConcept() {
                 </div>
                 
                 <div class="cours-section-reflexion">
-                    <h4>🤔 Question de réflexion</h4>
+                    <h4> Question de réflexion</h4>
                     <p>${concept.question_reflexion}</p>
                     <small>💬 Posez votre réponse à l'instructeur IA à droite, il vous corrigera.</small>
                 </div>
@@ -898,7 +898,7 @@ function quitterCours() {
                 <i class="fas fa-hand-pointer"></i>
                 <p>Sélectionnez un outil ou recommencez le cours</p>
             </div>`;
-        ajouterMessageIA('👋 Cours quitté. N\'hésitez pas à revenir quand vous voulez !');
+        ajouterMessageIA('Cours quitté. N\'hésitez pas à revenir quand vous voulez !');
     }
 }
 
@@ -947,7 +947,7 @@ function validerExercice() {
             nextBtn.innerHTML = '✅ Concept validé — Suivant <i class="fas fa-arrow-right"></i>';
         }
     } else {
-        ajouterMessageIA(`🤔 **Presque !** ${motsTrouves.length}/${motsCles.length} critères validés.\n\n💡 **Indice :** ${concept.exercice.indice}\n\nReprenez votre code et réessayez. Posez-moi une question si vous bloquez !`);
+        ajouterMessageIA(`**Presque !** ${motsTrouves.length}/${motsCles.length} critères validés.\n\n **Indice :** ${concept.exercice.indice}\n\nReprenez votre code et réessayez. Posez-moi une question si vous bloquez !`);
     }
 }
 
@@ -997,7 +997,7 @@ async function executerCodeExercice() {
         } 
         else if (outilActif === 'r') {
             if (!webRInstance) {
-                resultat.innerHTML = '<p style="color:#e67e22;">⚠️ R n\'est pas encore prêt. Attendez "✅ R prêt".</p>';
+                resultat.innerHTML = '<p style="color:#e67e22;">⚠️ R n\'est pas encore prêt. Attendez "R prêt".</p>';
                 return;
             }
             const shelter = await new webRInstance.Shelter();
