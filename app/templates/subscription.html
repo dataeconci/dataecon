@@ -24,7 +24,7 @@
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         gap: 20px;
         align-items: stretch;
-        margin-top: -30px; /* Pour remonter sur le bandeau */
+        margin-top: -30px;
         position: relative;
     }
     .tarif-card {
@@ -69,7 +69,7 @@
         text-align: center;
         font-size: 2.5rem;
         font-weight: 700;
-        color: #2a5298; /* Correction du contraste : Bleu foncé au lieu de jaune */
+        color: #2a5298;
         margin-bottom: 20px;
     }
     .tarif-prix span {
@@ -201,7 +201,8 @@
                     <li><i class="fas fa-check"></i> Téléchargement des datasets</li>
                     <li><i class="fas fa-times" style="color:#e74c3c;"></i> Accès aux modèles avancés</li>
                 </ul>
-                <a href="#" class="btn-subscribe" onclick="alert('Paiement en ligne bientôt disponible. Contactez l\'admin pour un paiement manuel.')">Choisir Standard</a>
+                <!-- BOUTON MODIFIÉ ICI -->
+                <a href="{{ url_for('payer_abonnement', plan='standard') }}" class="btn-subscribe">Choisir Standard</a>
             </div>
 
             <!-- Premium -->
@@ -215,7 +216,8 @@
                     <li><i class="fas fa-check"></i> Téléchargement des datasets</li>
                     <li><i class="fas fa-check"></i> Accès à tous les modèles d'économétrie</li>
                 </ul>
-                <a href="#" class="btn-subscribe" onclick="alert('Paiement en ligne bientôt disponible. Contactez l\'admin pour un paiement manuel.')">Choisir Premium</a>
+                <!-- BOUTON MODIFIÉ ICI -->
+                <a href="{{ url_for('payer_abonnement', plan='premium') }}" class="btn-subscribe">Choisir Premium</a>
             </div>
 
             <!-- Entreprise -->
