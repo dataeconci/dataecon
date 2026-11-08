@@ -34,7 +34,7 @@ function chargerOutil(outil) {
         editeur.innerHTML = `
             <div class="r-editor-wrapper">
                 <div class="r-toolbar">
-                    <span class="r-label">📝 Éditeur R (WebR)</span>
+                    <span class="r-label">Éditeur R (WebR)</span>
                     <button class="r-run-btn" onclick="executerR()">
                         <i class="fas fa-play"></i> Exécuter
                     </button>
@@ -49,7 +49,7 @@ ventes$total <- ventes$quantite * ventes$prix
 summary(ventes$total)
 mean(ventes$total)</textarea>
                 <div class="r-result-header">
-                    <span>📊 Console R</span>
+                    <span>Console R</span>
                     <span id="r-status" class="r-status"></span>
                 </div>
                 <div id="r-result" class="r-result">
@@ -62,7 +62,7 @@ mean(ventes$total)</textarea>
         editeur.innerHTML = `
             <div class="sql-editor-wrapper">
                 <div class="sql-toolbar">
-                    <span class="sql-label">📝 Éditeur SQL (SQLite)</span>
+                    <span class="sql-label">Éditeur SQL (SQLite)</span>
                     <button class="sql-run-btn" onclick="executerSQL()">
                         <i class="fas fa-play"></i> Exécuter
                     </button>
@@ -72,7 +72,7 @@ mean(ventes$total)</textarea>
 
 SELECT * FROM ventes LIMIT 5;">SELECT * FROM ventes LIMIT 5;</textarea>
                 <div class="sql-result-header">
-                    <span>📊 Résultat</span>
+                    <span>Résultat</span>
                     <span id="sql-status" class="sql-status"></span>
                 </div>
                 <div id="sql-result" class="sql-result">
@@ -85,7 +85,7 @@ SELECT * FROM ventes LIMIT 5;">SELECT * FROM ventes LIMIT 5;</textarea>
         editeur.innerHTML = `
             <div class="tableau-wrapper">
                 <div class="tableau-toolbar">
-                    <span class="tableau-label">📊 Mini-Tableau interactif</span>
+                    <span class="tableau-label">Mini-Tableau interactif</span>
                     <div class="tableau-controls">
                         <select id="tableau-type" class="tableau-select">
                             <option value="bar">Barres</option>
@@ -101,7 +101,7 @@ SELECT * FROM ventes LIMIT 5;">SELECT * FROM ventes LIMIT 5;</textarea>
                 </div>
                 <div class="tableau-config">
                     <div class="tableau-config-item">
-                        <label>📌 Dimension (Axe X)</label>
+                        <label>Dimension (Axe X)</label>
                         <select id="tableau-dim" class="tableau-select">
                             <option value="ville">Ville</option>
                             <option value="produit">Produit</option>
@@ -109,7 +109,7 @@ SELECT * FROM ventes LIMIT 5;">SELECT * FROM ventes LIMIT 5;</textarea>
                         </select>
                     </div>
                     <div class="tableau-config-item">
-                        <label>📈 Mesure (Axe Y)</label>
+                        <label>Mesure (Axe Y)</label>
                         <select id="tableau-mesure" class="tableau-select">
                             <option value="quantite">Quantité totale</option>
                             <option value="prix_unitaire">Prix unitaire moyen</option>
@@ -121,7 +121,7 @@ SELECT * FROM ventes LIMIT 5;">SELECT * FROM ventes LIMIT 5;</textarea>
                     <canvas id="tableau-canvas"></canvas>
                 </div>
                 <div class="tableau-tip">
-                    💡 <strong>Astuce :</strong> dans Tableau, on glisse une <strong>dimension</strong> sur l'axe X et une <strong>mesure</strong> sur l'axe Y. Ici, on simule ce workflow avec les menus ci-dessus.
+                    <strong>Astuce :</strong> dans Tableau, on glisse une <strong>dimension</strong> sur l'axe X et une <strong>mesure</strong> sur l'axe Y. Ici, on simule ce workflow avec les menus ci-dessus.
                 </div>
             </div>`;
         setTimeout(initialiserTableau, 100);
@@ -143,9 +143,9 @@ function changerNiveau(niveau) {
     
     // Message de l'IA quand on change de niveau
     const messages = {
-        debutant: "Niveau **Débutant** activé 🌱 Je vais vous expliquer les concepts pas à pas, avec des exemples simples.",
-        intermediaire: "Niveau **Intermédiaire** activé 🚀 On va approfondir les concepts et faire des exercices plus poussés.",
-        avance: "Niveau **Avancé** activé 🎯 On va travailler sur des cas complexes et des optimisations."
+        debutant: "Niveau **Débutant** activé Je vais vous expliquer les concepts pas à pas, avec des exemples simples.",
+        intermediaire: "Niveau **Intermédiaire** activé On va approfondir les concepts et faire des exercices plus poussés.",
+        avance: "Niveau **Avancé** activé On va travailler sur des cas complexes et des optimisations."
     };
     
     ajouterMessageIA(messages[niveau]);
@@ -210,7 +210,7 @@ async function envoyerQuestion() {
         
     } catch (error) {
         document.getElementById(loadingId).remove();
-        ajouterMessageIA("❌ Désolé, une erreur est survenue. Veuillez réessayer.");
+        ajouterMessageIA("Désolé, une erreur est survenue. Veuillez réessayer.");
         console.error('Erreur:', error);
     }
 }
@@ -227,13 +227,13 @@ function ajouterMessageIA(texte, isLoading = false) {
     div.id = id;
     
     if (isLoading) {
-        div.innerHTML = `<strong>🤖 EconBot</strong><p class="loading-dots">${texte}</p>`;
+        div.innerHTML = `<strong>EconBot</strong><p class="loading-dots">${texte}</p>`;
     } else {
         // Convertir les **gras** en <strong>
         const html = texte
             .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
             .replace(/\n/g, '<br>');
-        div.innerHTML = `<strong>🤖 EconBot</strong><p>${html}</p>`;
+        div.innerHTML = `<strong>EconBot</strong><p>${html}</p>`;
     }
     
     container.appendChild(div);
@@ -269,7 +269,7 @@ function escapeHtml(text) {
 // INITIALISATION
 // ============================================
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('📚 Section Formation chargée');
+    console.log('Section Formation chargée');
 });
 
 // ============================================
@@ -289,7 +289,7 @@ function chargerSQLJS() {
     script.onload = initialiserBaseSQL;
     script.onerror = function() {
         document.getElementById('sql-result').innerHTML = 
-            '<p style="color:#d33;">❌ Impossible de charger SQL.js. Vérifiez votre connexion.</p>';
+            '<p style="color:#d33;">Impossible de charger SQL.js. Vérifiez votre connexion.</p>';
     };
     document.head.appendChild(script);
     sqlJsLoaded = true;
@@ -340,7 +340,7 @@ function initialiserBaseSQL() {
             (20, '2024-10-05', 'Coton', 160, 1020.00, 'Bouaké');
         `);
         
-        console.log('✅ Base SQL initialisée avec 20 lignes dans la table "ventes"');
+        console.log('Base SQL initialisée avec 20 lignes dans la table "ventes"');
         
     }).catch(function(err) {
         console.error('Erreur SQL.js:', err);
@@ -350,7 +350,7 @@ function initialiserBaseSQL() {
 function executerSQL() {
     if (!sqlDb) {
         document.getElementById('sql-result').innerHTML = 
-            '<p style="color:#d33;">⏳ La base de données est en cours de chargement. Réessayez dans quelques secondes.</p>';
+            '<p style="color:#d33;">La base de données est en cours de chargement. Réessayez dans quelques secondes.</p>';
         return;
     }
     
@@ -366,8 +366,8 @@ function executerSQL() {
         const duree = (performance.now() - start).toFixed(1);
         
         if (resultats.length === 0) {
-            resultDiv.innerHTML = '<p style="color:#666;">✅ Requête exécutée (aucun résultat retourné).</p>';
-            status.textContent = `⚡ ${duree} ms`;
+            resultDiv.innerHTML = '<p style="color:#666;">Requête exécutée (aucun résultat retourné).</p>';
+            status.textContent = `${duree} ms`;
             return;
         }
         
@@ -391,10 +391,10 @@ function executerSQL() {
         });
         
         resultDiv.innerHTML = html;
-        status.textContent = `✅ ${resultats[0].values.length} ligne(s) en ${duree} ms`;
+        status.textContent = `${resultats[0].values.length} ligne(s) en ${duree} ms`;
         
     } catch (error) {
-        resultDiv.innerHTML = `<p style="color:#d33;">❌ Erreur SQL : ${escapeHtml(error.message)}</p>`;
+        resultDiv.innerHTML = `<p style="color:#d33;">Erreur SQL : ${escapeHtml(error.message)}</p>`;
         status.textContent = '';
     }
 }
@@ -434,20 +434,20 @@ async function chargerWebR() {
         
         webRLoaded = true;
         if (status) status.textContent = 'R prêt';
-        console.log('✅ WebR initialisé (version ' + webRVersion + ')');
+        console.log('WebR initialisé (version ' + webRVersion + ')');
         
         const resultDiv = document.getElementById('r-result');
         if (resultDiv) {
-            resultDiv.innerHTML = '<p style="color:#27ae60;">✅ R est prêt. Cliquez sur "Exécuter" pour lancer votre code.</p>';
+            resultDiv.innerHTML = '<p style="color:#27ae60;">R est prêt. Cliquez sur "Exécuter" pour lancer votre code.</p>';
         }
         
     } catch (error) {
         console.error('Erreur WebR:', error);
         const status = document.getElementById('r-status');
-        if (status) status.textContent = '❌ Erreur';
+        if (status) status.textContent = 'Erreur';
         const resultDiv = document.getElementById('r-result');
         if (resultDiv) {
-            resultDiv.innerHTML = '<p style="color:#d33;">❌ Impossible de charger R. Vérifiez votre connexion internet.</p>';
+            resultDiv.innerHTML = '<p style="color:#d33;">Impossible de charger R. Vérifiez votre connexion internet.</p>';
         }
     }
 }
@@ -456,7 +456,7 @@ async function executerR() {
     const status = document.getElementById('r-status');
     
     if (!webRInstance) {
-        resultDiv.innerHTML = '<p style="color:#d33;">⏳ R est en cours de chargement. Patientez quelques secondes.</p>';
+        resultDiv.innerHTML = '<p style="color:#d33;">R est en cours de chargement. Patientez quelques secondes.</p>';
         return;
     }
     
@@ -464,7 +464,7 @@ async function executerR() {
     if (!input) return;
     
     const start = performance.now();
-    resultDiv.innerHTML = '<p class="r-placeholder">⏳ Exécution en cours...</p>';
+    resultDiv.innerHTML = '<p class="r-placeholder">Exécution en cours...</p>';
     status.textContent = '';
     
     try {
@@ -499,15 +499,15 @@ async function executerR() {
         }
         
         if (!html) {
-            html = '<p style="color:#666;">✅ Code exécuté (aucun résultat affiché).</p>';
+            html = '<p style="color:#666;">Code exécuté (aucun résultat affiché).</p>';
         }
         
         resultDiv.innerHTML = html;
-        status.textContent = `✅ ${duration} ms`;
+        status.textContent = `${duration} ms`;
         
     } catch (error) {
         console.error('Erreur R:', error);
-        resultDiv.innerHTML = `<p style="color:#d33;">❌ Erreur R : ${escapeHtml(error.message)}</p>`;
+        resultDiv.innerHTML = `<p style="color:#d33;">Erreur R : ${escapeHtml(error.message)}</p>`;
         status.textContent = '';
     }
 }
@@ -632,7 +632,7 @@ function genererGraphique() {
     
     // Couleurs
     const couleurs = [
-        '#2a5298', '#27ae60', '#e67e22', '#e74c3c', '#9b59b6',
+        '#1f5f99', '#27ae60', '#e67e22', '#e74c3c', '#9b59b6',
         '#3498db', '#16a085', '#f39c12', '#c0392b', '#8e44ad'
     ];
     
@@ -649,7 +649,7 @@ function genererGraphique() {
                 label: getLabelMesure(mesure),
                 data: data,
                 backgroundColor: type === 'line' ? 'rgba(42, 82, 152, 0.2)' : couleurs,
-                borderColor: type === 'line' ? '#2a5298' : couleurs,
+                borderColor: type === 'line' ? '#1f5f99' : couleurs,
                 borderWidth: 2,
                 fill: type === 'line',
                 tension: 0.3
@@ -667,7 +667,7 @@ function genererGraphique() {
                     display: true,
                     text: `${getLabelMesure(mesure)} par ${getLabelDimension(dimension)}`,
                     font: { size: 14, weight: 'bold' },
-                    color: '#1e3c72'
+                    color: '#0b2a4a'
                 }
             },
             scales: (type === 'pie' || type === 'doughnut') ? {} : {
@@ -710,7 +710,7 @@ let exerciceValide = false;
 async function demarrerCours() {
     // Vérifier qu'un outil et un niveau sont sélectionnés
     if (!outilActif) {
-        alert('👆 Choisissez d\'abord un outil (Python, R, SQL ou Tableau).');
+        alert('Choisissez d\'abord un outil (Python, R, SQL ou Tableau).');
         return;
     }
     
@@ -744,14 +744,14 @@ async function demarrerCours() {
         afficherConcept();
         
         // Message de bienvenue de l'IA
-        ajouterMessageIA(` **${data.titre}**\n\nNous allons parcourir ensemble **${data.concepts.length} concepts**. Je vous explique chaque notion, puis vous pratiquez dans l'éditeur. Prêt ? C'est parti ! 🚀`);
+        ajouterMessageIA(` **${data.titre}**\n\nNous allons parcourir ensemble **${data.concepts.length} concepts**. Je vous explique chaque notion, puis vous pratiquez dans l'éditeur. Prêt ? C'est parti ! `);
         
     } catch (error) {
         console.error('Erreur chargement leçon:', error);
         editeur.innerHTML = `
             <div class="placeholder">
                 <i class="fas fa-exclamation-triangle"></i>
-                <p>❌ Impossible de charger le cours.</p>
+                <p>Impossible de charger le cours.</p>
             </div>`;
     }
 }
@@ -779,10 +779,10 @@ function afficherConcept() {
             
             <div class="cours-body">
                 <div class="cours-concept-header">
-                    <span class="cours-emoji">${concept.emoji}</span>
+                    <span class="cours-emoji"><i class="fas fa-book-open"></i></span>
                     <div>
                         <h3>${concept.titre}</h3>
-                        <p class="cours-objectif">🎯 ${concept.objectif}</p>
+                        <p class="cours-objectif">${concept.objectif}</p>
                     </div>
                 </div>
                 
@@ -809,20 +809,20 @@ function afficherConcept() {
                 <div class="cours-section-reflexion">
                     <h4> Question de réflexion</h4>
                     <p>${concept.question_reflexion}</p>
-                    <small>💬 Posez votre réponse à l'instructeur IA à droite, il vous corrigera.</small>
+                    <small>Posez votre réponse à l'instructeur IA à droite, il vous corrigera.</small>
                 </div>
                 
                             <div class="cours-section-exercice">
-                    <h4>✏️ Exercice pratique</h4>
+                    <h4>Exercice pratique</h4>
                     <div class="cours-exercice-box">
                         <p><strong>Énoncé :</strong> ${concept.exercice.enonce}</p>
                         <details class="cours-indice">
-                            <summary>💡 Voir un indice</summary>
+                            <summary>Voir un indice</summary>
                             <p>${concept.exercice.indice}</p>
                         </details>
                         
                         <div class="exercice-editeur">
-                            <label>📝 Votre code :</label>
+                            <label>Votre code :</label>
                             <textarea id="exercice-code" class="exercice-textarea" placeholder="Écrivez votre code ici..."></textarea>
                             <div class="exercice-boutons">
                                 <button class="exercice-run-btn" onclick="executerCodeExercice()">
@@ -849,7 +849,7 @@ function afficherConcept() {
         </div>`;
     
     // Message de l'IA pour accompagner le concept
-    ajouterMessageIA(`${concept.emoji} **Concept ${conceptIndex + 1}/${total} : ${concept.titre}**\n\n${concept.objectif}\n\nLisez l'explication et testez le code. Posez-moi toutes vos questions !`);
+    ajouterMessageIA(`**Concept ${conceptIndex + 1}/${total} : ${concept.titre}**\n\n${concept.objectif}\n\nLisez l'explication et testez le code. Posez-moi toutes vos questions !`);
 }
 
 // Formater le markdown basique (**gras**, `code`)
@@ -867,7 +867,7 @@ function copierCodeExemple() {
     
     // Si on est sur Python, on remplit un textarea temporaire
     // Sinon, on affiche le code dans un message IA
-    ajouterMessageIA(`📋 Voici le code à tester :\n\n\`\`\`\n${concept.code_exemple}\n\`\`\`\n\nCopiez-le dans l'éditeur à gauche pour l'exécuter.`);
+    ajouterMessageIA(`Voici le code à tester :\n\n\`\`\`\n${concept.code_exemple}\n\`\`\`\n\nCopiez-le dans l'éditeur à gauche pour l'exécuter.`);
 }
 
 function conceptSuivant() {
@@ -921,12 +921,12 @@ function validerExercice() {
     } else {
         // Pour Python (iframe JupyterLite), on ne peut pas lire directement
         // On demande à l'utilisateur de décrire ou on envoie le code à l'IA
-        ajouterMessageIA('💡 Pour valider votre exercice Python, **copiez votre code dans le chat à droite** et je vous dirai si c\'est correct.');
+        ajouterMessageIA('Pour valider votre exercice Python, **copiez votre code dans le chat à droite** et je vous dirai si c\'est correct.');
         return;
     }
     
     if (!codeUtilisateur) {
-        ajouterMessageIA('⚠️ Écrivez votre code dans l\'éditeur avant de valider.');
+        ajouterMessageIA('Écrivez votre code dans l\'éditeur avant de valider.');
         return;
     }
     
@@ -938,13 +938,13 @@ function validerExercice() {
     
     if (score >= 70) {
         exerciceValide = true;
-        ajouterMessageIA(`🎉 **Bravo !** Votre exercice semble correct (${motsTrouves.length}/${motsCles.length} critères validés).\n\n✅ Vous pouvez passer au concept suivant !`);
+        ajouterMessageIA(`**Bravo !** Votre exercice semble correct (${motsTrouves.length}/${motsCles.length} critères validés).\n\nVous pouvez passer au concept suivant !`);
         
         // Mettre à jour le bouton "Suivant"
         const nextBtn = document.querySelector('.cours-nav-next');
         if (nextBtn) {
             nextBtn.style.background = '#27ae60';
-            nextBtn.innerHTML = '✅ Concept validé — Suivant <i class="fas fa-arrow-right"></i>';
+            nextBtn.innerHTML = 'Concept validé — Suivant <i class="fas fa-arrow-right"></i>';
         }
     } else {
         ajouterMessageIA(`**Presque !** ${motsTrouves.length}/${motsCles.length} critères validés.\n\n **Indice :** ${concept.exercice.indice}\n\nReprenez votre code et réessayez. Posez-moi une question si vous bloquez !`);
@@ -964,11 +964,11 @@ async function executerCodeExercice() {
     const resultat = document.getElementById('exercice-resultat');
     
     if (!code) {
-        resultat.innerHTML = '<p style="color:#e67e22;">⚠️ Écrivez du code avant d\'exécuter.</p>';
+        resultat.innerHTML = '<p style="color:#e67e22;">Écrivez du code avant d\'exécuter.</p>';
         return;
     }
     
-    resultat.innerHTML = '<p style="color:#2a5298;">⏳ Exécution en cours...</p>';
+    resultat.innerHTML = '<p style="color:#1f5f99;">Exécution en cours...</p>';
     const start = performance.now();
     
     try {
@@ -976,12 +976,12 @@ async function executerCodeExercice() {
         
         if (outilActif === 'sql') {
             if (!sqlDb) {
-                resultat.innerHTML = '<p style="color:#e67e22;">⚠️ La base SQL n\'est pas encore prête. Réessayez dans quelques secondes.</p>';
+                resultat.innerHTML = '<p style="color:#e67e22;">La base SQL n\'est pas encore prête. Réessayez dans quelques secondes.</p>';
                 return;
             }
             const res = sqlDb.exec(code);
             if (res.length === 0) {
-                output = '✅ Requête exécutée (aucun résultat).';
+                output = 'Requête exécutée (aucun résultat).';
             } else {
                 let html = '<table class="sql-table"><thead><tr>';
                 res[0].columns.forEach(c => html += `<th>${c}</th>`);
@@ -997,7 +997,7 @@ async function executerCodeExercice() {
         } 
         else if (outilActif === 'r') {
             if (!webRInstance) {
-                resultat.innerHTML = '<p style="color:#e67e22;">⚠️ R n\'est pas encore prêt. Attendez "R prêt".</p>';
+                resultat.innerHTML = '<p style="color:#e67e22;">R n\'est pas encore prêt. Attendez "R prêt".</p>';
                 return;
             }
             const shelter = await new webRInstance.Shelter();
@@ -1016,14 +1016,14 @@ async function executerCodeExercice() {
                     const valStr = formaterValeurR(jsVal);
                     if (valStr) output += `<pre class="r-output r-value">${escapeHtml(valStr)}</pre>`;
                 }
-                if (!output) output = '✅ Code exécuté (aucun résultat).';
+                if (!output) output = 'Code exécuté (aucun résultat).';
             } finally {
                 shelter.purge();
             }
         }
         else if (outilActif === 'python') {
             if (!pyodideInstance && !pyodideLoading) {
-                resultat.innerHTML = '<p style="color:#2a5298;">⏳ Premier chargement de Python (10-20 sec)...</p>';
+                resultat.innerHTML = '<p style="color:#1f5f99;">Premier chargement de Python (10-20 sec)...</p>';
                 pyodideLoading = true;
                 await new Promise((resolve, reject) => {
                     const script = document.createElement('script');
@@ -1039,22 +1039,22 @@ async function executerCodeExercice() {
             }
             // Rediriger stdout
             pyodideInstance.setStdout({ batched: (s) => { output += s + '\n'; } });
-            pyodideInstance.setStderr({ batched: (s) => { output += '❌ ' + s + '\n'; } });
+            pyodideInstance.setStderr({ batched: (s) => { output += '' + s + '\n'; } });
             try {
                 await pyodideInstance.runPythonAsync(code);
-                if (!output) output = '✅ Code exécuté (aucune sortie).';
+                if (!output) output = 'Code exécuté (aucune sortie).';
             } catch (e) {
-                output = '❌ ' + e.message;
+                output = '' + e.message;
             }
         }
         
         const duree = (performance.now() - start).toFixed(0);
         resultat.innerHTML = (typeof output === 'string' && output.startsWith('<')) 
             ? output 
-            : `<pre class="r-output">${escapeHtml(output)}</pre><p style="color:#27ae60; font-size:0.8rem; margin:5px 0 0;">✅ Exécuté en ${duree} ms</p>`;
+            : `<pre class="r-output">${escapeHtml(output)}</pre><p style="color:#27ae60; font-size:0.8rem; margin:5px 0 0;">Exécuté en ${duree} ms</p>`;
         
     } catch (e) {
-        resultat.innerHTML = `<p style="color:#d33;">❌ Erreur : ${escapeHtml(e.message)}</p>`;
+        resultat.innerHTML = `<p style="color:#d33;">Erreur : ${escapeHtml(e.message)}</p>`;
     }
 }
 
@@ -1063,7 +1063,7 @@ async function soumettreExerciceIA() {
     
     const code = document.getElementById('exercice-code').value.trim();
     if (!code) {
-        ajouterMessageIA('⚠️ Écrivez d\'abord votre code dans l\'éditeur d\'exercice avant de soumettre.');
+        ajouterMessageIA('Écrivez d\'abord votre code dans l\'éditeur d\'exercice avant de soumettre.');
         return;
     }
     
@@ -1071,9 +1071,9 @@ async function soumettreExerciceIA() {
     const message = `Voici ma réponse à l'exercice :\n\n\`\`\`\n${code}\n\`\`\`\n\nEst-ce correct ? Si non, donne-moi un indice sans la solution.`;
     
     // Ajouter au chat
-    ajouterMessageUtilisateur(`📤 Soumission de l'exercice :\n${code}`);
+    ajouterMessageUtilisateur(`Soumission de l'exercice :\n${code}`);
     
-    const loadingId = ajouterMessageIA('⏳ Analyse de votre réponse...', true);
+    const loadingId = ajouterMessageIA('Analyse de votre réponse...', true);
     
     try {
         const response = await fetch('/api/tutor', {
@@ -1109,18 +1109,18 @@ async function soumettreExerciceIA() {
         
         if (estValide) {
             const resultat = document.getElementById('exercice-resultat');
-            resultat.innerHTML = '<p style="color:#27ae60; font-weight:600;">✅ Exercice validé ! Vous pouvez passer au concept suivant.</p>';
+            resultat.innerHTML = '<p style="color:#27ae60; font-weight:600;">Exercice validé ! Vous pouvez passer au concept suivant.</p>';
             
             const nextBtn = document.querySelector('.cours-nav-next');
             if (nextBtn) {
                 nextBtn.style.background = '#27ae60';
                 nextBtn.style.borderColor = '#27ae60';
-                nextBtn.innerHTML = '✅ Concept validé — Suivant <i class="fas fa-arrow-right"></i>';
+                nextBtn.innerHTML = 'Concept validé — Suivant <i class="fas fa-arrow-right"></i>';
             }
         }
         
     } catch (e) {
         document.getElementById(loadingId).remove();
-        ajouterMessageIA('❌ Erreur lors de la soumission. Réessayez.');
+        ajouterMessageIA('Erreur lors de la soumission. Réessayez.');
     }
 }

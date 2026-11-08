@@ -45,7 +45,7 @@
         <!-- ========== MEILLEUR MODÈLE ========== -->
         {% if results.comparison %}
             <div class="best-model-card">
-                <div class="best-model-icon">🏆</div>
+                <div class="best-model-icon"><i class="fas fa-trophy"></i></div>
                 <div class="best-model-content">
                     <h3>Meilleur modèle : {{ results.comparison.best_model }}</h3>
                     <p>Ce modèle offre la meilleure performance avec un <strong>R² = {{ results.comparison.best_r2|round(4) }}</strong></p>
@@ -204,7 +204,7 @@
                                     <td>
                                         <strong>{{ name|replace('_', ' ')|capitalize }}</strong>
                                         {% if name == results.comparison.best_model|lower|replace(' ', '_') %}
-                                            <span class="badge-best">🏆 Meilleur</span>
+                                            <span class="badge-best">Meilleur</span>
                                         {% endif %}
                                     </td>
                                     <td>
@@ -280,11 +280,11 @@
                                         </td>
                                         <td>
                                             {% if coef > 0.01 %}
-                                                <span class="badge-effect positive">📈 Positif</span>
+                                                <span class="badge-effect positive">Positif</span>
                                             {% elif coef < -0.01 %}
-                                                <span class="badge-effect negative">📉 Négatif</span>
+                                                <span class="badge-effect negative">Négatif</span>
                                             {% else %}
-                                                <span class="badge-effect neutral">➖ Neutre</span>
+                                                <span class="badge-effect neutral">Neutre</span>
                                             {% endif %}
                                         </td>
                                         <td>
@@ -312,7 +312,7 @@
         {% if results.economic_interpretation %}
             <div class="interpretation-card economic">
                 <div class="interpretation-header">
-                    <span class="icon">📊</span>
+                    <span class="icon"><i class="fas fa-chart-bar"></i></span>
                     <h3>Interprétation économique</h3>
                 </div>
                 <div class="interpretation-body">
@@ -329,7 +329,7 @@
         {% if results.financial_interpretation %}
             <div class="interpretation-card financial">
                 <div class="interpretation-header">
-                    <span class="icon">💰</span>
+                    <span class="icon"><i class="fas fa-wallet"></i></span>
                     <h3>Interprétation financière</h3>
                 </div>
                 <div class="interpretation-body">
@@ -346,7 +346,7 @@
         {% if results.strategic_decisions %}
             <div class="interpretation-card strategic">
                 <div class="interpretation-header">
-                    <span class="icon">🎯</span>
+                    <span class="icon"><i class="fas fa-bullseye"></i></span>
                     <h3>Décisions stratégiques</h3>
                 </div>
                 <div class="interpretation-body">
@@ -378,14 +378,14 @@
 }
 
 .results-header h1 {
-    color: #1a2a6c;
+    color: #0b2a4a;
     font-weight: 800;
     font-size: 2rem;
     margin-bottom: 8px;
 }
 
 .results-header h1 i {
-    color: #fdbb2d;
+    color: #c2a15a;
 }
 
 .header-actions {
@@ -396,7 +396,7 @@
 
 /* Meilleur modèle */
 .best-model-card {
-    background: linear-gradient(135deg, #1a2a6c 0%, #2d3561 100%);
+    background: linear-gradient(135deg, #0b2a4a 0%, #123a63 100%);
     color: white;
     border-radius: 20px;
     padding: 30px 35px;
@@ -417,7 +417,7 @@
 }
 
 .best-model-content h3 {
-    color: #fdbb2d;
+    color: #c2a15a;
     font-weight: 700;
     margin-bottom: 8px;
     font-size: 1.5rem;
@@ -444,7 +444,7 @@
 }
 
 .badge-quality.excellent { background: #00ff88; color: #0a2c15; }
-.badge-quality.good { background: #fdbb2d; color: #1a2a6c; }
+.badge-quality.good { background: #c2a15a; color: #0b2a4a; }
 .badge-quality.medium { background: #ff9800; color: white; }
 .badge-quality.weak { background: #dc3545; color: white; }
 
@@ -458,7 +458,7 @@
 }
 
 .result-section h2 {
-    color: #1a2a6c;
+    color: #0b2a4a;
     font-weight: 700;
     font-size: 1.4rem;
     margin-bottom: 25px;
@@ -467,12 +467,12 @@
 }
 
 .result-section h2 i {
-    color: #fdbb2d;
+    color: #c2a15a;
     margin-right: 8px;
 }
 
 .result-section h3 {
-    color: #1a2a6c;
+    color: #0b2a4a;
     font-weight: 700;
     font-size: 1.1rem;
     margin: 25px 0 15px;
@@ -491,7 +491,7 @@
     border-radius: 15px;
     padding: 20px;
     text-align: center;
-    border-left: 4px solid #1a2a6c;
+    border-left: 4px solid #0b2a4a;
 }
 
 .info-label {
@@ -503,7 +503,7 @@
 }
 
 .info-value {
-    color: #1a2a6c;
+    color: #0b2a4a;
     font-size: 1.5rem;
     font-weight: 800;
 }
@@ -520,7 +520,7 @@
 /* Équation */
 .equation-box {
     background: linear-gradient(135deg, #f8f9fc 0%, #eef2f9 100%);
-    border: 2px solid #1a2a6c;
+    border: 2px solid #0b2a4a;
     border-radius: 15px;
     padding: 25px;
     margin-bottom: 25px;
@@ -538,7 +538,7 @@
 .equation {
     font-family: 'Courier New', monospace;
     font-size: 1.15rem;
-    color: #1a2a6c;
+    color: #0b2a4a;
     font-weight: 700;
     line-height: 1.8;
     word-break: break-word;
@@ -561,7 +561,7 @@
 }
 
 .results-table thead th {
-    background: #1a2a6c;
+    background: #0b2a4a;
     color: white;
     padding: 14px 18px;
     text-align: left;
@@ -593,19 +593,19 @@
     background: #f0f2f5;
     padding: 3px 8px;
     border-radius: 5px;
-    color: #1a2a6c;
+    color: #0b2a4a;
     font-size: 0.85rem;
 }
 
 .coef-cell {
     font-family: 'Courier New', monospace;
     font-weight: 700;
-    color: #1a2a6c;
+    color: #0b2a4a;
 }
 
 .badge-best {
-    background: #fdbb2d;
-    color: #1a2a6c;
+    background: #c2a15a;
+    color: #0b2a4a;
     padding: 3px 10px;
     border-radius: 12px;
     font-size: 0.72rem;
@@ -636,7 +636,7 @@
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #1a2a6c, #fdbb2d);
+    background: linear-gradient(90deg, #0b2a4a, #c2a15a);
     border-radius: 2px;
 }
 
@@ -652,7 +652,7 @@
     border-radius: 12px;
     padding: 15px;
     text-align: center;
-    border-top: 3px solid #fdbb2d;
+    border-top: 3px solid #c2a15a;
     transition: all 0.3s;
 }
 
@@ -672,7 +672,7 @@
 .forecast-value {
     font-size: 1.3rem;
     font-weight: 800;
-    color: #1a2a6c;
+    color: #0b2a4a;
 }
 
 /* Cartes d'interprétation */
@@ -684,9 +684,9 @@
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
 }
 
-.interpretation-card.economic { border-left: 5px solid #1a2a6c; }
+.interpretation-card.economic { border-left: 5px solid #0b2a4a; }
 .interpretation-card.financial { border-left: 5px solid #28a745; }
-.interpretation-card.strategic { border-left: 5px solid #fdbb2d; }
+.interpretation-card.strategic { border-left: 5px solid #c2a15a; }
 
 .interpretation-header {
     display: flex;
@@ -702,7 +702,7 @@
 
 .interpretation-header h3 {
     margin: 0;
-    color: #1a2a6c;
+    color: #0b2a4a;
     font-weight: 700;
     font-size: 1.2rem;
 }
@@ -733,7 +733,7 @@
     content: '→';
     position: absolute;
     left: 0;
-    color: #fdbb2d;
+    color: #c2a15a;
     font-weight: bold;
     font-size: 1.1rem;
 }
@@ -746,14 +746,14 @@
 }
 
 .interpretation-box h4 {
-    color: #1a2a6c;
+    color: #0b2a4a;
     font-weight: 700;
     margin-bottom: 15px;
     font-size: 1rem;
 }
 
 .interpretation-box h4 i {
-    color: #fdbb2d;
+    color: #c2a15a;
     margin-right: 8px;
 }
 

@@ -1,4 +1,4 @@
-﻿services:
+services:
   web:
     build: .
     container_name: dataecon_web

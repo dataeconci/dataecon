@@ -15,8 +15,10 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <!-- CSS Chatbot -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}">
     
     {% block extra_css %}{% endblock %}
 </head>
@@ -86,7 +88,7 @@
                         
                         <!-- Abonnements (Mis en évidence) -->
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('subscription') }}" style="color: #fdbb2d !important;">
+                            <a class="nav-link" href="{{ url_for('subscription') }}" style="color: #c2a15a !important;">
                                 <i class="fas fa-crown"></i> Abonnements
                             </a>
                         </li>
@@ -94,7 +96,7 @@
                         <!-- 3. MENU ADMINISTRATION (Admin uniquement) -->
                         {% if current_user.is_admin %}
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" style="color: #fdbb2d !important;">
+                                <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" style="color: #c2a15a !important;">
                                     <i class="fas fa-cog"></i> Administration
                                 </a>
                                 <ul class="dropdown-menu">
@@ -110,13 +112,13 @@
                                     </li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
-                                        <a class="dropdown-item" href="{{ url_for('admin_candidatures') }}" style="color: #2a5298; font-weight: 600;">
+                                        <a class="dropdown-item" href="{{ url_for('admin_candidatures') }}">
                                             <i class="fas fa-file-signature"></i> Candidatures reçues
-<li>
-    <a class="dropdown-item" href="{{ url_for('admin_demandes_paiement') }}" style="color: #2a5298; font-weight: 600;">
-        <i class="fas fa-money-bill-wave"></i> Demandes d'abonnement
-    </a>
-</li>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{{ url_for('admin_demandes_paiement') }}">
+                                            <i class="fas fa-money-bill-wave"></i> Demandes d'abonnement
                                         </a>
                                     </li>
                                 </ul>
@@ -243,7 +245,7 @@
     <div id="chatbotWindow" class="chatbot-window">
         <!-- En-tête -->
         <div class="chatbot-header">
-            <div class="chatbot-avatar">🤖</div>
+            <div class="chatbot-avatar"><i class="fas fa-robot"></i></div>
             <div class="chatbot-info">
                 <h4>EconBot</h4>
                 <p>Assistant DataEcon.Ci</p>

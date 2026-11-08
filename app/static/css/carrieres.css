@@ -8,7 +8,7 @@
 }
 
 .carrieres-hero {
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    background: linear-gradient(135deg, #0b2a4a 0%, #1f5f99 100%);
     color: white;
     padding: 60px 0;
 }
@@ -20,7 +20,7 @@
 }
 
 .carrieres-hero h1 span {
-    color: #ffc107;
+    color: #c2a15a;
 }
 
 .carrieres-hero p {
@@ -37,7 +37,7 @@
 /* Titres de section */
 .section-title {
     text-align: center;
-    color: #1e3c72;
+    color: #0b2a4a;
     font-size: 2rem;
     font-weight: 700;
     margin: 50px 0 30px;
@@ -49,7 +49,7 @@
     display: block;
     width: 60px;
     height: 4px;
-    background: #ffc107;
+    background: #c2a15a;
     margin: 15px auto 0;
     border-radius: 2px;
 }
@@ -68,17 +68,17 @@
     border-radius: 12px;
     text-align: center;
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    border-top: 4px solid #2a5298;
+    border-top: 4px solid #1f5f99;
 }
 
 .avantage-card i {
     font-size: 2.5rem;
-    color: #2a5298;
+    color: #1f5f99;
     margin-bottom: 15px;
 }
 
 .avantage-card h3 {
-    color: #1e3c72;
+    color: #0b2a4a;
     font-size: 1.1rem;
     margin-bottom: 10px;
 }
@@ -108,7 +108,7 @@
 .offre-card:hover {
     transform: translateY(-3px);
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    border-color: #2a5298;
+    border-color: #1f5f99;
 }
 
 .offre-header {
@@ -121,7 +121,7 @@
 }
 
 .offre-titre {
-    color: #1e3c72;
+    color: #0b2a4a;
     font-size: 1.4rem;
     font-weight: 700;
     margin: 0 0 5px 0;
@@ -130,7 +130,7 @@
 .offre-type {
     display: inline-block;
     background: #e3f2fd;
-    color: #2a5298;
+    color: #1f5f99;
     padding: 4px 12px;
     border-radius: 20px;
     font-size: 0.8rem;
@@ -166,7 +166,7 @@
 
 .competence-tag {
     background: #f0f5ff;
-    color: #2a5298;
+    color: #1f5f99;
     padding: 5px 12px;
     border-radius: 6px;
     font-size: 0.8rem;
@@ -182,7 +182,7 @@
 }
 
 .btn-postuler {
-    background: #2a5298;
+    background: #1f5f99;
     color: white;
     padding: 10px 25px;
     border-radius: 6px;
@@ -193,13 +193,13 @@
 }
 
 .btn-postuler:hover {
-    background: #1e3c72;
+    background: #0b2a4a;
 }
 
 /* Candidature spontanée */
 .candidature-spontanee {
     background: white;
-    border: 2px dashed #ffc107;
+    border: 2px dashed #c2a15a;
     border-radius: 12px;
     padding: 40px;
     text-align: center;
@@ -207,7 +207,7 @@
 }
 
 .candidature-spontanee h3 {
-    color: #1e3c72;
+    color: #0b2a4a;
     font-size: 1.3rem;
     margin-bottom: 10px;
 }
@@ -218,8 +218,8 @@
 }
 
 .btn-spontanee {
-    background: #ffc107;
-    color: #1e3c72;
+    background: #c2a15a;
+    color: #0b2a4a;
     padding: 12px 25px;
     border-radius: 6px;
     text-decoration: none;
@@ -230,7 +230,7 @@
 }
 
 .btn-spontanee:hover {
-    background: #e0a800;
+    background: #a8873f;
 }
 
 /* Mobile */

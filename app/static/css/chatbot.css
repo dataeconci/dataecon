@@ -10,7 +10,7 @@
     width: 65px;
     height: 65px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #1a2a6c 0%, #2d3561 100%);
+    background: linear-gradient(135deg, #0b2a4a 0%, #123a63 100%);
     color: white;
     border: none;
     cursor: pointer;
@@ -99,7 +99,7 @@
 
 /* En-tête */
 .chatbot-header {
-    background: linear-gradient(135deg, #1a2a6c 0%, #2d3561 100%);
+    background: linear-gradient(135deg, #0b2a4a 0%, #123a63 100%);
     color: white;
     padding: 20px;
     display: flex;
@@ -112,7 +112,7 @@
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: #fdbb2d;
+    background: #c2a15a;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -200,7 +200,7 @@
 }
 
 .chatbot-messages::-webkit-scrollbar-thumb:hover {
-    background: #1a2a6c;
+    background: #0b2a4a;
 }
 
 /* Message */
@@ -245,11 +245,11 @@
 }
 
 .chatbot-message.bot .chatbot-message-avatar {
-    background: linear-gradient(135deg, #1a2a6c, #2d3561);
+    background: linear-gradient(135deg, #0b2a4a, #123a63);
 }
 
 .chatbot-message.user .chatbot-message-avatar {
-    background: linear-gradient(135deg, #fdbb2d, #f7971e);
+    background: linear-gradient(135deg, #c2a15a, #b8923f);
 }
 
 .chatbot-message-content {
@@ -269,18 +269,18 @@
 }
 
 .chatbot-message.user .chatbot-message-content {
-    background: linear-gradient(135deg, #1a2a6c, #2d3561);
+    background: linear-gradient(135deg, #0b2a4a, #123a63);
     color: white;
     border-top-right-radius: 4px;
 }
 
 .chatbot-message-content strong {
-    color: #1a2a6c;
+    color: #0b2a4a;
     font-weight: 700;
 }
 
 .chatbot-message.user .chatbot-message-content strong {
-    color: #fdbb2d;
+    color: #c2a15a;
 }
 
 /* Bouton WhatsApp dans le chat */
@@ -356,7 +356,7 @@
 .chatbot-suggestion {
     background: white;
     border: 1.5px solid #e8eaf0;
-    color: #1a2a6c;
+    color: #0b2a4a;
     padding: 8px 15px;
     border-radius: 20px;
     font-size: 0.82rem;
@@ -367,9 +367,9 @@
 }
 
 .chatbot-suggestion:hover {
-    background: #1a2a6c;
+    background: #0b2a4a;
     color: white;
-    border-color: #1a2a6c;
+    border-color: #0b2a4a;
     transform: translateY(-2px);
 }
 
@@ -395,7 +395,7 @@
 }
 
 .chatbot-input:focus {
-    border-color: #1a2a6c;
+    border-color: #0b2a4a;
     box-shadow: 0 0 0 3px rgba(26, 42, 108, 0.1);
 }
 
@@ -403,7 +403,7 @@
     width: 45px;
     height: 45px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #1a2a6c, #2d3561);
+    background: linear-gradient(135deg, #0b2a4a, #123a63);
     color: white;
     border: none;
     cursor: pointer;

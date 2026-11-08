@@ -111,7 +111,7 @@
                                           style="display: inline-block;">
                                         <button type="submit" 
                                                 class="btn btn-danger btn-sm"
-                                                onclick="return confirm('⚠️ Supprimer définitivement le jeu de données \'{{ dataset.name }}\' ? Cette action est irréversible.')"
+                                                onclick='return confirm({{ ("Supprimer définitivement le jeu de données « " ~ dataset.name ~ " » ? Cette action est irréversible.")|tojson }})'
                                                 title="Supprimer">
                                             <i class="fas fa-trash"></i>
                                         </button>
@@ -125,7 +125,7 @@
         </div>
     {% else %}
         <div class="text-center py-5">
-            <div style="font-size: 4rem; margin-bottom: 20px;">📊</div>
+            <div style="font-size: 4rem; margin-bottom: 20px;"><i class="fas fa-chart-bar"></i></div>
             <h4 class="text-muted">Aucun jeu de données disponible</h4>
             <p class="text-muted small">
                 Importez votre premier fichier de données pour commencer l'analyse !

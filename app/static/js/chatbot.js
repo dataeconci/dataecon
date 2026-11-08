@@ -72,13 +72,13 @@
         // Afficher le message de bienvenue la première fois
         if (isFirstOpen) {
             setTimeout(() => {
-                addBotMessage(`Bonjour ! 👋 Je suis **EconBot**, votre assistant DataEcon.Ci.
+                addBotMessage(`Bonjour ! Je suis **EconBot**, votre assistant DataEcon.Ci.
 
 Je peux vous aider sur :
-• 📚 Inscription et connexion
-• 🎓 Cours et formations
-• 💎 Abonnements et paiement
-• 📊 Données et modèles
+• Inscription et connexion
+• Cours et formations
+• Abonnements et paiement
+• Données et modèles
 
 Comment puis-je vous aider ?`);
                 isFirstOpen = false;

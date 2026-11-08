@@ -90,7 +90,7 @@ class ReportGenerator:
         # Titre
         title_p = self.doc.add_paragraph()
         title_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        run = title_p.add_run("📊 DataEcon.Ci")
+        run = title_p.add_run("DataEcon.Ci")
         run.font.size = Pt(28)
         run.font.bold = True
         run.font.color.rgb = RGBColor(26, 42, 108)
@@ -244,13 +244,13 @@ class ReportGenerator:
             'statistical': RGBColor(128, 0, 128)
         }
         icons = {
-            'economic': '📊',
-            'financial': '💰',
-            'strategic': '🎯',
-            'statistical': '📈'
+            'economic': '',
+            'financial': '',
+            'strategic': '',
+            'statistical': ''
         }
 
-        h = self.doc.add_heading(f"{icons.get(color, '📌')} {title}", level=3)
+        h = self.doc.add_heading(title, level=3)
         for run in h.runs:
             run.font.color.rgb = colors.get(color, RGBColor(0, 0, 0))
 
@@ -274,7 +274,7 @@ def create_data_distribution_chart(df, numeric_cols):
     axes = axes.flatten()
 
     for i, col in enumerate(numeric_cols[:6]):
-        axes[i].hist(df[col].dropna(), bins=20, color='#1a2a6c', alpha=0.7, edgecolor='white')
+        axes[i].hist(df[col].dropna(), bins=20, color='#0b2a4a', alpha=0.7, edgecolor='white')
         axes[i].set_title(f'Distribution de {col}', fontsize=10, fontweight='bold')
         axes[i].set_xlabel(col, fontsize=9)
         axes[i].set_ylabel('Fréquence', fontsize=9)
@@ -314,7 +314,7 @@ def create_boxplots(df, numeric_cols):
 
     for i, col in enumerate(numeric_cols[:6]):
         axes[i].boxplot(df[col].dropna(), patch_artist=True,
-                       boxprops=dict(facecolor='#fdbb2d', alpha=0.7))
+                       boxprops=dict(facecolor='#c2a15a', alpha=0.7))
         axes[i].set_title(f'Boxplot de {col}', fontsize=10, fontweight='bold')
         axes[i].set_ylabel(col, fontsize=9)
         axes[i].grid(True, alpha=0.3)
@@ -340,11 +340,11 @@ def create_scatter_matrix(df, numeric_cols, target_col=None):
         for j in range(n):
             if i == j:
                 axes[i, j].hist(df[cols_to_use[i]].dropna(), bins=15,
-                              color='#1a2a6c', alpha=0.7)
+                              color='#0b2a4a', alpha=0.7)
                 axes[i, j].set_ylabel('Fréquence', fontsize=8)
             else:
                 axes[i, j].scatter(df[cols_to_use[j]], df[cols_to_use[i]],
-                                   alpha=0.5, s=15, color='#2d3561')
+                                   alpha=0.5, s=15, color='#123a63')
             if i == n - 1:
                 axes[i, j].set_xlabel(cols_to_use[j], fontsize=9)
             if j == 0:
@@ -365,7 +365,7 @@ def create_residuals_plot(df, target_col, predictions=None):
     fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
     # Résidus vs valeurs prédites
-    axes[0].scatter(predictions, residuals, alpha=0.5, s=20, color='#1a2a6c')
+    axes[0].scatter(predictions, residuals, alpha=0.5, s=20, color='#0b2a4a')
     axes[0].axhline(y=0, color='red', linestyle='--', linewidth=2)
     axes[0].set_xlabel('Valeurs prédites', fontsize=10)
     axes[0].set_ylabel('Résidus', fontsize=10)
@@ -387,17 +387,17 @@ def create_time_series_plot(df, col):
     fig, axes = plt.subplots(2, 1, figsize=(12, 8))
 
     # Série originale
-    axes[0].plot(df.index, df[col], color='#1a2a6c', linewidth=1.5)
+    axes[0].plot(df.index, df[col], color='#0b2a4a', linewidth=1.5)
     axes[0].set_title(f'Évolution de {col}', fontsize=12, fontweight='bold')
     axes[0].set_xlabel('Temps', fontsize=10)
     axes[0].set_ylabel(col, fontsize=10)
     axes[0].grid(True, alpha=0.3)
-    axes[0].fill_between(df.index, df[col], alpha=0.2, color='#1a2a6c')
+    axes[0].fill_between(df.index, df[col], alpha=0.2, color='#0b2a4a')
 
     # Moyenne mobile
     rolling = df[col].rolling(window=12).mean()
-    axes[1].plot(df.index, df[col], color='#2d3561', linewidth=1, alpha=0.5, label='Série')
-    axes[1].plot(df.index, rolling, color='#fdbb2d', linewidth=2, label='Moyenne mobile (12)')
+    axes[1].plot(df.index, df[col], color='#123a63', linewidth=1, alpha=0.5, label='Série')
+    axes[1].plot(df.index, rolling, color='#c2a15a', linewidth=2, label='Moyenne mobile (12)')
     axes[1].set_title(f'Tendance de {col}', fontsize=12, fontweight='bold')
     axes[1].set_xlabel('Temps', fontsize=10)
     axes[1].set_ylabel(col, fontsize=10)
@@ -429,7 +429,7 @@ def create_model_comparison_chart(models_results):
     fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
     # R²
-    colors = ['#fdbb2d' if r == max(r2_scores) else '#1a2a6c' for r in r2_scores]
+    colors = ['#c2a15a' if r == max(r2_scores) else '#0b2a4a' for r in r2_scores]
     bars1 = axes[0].barh(models, r2_scores, color=colors, edgecolor='white', linewidth=2)
     axes[0].set_xlabel('R² (coefficient de détermination)', fontsize=10)
     axes[0].set_title('Comparaison des R²', fontsize=12, fontweight='bold')
@@ -438,7 +438,7 @@ def create_model_comparison_chart(models_results):
         axes[0].text(v + 0.01, i, f'{v:.4f}', va='center', fontsize=9, fontweight='bold')
 
     # RMSE
-    bars2 = axes[1].barh(models, rmse_scores, color='#2d3561', edgecolor='white', linewidth=2)
+    bars2 = axes[1].barh(models, rmse_scores, color='#123a63', edgecolor='white', linewidth=2)
     axes[1].set_xlabel('RMSE (plus petit = meilleur)', fontsize=10)
     axes[1].set_title('Comparaison des RMSE', fontsize=12, fontweight='bold')
     for i, v in enumerate(rmse_scores):
@@ -486,9 +486,9 @@ def create_forecast_chart(forecast_values):
 
     fig, ax = plt.subplots(figsize=(12, 5))
     periods = list(range(1, len(forecast_values) + 1))
-    ax.plot(periods, forecast_values, marker='o', color='#1a2a6c',
-            linewidth=2, markersize=8, markerfacecolor='#fdbb2d')
-    ax.fill_between(periods, forecast_values, alpha=0.2, color='#1a2a6c')
+    ax.plot(periods, forecast_values, marker='o', color='#0b2a4a',
+            linewidth=2, markersize=8, markerfacecolor='#c2a15a')
+    ax.fill_between(periods, forecast_values, alpha=0.2, color='#0b2a4a')
     ax.set_xlabel('Période', fontsize=11)
     ax.set_ylabel('Valeur prévue', fontsize=11)
     ax.set_title('Prévisions', fontsize=13, fontweight='bold')

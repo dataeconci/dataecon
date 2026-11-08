@@ -9,7 +9,7 @@
 
 /* Bannière */
 .formations-hero {
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    background: linear-gradient(135deg, #0b2a4a 0%, #1f5f99 100%);
     color: white;
     padding: 60px 0 40px;
     text-align: center;
@@ -22,7 +22,7 @@
 }
 
 .formations-hero-content h1 span {
-    color: #ffc107;
+    color: #c2a15a;
 }
 
 .formations-hero-badge {
@@ -47,7 +47,7 @@
 .formations-container h2 {
     font-size: 1.4rem;
     margin-bottom: 20px;
-    color: #1e3c72;
+    color: #0b2a4a;
     font-weight: 600;
 }
 
@@ -78,19 +78,19 @@
 }
 
 .outil-card:hover {
-    border-color: #2a5298;
+    border-color: #1f5f99;
     transform: translateY(-3px);
     box-shadow: 0 8px 20px rgba(30, 60, 114, 0.15);
 }
 
 .outil-card.active {
-    border-color: #2a5298;
+    border-color: #1f5f99;
     background: #f0f5ff;
 }
 
 .outil-card i {
     font-size: 2.2rem;
-    color: #2a5298;
+    color: #1f5f99;
     margin-bottom: 10px;
     display: block;
 }
@@ -98,7 +98,7 @@
 .outil-card h3 {
     font-size: 1.1rem;
     margin: 8px 0 5px;
-    color: #1e3c72;
+    color: #0b2a4a;
 }
 
 .outil-card p {
@@ -130,13 +130,13 @@
 }
 
 .niveau-btn:hover {
-    border-color: #2a5298;
+    border-color: #1f5f99;
 }
 
 .niveau-btn.active {
-    background: #2a5298;
+    background: #1f5f99;
     color: white;
-    border-color: #2a5298;
+    border-color: #1f5f99;
 }
 
 /* Section Pratique */
@@ -169,7 +169,7 @@
 }
 
 .panel-header {
-    background: #1e3c72;
+    background: #0b2a4a;
     color: white;
     padding: 12px 20px;
     display: flex;
@@ -252,11 +252,11 @@
 
 .msg-ia {
     background: white;
-    border-left: 3px solid #2a5298;
+    border-left: 3px solid #1f5f99;
 }
 
 .msg-user {
-    background: #2a5298;
+    background: #1f5f99;
     color: white;
     margin-left: 20px;
 }
@@ -264,7 +264,7 @@
 .msg-ia strong {
     display: block;
     margin-bottom: 5px;
-    color: #1e3c72;
+    color: #0b2a4a;
 }
 
 .msg-ia p {
@@ -291,11 +291,11 @@
 }
 
 .chat-input input:focus {
-    border-color: #2a5298;
+    border-color: #1f5f99;
 }
 
 .chat-input button {
-    background: #2a5298;
+    background: #1f5f99;
     color: white;
     border: none;
     border-radius: 50%;
@@ -306,7 +306,7 @@
 }
 
 .chat-input button:hover {
-    background: #1e3c72;
+    background: #0b2a4a;
 }
 
 .loading-dots {
@@ -575,7 +575,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px 15px;
-    background: #1e3c72;
+    background: #0b2a4a;
     color: white;
     flex-wrap: wrap;
     gap: 10px;
@@ -675,7 +675,7 @@
 }
 
 .cours-cta {
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    background: linear-gradient(135deg, #0b2a4a 0%, #1f5f99 100%);
     color: white;
     border-radius: 12px;
     padding: 25px 30px;
@@ -695,7 +695,7 @@
 
 .cours-cta-text h3 i {
     margin-right: 8px;
-    color: #ffc107;
+    color: #c2a15a;
 }
 
 .cours-cta-text p {
@@ -705,8 +705,8 @@
 }
 
 .btn-commencer-cours {
-    background: #ffc107;
-    color: #1e3c72;
+    background: #c2a15a;
+    color: #0b2a4a;
     border: none;
     border-radius: 8px;
     padding: 14px 26px;
@@ -742,7 +742,7 @@
     justify-content: center;
     height: 100%;
     min-height: 500px;
-    color: #2a5298;
+    color: #1f5f99;
     gap: 15px;
 }
 
@@ -764,7 +764,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 12px 20px;
-    background: #1e3c72;
+    background: #0b2a4a;
     color: white;
 }
 
@@ -791,7 +791,7 @@
 
 .cours-barre-fill {
     height: 100%;
-    background: #ffc107;
+    background: #c2a15a;
     border-radius: 3px;
     transition: width 0.4s ease;
 }
@@ -824,7 +824,7 @@
     gap: 15px;
     padding: 18px;
     background: linear-gradient(135deg, #e8f0fe 0%, #f0f5ff 100%);
-    border-left: 4px solid #2a5298;
+    border-left: 4px solid #1f5f99;
     border-radius: 8px;
     margin-bottom: 20px;
 }
@@ -836,7 +836,7 @@
 
 .cours-concept-header h3 {
     margin: 0 0 6px;
-    color: #1e3c72;
+    color: #0b2a4a;
     font-size: 1.25rem;
     font-weight: 700;
 }
@@ -868,7 +868,7 @@
 .cours-section-exercice h4 {
     margin: 0 0 10px;
     font-size: 1rem;
-    color: #2a5298;
+    color: #1f5f99;
     font-weight: 700;
 }
 
@@ -888,7 +888,7 @@
 }
 
 .cours-texte strong {
-    color: #1e3c72;
+    color: #0b2a4a;
 }
 
 /* Image SVG */
@@ -917,7 +917,7 @@
 }
 
 .cours-copy-btn {
-    background: #2a5298;
+    background: #1f5f99;
     color: white;
     border: none;
     border-radius: 6px;
@@ -929,7 +929,7 @@
 }
 
 .cours-copy-btn:hover {
-    background: #1e3c72;
+    background: #0b2a4a;
 }
 
 .cours-copy-btn i {
@@ -956,7 +956,7 @@
 /* Question de réflexion */
 .cours-section-reflexion {
     background: #fff9e6;
-    border-left: 4px solid #ffc107;
+    border-left: 4px solid #c2a15a;
 }
 
 .cours-section-reflexion p {
@@ -1044,8 +1044,8 @@
 
 .cours-nav-btn {
     background: white;
-    border: 2px solid #2a5298;
-    color: #2a5298;
+    border: 2px solid #1f5f99;
+    color: #1f5f99;
     border-radius: 8px;
     padding: 10px 20px;
     font-size: 0.9rem;
@@ -1058,7 +1058,7 @@
 }
 
 .cours-nav-btn:hover:not(:disabled) {
-    background: #2a5298;
+    background: #1f5f99;
     color: white;
 }
 
@@ -1068,13 +1068,13 @@
 }
 
 .cours-nav-next {
-    background: #2a5298;
+    background: #1f5f99;
     color: white;
     margin-left: auto;
 }
 
 .cours-nav-next:hover:not(:disabled) {
-    background: #1e3c72;
+    background: #0b2a4a;
 }
 
 
@@ -1093,7 +1093,7 @@
 .exercice-editeur label {
     display: block;
     font-weight: 600;
-    color: #1e3c72;
+    color: #0b2a4a;
     margin-bottom: 8px;
     font-size: 0.9rem;
 }
@@ -1114,7 +1114,7 @@
 }
 
 .exercice-textarea:focus {
-    border-color: #2a5298;
+    border-color: #1f5f99;
     box-shadow: 0 0 0 2px rgba(42, 82, 152, 0.15);
 }
 
@@ -1126,7 +1126,7 @@
 }
 
 .exercice-run-btn {
-    background: #2a5298;
+    background: #1f5f99;
     color: white;
     border: none;
     border-radius: 6px;
@@ -1141,7 +1141,7 @@
 }
 
 .exercice-run-btn:hover {
-    background: #1e3c72;
+    background: #0b2a4a;
 }
 
 .exercice-submit-btn {
@@ -1170,7 +1170,7 @@
 
 .exercice-resultat pre {
     background: #f5f5f5;
-    border-left: 3px solid #2a5298;
+    border-left: 3px solid #1f5f99;
     padding: 10px 15px;
     margin: 8px 0;
     font-family: 'Courier New', monospace;

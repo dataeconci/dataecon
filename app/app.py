@@ -101,7 +101,7 @@ def read_data_file(file_path):
             return df
             
         except Exception as e:
-            print(f"⚠️ Erreur lecture CSV: {e}", flush=True)
+            print(f"Erreur lecture CSV: {e}", flush=True)
             # Dernier essai avec séparateur automatique
             try:
                 return pd.read_csv(file_path, sep=None, engine='python', encoding='utf-8')
@@ -133,6 +133,8 @@ def read_dataset_file(dataset):
 # ==================== CONFIGURATION ====================
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['REMEMBER_COOKIE_SAMESITE'] = 'Lax'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql://dataecon:dataecon123@db:5432/dataecon')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = '/app/data'
@@ -179,7 +181,7 @@ BREVO_API_KEY = os.environ.get('BREVO_API_KEY')
 def brevo_send_email(to_email, to_name, subject, html_content):
     """Envoyer un email via l'API HTTP de Brevo (contourne le blocage SMTP de Render)"""
     if not BREVO_API_KEY:
-        print("❌ BREVO_API_KEY non configurée", flush=True)
+        print("BREVO_API_KEY non configurée", flush=True)
         return False
     
     try:
@@ -196,13 +198,13 @@ def brevo_send_email(to_email, to_name, subject, html_content):
         )
         
         api_instance.send_transac_email(email)
-        print(f"✅ Email envoyé à {to_email} via Brevo", flush=True)
+        print(f"Email envoyé à {to_email} via Brevo", flush=True)
         return True
     except ApiException as e:
-        print(f"❌ Erreur Brevo API: {e}", flush=True)
+        print(f"Erreur Brevo API: {e}", flush=True)
         return False
     except Exception as e:
-        print(f"❌ Erreur générale Brevo: {e}", flush=True)
+        print(f"Erreur générale Brevo: {e}", flush=True)
         return False
 
 # ==================== CONFIGURATION CLOUDFLARE R2 ====================
@@ -238,7 +240,7 @@ def get_pdf_url(file_name):
         )
         return url
     except Exception as e:
-        print(f"❌ Erreur R2: {e}", flush=True)
+        print(f"Erreur R2: {e}", flush=True)
         return None
 
 def upload_file_to_r2(local_path, r2_key):
@@ -248,10 +250,10 @@ def upload_file_to_r2(local_path, r2_key):
         return False
     try:
         client.upload_file(local_path, R2_BUCKET_NAME, r2_key)
-        print(f"✅ Fichier uploadé vers R2: {r2_key}", flush=True)
+        print(f"Fichier uploadé vers R2: {r2_key}", flush=True)
         return True
     except Exception as e:
-        print(f"❌ Erreur upload R2: {e}", flush=True)
+        print(f"Erreur upload R2: {e}", flush=True)
         return False
 
 def download_file_from_r2(r2_key, local_path):
@@ -262,10 +264,10 @@ def download_file_from_r2(r2_key, local_path):
     try:
         os.makedirs(os.path.dirname(local_path), exist_ok=True)
         client.download_file(R2_BUCKET_NAME, r2_key, local_path)
-        print(f"✅ Fichier téléchargé depuis R2: {r2_key}", flush=True)
+        print(f"Fichier téléchargé depuis R2: {r2_key}", flush=True)
         return True
     except Exception as e:
-        print(f"❌ Erreur download R2: {e}", flush=True)
+        print(f"Erreur download R2: {e}", flush=True)
         return False
 
 def read_data_from_r2(r2_key):
@@ -296,7 +298,7 @@ def read_data_from_r2(r2_key):
         else:
             return None
     except Exception as e:
-        print(f"❌ Erreur lecture R2: {e}", flush=True)
+        print(f"Erreur lecture R2: {e}", flush=True)
         return None
 
 # ==================== CONFIGURATION WAVE PAYMENT ====================
@@ -475,8 +477,8 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def send_email(to, subject, template, **kwargs):
-    print(f"📧 TENTATIVE D'ENVOI EMAIL: {to}", flush=True)
-    print(f"📧 Sujet: {subject}", flush=True)
+    print(f"TENTATIVE D'ENVOI EMAIL: {to}", flush=True)
+    print(f"Sujet: {subject}", flush=True)
     
     try:
         msg = Message(
@@ -485,12 +487,12 @@ def send_email(to, subject, template, **kwargs):
             html=render_template(template, **kwargs),
             sender=app.config['MAIL_DEFAULT_SENDER']
         )
-        print(f"📧 Message créé, envoi en cours...", flush=True)
+        print(f"Message créé, envoi en cours...", flush=True)
         mail.send(msg)
-        print(f"✅ EMAIL ENVOYÉ AVEC SUCCÈS à {to}", flush=True)
+        print(f"EMAIL ENVOYÉ AVEC SUCCÈS à {to}", flush=True)
         return True
     except Exception as e:
-        print(f"❌ ERREUR ENVOI EMAIL: {str(e)}", flush=True)
+        print(f"ERREUR ENVOI EMAIL: {str(e)}", flush=True)
         traceback.print_exc()
         return False
 
@@ -499,7 +501,7 @@ def send_confirmation_email(user):
     try:
         token = serializer.dumps(user.email, salt='email-confirm')
         confirm_url = url_for('confirm_email', token=token, _external=True)
-        print(f"🔗 URL de confirmation: {confirm_url}", flush=True)
+        print(f"URL de confirmation: {confirm_url}", flush=True)
         
         html_content = render_template(
             'emails/confirm_email.html',
@@ -514,7 +516,7 @@ def send_confirmation_email(user):
             html_content=html_content
         )
     except Exception as e:
-        print(f"❌ Erreur dans send_confirmation_email: {str(e)}", flush=True)
+        print(f"Erreur dans send_confirmation_email: {str(e)}", flush=True)
         traceback.print_exc()
         return False
 
@@ -523,7 +525,7 @@ def send_reset_email(user):
     try:
         token = serializer.dumps(user.email, salt='password-reset')
         reset_url = url_for('reset_password', token=token, _external=True)
-        print(f"🔗 URL de réinitialisation: {reset_url}", flush=True)
+        print(f"URL de réinitialisation: {reset_url}", flush=True)
         
         html_content = render_template(
             'emails/reset_password.html',
@@ -538,7 +540,7 @@ def send_reset_email(user):
             html_content=html_content
         )
     except Exception as e:
-        print(f"❌ Erreur dans send_reset_email: {str(e)}", flush=True)
+        print(f"Erreur dans send_reset_email: {str(e)}", flush=True)
         traceback.print_exc()
         return False
 
@@ -558,8 +560,8 @@ def send_reset_code_email(user, code):
         </head>
         <body style="font-family: Arial, sans-serif; background: #f4f6f9; padding: 40px;">
             <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.08);">
-                <h1 style="color: #1a2a6c; text-align: center;">📊 DataEcon.Ci</h1>
-                <h2 style="color: #1a2a6c;">Réinitialisation du mot de passe 🔑</h2>
+                <h1 style="color: #1a2a6c; text-align: center;">DataEcon.Ci</h1>
+                <h2 style="color: #1a2a6c;">Réinitialisation du mot de passe </h2>
                 <p>Bonjour {user.first_name or user.username},</p>
                 <p>Vous avez demandé la réinitialisation de votre mot de passe. Voici votre code de vérification :</p>
                 <div style="text-align: center; margin: 30px 0;">
@@ -583,7 +585,7 @@ def send_reset_code_email(user, code):
             html_content=html_content
         )
     except Exception as e:
-        print(f"❌ Erreur envoi code: {e}", flush=True)
+        print(f"Erreur envoi code: {e}", flush=True)
         traceback.print_exc()
         return False
 
@@ -599,7 +601,7 @@ def load_user(user_id):
 def check_subscription_reminders():
     """Envoyer un rappel 3 jours avant l'expiration"""
     with app.app_context():
-        print("🔔 Vérification des rappels d'abonnement...", flush=True)
+        print("Vérification des rappels d'abonnement...", flush=True)
         seuil = datetime.utcnow() + timedelta(days=3)
         users_to_remind = User.query.filter(
             User.subscription_level.in_(['standard', 'premium']),
@@ -627,14 +629,14 @@ def check_subscription_reminders():
                 )
                 user.reminder_sent = True
                 db.session.commit()
-                print(f"✅ Rappel envoyé à {user.email}", flush=True)
+                print(f"Rappel envoyé à {user.email}", flush=True)
             except Exception as e:
-                print(f"❌ Erreur envoi rappel à {user.email}: {e}", flush=True)
+                print(f"Erreur envoi rappel à {user.email}: {e}", flush=True)
 
 def downgrade_expired_subscriptions():
     """Repasser en Gratuit les abonnements expirés"""
     with app.app_context():
-        print("⏳ Vérification des abonnements expirés...", flush=True)
+        print("Vérification des abonnements expirés...", flush=True)
         expired_users = User.query.filter(
             User.subscription_level.in_(['standard', 'premium']),
             User.is_subscription_active == True,
@@ -647,7 +649,7 @@ def downgrade_expired_subscriptions():
             user.subscription_expires_at = None
             user.reminder_sent = False
             db.session.commit()
-            print(f"⬇️ {user.username} repassé en Gratuit (abonnement expiré)", flush=True)
+            print(f"{user.username} repassé en Gratuit (abonnement expiré)", flush=True)
 
             try:
                 html_content = render_template(
@@ -662,7 +664,7 @@ def downgrade_expired_subscriptions():
                     html_content=html_content
                 )
             except Exception as e:
-                print(f"❌ Erreur envoi email expiration à {user.email}: {e}", flush=True)
+                print(f"Erreur envoi email expiration à {user.email}: {e}", flush=True)
 
 # ==================== ROUTES ====================
 @app.route('/')
@@ -673,7 +675,7 @@ def index():
         total_users = User.query.count()
         total_datasets = Dataset.query.count()
     except Exception as e:
-        print(f"⚠️ Erreur stats: {e}", flush=True)
+        print(f"Erreur stats: {e}", flush=True)
         total_courses = 0
         total_users = 0
         total_datasets = 0
@@ -702,7 +704,7 @@ def register():
         last_name = request.form.get('last_name')
         phone = request.form.get('phone')
 
-        print(f"📝 NOUVEL UTILISATEUR: {username} - {email}", flush=True)
+        print(f"NOUVEL UTILISATEUR: {username} - {email}", flush=True)
 
         if not is_valid_email(email):
             flash('Veuillez entrer un email valide.', 'danger')
@@ -732,7 +734,7 @@ def register():
         user.set_password(password)
         db.session.add(user)
         db.session.commit()
-        print(f"✅ Utilisateur {username} créé en base de données", flush=True)
+        print(f"Utilisateur {username} créé en base de données", flush=True)
 
         email_sent = send_confirmation_email(user)
         if email_sent:
@@ -979,7 +981,7 @@ def api_chat():
         })
     
     except Exception as e:
-        print(f"❌ Erreur chatbot: {e}", flush=True)
+        print(f"Erreur chatbot: {e}", flush=True)
         import traceback
         traceback.print_exc()
         return jsonify({
@@ -1088,7 +1090,7 @@ def upload_dataset():
         # Vérifier que le fichier est lisible
         try:
             df = read_data_file(local_path)
-            print(f"✅ Fichier validé: {filename} ({len(df)} lignes, {len(df.columns)} colonnes)", flush=True)
+            print(f"Fichier validé: {filename} ({len(df)} lignes, {len(df.columns)} colonnes)", flush=True)
         except Exception as e:
             flash(f'Erreur lors de la lecture du fichier: {str(e)}', 'danger')
             if os.path.exists(local_path):
@@ -1296,9 +1298,9 @@ def delete_dataset(dataset_id):
             client = get_r2_client()
             if client:
                 client.delete_object(Bucket=R2_BUCKET_NAME, Key=dataset.file_path)
-                print(f"✅ Fichier supprimé de R2: {dataset.file_path}", flush=True)
+                print(f"Fichier supprimé de R2: {dataset.file_path}", flush=True)
         except Exception as e:
-            print(f"⚠️ Erreur suppression R2: {e}", flush=True)
+            print(f"Erreur suppression R2: {e}", flush=True)
     # Sinon, supprimer le fichier local
     elif dataset.file_path and os.path.exists(dataset.file_path):
         try:
@@ -1365,7 +1367,7 @@ def download_course_pdf(course_id):
                     mimetype='application/pdf'
                 )
             except ClientError as e:
-                print(f"❌ Erreur R2: {e}", flush=True)
+                print(f"Erreur R2: {e}", flush=True)
     
     # Local
     if not course.file_path or not os.path.exists(course.file_path):
@@ -1393,7 +1395,7 @@ def payment_callback():
         current_user.reminder_sent = False
         db.session.commit()
         
-        flash(f'Paiement réussi ! Bienvenue sur le plan {SUBSCRIPTION_PLANS[plan]["name"]} 🎉', 'success')
+        flash(f'Paiement réussi ! Bienvenue sur le plan {SUBSCRIPTION_PLANS[plan]["name"]} ', 'success')
     else:
         flash('Erreur lors du traitement du paiement.', 'danger')
     
@@ -1658,7 +1660,7 @@ def models_analyze():
         # Utiliser la fonction de lecture automatique
         df = read_dataset_file(dataset)
         
-        print(f"📊 Colonnes disponibles: {list(df.columns)}", flush=True)
+        print(f"Colonnes disponibles: {list(df.columns)}", flush=True)
         
         # Initialiser les modèles
         models = EconometricModels(df)
@@ -1692,7 +1694,7 @@ def models_analyze():
         # Vérifier les erreurs
         if results.get('errors'):
             for error in results['errors']:
-                flash(f'⚠️ {error}', 'danger')
+                flash(f'{error}', 'danger')
             return render_template('models_results.html', 
                                  results=results, 
                                  model_type=model_type,
@@ -1728,7 +1730,7 @@ def models_analyze():
             with open(latex_path, 'w', encoding='utf-8') as f:
                 f.write(latex_content)
         except Exception as e:
-            print(f"⚠️ Erreur génération LaTeX: {e}", flush=True)
+            print(f"Erreur génération LaTeX: {e}", flush=True)
         
         # Stocker le chemin dans la session
         session['report_id'] = report_id
@@ -1881,9 +1883,9 @@ def init_db():
             db.session.execute(text('ALTER TABLE "user" ADD COLUMN IF NOT EXISTS reset_code_expires TIMESTAMP'))
             db.session.execute(text('ALTER TABLE "user" ADD COLUMN IF NOT EXISTS profile_picture VARCHAR(200)'))
             db.session.commit()
-            print("✅ Migration des colonnes reset_code réussie", flush=True)
+            print("Migration des colonnes reset_code réussie", flush=True)
         except Exception as e:
-            print(f"ℹ️ Colonnes reset_code déjà présentes ou erreur: {e}", flush=True)
+            print(f"Colonnes reset_code déjà présentes ou erreur: {e}", flush=True)
             db.session.rollback()
         
         admin = User.query.filter_by(username='admin').first()
@@ -1902,12 +1904,12 @@ def init_db():
             admin.set_password('admin123')
             db.session.add(admin)
             db.session.commit()
-            print("✅ Admin créé avec succès !")
+            print("Admin créé avec succès !")
 
         existing_courses = db.session.execute(db.select(Course)).scalars().all()
         
         if len(existing_courses) == 0:
-            print("📚 Ajout des cours par défaut...")
+            print("Ajout des cours par défaut...")
             courses_data = [
                 {
                     'title': "Introduction à l'Économétrie",
@@ -1934,9 +1936,9 @@ def init_db():
                 db.session.add(course)
             
             db.session.commit()
-            print("✅ Cours ajoutés avec succès !")
+            print("Cours ajoutés avec succès !")
         else:
-            print(f"ℹ️ {len(existing_courses)} cours existent déjà.")
+            print(f"{len(existing_courses)} cours existent déjà.")
 
 # ==================== PLANIFICATEUR DE TÂCHES ====================
 try:
@@ -1944,28 +1946,28 @@ try:
     scheduler.add_job(func=check_subscription_reminders, trigger="interval", hours=24, id='reminder_job')
     scheduler.add_job(func=downgrade_expired_subscriptions, trigger="interval", hours=24, id='downgrade_job')
     scheduler.start()
-    print("✅ Scheduler démarré", flush=True)
+    print("Scheduler démarré", flush=True)
 except Exception as e:
-    print(f"⚠️ Erreur scheduler: {e}", flush=True)
+    print(f"Erreur scheduler: {e}", flush=True)
 
 # Afficher le port que Render a attribué
-print(f"🔌 PORT = {os.environ.get('PORT', 'non défini')}", flush=True)
+print(f"PORT = {os.environ.get('PORT', 'non défini')}", flush=True)
 
 # ==================== INITIALISATION AU CHARGEMENT (pour Gunicorn) ====================
-print("🚀 Démarrage de l'application...", flush=True)
+print("Démarrage de l'application...", flush=True)
 try:
     with app.app_context():
-        print("📡 Connexion à la base de données...", flush=True)
+        print("Connexion à la base de données...", flush=True)
         init_db()
-        print("✅ Base de données initialisée avec succès !", flush=True)
+        print("Base de données initialisée avec succès !", flush=True)
 except Exception as e:
     import traceback
-    print(f"❌ ERREUR INITIALISATION BD: {e}", flush=True)
+    print(f"ERREUR INITIALISATION BD: {e}", flush=True)
     traceback.print_exc()
 
 # ==================== FORCER L'ENREGISTREMENT DES ROUTES ====================
 # S'assurer que toutes les routes sont bien enregistrées
-print(f"📋 Routes enregistrées: {len(list(app.url_map.iter_rules()))} routes", flush=True)
+print(f"Routes enregistrées: {len(list(app.url_map.iter_rules()))} routes", flush=True)
 for rule in app.url_map.iter_rules():
     print(f"   - {rule.rule}", flush=True)
 
@@ -1992,10 +1994,10 @@ try:
         base_url="https://api.groq.com/openai/v1",
         api_key=os.environ.get("GROQ_API_KEY")
     )
-    print("✅ Client Groq initialisé", flush=True)
+    print("Client Groq initialisé", flush=True)
 except Exception as e:
     groq_client = None
-    print(f"⚠️ Erreur initialisation Groq: {e}", flush=True)
+    print(f"Erreur initialisation Groq: {e}", flush=True)
 
 
 SYSTEM_PROMPT_TUTOR = """Tu es EconBot, un instructeur IA pour DataEcon.Ci, une plateforme ivoirienne de formation en économétrie et data science.
@@ -2011,7 +2013,7 @@ Ton rôle :
 
 Style :
 - Réponses courtes (3-5 phrases max sauf si explication complexe)
-- Utilise des emojis avec modération 🎯
+- Utilise des emojis avec modération 
 - Tutoiement amical mais professionnel
 - Si on te pose une question hors sujet (politique, religion, etc.), ramène poliment vers l'apprentissage
 
@@ -2023,7 +2025,7 @@ def api_tutor():
     """Endpoint pour l'instructeur IA de la formation"""
     if not groq_client:
         return jsonify({
-            "reponse": "⚠️ L'instructeur IA n'est pas disponible. Contactez l'administrateur."
+            "reponse": "L'instructeur IA n'est pas disponible. Contactez l'administrateur."
         }), 503
     
     try:
@@ -2041,19 +2043,19 @@ def api_tutor():
 - Outil sélectionné : {outil}
 - Niveau de l'apprenant : {niveau}
 
-📚 LEÇON EN COURS :
+LEÇON EN COURS :
 - Concept : {concept.get('titre', '')}
 - Objectif : {concept.get('objectif', '')}
 - Explication donnée : {concept.get('explication', '')}
 
-✏️ EXERCICE EN COURS :
+EXERCICE EN COURS :
 - Énoncé : {concept.get('exercice', '')}
 - Solution attendue : {concept.get('solution', '')}
 - Indice disponible : {concept.get('indice', '')}
 
 Question de l'apprenant : {message}
 
-⚠️ INSTRUCTIONS IMPORTANTES :
+INSTRUCTIONS IMPORTANTES :
 1. Si l'apprenant propose une réponse à l'exercice, compare-la à la solution attendue.
 2. S'il a juste (même partiellement), félicite-le et confirme-lui qu'il peut passer au concept suivant.
 3. S'il a faux, NE DONNE PAS la solution directement. Donne un indice et encourage-le à réessayer.
@@ -2080,11 +2082,11 @@ Question de l'apprenant : {message}"""
         return jsonify({"reponse": reponse})
         
     except Exception as e:
-        print(f"❌ Erreur tutor: {e}", flush=True)
+        print(f"Erreur tutor: {e}", flush=True)
         import traceback
         traceback.print_exc()
         return jsonify({
-            "reponse": "❌ Désolé, une erreur technique est survenue. Réessayez dans quelques instants."
+            "reponse": "Désolé, une erreur technique est survenue. Réessayez dans quelques instants."
         }), 500
 
 # ==================== FIN FORMATION PRATIQUE ====================
@@ -2120,7 +2122,7 @@ def api_lesson(outil, niveau):
             lecon = json_module.load(f)
         return jsonify(lecon)
     except Exception as e:
-        print(f"❌ Erreur lecture leçon: {e}", flush=True)
+        print(f"Erreur lecture leçon: {e}", flush=True)
         return jsonify({"error": "Erreur lecture leçon"}), 500
 
 # ==================== FIN API LEÇONS ====================
@@ -2296,11 +2298,15 @@ def admin_candidatures():
     candidatures = Candidature.query.order_by(Candidature.date_postule.desc()).all()
     return render_template('admin_candidatures.html', candidatures=candidatures)
 
-@app.route('/admin/candidature/<int:cand_id>/statut/<string:nouveau_statut>')
+@app.route('/admin/candidature/<int:cand_id>/statut/<string:nouveau_statut>', methods=['POST'])
 @login_required
 def changer_statut_candidature(cand_id, nouveau_statut):
     if not current_user.is_admin:
         return redirect(url_for('index'))
+    
+    if nouveau_statut not in ('En attente', 'Retenu', 'Refusé', 'Entretien'):
+        flash("Statut invalide.", "danger")
+        return redirect(url_for('admin_candidatures'))
     
     cand = Candidature.query.get_or_404(cand_id)
     cand.statut = nouveau_statut
@@ -2377,12 +2383,12 @@ def payer_abonnement(plan):
         )
         
         if email_envoye:
-            print(f"✅ E-mail admin envoyé pour la demande de {current_user.username}", flush=True)
+            print(f"E-mail admin envoyé pour la demande de {current_user.username}", flush=True)
         else:
-            print(f"❌ Échec de l'envoi de l'e-mail admin (vérifie BREVO_API_KEY)", flush=True)
+            print(f"Échec de l'envoi de l'e-mail admin (vérifie BREVO_API_KEY)", flush=True)
             
     except Exception as e:
-        print(f"❌ Erreur envoi email admin: {e}", flush=True)
+        print(f"Erreur envoi email admin: {e}", flush=True)
     
     # 3. Rediriger l'utilisateur vers la page d'instructions
     return render_template('instructions_paiement.html', plan=nom_plan, montant=montant)
@@ -2398,7 +2404,7 @@ def admin_demandes_paiement():
     demandes = DemandePaiement.query.order_by(DemandePaiement.date_demande.desc()).all()
     return render_template('admin_demandes_paiement.html', demandes=demandes)
 
-@app.route('/admin/demande-paiement/<int:demande_id>/valider')
+@app.route('/admin/demande-paiement/<int:demande_id>/valider', methods=['POST'])
 @login_required
 def valider_demande_paiement(demande_id):
     if not current_user.is_admin:
@@ -2406,6 +2412,9 @@ def valider_demande_paiement(demande_id):
         return redirect(url_for('index'))
     
     demande = DemandePaiement.query.get_or_404(demande_id)
+    if demande.statut == 'Validée':
+        flash("Cette demande est déjà validée.", "info")
+        return redirect(url_for('admin_demandes_paiement'))
     user = User.query.get(demande.user_id)
     
     if user:

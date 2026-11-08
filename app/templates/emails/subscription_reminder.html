@@ -6,12 +6,12 @@
 </head>
 <body style="font-family: Arial, sans-serif;">
     <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-        <h2 style="color: #1a2a6c;">⚠️ Votre abonnement expire bientôt !</h2>
+        <h2 style="color: #0b2a4a;">Votre abonnement expire bientôt !</h2>
         <p>Bonjour {{ user.first_name }},</p>
         <p>Votre abonnement <strong>{{ user.get_subscription_name() }}</strong> expire le <strong>{{ user.subscription_expires_at.strftime('%d/%m/%Y') }}</strong>.</p>
         <p>Pour continuer à profiter de tous les avantages, renouvelez votre abonnement dès maintenant.</p>
         <div style="text-align: center; margin: 30px 0;">
-            <a href="http://localhost:5000/subscription" style="background: #1a2a6c; color: white; padding: 14px 40px; text-decoration: none; border-radius: 50px; display: inline-block;">
+            <a href="{{ subscription_url or url_for("subscription", _external=True) }}" style="background: #0b2a4a; color: white; padding: 14px 40px; text-decoration: none; border-radius: 50px; display: inline-block;">
                 Renouveler mon abonnement
             </a>
         </div>

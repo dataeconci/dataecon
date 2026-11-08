@@ -59,7 +59,7 @@
             <div class="col-md-4">
                 <div class="card h-100 text-center shadow-hover">
                     <div class="card-body">
-                        <div class="feature-icon">📚</div>
+                        <div class="feature-icon"><i class="fas fa-book-open"></i></div>
                         <h5 class="card-title">Cours structurés</h5>
                         <p class="card-text text-muted">
                             Des cours progressifs, du débutant à l'avancé, avec des exercices pratiques.
@@ -70,7 +70,7 @@
             <div class="col-md-4">
                 <div class="card h-100 text-center shadow-hover">
                     <div class="card-body">
-                        <div class="feature-icon">📊</div>
+                        <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
                         <h5 class="card-title">Données réelles</h5>
                         <p class="card-text text-muted">
                             Téléchargez et analysez de vrais jeux de données économiques.
@@ -81,7 +81,7 @@
             <div class="col-md-4">
                 <div class="card h-100 text-center shadow-hover">
                     <div class="card-body">
-                        <div class="feature-icon">🧮</div>
+                        <div class="feature-icon"><i class="fas fa-calculator"></i></div>
                         <h5 class="card-title">Modèles économétriques</h5>
                         <p class="card-text text-muted">
                             Lancez des régressions, séries temporelles et visualisations en un clic.
@@ -129,37 +129,6 @@
                     <p class="text-muted">Aucun cours disponible pour le moment.</p>
                 </div>
             {% endif %}
-        </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card shadow-hover">
-                    <div class="card-body">
-                        <span class="badge badge-intermediaire">Intermédiaire</span>
-                        <h5 class="card-title mt-2">Régression Linéaire Avancée</h5>
-                        <p class="card-text text-muted small">
-                            Modèles multi-variables, tests d'hypothèses, sélection de modèles.
-                        </p>
-                        <a href="#" class="btn btn-primary btn-sm rounded-pill">
-                            Voir le cours <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card shadow-hover">
-                    <div class="card-body">
-                        <span class="badge badge-avance">Avancé</span>
-                        <h5 class="card-title mt-2">Séries Temporelles</h5>
-                        <p class="card-text text-muted small">
-                            Analyse des séries temporelles : ARIMA, stationnarité, prévisions.
-                        </p>
-                        <a href="#" class="btn btn-primary btn-sm rounded-pill">
-                            Voir le cours <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
         </div>
         <div class="text-center mt-4">
             <a href="{{ url_for('courses') }}" class="btn btn-outline-primary rounded-pill px-4">

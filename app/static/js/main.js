@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (input) {
                 const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
                 input.setAttribute('type', type);
-                this.textContent = type === 'password' ? '👁️' : '👁️‍🗨️';
+                this.textContent = type === 'password' ? '' : '';
             }
         });
     });
@@ -184,13 +184,13 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.classList.toggle('dark-mode');
             const isDark = document.body.classList.contains('dark-mode');
             localStorage.setItem('darkMode', isDark);
-            this.textContent = isDark ? '☀️' : '🌙';
+            this.textContent = isDark ? '' : '';
         });
 
         // Vérifier la préférence stockée
         if (localStorage.getItem('darkMode') === 'true') {
             document.body.classList.add('dark-mode');
-            darkModeToggle.textContent = '☀️';
+            darkModeToggle.textContent = '';
         }
     }
 
@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const text = target.textContent || target.value;
                 navigator.clipboard.writeText(text).then(() => {
                     const originalText = this.textContent;
-                    this.textContent = '✅ Copié !';
+                    this.textContent = 'Copié !';
                     setTimeout(() => {
                         this.textContent = originalText;
                     }, 2000);
@@ -308,5 +308,5 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    console.log('🚀 DataEcon.Ci - Application chargée avec succès !');
+    console.log('DataEcon.Ci - Application chargée avec succès !');
 });

@@ -34,7 +34,7 @@
                         <div class="stat-number">{{ total_courses or 0 }}</div>
                         <div class="stat-label">Total cours</div>
                     </div>
-                    <div class="stat-icon">📚</div>
+                    <div class="stat-icon"><i class="fas fa-book-open"></i></div>
                 </div>
             </div>
         </div>
@@ -45,18 +45,18 @@
                         <div class="stat-number">{{ completed_count or 0 }}</div>
                         <div class="stat-label">Cours terminés</div>
                     </div>
-                    <div class="stat-icon">✅</div>
+                    <div class="stat-icon"><i class="fas fa-circle-check"></i></div>
                 </div>
             </div>
         </div>
         <div class="col-md-3 col-6">
-            <div class="stat-card" style="border-left-color: #ffc107;">
+            <div class="stat-card" style="border-left-color: #c2a15a;">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <div class="stat-number">{{ datasets|length or 0 }}</div>
                         <div class="stat-label">Jeux de données</div>
                     </div>
-                    <div class="stat-icon">📊</div>
+                    <div class="stat-icon"><i class="fas fa-chart-bar"></i></div>
                 </div>
             </div>
         </div>
@@ -73,7 +73,7 @@
                         </div>
                         <div class="stat-label">Progression</div>
                     </div>
-                    <div class="stat-icon">📈</div>
+                    <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
                 </div>
             </div>
         </div>
@@ -151,7 +151,7 @@
                                             {% if prog %}
                                                 {% set p = prog[0] %}
                                                 {% if p.completed %}
-                                                    <span class="text-success">✅ Terminé</span>
+                                                    <span class="text-success">Terminé</span>
                                                 {% else %}
                                                     {{ p.progress_percent }}%
                                                 {% endif %}

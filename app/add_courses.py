@@ -8,10 +8,10 @@ from datetime import datetime
 def add_courses():
     with app.app_context():
         # 1. Supprimer les progressions d'abord
-        print("🗑️ Suppression des progressions...")
+        print("Suppression des progressions...")
         Progress.query.delete()
         db.session.commit()
-        print("✅ Progressions supprimées")
+        print("Progressions supprimées")
 
         # 2. Supprimer les anciens cours
         courses = Course.query.all()
@@ -20,10 +20,10 @@ def add_courses():
                 os.remove(course.file_path)
             db.session.delete(course)
         db.session.commit()
-        print("🗑️ Anciens cours supprimés")
+        print("Anciens cours supprimés")
 
         # 3. Ajouter les nouveaux cours
-        print("📚 Ajout des nouveaux cours...")
+        print("Ajout des nouveaux cours...")
         courses_data = [
             {
                 'title': 'Économétrie Fondamentale',
@@ -72,7 +72,7 @@ def add_courses():
             db.session.add(course)
         
         db.session.commit()
-        print(f"✅ {len(courses_data)} cours ajoutés avec succès !")
+        print(f"{len(courses_data)} cours ajoutés avec succès !")
 
 if __name__ == '__main__':
     add_courses()
@@ -86,10 +86,10 @@ from datetime import datetime
 def add_courses():
     with app.app_context():
         # 1. Supprimer les progressions
-        print("🗑️ Suppression des progressions...")
+        print("Suppression des progressions...")
         Progress.query.delete()
         db.session.commit()
-        print("✅ Progressions supprimées")
+        print("Progressions supprimées")
 
         # 2. Supprimer les anciens cours
         courses = Course.query.all()
@@ -98,10 +98,10 @@ def add_courses():
                 os.remove(course.file_path)
             db.session.delete(course)
         db.session.commit()
-        print("🗑️ Anciens cours supprimés")
+        print("Anciens cours supprimés")
 
         # 3. Ajouter les nouveaux cours avec TOUS vos PDF
-        print("📚 Ajout des nouveaux cours...")
+        print("Ajout des nouveaux cours...")
         courses_data = [
             {
                 'title': 'Econométrie - Cours complet M1',
@@ -286,12 +286,12 @@ def add_courses():
             if os.path.exists(c['file_path']):
                 course = Course(**c)
                 db.session.add(course)
-                print(f"✅ Ajout du cours: {c['title']}")
+                print(f"Ajout du cours: {c['title']}")
             else:
-                print(f"❌ Fichier non trouvé: {c['file_path']}")
+                print(f"Fichier non trouvé: {c['file_path']}")
         
         db.session.commit()
-        print(f"✅ {len(courses_data)} cours ajoutés avec succès !")
+        print(f"{len(courses_data)} cours ajoutés avec succès !")
 
 if __name__ == '__main__':
     add_courses()

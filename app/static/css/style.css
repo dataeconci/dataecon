@@ -1,10 +1,10 @@
 :root {
-    --primary: #1a2a6c;
-    --secondary: #b21f1f;
-    --accent: #fdbb2d;
+    --primary: #0b2a4a;
+    --secondary: #8c2f39;
+    --accent: #c2a15a;
     --text-light: #f8f9fa;
     --text-dark: #2d3436;
-    --bg-gradient: linear-gradient(135deg, #1a2a6c, #2d3561, #4a4a8a);
+    --bg-gradient: linear-gradient(135deg, #0b2a4a, #123a63, #1f5f99);
 }
 
 * {
@@ -14,7 +14,7 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #f4f6f9;
     min-height: 100vh;
 }
@@ -59,7 +59,7 @@ body {
 }
 
 .nav-link.btn-primary-custom:hover {
-    background: #f5c800;
+    background: #c2a15a;
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(253, 187, 45, 0.3);
 }
@@ -544,13 +544,13 @@ footer small {
 
 /* Effet de survol élégant */
 .navbar-nav .nav-link:hover {
-    color: #ffc107 !important;
+    color: #c2a15a !important;
     transform: translateY(-1px);
 }
 
 /* Style spécifique pour le bouton Abonnement (Couleur Or) */
 .navbar-nav .nav-link[href*="subscription"] {
-    color: #ffc107 !important;
+    color: #c2a15a !important;
     font-weight: 600;
 }
 
@@ -595,14 +595,14 @@ footer small {
 
 .dropdown-item:hover {
     background-color: #f0f5ff;
-    color: #2a5298;
+    color: #1f5f99;
 }
 
 .dropdown-item i {
     width: 20px;
     text-align: center;
     margin-right: 8px;
-    color: #2a5298;
+    color: #1f5f99;
 }
 
 /* Alignement vertical parfait dans la navbar */
@@ -614,3 +614,17 @@ footer small {
     display: flex;
     align-items: center;
 }
+
+/* ===== Finitions professionnelles ===== */
+body { background-color: #f5f7fa; color: #1f2933; -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4, h5 { letter-spacing: -0.01em; font-weight: 700; }
+.btn { border-radius: 8px; font-weight: 600; letter-spacing: .01em; }
+.btn-primary { background-color: #0b2a4a; border-color: #0b2a4a; }
+.btn-primary:hover, .btn-primary:focus { background-color: #123a63; border-color: #123a63; }
+.card, .stat-card { border-radius: 12px; box-shadow: 0 2px 12px rgba(11, 42, 74, .08); }
+.form-control:focus, .form-select:focus { border-color: #1f5f99; box-shadow: 0 0 0 .2rem rgba(31, 95, 153, .15); }
+a { color: #1f5f99; }
+.dropdown-menu { border: 1px solid #e3e8ef; border-radius: 10px; box-shadow: 0 8px 24px rgba(11, 42, 74, .12); }
+.dropdown-item:hover { background: #eef3f9; color: #0b2a4a; }
+
+.hero { background-image: url('../images/hero-pattern.svg'), var(--bg-gradient); background-size: cover; background-position: center; }

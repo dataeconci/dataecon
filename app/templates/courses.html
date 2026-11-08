@@ -77,9 +77,9 @@
                                     {% elif course.level == 'Intermédiaire' %}header-intermediaire
                                     {% else %}header-avance{% endif %}">
                                     <div class="course-level-icon">
-                                        {% if course.level == 'Débutant' %}🌱
-                                        {% elif course.level == 'Intermédiaire' %}📈
-                                        {% else %}🚀{% endif %}
+                                        {% if course.level == 'Débutant' %}
+                                        {% elif course.level == 'Intermédiaire' %}
+                                        {% else %}{% endif %}
                                     </div>
                                     <span class="course-level-badge">{{ course.level }}</span>
                                 </div>
@@ -118,13 +118,13 @@
 
                 <!-- Message si aucun résultat -->
                 <div id="noResults" class="no-results" style="display: none;">
-                    <div class="no-results-icon">🔍</div>
+                    <div class="no-results-icon"><i class="fas fa-magnifying-glass"></i></div>
                     <h4>Aucun cours trouvé</h4>
                     <p>Essayez d'autres mots-clés ou changez le filtre de niveau.</p>
                 </div>
             {% else %}
                 <div class="no-results">
-                    <div class="no-results-icon">📚</div>
+                    <div class="no-results-icon"><i class="fas fa-book-open"></i></div>
                     <h4>Aucun cours disponible</h4>
                     <p>Revenez plus tard, de nouveaux cours seront ajoutés régulièrement.</p>
                 </div>
@@ -142,7 +142,7 @@
 
 /* Bannière */
 .courses-hero {
-    background: linear-gradient(135deg, #1a2a6c 0%, #2d3561 50%, #4a4a8a 100%);
+    background: linear-gradient(135deg, #0b2a4a 0%, #123a63 50%, #1f5f99 100%);
     padding: 80px 0 60px;
     position: relative;
     overflow: hidden;
@@ -177,7 +177,7 @@
 .courses-hero-badge {
     display: inline-block;
     background: rgba(253, 187, 45, 0.15);
-    color: #fdbb2d;
+    color: #c2a15a;
     padding: 8px 20px;
     border-radius: 50px;
     font-size: 0.9rem;
@@ -194,7 +194,7 @@
 }
 
 .courses-hero h1 span {
-    color: #fdbb2d;
+    color: #c2a15a;
 }
 
 .courses-hero p {
@@ -219,7 +219,7 @@
 .hero-stat-number {
     font-size: 2.5rem;
     font-weight: 800;
-    color: #fdbb2d;
+    color: #c2a15a;
     line-height: 1;
 }
 
@@ -277,7 +277,7 @@
 
 .search-box input:focus {
     outline: none;
-    border-color: #1a2a6c;
+    border-color: #0b2a4a;
     background: white;
     box-shadow: 0 0 0 4px rgba(26, 42, 108, 0.1);
 }
@@ -305,17 +305,17 @@
 
 .level-btn:hover {
     background: white;
-    border-color: #1a2a6c;
+    border-color: #0b2a4a;
 }
 
 .level-btn.active {
-    background: #1a2a6c;
+    background: #0b2a4a;
     color: white;
-    border-color: #1a2a6c;
+    border-color: #0b2a4a;
 }
 
 .level-btn.active .level-dot {
-    background: #fdbb2d !important;
+    background: #c2a15a !important;
 }
 
 .level-dot {
@@ -326,7 +326,7 @@
 }
 
 .level-dot.debutant { background: #28a745; }
-.level-dot.intermediaire { background: #ffc107; }
+.level-dot.intermediaire { background: #c2a15a; }
 .level-dot.avance { background: #dc3545; }
 
 /* Liste des cours */
@@ -367,7 +367,7 @@
 }
 
 .header-intermediaire {
-    background: linear-gradient(135deg, #ffc107, #ff9800);
+    background: linear-gradient(135deg, #c2a15a, #ff9800);
 }
 
 .header-avance {
@@ -403,7 +403,7 @@
 .course-title {
     font-size: 1.15rem;
     font-weight: 700;
-    color: #1a2a6c;
+    color: #0b2a4a;
     margin-bottom: 12px;
     line-height: 1.3;
 }
@@ -433,7 +433,7 @@
 }
 
 .course-meta-item i {
-    color: #1a2a6c;
+    color: #0b2a4a;
 }
 
 .course-card-footer {
@@ -443,7 +443,7 @@
 .btn-course-view {
     display: block;
     width: 100%;
-    background: linear-gradient(135deg, #1a2a6c 0%, #2d3561 100%);
+    background: linear-gradient(135deg, #0b2a4a 0%, #123a63 100%);
     color: white;
     text-decoration: none;
     text-align: center;
@@ -482,7 +482,7 @@
 }
 
 .no-results h4 {
-    color: #1a2a6c;
+    color: #0b2a4a;
     font-weight: 700;
     margin-bottom: 10px;
 }
