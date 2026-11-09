@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+
+{% block title %}Cours interactif - DataEcon.Ci{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/player.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="pl" id="pl" data-outil="{{ outil }}" data-niveau="{{ niveau }}">
+
+    <header class="pl-top">
+        <a href="{{ url_for('formations') }}" class="pl-back" title="Retour aux formations"><i class="fas fa-arrow-left"></i></a>
+        <div class="pl-title">
+            <span class="pl-tool" id="pl-tool"></span>
+            <strong id="pl-course-title">Chargement...</strong>
+        </div>
+        <div class="pl-progress" aria-label="Progression">
+            <div class="pl-progress-bar"><div id="pl-progress-fill"></div></div>
+            <span id="pl-progress-label">0 / 0</span>
+        </div>
+        <div class="pl-xp" title="Points d'expérience"><i class="fas fa-bolt"></i> <span id="pl-xp">0</span> XP</div>
+        <div class="pl-voice">
+            <button id="v-play" class="pl-btn-icon" title="Écouter l'explication"><i class="fas fa-volume-high"></i></button>
+            <button id="v-pause" class="pl-btn-icon" title="Pause / reprendre" disabled><i class="fas fa-pause"></i></button>
+            <button id="v-stop" class="pl-btn-icon" title="Arrêter" disabled><i class="fas fa-stop"></i></button>
+            <select id="v-rate" title="Vitesse de lecture">
+                <option value="0.85">0,85x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.15">1,15x</option>
+                <option value="1.3">1,3x</option>
+            </select>
+            <label class="pl-switch" title="Lecture automatique à chaque concept">
+                <input type="checkbox" id="v-auto"><span></span> Auto
+            </label>
+        </div>
+    </header>
+
+    <nav class="pl-steps" id="pl-steps"></nav>
+
+    <div class="pl-body" id="pl-body">
+        <div class="pl-loading"><i class="fas fa-spinner fa-spin"></i> Chargement du cours...</div>
+    </div>
+
+    <button class="pl-tutor-fab" id="tutor-fab"><i class="fas fa-robot"></i> Instructeur IA</button>
+    <aside class="pl-tutor" id="tutor" hidden>
+        <div class="pl-tutor-head"><strong><i class="fas fa-robot"></i> Instructeur IA</strong><button id="tutor-close" class="pl-btn-icon"><i class="fas fa-xmark"></i></button></div>
+        <div class="pl-tutor-msgs" id="tutor-msgs"><div class="msg bot">Posez-moi une question sur le concept en cours. Je vous donne des indices sans vous livrer la solution.</div></div>
+        <form class="pl-tutor-form" id="tutor-form"><input id="tutor-input" placeholder="Votre question..." autocomplete="off"><button type="submit"><i class="fas fa-paper-plane"></i></button></form>
+    </aside>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/r/r.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/sql/sql.min.js"></script>
+<script src="{{ url_for('static', filename='js/player.js') }}"></script>
+{% endblock %}

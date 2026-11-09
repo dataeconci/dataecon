@@ -1,0 +1,126 @@
+{
+ "outil": "tableau",
+ "niveau": "avance",
+ "titre": "Tableau avancé",
+ "description": "Filtres combinés, mesures calculées, comparaison de périodes et storytelling avec les données.",
+ "concepts": [
+  {
+   "id": "tab_ava_1",
+   "titre": "Combiner plusieurs filtres",
+   "objectif": "Répondre à une question précise avec deux filtres",
+   "explication": "Les filtres se **cumulent** : chaque filtre ajoute une condition. Avec **Produit = Cacao** et **Période = 1er trimestre**, vous ne gardez que le Cacao vendu de janvier à mars.\n\nCombiner les filtres permet des analyses ciblées : un produit, dans une zone, sur une période. Vérifiez toujours qu'il reste des données après filtrage.\n\n**Important** : trop de filtres peuvent laisser trop peu de lignes pour conclure. Gardez un œil sur la taille de l'échantillon.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Deux filtres cumulés</text><rect x='20' y='60' width='110' height='44' rx='8' fill='#0b2a4a'/><text x='75.0' y='79.0' text-anchor='middle' font-size='12' font-weight='700' fill='#fff'>Toutes les</text><text x='75.0' y='93.0' text-anchor='middle' font-size='12' font-weight='700' fill='#fff'>ventes</text><line x1='132' y1='82' x2='154.0' y2='82.0' stroke='#1f5f99' stroke-width='2.5'/><polygon points='162,82 154.0,87.0 154.0,77.0' fill='#1f5f99'/><rect x='165' y='60' width='110' height='44' rx='8' fill='#1f5f99'/><text x='220.0' y='79.0' text-anchor='middle' font-size='12' font-weight='700' fill='#fff'>Produit =</text><text x='220.0' y='93.0' text-anchor='middle' font-size='12' font-weight='700' fill='#fff'>Cacao</text><line x1='277' y1='82' x2='299.0' y2='82.0' stroke='#1f5f99' stroke-width='2.5'/><polygon points='307,82 299.0,87.0 299.0,77.0' fill='#1f5f99'/><rect x='310' y='60' width='95' height='44' rx='8' fill='#c2a15a'/><text x='357.5' y='79.0' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>Période =</text><text x='357.5' y='93.0' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>1er trim.</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>Chaque filtre réduit un peu plus les données</text></svg>",
+   "code_exemple": "# Dans le Mini-Tableau :\n# Filtre Produit = Cacao, Période = 1er trimestre\n# Dimension = Ville, Mesure = Quantité totale\n# Tri = Décroissant",
+   "question_reflexion": "Combien de lignes restent-elles avec ces deux filtres ?",
+   "exercice": {
+    "enonce": "Générez un graphique en **barres** de la **quantité par ville**, pour le **Cacao** au **1er trimestre**, trié du plus grand au plus petit. Quelle ville arrive en tête ?",
+    "indice": "Produit = Cacao, Période = 1er trimestre, Dimension = Ville, Tri = Décroissant.",
+    "solution_attendue": "Abidjan arrive en tête avec 300 unités.",
+    "mots_cles": [
+     "abidjan",
+     "cacao"
+    ],
+    "attendu": {
+     "dim": "ville",
+     "mes": "quantite",
+     "type": "bar",
+     "produit": "Cacao",
+     "periode": "T1",
+     "tri": "desc"
+    }
+   }
+  },
+  {
+   "id": "tab_ava_2",
+   "titre": "Une mesure calculée : le prix moyen",
+   "objectif": "Comprendre qu'une moyenne dépend de la façon dont on la calcule",
+   "explication": "Une **mesure calculée** est obtenue à partir d'autres mesures. Le **prix moyen** se calcule en divisant le **chiffre d'affaires** par la **quantité**.\n\nAttention : ce n'est pas la moyenne simple des prix. Ici, les gros volumes pèsent plus : on parle de **moyenne pondérée**.\n\n**Important** : une mesure calculée se définit toujours avec sa formule, pour que tout le monde l'interprète pareil.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Prix moyen = CA / Quantité</text><rect x='25' y='60' width='115' height='44' rx='8' fill='#0b2a4a'/><text x='82.5' y='86.0' text-anchor='middle' font-size='11' font-weight='700' fill='#fff'>Chiffre d&#39;affaires</text><text x='152' y='88' text-anchor='middle' font-size='22' font-weight='700' fill='#0b2a4a'>/</text><rect x='165' y='60' width='115' height='44' rx='8' fill='#1f5f99'/><text x='222.5' y='86.0' text-anchor='middle' font-size='12' font-weight='700' fill='#fff'>Quantité</text><text x='292' y='88' text-anchor='middle' font-size='22' font-weight='700' fill='#0b2a4a'>=</text><rect x='305' y='60' width='95' height='44' rx='8' fill='#c2a15a'/><text x='352.5' y='86.0' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>Prix moyen</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>Moyenne pondérée par les volumes</text></svg>",
+   "code_exemple": "# Dans le Mini-Tableau :\n# Dimension = Produit, Mesure = Prix moyen (FCFA)\n# Type = Barres, Tri = Décroissant",
+   "question_reflexion": "Pourquoi la moyenne pondérée est-elle plus juste ici que la moyenne simple ?",
+   "exercice": {
+    "enonce": "Générez un graphique en **barres** du **prix moyen par produit**, trié du plus grand au plus petit. Quel produit a le prix moyen le plus élevé ?",
+    "indice": "Mesure = Prix moyen (FCFA), Dimension = Produit, Tri = Décroissant.",
+    "solution_attendue": "Cacao a le prix moyen le plus élevé, environ 1 579 FCFA.",
+    "mots_cles": [
+     "cacao"
+    ],
+    "attendu": {
+     "dim": "produit",
+     "mes": "prix",
+     "type": "bar",
+     "tri": "desc"
+    }
+   }
+  },
+  {
+   "id": "tab_ava_3",
+   "titre": "Comparer deux périodes",
+   "objectif": "Mesurer l'évolution en comparant un trimestre à un autre",
+   "explication": "Comparer deux périodes revient à générer le **même graphique** avec deux filtres de période différents, puis à comparer les résultats.\n\nOn cherche ce qui **change** : un produit qui passe en tête, une ville qui décroche. Toujours comparer des périodes de **même durée** : ici, deux trimestres.\n\n**Important** : une variation n'est pas forcément une tendance. Vérifiez si l'écart est durable avant de conclure.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>T1 contre T2</text><line x1='30' y1='153' x2='200' y2='153' stroke='#9aa5b1'/><rect x='38.5' y='48.0' width='25.5' height='105.0' rx='3' fill='#5b9bd5'/><text x='51.25' y='43.0' text-anchor='middle' font-size='10' font-weight='700' fill='#1f2933'></text><text x='51.25' y='168' text-anchor='middle' font-size='10.5' font-weight='400' fill='#52606d'>Cacao</text><rect x='81.0' y='118.0' width='25.5' height='35.0' rx='3' fill='#5b9bd5'/><text x='93.75' y='113.0' text-anchor='middle' font-size='10' font-weight='700' fill='#1f2933'></text><text x='93.75' y='168' text-anchor='middle' font-size='10.5' font-weight='400' fill='#52606d'>Café</text><rect x='123.5' y='118.0' width='25.5' height='35.0' rx='3' fill='#5b9bd5'/><text x='136.25' y='113.0' text-anchor='middle' font-size='10' font-weight='700' fill='#1f2933'></text><text x='136.25' y='168' text-anchor='middle' font-size='10.5' font-weight='400' fill='#52606d'>Anac.</text><rect x='166.0' y='118.0' width='25.5' height='35.0' rx='3' fill='#5b9bd5'/><text x='178.75' y='113.0' text-anchor='middle' font-size='10' font-weight='700' fill='#1f2933'></text><text x='178.75' y='168' text-anchor='middle' font-size='10.5' font-weight='400' fill='#52606d'>Coton</text><line x1='225' y1='153' x2='395' y2='153' stroke='#9aa5b1'/><rect x='233.5' y='48.0' width='25.5' height='105.0' rx='3' fill='#1f5f99'/><text x='246.25' y='43.0' text-anchor='middle' font-size='10' font-weight='700' fill='#1f2933'></text><text x='246.25' y='168' text-anchor='middle' font-size='10.5' font-weight='400' fill='#52606d'>Cacao</text><rect x='276.0' y='83.0' width='25.5' height='70.0' rx='3' fill='#1f5f99'/><text x='288.75' y='78.0' text-anchor='middle' font-size='10' font-weight='700' fill='#1f2933'></text><text x='288.75' y='168' text-anchor='middle' font-size='10.5' font-weight='400' fill='#52606d'>Café</text><rect x='318.5' y='83.0' width='25.5' height='70.0' rx='3' fill='#1f5f99'/><text x='331.25' y='78.0' text-anchor='middle' font-size='10' font-weight='700' fill='#1f2933'></text><text x='331.25' y='168' text-anchor='middle' font-size='10.5' font-weight='400' fill='#52606d'>Anac.</text><rect x='361.0' y='118.0' width='25.5' height='35.0' rx='3' fill='#1f5f99'/><text x='373.75' y='113.0' text-anchor='middle' font-size='10' font-weight='700' fill='#1f2933'></text><text x='373.75' y='168' text-anchor='middle' font-size='10.5' font-weight='400' fill='#52606d'>Coton</text><text x='115' y='40' text-anchor='middle' font-size='11' font-weight='700' fill='#0b2a4a'>1er trimestre</text><text x='310' y='40' text-anchor='middle' font-size='11' font-weight='700' fill='#0b2a4a'>2e trimestre</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>Même graphique, deux périodes (schéma)</text></svg>",
+   "code_exemple": "# Dans le Mini-Tableau :\n# Générer le graphique avec Période = 1er trimestre\n# Puis régénérer avec Période = 2e trimestre\n# Dimension = Produit, Mesure = Chiffre d'affaires",
+   "question_reflexion": "Pourquoi comparer des périodes de même durée ?",
+   "exercice": {
+    "enonce": "Générez un graphique en **barres** du **chiffre d'affaires par produit** pour le **2e trimestre**, trié du plus grand au plus petit. Quel produit domine ce trimestre ?",
+    "indice": "Période = 2e trimestre, Dimension = Produit, Mesure = Chiffre d'affaires, Tri = Décroissant.",
+    "solution_attendue": "Au 2e trimestre, Cacao domine avec 895 000 FCFA.",
+    "mots_cles": [
+     "cacao"
+    ],
+    "attendu": {
+     "dim": "produit",
+     "mes": "ca",
+     "type": "bar",
+     "periode": "T2",
+     "tri": "desc"
+    }
+   }
+  },
+  {
+   "id": "tab_ava_4",
+   "titre": "Mesurer l'activité en comptant",
+   "objectif": "Distinguer le volume d'activité du volume vendu",
+   "explication": "La mesure **Nombre de ventes** compte les transactions, alors que la **quantité** additionne les unités vendues. Ce sont deux informations différentes.\n\nUne ville peut avoir beaucoup de petites ventes ou peu de grosses ventes. Pour juger de l'**activité commerciale**, le nombre de transactions est souvent plus parlant.\n\n**Important** : croisez toujours le nombre de ventes avec la quantité pour comprendre la taille moyenne d'une vente.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Nombre de ventes et quantité</text><rect x='30' y='55' width='170' height='60' rx='8' fill='#0b2a4a'/><text x='115.0' y='82.0' text-anchor='middle' font-size='12' font-weight='700' fill='#fff'>Nombre de ventes</text><text x='115.0' y='96.0' text-anchor='middle' font-size='12' font-weight='700' fill='#fff'>5 transactions</text><rect x='220' y='55' width='170' height='60' rx='8' fill='#c2a15a'/><text x='305.0' y='82.0' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>Quantité</text><text x='305.0' y='96.0' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>965 unités</text><text x='210' y='150' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>Taille moyenne = 965 / 5 = 193 unités</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>Exemple pour Abidjan</text></svg>",
+   "code_exemple": "# Dans le Mini-Tableau :\n# Dimension = Ville, Mesure = Nombre de ventes\n# Type = Barres, Tri = Décroissant",
+   "question_reflexion": "Une ville avec peu de ventes peut-elle avoir une grande quantité vendue ?",
+   "exercice": {
+    "enonce": "Générez un graphique en **barres** du **nombre de ventes par ville**, trié du plus grand au plus petit. Quelle ville réalise le plus de ventes ?",
+    "indice": "Mesure = Nombre de ventes, Dimension = Ville, Tri = Décroissant.",
+    "solution_attendue": "Abidjan réalise le plus de ventes (4).",
+    "mots_cles": [
+     "abidjan"
+    ],
+    "attendu": {
+     "dim": "ville",
+     "mes": "nb",
+     "type": "bar",
+     "tri": "desc"
+    }
+   }
+  },
+  {
+   "id": "tab_ava_5",
+   "titre": "Raconter une histoire avec les données",
+   "objectif": "Transformer un graphique en message clair pour décideurs",
+   "explication": "Un bon graphique **raconte une histoire** : il a un titre-message, un élément mis en avant et une conclusion.\n\nLa méthode en trois temps : **1)** choisir le graphique qui prouve votre idée, **2)** attirer l'œil sur l'élément important, **3)** écrire une phrase de conclusion avec un chiffre. Ce dernier point est essentiel : un décideur retient une phrase, pas un graphique.\n\n**Important** : un titre doit annoncer le résultat (« Le chiffre d'affaires culmine en juin »), pas décrire le graphique.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Du graphique au message</text><line x1='50' y1='160' x2='370' y2='160' stroke='#9aa5b1'/><polygon points='50,160 50.0,113.4 103.3,78.2 156.7,69.1 210.0,71.1 263.3,114.3 316.7,60.0 370.0,136.9 370,160' fill='#1f5f99' fill-opacity='.18'/><polyline points='50.0,113.4 103.3,78.2 156.7,69.1 210.0,71.1 263.3,114.3 316.7,60.0 370.0,136.9' fill='none' stroke='#1f5f99' stroke-width='3' stroke-linejoin='round'/><circle cx='50.0' cy='113.4' r='4' fill='#c2a15a'/><text x='50.0' y='175' text-anchor='middle' font-size='10' font-weight='400' fill='#52606d'>jan</text><circle cx='103.3' cy='78.2' r='4' fill='#c2a15a'/><text x='103.33333333333334' y='175' text-anchor='middle' font-size='10' font-weight='400' fill='#52606d'>fév</text><circle cx='156.7' cy='69.1' r='4' fill='#c2a15a'/><text x='156.66666666666669' y='175' text-anchor='middle' font-size='10' font-weight='400' fill='#52606d'>mar</text><circle cx='210.0' cy='71.1' r='4' fill='#c2a15a'/><text x='210.0' y='175' text-anchor='middle' font-size='10' font-weight='400' fill='#52606d'>avr</text><circle cx='263.3' cy='114.3' r='4' fill='#c2a15a'/><text x='263.33333333333337' y='175' text-anchor='middle' font-size='10' font-weight='400' fill='#52606d'>mai</text><circle cx='316.7' cy='60.0' r='4' fill='#c2a15a'/><text x='316.6666666666667' y='175' text-anchor='middle' font-size='10' font-weight='400' fill='#52606d'>juin</text><circle cx='370.0' cy='136.9' r='4' fill='#c2a15a'/><text x='370.0' y='175' text-anchor='middle' font-size='10' font-weight='400' fill='#52606d'>juil</text><text x='210' y='46' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>Le chiffre d&#39;affaires culmine en juin</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>Titre-message, courbe, conclusion chiffrée</text></svg>",
+   "code_exemple": "# Dans le Mini-Tableau :\n# Dimension = Mois, Mesure = Chiffre d'affaires\n# Type = Aires\n# Écrire ensuite une phrase de conclusion avec un chiffre",
+   "question_reflexion": "Quelle différence entre un titre descriptif et un titre-message ?",
+   "exercice": {
+    "enonce": "Générez un graphique en **aires** du **chiffre d'affaires par mois**. Rédigez ensuite une phrase de conclusion qui cite le **mois le plus fort** et son chiffre d'affaires.",
+    "indice": "Dimension = Mois, Mesure = Chiffre d'affaires, Type = Aires. Puis citez le mois le plus élevé.",
+    "solution_attendue": "Le chiffre d'affaires culmine en juin (2024-06) avec 604 800 FCFA.",
+    "mots_cles": [
+     "juin|2024-06"
+    ],
+    "attendu": {
+     "dim": "date",
+     "mes": "ca",
+     "type": "area"
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,291 @@
+{
+ "menages": {
+  "titre": "Enquête ménages (Côte d'Ivoire)",
+  "lignes": 3000,
+  "description": "Enquête simulée auprès de 3 000 ménages ivoiriens répartis dans 12 régions, entre 2021 et 2023. Elle décrit le chef de ménage, son activité, ses revenus et ses dépenses. Idéale pour la statistique descriptive, les comparaisons de groupes et la régression. Certaines valeurs sont volontairement manquantes (revenu, âge) pour s'entraîner au nettoyage.",
+  "source": "Données simulées à but pédagogique, inspirées de la structure des enquêtes de niveau de vie.",
+  "colonnes": [
+   {
+    "nom": "id_menage",
+    "type": "entier",
+    "description": "Identifiant unique du ménage"
+   },
+   {
+    "nom": "region",
+    "type": "texte",
+    "description": "Région de résidence (12 modalités)"
+   },
+   {
+    "nom": "milieu",
+    "type": "texte",
+    "description": "Urbain ou Rural"
+   },
+   {
+    "nom": "taille_menage",
+    "type": "entier",
+    "description": "Nombre de personnes dans le ménage"
+   },
+   {
+    "nom": "age_chef",
+    "type": "entier",
+    "description": "Âge du chef de ménage (valeurs manquantes possibles)"
+   },
+   {
+    "nom": "sexe_chef",
+    "type": "texte",
+    "description": "M ou F"
+   },
+   {
+    "nom": "niveau_educ",
+    "type": "texte",
+    "description": "Aucun, Primaire, Secondaire, Supérieur"
+   },
+   {
+    "nom": "secteur",
+    "type": "texte",
+    "description": "Secteur d'activité du chef de ménage"
+   },
+   {
+    "nom": "revenu_mensuel",
+    "type": "nombre",
+    "description": "Revenu mensuel du ménage en FCFA (manquant pour environ 4 %)"
+   },
+   {
+    "nom": "depenses_alimentaires",
+    "type": "nombre",
+    "description": "Dépenses alimentaires mensuelles en FCFA"
+   },
+   {
+    "nom": "depenses_totales",
+    "type": "nombre",
+    "description": "Dépenses totales mensuelles en FCFA"
+   },
+   {
+    "nom": "epargne_mensuelle",
+    "type": "nombre",
+    "description": "Épargne mensuelle estimée en FCFA"
+   },
+   {
+    "nom": "electricite",
+    "type": "texte",
+    "description": "Accès à l'électricité : Oui ou Non"
+   },
+   {
+    "nom": "mobile_money",
+    "type": "texte",
+    "description": "Utilise le mobile money : Oui ou Non"
+   },
+   {
+    "nom": "annee_enquete",
+    "type": "entier",
+    "description": "Année de l'enquête (2021, 2022 ou 2023)"
+   }
+  ],
+  "fichier": "menages.csv"
+ },
+ "ventes": {
+  "titre": "Ventes du réseau de distribution",
+  "lignes": 12000,
+  "description": "12 000 transactions d'un réseau de distribution actif dans 10 villes ivoiriennes, de 2022 à 2024. Chaque ligne est une vente avec son produit, son canal, sa quantité, son prix et sa remise. Parfaite pour les agrégations, les jointures avec les tables clients et produits, et les séries temporelles.",
+  "source": "Données simulées à but pédagogique.",
+  "colonnes": [
+   {
+    "nom": "id_vente",
+    "type": "entier",
+    "description": "Identifiant de la vente"
+   },
+   {
+    "nom": "date",
+    "type": "date",
+    "description": "Date de la vente (AAAA-MM-JJ)"
+   },
+   {
+    "nom": "produit",
+    "type": "texte",
+    "description": "Nom du produit (20 produits)"
+   },
+   {
+    "nom": "categorie",
+    "type": "texte",
+    "description": "Alimentaire, Boissons, Hygiène, Agricole ou Électronique"
+   },
+   {
+    "nom": "id_client",
+    "type": "entier",
+    "description": "Clé vers la table clients"
+   },
+   {
+    "nom": "ville",
+    "type": "texte",
+    "description": "Ville du client"
+   },
+   {
+    "nom": "canal",
+    "type": "texte",
+    "description": "Boutique, Marché, En ligne ou Grossiste"
+   },
+   {
+    "nom": "quantite",
+    "type": "entier",
+    "description": "Quantité vendue"
+   },
+   {
+    "nom": "prix_unitaire",
+    "type": "entier",
+    "description": "Prix unitaire en FCFA"
+   },
+   {
+    "nom": "remise_pct",
+    "type": "entier",
+    "description": "Remise accordée en pourcentage"
+   },
+   {
+    "nom": "montant",
+    "type": "entier",
+    "description": "Montant net payé en FCFA = quantité x prix x (1 - remise)"
+   }
+  ],
+  "fichier": "ventes.csv"
+ },
+ "clients": {
+  "titre": "Clients du réseau",
+  "lignes": 800,
+  "description": "800 clients du réseau de distribution, avec leur ville, leur segment et leur date d'inscription. Se joint à la table ventes grâce à id_client. L'âge n'est renseigné que pour les particuliers.",
+  "source": "Données simulées à but pédagogique.",
+  "colonnes": [
+   {
+    "nom": "id_client",
+    "type": "entier",
+    "description": "Identifiant unique du client"
+   },
+   {
+    "nom": "ville",
+    "type": "texte",
+    "description": "Ville de résidence"
+   },
+   {
+    "nom": "segment",
+    "type": "texte",
+    "description": "Particulier, Entreprise ou Grossiste"
+   },
+   {
+    "nom": "date_inscription",
+    "type": "date",
+    "description": "Date d'inscription (AAAA-MM-JJ)"
+   },
+   {
+    "nom": "age",
+    "type": "entier",
+    "description": "Âge (manquant pour les entreprises et grossistes)"
+   }
+  ],
+  "fichier": "clients.csv"
+ },
+ "produits": {
+  "titre": "Catalogue produits",
+  "lignes": 20,
+  "description": "Petit catalogue de 20 produits avec leur catégorie, leur coût d'achat unitaire et le pays du fournisseur. Se joint à la table ventes grâce à la colonne produit.",
+  "source": "Données simulées à but pédagogique.",
+  "colonnes": [
+   {
+    "nom": "produit",
+    "type": "texte",
+    "description": "Nom du produit (clé de jointure)"
+   },
+   {
+    "nom": "categorie",
+    "type": "texte",
+    "description": "Catégorie du produit"
+   },
+   {
+    "nom": "cout_unitaire",
+    "type": "entier",
+    "description": "Coût d'achat unitaire en FCFA"
+   },
+   {
+    "nom": "fournisseur_pays",
+    "type": "texte",
+    "description": "Pays du fournisseur"
+   }
+  ],
+  "fichier": "produits.csv"
+ },
+ "exportations": {
+  "titre": "Exportations mensuelles 2015-2024",
+  "lignes": 5760,
+  "description": "Série mensuelle des exportations ivoiriennes de 8 produits (cacao, café, anacarde, caoutchouc, pétrole, or, coton, banane) vers 6 destinations, de janvier 2015 à décembre 2024. Chaque ligne donne un volume et une valeur. Idéale pour les séries temporelles, les tendances et la saisonnalité.",
+  "source": "Données simulées à but pédagogique, ordres de grandeur réalistes.",
+  "colonnes": [
+   {
+    "nom": "date",
+    "type": "date",
+    "description": "Premier jour du mois (AAAA-MM-JJ)"
+   },
+   {
+    "nom": "annee",
+    "type": "entier",
+    "description": "Année"
+   },
+   {
+    "nom": "mois",
+    "type": "entier",
+    "description": "Mois (1 à 12)"
+   },
+   {
+    "nom": "produit",
+    "type": "texte",
+    "description": "Produit exporté"
+   },
+   {
+    "nom": "destination",
+    "type": "texte",
+    "description": "Pays de destination"
+   },
+   {
+    "nom": "volume_tonnes",
+    "type": "nombre",
+    "description": "Volume exporté en tonnes"
+   },
+   {
+    "nom": "valeur_millions_fcfa",
+    "type": "nombre",
+    "description": "Valeur exportée en millions de FCFA"
+   }
+  ],
+  "fichier": "exportations.csv"
+ },
+ "prix_marches": {
+  "titre": "Prix des produits vivriers sur les marchés",
+  "lignes": 5760,
+  "description": "Relevé mensuel du prix au kilo de 8 produits vivriers sur 10 marchés ivoiriens, de 2019 à 2024. On y observe l'inflation, la saisonnalité et la hausse de 2022. Utile pour les moyennes, les comparaisons entre villes et les évolutions dans le temps.",
+  "source": "Données simulées à but pédagogique.",
+  "colonnes": [
+   {
+    "nom": "date",
+    "type": "date",
+    "description": "Premier jour du mois (AAAA-MM-JJ)"
+   },
+   {
+    "nom": "marche",
+    "type": "texte",
+    "description": "Marché (10 villes)"
+   },
+   {
+    "nom": "region",
+    "type": "texte",
+    "description": "Région du marché"
+   },
+   {
+    "nom": "produit",
+    "type": "texte",
+    "description": "Produit vivrier (8 produits)"
+   },
+   {
+    "nom": "prix_kg",
+    "type": "nombre",
+    "description": "Prix au kilo en FCFA"
+   }
+  ],
+  "fichier": "prix_marches.csv"
+ }
+}

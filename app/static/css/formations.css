@@ -1178,3 +1178,25 @@
     white-space: pre-wrap;
     word-wrap: break-word;
 }
+/* ===== Catalogue des cours interactifs ===== */
+.catalogue-section { margin: 10px 0 40px; }
+.catalogue-section h2, .outils-section h2 { color: #0b2a4a; font-weight: 700; margin-bottom: 8px; }
+.catalogue-lead { color: #52606d; max-width: 760px; margin-bottom: 22px; }
+.catalogue-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 22px; }
+.cat-card { background: #fff; border: 1px solid #e3e8ef; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 18px rgba(11, 42, 74, .08); display: flex; flex-direction: column; transition: transform .2s, box-shadow .2s; }
+.cat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(11, 42, 74, .14); }
+.cat-cover { width: 100%; aspect-ratio: 600 / 340; object-fit: cover; display: block; background: #0b2a4a; }
+.cat-body { padding: 18px 18px 20px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.cat-body h3 { margin: 0; color: #0b2a4a; font-size: 1.3rem; }
+.cat-libs { color: #1f5f99; font-size: .82rem; font-weight: 600; margin: 0; }
+.cat-desc { color: #52606d; font-size: .92rem; margin: 4px 0 10px; }
+.cat-levels { list-style: none; padding: 0; margin: auto 0 0; display: flex; flex-direction: column; gap: 8px; }
+.cat-levels li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border: 1px solid #e3e8ef; border-radius: 10px; background: #f7f9fc; }
+.cat-level-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.cat-level-info strong { color: #0b2a4a; font-size: .95rem; }
+.cat-level-info span { color: #7b8794; font-size: .8rem; }
+.cat-bar { height: 5px; border-radius: 3px; background: #e3e8ef; overflow: hidden; margin-top: 3px; }
+.cat-bar div { height: 100%; width: 0; background: #c2a15a; transition: width .4s; }
+.cat-go { background: #0b2a4a; color: #fff !important; padding: 7px 14px; border-radius: 8px; text-decoration: none; font-size: .85rem; font-weight: 600; white-space: nowrap; }
+.cat-go:hover { background: #123a63; }
+.cat-soon { color: #9aa5b1; font-size: .85rem; }

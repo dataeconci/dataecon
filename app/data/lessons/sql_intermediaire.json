@@ -1,0 +1,192 @@
+{
+ "outil": "sql",
+ "niveau": "intermediaire",
+ "titre": "SQL intermédiaire",
+ "description": "Jointures, regroupements, HAVING, CASE, sous-requêtes et séries mensuelles sur les ventes, produits et villes.",
+ "concepts": [
+  {
+   "id": "sql_int_1",
+   "titre": "GROUP BY avec plusieurs indicateurs",
+   "objectif": "Résumer chaque groupe avec COUNT, SUM, AVG et ROUND",
+   "explication": "`GROUP BY` regroupe les lignes qui ont la même valeur, puis chaque **fonction d'agrégation** résume un groupe : `COUNT(*)` compte, `SUM` additionne, `AVG` fait la moyenne, `MIN` et `MAX` donnent les extrêmes.\n\nOn peut mettre **plusieurs indicateurs** dans le même `SELECT`. `ROUND(valeur, 2)` arrondit à deux décimales.\n\n**Important** : toute colonne du SELECT qui n'est pas dans une fonction doit apparaître dans le GROUP BY.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>GROUP BY produit</text><rect x='20' y='40' width='64' height='22' fill='#0b2a4a'/><text x='52.0' y='55' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>produit</text><rect x='84' y='40' width='64' height='22' fill='#0b2a4a'/><text x='116.0' y='55' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>quantite</text><rect x='20' y='62' width='64' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='52.0' y='77' text-anchor='middle' font-size='10.5' fill='#1f2933'>Cacao</text><rect x='84' y='62' width='64' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='116.0' y='77' text-anchor='middle' font-size='10.5' fill='#1f2933'>120</text><rect x='20' y='84' width='64' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='52.0' y='99' text-anchor='middle' font-size='10.5' fill='#1f2933'>Café</text><rect x='84' y='84' width='64' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='116.0' y='99' text-anchor='middle' font-size='10.5' fill='#1f2933'>85</text><rect x='20' y='106' width='64' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='52.0' y='121' text-anchor='middle' font-size='10.5' fill='#1f2933'>Cacao</text><rect x='84' y='106' width='64' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='116.0' y='121' text-anchor='middle' font-size='10.5' fill='#1f2933'>200</text><rect x='20' y='128' width='64' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='52.0' y='143' text-anchor='middle' font-size='10.5' fill='#1f2933'>Café</text><rect x='84' y='128' width='64' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='116.0' y='143' text-anchor='middle' font-size='10.5' fill='#1f2933'>60</text><line x1='160' y1='95' x2='192.0' y2='95.0' stroke='#1f5f99' stroke-width='2.5'/><polygon points='200,95 192.0,100.0 192.0,90.0' fill='#1f5f99'/><rect x='210' y='40' width='64' height='22' fill='#0b2a4a'/><text x='242.0' y='55' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>produit</text><rect x='274' y='40' width='64' height='22' fill='#0b2a4a'/><text x='306.0' y='55' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>nb</text><rect x='338' y='40' width='64' height='22' fill='#0b2a4a'/><text x='370.0' y='55' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>total</text><rect x='210' y='62' width='64' height='22' fill='#fbf3df' stroke='#cfd9e6'/><text x='242.0' y='77' text-anchor='middle' font-size='10.5' fill='#1f2933'>Cacao</text><rect x='274' y='62' width='64' height='22' fill='#fbf3df' stroke='#cfd9e6'/><text x='306.0' y='77' text-anchor='middle' font-size='10.5' fill='#1f2933'>2</text><rect x='338' y='62' width='64' height='22' fill='#fbf3df' stroke='#cfd9e6'/><text x='370.0' y='77' text-anchor='middle' font-size='10.5' fill='#1f2933'>320</text><rect x='210' y='84' width='64' height='22' fill='#fbf3df' stroke='#cfd9e6'/><text x='242.0' y='99' text-anchor='middle' font-size='10.5' fill='#1f2933'>Café</text><rect x='274' y='84' width='64' height='22' fill='#fbf3df' stroke='#cfd9e6'/><text x='306.0' y='99' text-anchor='middle' font-size='10.5' fill='#1f2933'>2</text><rect x='338' y='84' width='64' height='22' fill='#fbf3df' stroke='#cfd9e6'/><text x='370.0' y='99' text-anchor='middle' font-size='10.5' fill='#1f2933'>145</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>Une ligne de résultat par groupe</text></svg>",
+   "code_exemple": "SELECT produit,\n       COUNT(*) AS nb_ventes,\n       SUM(quantite) AS total,\n       ROUND(AVG(prix_unitaire), 2) AS prix_moyen\nFROM ventes\nGROUP BY produit;",
+   "question_reflexion": "Que se passe-t-il si vous oubliez une colonne du SELECT dans le GROUP BY ?",
+   "exercice": {
+    "enonce": "Pour chaque ville, affiche le nombre de ventes (`nb_ventes`) et la quantité totale (`total`), triées par `total` décroissant.",
+    "indice": "GROUP BY ville, puis ORDER BY total DESC.",
+    "solution_attendue": "SELECT ville, COUNT(*) AS nb_ventes, SUM(quantite) AS total FROM ventes GROUP BY ville ORDER BY total DESC;",
+    "mots_cles": [
+     "select",
+     "count",
+     "sum",
+     "group by",
+     "ville",
+     "order by",
+     "desc"
+    ]
+   }
+  },
+  {
+   "id": "sql_int_2",
+   "titre": "Filtrer les groupes avec HAVING",
+   "objectif": "Garder seulement les groupes qui respectent une condition",
+   "explication": "`WHERE` filtre les **lignes avant** le regroupement. `HAVING` filtre les **groupes après** le calcul des agrégats.\n\nPour garder les produits dont le total dépasse 600, on écrit `HAVING SUM(quantite) > 600`. On ne peut pas écrire cela dans un WHERE, car la somme n'existe pas encore à ce moment.\n\n**Important** : l'ordre est SELECT, FROM, WHERE, GROUP BY, HAVING, ORDER BY.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>WHERE puis GROUP BY puis HAVING</text><rect x='15' y='60' width='80' height='44' rx='8' fill='#0b2a4a'/><text x='55.0' y='79.0' text-anchor='middle' font-size='12' font-weight='700' fill='#fff'>Lignes</text><text x='55.0' y='93.0' text-anchor='middle' font-size='12' font-weight='700' fill='#fff'>du tableau</text><line x1='97' y1='82' x2='114.0' y2='82.0' stroke='#1f5f99' stroke-width='2.5'/><polygon points='122,82 114.0,87.0 114.0,77.0' fill='#1f5f99'/><rect x='125' y='60' width='80' height='44' rx='8' fill='#1f5f99'/><text x='165.0' y='72.0' text-anchor='middle' font-size='11' font-weight='700' fill='#fff'>WHERE</text><text x='165.0' y='86.0' text-anchor='middle' font-size='11' font-weight='700' fill='#fff'>filtre les</text><text x='165.0' y='100.0' text-anchor='middle' font-size='11' font-weight='700' fill='#fff'>lignes</text><line x1='207' y1='82' x2='224.0' y2='82.0' stroke='#1f5f99' stroke-width='2.5'/><polygon points='232,82 224.0,87.0 224.0,77.0' fill='#1f5f99'/><rect x='235' y='60' width='80' height='44' rx='8' fill='#1f5f99'/><text x='275.0' y='79.0' text-anchor='middle' font-size='11' font-weight='700' fill='#fff'>GROUP BY</text><text x='275.0' y='93.0' text-anchor='middle' font-size='11' font-weight='700' fill='#fff'>regroupe</text><line x1='317' y1='82' x2='334.0' y2='82.0' stroke='#1f5f99' stroke-width='2.5'/><polygon points='342,82 334.0,87.0 334.0,77.0' fill='#1f5f99'/><rect x='345' y='60' width='65' height='44' rx='8' fill='#c2a15a'/><text x='377.5' y='72.0' text-anchor='middle' font-size='10' font-weight='700' fill='#0b2a4a'>HAVING</text><text x='377.5' y='86.0' text-anchor='middle' font-size='10' font-weight='700' fill='#0b2a4a'>filtre les</text><text x='377.5' y='100.0' text-anchor='middle' font-size='10' font-weight='700' fill='#0b2a4a'>groupes</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>HAVING agit après les agrégats</text></svg>",
+   "code_exemple": "SELECT produit, SUM(quantite) AS total\nFROM ventes\nGROUP BY produit\nHAVING SUM(quantite) > 600;",
+   "question_reflexion": "Quelle différence entre WHERE et HAVING ?",
+   "exercice": {
+    "enonce": "Affiche les produits dont la quantité totale vendue dépasse 600. Colonnes : `produit` et `total`.",
+    "indice": "Calculez SUM(quantite) AS total par produit, puis ajoutez HAVING SUM(quantite) > 600.",
+    "solution_attendue": "SELECT produit, SUM(quantite) AS total FROM ventes GROUP BY produit HAVING SUM(quantite) > 600;",
+    "mots_cles": [
+     "select",
+     "sum",
+     "group by",
+     "having",
+     "600",
+     "produit"
+    ]
+   }
+  },
+  {
+   "id": "sql_int_3",
+   "titre": "CASE WHEN : créer des catégories",
+   "objectif": "Classer les lignes selon des conditions",
+   "explication": "`CASE WHEN` fonctionne comme un « si... alors... sinon » : il crée une colonne dont la valeur dépend d'une condition.\n\n`CASE WHEN quantite >= 200 THEN 'Grande' ELSE 'Petite' END AS taille` classe chaque vente. On peut enchaîner plusieurs `WHEN` avant le `ELSE`.\n\n**Important** : la expression se termine toujours par `END`.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>CASE WHEN quantite &gt;= 200</text><rect x='30' y='60' width='110' height='40' rx='8' fill='#0b2a4a'/><text x='85.0' y='84.0' text-anchor='middle' font-size='12' font-weight='700' fill='#fff'>quantite = 250</text><line x1='142' y1='80' x2='173.7' y2='55.0' stroke='#1f5f99' stroke-width='2.5'/><polygon points='180,50 176.8,58.9 170.6,51.0' fill='#1f5f99'/><line x1='142' y1='80' x2='174.1' y2='109.6' stroke='#1f5f99' stroke-width='2.5'/><polygon points='180,115 170.7,113.3 177.5,105.9' fill='#1f5f99'/><rect x='182' y='32' width='200' height='36' rx='8' fill='#c2a15a'/><text x='282.0' y='54.0' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>oui : taille = &#39;Grande&#39;</text><rect x='182' y='98' width='200' height='36' rx='8' fill='#d5dde6'/><text x='282.0' y='120.0' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>non : taille = &#39;Petite&#39;</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>Une condition, deux résultats possibles</text></svg>",
+   "code_exemple": "SELECT id, quantite,\n       CASE\n         WHEN quantite >= 200 THEN 'Grande'\n         WHEN quantite >= 100 THEN 'Moyenne'\n         ELSE 'Petite'\n       END AS taille\nFROM ventes;",
+   "question_reflexion": "Que se passe-t-il si aucune condition n'est vraie et qu'il n'y a pas de ELSE ?",
+   "exercice": {
+    "enonce": "Affiche `id`, `quantite` et une colonne `taille` qui vaut `Grande` si la quantité est supérieure ou égale à 200, sinon `Petite`.",
+    "indice": "Utilisez CASE WHEN quantite >= 200 THEN 'Grande' ELSE 'Petite' END AS taille.",
+    "solution_attendue": "SELECT id, quantite, CASE WHEN quantite >= 200 THEN 'Grande' ELSE 'Petite' END AS taille FROM ventes;",
+    "mots_cles": [
+     "select",
+     "case",
+     "when",
+     "then",
+     "else",
+     "end",
+     "taille",
+     "200"
+    ]
+   }
+  },
+  {
+   "id": "sql_int_4",
+   "titre": "Relier deux tables avec JOIN",
+   "objectif": "Combiner les lignes de deux tables grâce à une colonne commune",
+   "explication": "Une base de données contient souvent **plusieurs tables**. Ici, `ventes` contient le produit, et la table `produits` donne sa **catégorie** (`produit`, `categorie`, `cout_unitaire`).\n\n`JOIN` relie les deux tables : `FROM ventes v JOIN produits p ON v.produit = p.produit`. La condition après `ON` indique quelle colonne est commune. Les lettres `v` et `p` sont des alias de tables, pour écrire moins.\n\n**Important** : un JOIN simple ne garde que les lignes qui ont une correspondance des deux côtés.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>ventes JOIN produits</text><rect x='15' y='45' width='66' height='22' fill='#c2a15a'/><text x='48.0' y='60' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>produit</text><rect x='81' y='45' width='66' height='22' fill='#0b2a4a'/><text x='114.0' y='60' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>quantite</text><rect x='15' y='67' width='66' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='48.0' y='82' text-anchor='middle' font-size='10.5' fill='#1f2933'>Cacao</text><rect x='81' y='67' width='66' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='114.0' y='82' text-anchor='middle' font-size='10.5' fill='#1f2933'>120</text><rect x='15' y='89' width='66' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='48.0' y='104' text-anchor='middle' font-size='10.5' fill='#1f2933'>Café</text><rect x='81' y='89' width='66' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='114.0' y='104' text-anchor='middle' font-size='10.5' fill='#1f2933'>85</text><rect x='15' y='125' width='66' height='22' fill='#c2a15a'/><text x='48.0' y='140' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>produit</text><rect x='81' y='125' width='66' height='22' fill='#0b2a4a'/><text x='114.0' y='140' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>categorie</text><rect x='15' y='147' width='66' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='48.0' y='162' text-anchor='middle' font-size='10.5' fill='#1f2933'>Cacao</text><rect x='81' y='147' width='66' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='114.0' y='162' text-anchor='middle' font-size='10.5' fill='#1f2933'>Rente</text><rect x='15' y='169' width='66' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='48.0' y='184' text-anchor='middle' font-size='10.5' fill='#1f2933'>Café</text><rect x='81' y='169' width='66' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='114.0' y='184' text-anchor='middle' font-size='10.5' fill='#1f2933'>Rente</text><line x1='155' y1='85' x2='197.3' y2='97.7' stroke='#1f5f99' stroke-width='2.5'/><polygon points='205,100 195.9,102.5 198.8,92.9' fill='#1f5f99'/><line x1='155' y1='140' x2='197.8' y2='118.6' stroke='#1f5f99' stroke-width='2.5'/><polygon points='205,115 200.1,123.0 195.6,114.1' fill='#1f5f99'/><rect x='215' y='70' width='66' height='22' fill='#0b2a4a'/><text x='248.0' y='85' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>produit</text><rect x='281' y='70' width='66' height='22' fill='#0b2a4a'/><text x='314.0' y='85' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>quantite</text><rect x='347' y='70' width='66' height='22' fill='#0b2a4a'/><text x='380.0' y='85' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>categorie</text><rect x='215' y='92' width='66' height='22' fill='#fbf3df' stroke='#cfd9e6'/><text x='248.0' y='107' text-anchor='middle' font-size='10.5' fill='#1f2933'>Cacao</text><rect x='281' y='92' width='66' height='22' fill='#fbf3df' stroke='#cfd9e6'/><text x='314.0' y='107' text-anchor='middle' font-size='10.5' fill='#1f2933'>120</text><rect x='347' y='92' width='66' height='22' fill='#fbf3df' stroke='#cfd9e6'/><text x='380.0' y='107' text-anchor='middle' font-size='10.5' fill='#1f2933'>Rente</text><rect x='215' y='114' width='66' height='22' fill='#fbf3df' stroke='#cfd9e6'/><text x='248.0' y='129' text-anchor='middle' font-size='10.5' fill='#1f2933'>Café</text><rect x='281' y='114' width='66' height='22' fill='#fbf3df' stroke='#cfd9e6'/><text x='314.0' y='129' text-anchor='middle' font-size='10.5' fill='#1f2933'>85</text><rect x='347' y='114' width='66' height='22' fill='#fbf3df' stroke='#cfd9e6'/><text x='380.0' y='129' text-anchor='middle' font-size='10.5' fill='#1f2933'>Rente</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>La colonne produit sert de lien</text></svg>",
+   "code_exemple": "SELECT v.produit, v.quantite, p.categorie\nFROM ventes v\nJOIN produits p\n  ON v.produit = p.produit;",
+   "question_reflexion": "Que devient une vente dont le produit n'existe pas dans la table produits ?",
+   "exercice": {
+    "enonce": "Calcule la quantité totale vendue par catégorie de produit. Colonnes : `categorie` et `total`.",
+    "indice": "Joignez ventes et produits sur la colonne produit, puis GROUP BY p.categorie.",
+    "solution_attendue": "SELECT p.categorie, SUM(v.quantite) AS total FROM ventes v JOIN produits p ON v.produit = p.produit GROUP BY p.categorie;",
+    "mots_cles": [
+     "select",
+     "sum",
+     "join",
+     "on",
+     "produit",
+     "group by",
+     "categorie"
+    ]
+   }
+  },
+  {
+   "id": "sql_int_5",
+   "titre": "LEFT JOIN : garder les lignes sans correspondance",
+   "objectif": "Inclure toutes les lignes de la table de gauche",
+   "explication": "Avec `LEFT JOIN`, **toutes** les lignes de la table de gauche sont gardées, même sans correspondance dans la table de droite. Les colonnes manquantes valent `NULL`.\n\nC'est utile pour trouver ce qui **manque** : par exemple les villes sans aucune vente. La table `villes` contient aussi Yamoussoukro, qui n'a jamais vendu.\n\n**Important** : `COUNT(v.id)` ignore les NULL, donc il renvoie 0 pour une ville sans vente, alors que `COUNT(*)` renverrait 1.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>LEFT JOIN</text><defs><clipPath id='ca'><circle cx='178' cy='120' r='55'/></clipPath><clipPath id='cb'><circle cx='242' cy='120' r='55'/></clipPath></defs><circle cx='178' cy='120' r='55' fill='#fff' stroke='#0b2a4a' stroke-width='2'/><circle cx='242' cy='120' r='55' fill='#fff' stroke='#0b2a4a' stroke-width='2'/><circle cx='178' cy='120' r='55' fill='#c2a15a'/><circle cx='178' cy='120' r='55' fill='none' stroke='#0b2a4a' stroke-width='2'/><circle cx='242' cy='120' r='55' fill='none' stroke='#0b2a4a' stroke-width='2'/><text x='140' y='124' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>villes</text><text x='280' y='124' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>ventes</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>Tout le cercle de gauche est conservé</text></svg>",
+   "code_exemple": "SELECT p.produit, COUNT(v.id) AS nb_ventes\nFROM produits p\nLEFT JOIN ventes v\n  ON p.produit = v.produit\nGROUP BY p.produit;",
+   "question_reflexion": "Pourquoi utiliser COUNT(v.id) plutôt que COUNT(*) avec un LEFT JOIN ?",
+   "exercice": {
+    "enonce": "Affiche chaque ville de la table `villes` avec son nombre de ventes (`nb_ventes`), y compris celles qui n'ont aucune vente.",
+    "indice": "Partez de villes avec LEFT JOIN ventes, puis COUNT(v.id) et GROUP BY.",
+    "solution_attendue": "SELECT vi.ville, COUNT(v.id) AS nb_ventes FROM villes vi LEFT JOIN ventes v ON vi.ville = v.ville GROUP BY vi.ville;",
+    "mots_cles": [
+     "select",
+     "count",
+     "left join",
+     "on",
+     "ville",
+     "group by",
+     "nb_ventes"
+    ]
+   }
+  },
+  {
+   "id": "sql_int_6",
+   "titre": "Agréger après une jointure",
+   "objectif": "Résumer des données en utilisant des informations d'une autre table",
+   "explication": "La table `villes` donne la **région** de chaque ville (`ville`, `region`, `habitants`). En joignant `ventes` et `villes`, on peut résumer par **région**.\n\nL'ordre logique est : on relie les tables avec `JOIN`, on regroupe avec `GROUP BY`, puis on trie avec `ORDER BY`.\n\n**Important** : une fois la jointure faite, on peut utiliser toutes les colonnes des deux tables dans le SELECT et dans le GROUP BY.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Total par région</text><text x='112' y='59' text-anchor='end' font-size='11' font-weight='400' fill='#1f2933'>Lagunes</text><rect x='120' y='46' width='250.0' height='22' rx='3' fill='#c2a15a'/><text x='376.0' y='61' text-anchor='start' font-size='10' font-weight='700' fill='#1f2933'>965</text><text x='112' y='93' text-anchor='end' font-size='11' font-weight='400' fill='#1f2933'>Vallée Bandama</text><rect x='120' y='80' width='199.5' height='22' rx='3' fill='#1f5f99'/><text x='325.4818652849741' y='95' text-anchor='start' font-size='10' font-weight='700' fill='#1f2933'>770</text><text x='112' y='127' text-anchor='end' font-size='11' font-weight='400' fill='#1f2933'>Bas-Sassandra</text><rect x='120' y='114' width='171.0' height='22' rx='3' fill='#1f5f99'/><text x='296.98445595854923' y='129' text-anchor='start' font-size='10' font-weight='700' fill='#1f2933'>660</text><text x='112' y='161' text-anchor='end' font-size='11' font-weight='400' fill='#1f2933'>Savanes</text><rect x='120' y='148' width='126.9' height='22' rx='3' fill='#1f5f99'/><text x='252.94300518134713' y='163' text-anchor='start' font-size='10' font-weight='700' fill='#1f2933'>490</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>Quantité totale par région (4 premières)</text></svg>",
+   "code_exemple": "SELECT vi.region, SUM(v.quantite) AS total\nFROM ventes v\nJOIN villes vi ON v.ville = vi.ville\nGROUP BY vi.region\nORDER BY total DESC;",
+   "question_reflexion": "Quelle région a le plus vendu ?",
+   "exercice": {
+    "enonce": "Calcule la quantité totale vendue par région, triée de la plus grande à la plus petite. Colonnes : `region` et `total`.",
+    "indice": "JOIN villes sur ville, GROUP BY vi.region, ORDER BY total DESC.",
+    "solution_attendue": "SELECT vi.region, SUM(v.quantite) AS total FROM ventes v JOIN villes vi ON v.ville = vi.ville GROUP BY vi.region ORDER BY total DESC;",
+    "mots_cles": [
+     "select",
+     "sum",
+     "join",
+     "villes",
+     "region",
+     "group by",
+     "order by",
+     "desc"
+    ]
+   }
+  },
+  {
+   "id": "sql_int_7",
+   "titre": "Les sous-requêtes",
+   "objectif": "Utiliser le résultat d'une requête à l'intérieur d'une autre",
+   "explication": "Une **sous-requête** est une requête placée entre parenthèses dans une autre. Elle sert souvent à calculer une valeur de référence, comme une moyenne.\n\n`WHERE prix_unitaire > (SELECT AVG(prix_unitaire) FROM ventes)` garde les ventes dont le prix dépasse la moyenne générale.\n\n**Important** : la sous-requête s'exécute en premier, puis son résultat est utilisé par la requête principale.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Une requête dans une requête</text><rect x='40' y='50' width='340' height='110' rx='8' fill='#eaf1f8'/><text x='210.0' y='109.0' text-anchor='middle' font-size='12' font-weight='700' fill='#fff'></text><rect x='40' y='50' width='340' height='110' rx='8' fill='#eaf1f8' stroke='#1f5f99' stroke-width='2'/><text x='210' y='72' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>SELECT * FROM ventes WHERE prix_unitaire &gt;</text><rect x='80' y='86' width='260' height='50' rx='8' fill='#c2a15a'/><text x='210.0' y='115.0' text-anchor='middle' font-size='11' font-weight='700' fill='#0b2a4a'>(SELECT AVG(prix_unitaire) FROM ventes)</text><text x='210' y='152' text-anchor='middle' font-size='10.5' font-weight='400' fill='#52606d'>calculée en premier</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>Moyenne calculée, puis comparaison</text></svg>",
+   "code_exemple": "SELECT id, produit, quantite\nFROM ventes\nWHERE quantite > (\n  SELECT AVG(quantite) FROM ventes\n);",
+   "question_reflexion": "Pourquoi ne peut-on pas écrire WHERE quantite > AVG(quantite) directement ?",
+   "exercice": {
+    "enonce": "Affiche `id`, `produit` et `prix_unitaire` des ventes dont le prix unitaire est supérieur au prix unitaire moyen de toutes les ventes.",
+    "indice": "Utilisez (SELECT AVG(prix_unitaire) FROM ventes) après le signe >.",
+    "solution_attendue": "SELECT id, produit, prix_unitaire FROM ventes WHERE prix_unitaire > (SELECT AVG(prix_unitaire) FROM ventes);",
+    "mots_cles": [
+     "select",
+     "where",
+     "prix_unitaire",
+     "avg",
+     "from ventes",
+     ">"
+    ]
+   }
+  },
+  {
+   "id": "sql_int_8",
+   "titre": "Regrouper par mois avec strftime",
+   "objectif": "Extraire une partie d'une date pour analyser dans le temps",
+   "explication": "`strftime('%Y-%m', date)` extrait l'année et le mois d'une date. `%Y` donne l'année, `%m` le mois, `%d` le jour.\n\nEn regroupant sur cette expression, on obtient une **série mensuelle**, base de toute analyse de tendance.\n\n**Important** : on peut donner un alias au calcul, puis réutiliser cet alias dans `GROUP BY` et `ORDER BY`.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>strftime(&#39;%Y-%m&#39;, date)</text><line x1='50' y1='165' x2='370' y2='165' stroke='#9aa5b1'/><polyline points='50.0,115.3 114.0,65.6 178.0,45.0 242.0,77.7 306.0,91.1 370.0,70.5' fill='none' stroke='#1f5f99' stroke-width='3' stroke-linejoin='round'/><circle cx='50.0' cy='115.3' r='4' fill='#c2a15a'/><text x='50.0' y='180' text-anchor='middle' font-size='10' font-weight='400' fill='#52606d'>jan</text><circle cx='114.0' cy='65.6' r='4' fill='#c2a15a'/><text x='114.0' y='180' text-anchor='middle' font-size='10' font-weight='400' fill='#52606d'>fév</text><circle cx='178.0' cy='45.0' r='4' fill='#c2a15a'/><text x='178.0' y='180' text-anchor='middle' font-size='10' font-weight='400' fill='#52606d'>mar</text><circle cx='242.0' cy='77.7' r='4' fill='#c2a15a'/><text x='242.0' y='180' text-anchor='middle' font-size='10' font-weight='400' fill='#52606d'>avr</text><circle cx='306.0' cy='91.1' r='4' fill='#c2a15a'/><text x='306.0' y='180' text-anchor='middle' font-size='10' font-weight='400' fill='#52606d'>mai</text><circle cx='370.0' cy='70.5' r='4' fill='#c2a15a'/><text x='370.0' y='180' text-anchor='middle' font-size='10' font-weight='400' fill='#52606d'>juin</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>Quantité vendue par mois</text></svg>",
+   "code_exemple": "SELECT strftime('%Y-%m', date) AS mois,\n       SUM(quantite * prix_unitaire) AS ca\nFROM ventes\nGROUP BY mois\nORDER BY mois;",
+   "question_reflexion": "Pourquoi regrouper par mois plutôt que par date exacte ?",
+   "exercice": {
+    "enonce": "Pour chaque mois (numéro à deux chiffres obtenu avec `strftime('%m', date)`, nommé `mois`), affiche le nombre de ventes (`nb`), trié par mois croissant.",
+    "indice": "SELECT strftime('%m', date) AS mois, COUNT(*) AS nb ... GROUP BY mois ORDER BY mois",
+    "solution_attendue": "SELECT strftime('%m', date) AS mois, COUNT(*) AS nb FROM ventes GROUP BY mois ORDER BY mois;",
+    "mots_cles": [
+     "select",
+     "strftime",
+     "%m",
+     "count",
+     "group by",
+     "order by",
+     "mois"
+    ]
+   }
+  }
+ ]
+}

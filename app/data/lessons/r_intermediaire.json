@@ -1,0 +1,201 @@
+{
+ "outil": "r",
+ "niveau": "intermediaire",
+ "titre": "R intermédiaire : analyser des données",
+ "description": "Exploration, filtrage, valeurs manquantes, indicateurs, tableaux croisés, aggregate, tri, jointures et dates sur des jeux de données de plusieurs milliers de lignes.",
+ "datasets": [
+  "menages",
+  "ventes",
+  "clients",
+  "produits"
+ ],
+ "concepts": [
+  {
+   "titre": "Explorer un data.frame",
+   "objectif": "summary, str et premiers résumés",
+   "explication": "Avant toute analyse, on **explore**. `summary(df$revenu_mensuel)` donne minimum, quartiles, médiane, moyenne, maximum et le nombre de manquants. `str(df)` affiche les types de toutes les colonnes.\n\nPour une colonne texte : `unique(df$region)` liste les modalités et `length(unique(...))` les compte.\n\nUne colonne s'extrait avec `df$nom` ou `df[['nom']]`.",
+   "code_exemple": "df <- read.csv('menages.csv')\nprint(dim(df))\nprint(summary(df$revenu_mensuel))\nprint(length(unique(df$region)))",
+   "question_reflexion": "Que nous apprend l'écart entre la moyenne et la médiane du revenu ?",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210' y='22' text-anchor='middle' font-size='13.5' font-weight='700' fill='#0b2a4a'>Résumé statistique d&#39;une colonne</text><rect x='90' y='40' width='120' height='24' fill='#c2a15a'/><text x='150' y='56' text-anchor='middle' font-size='10.5' font-weight='700' fill='#0b2a4a'>stat</text><rect x='210' y='40' width='120' height='24' fill='#0b2a4a'/><text x='270' y='56' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>valeur</text><rect x='90' y='64' width='120' height='24' fill='#fff3cf' stroke='#cfd9e6'/><text x='150' y='80' text-anchor='middle' font-size='10.5' fill='#1f2933'>Min.</text><rect x='210' y='64' width='120' height='24' fill='#fff' stroke='#cfd9e6'/><text x='270' y='80' text-anchor='middle' font-size='10.5' fill='#1f2933'>30000</text><rect x='90' y='88' width='120' height='24' fill='#fff3cf' stroke='#cfd9e6'/><text x='150' y='104' text-anchor='middle' font-size='10.5' fill='#1f2933'>Median</text><rect x='210' y='88' width='120' height='24' fill='#eaf1f8' stroke='#cfd9e6'/><text x='270' y='104' text-anchor='middle' font-size='10.5' fill='#1f2933'>156800</text><rect x='90' y='112' width='120' height='24' fill='#fff3cf' stroke='#cfd9e6'/><text x='150' y='128' text-anchor='middle' font-size='10.5' fill='#1f2933'>Mean</text><rect x='210' y='112' width='120' height='24' fill='#fff' stroke='#cfd9e6'/><text x='270' y='128' text-anchor='middle' font-size='10.5' fill='#1f2933'>188965</text><rect x='90' y='136' width='120' height='24' fill='#fff3cf' stroke='#cfd9e6'/><text x='150' y='152' text-anchor='middle' font-size='10.5' fill='#1f2933'>Max.</text><rect x='210' y='136' width='120' height='24' fill='#eaf1f8' stroke='#cfd9e6'/><text x='270' y='152' text-anchor='middle' font-size='10.5' fill='#1f2933'>1048300</text><text x='210' y='210' text-anchor='middle' font-size='11.5' fill='#52606d'>summary(df$revenu_mensuel)</text></svg>",
+   "exercice": {
+    "enonce": "Affiche le nombre de régions différentes puis la moyenne de `taille_menage` arrondie à 2 décimales.",
+    "indice": "length(unique(df$region)) et round(mean(df$taille_menage), 2).",
+    "solution_attendue": "df <- read.csv('menages.csv')\nprint(length(unique(df$region)))\nprint(round(mean(df$taille_menage), 2))",
+    "mots_cles": [
+     "unique",
+     "region",
+     "taille_menage",
+     "mean",
+     "round"
+    ]
+   },
+   "id": "r_int_1"
+  },
+  {
+   "titre": "Sélectionner et filtrer",
+   "objectif": "Extraire colonnes et lignes avec [ ] et subset",
+   "explication": "La syntaxe `df[lignes, colonnes]` sélectionne des cases. `df[df$milieu == 'Rural', ]` garde les lignes rurales (la virgule vide signifie toutes les colonnes).\n\nPour choisir des colonnes : `df[, c('region', 'revenu_mensuel')]`. La fonction `subset(df, condition, select = colonnes)` est plus lisible.\n\nOn combine les conditions avec `&` (et) et `|` (ou).",
+   "code_exemple": "df <- read.csv('menages.csv')\nrural <- subset(df, milieu == 'Rural')\nprint(nrow(rural))\ngrands <- subset(df, milieu == 'Rural' & taille_menage >= 8)\nprint(nrow(grands))\nprint(head(subset(df, region %in% c('Savanes', 'Zanzan'), select = c(region, revenu_mensuel)), 3))",
+   "question_reflexion": "Quelle différence entre & et && ?",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210' y='22' text-anchor='middle' font-size='13.5' font-weight='700' fill='#0b2a4a'>Filtrer = garder certaines lignes</text><rect x='60' y='40' width='100' height='24' fill='#0b2a4a'/><text x='110' y='56' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>id</text><rect x='160' y='40' width='100' height='24' fill='#0b2a4a'/><text x='210' y='56' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>milieu</text><rect x='260' y='40' width='100' height='24' fill='#0b2a4a'/><text x='310' y='56' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>taille</text><rect x='60' y='64' width='100' height='24' fill='#fff' stroke='#cfd9e6'/><text x='110' y='80' text-anchor='middle' font-size='10.5' fill='#1f2933'>1</text><rect x='160' y='64' width='100' height='24' fill='#fff' stroke='#cfd9e6'/><text x='210' y='80' text-anchor='middle' font-size='10.5' fill='#1f2933'>Rural</text><rect x='260' y='64' width='100' height='24' fill='#fff' stroke='#cfd9e6'/><text x='310' y='80' text-anchor='middle' font-size='10.5' fill='#1f2933'>4</text><rect x='60' y='88' width='100' height='24' fill='#fff3cf' stroke='#cfd9e6'/><text x='110' y='104' text-anchor='middle' font-size='10.5' fill='#1f2933'>2</text><rect x='160' y='88' width='100' height='24' fill='#fff3cf' stroke='#cfd9e6'/><text x='210' y='104' text-anchor='middle' font-size='10.5' fill='#1f2933'>Urbain</text><rect x='260' y='88' width='100' height='24' fill='#fff3cf' stroke='#cfd9e6'/><text x='310' y='104' text-anchor='middle' font-size='10.5' fill='#1f2933'>9</text><rect x='60' y='112' width='100' height='24' fill='#fff3cf' stroke='#cfd9e6'/><text x='110' y='128' text-anchor='middle' font-size='10.5' fill='#1f2933'>3</text><rect x='160' y='112' width='100' height='24' fill='#fff3cf' stroke='#cfd9e6'/><text x='210' y='128' text-anchor='middle' font-size='10.5' fill='#1f2933'>Urbain</text><rect x='260' y='112' width='100' height='24' fill='#fff3cf' stroke='#cfd9e6'/><text x='310' y='128' text-anchor='middle' font-size='10.5' fill='#1f2933'>2</text><text x='210' y='210' text-anchor='middle' font-size='11.5' fill='#52606d'>subset(df, milieu == &#39;Urbain&#39;)</text></svg>",
+   "exercice": {
+    "enonce": "Garde les ménages urbains dont le niveau d'éducation est 'Supérieur' et dont `taille_menage` vaut au plus 3. Affiche leur nombre avec nrow().",
+    "indice": "subset(df, milieu == 'Urbain' & niveau_educ == 'Supérieur' & taille_menage <= 3).",
+    "solution_attendue": "df <- read.csv('menages.csv')\nsel <- subset(df, milieu == 'Urbain' & niveau_educ == 'Supérieur' & taille_menage <= 3)\nprint(nrow(sel))",
+    "mots_cles": [
+     "subset",
+     "urbain",
+     "supérieur",
+     "taille_menage",
+     "nrow"
+    ]
+   },
+   "id": "r_int_2"
+  },
+  {
+   "titre": "Les valeurs manquantes",
+   "objectif": "NA : détecter, ignorer, remplacer",
+   "explication": "Une valeur manquante s'écrit `NA`. `is.na(x)` la détecte, `sum(is.na(x))` les compte. Attention : `mean(x)` renvoie `NA` s'il y a un manquant, sauf avec **`na.rm = TRUE`**.\n\n`complete.cases(df)` repère les lignes sans aucun manquant et `na.omit(df)` les garde seulement.\n\nPour imputer : `x[is.na(x)] <- median(x, na.rm = TRUE)`.",
+   "code_exemple": "df <- read.csv('menages.csv')\nprint(sum(is.na(df$revenu_mensuel)))\nprint(mean(df$revenu_mensuel))\nprint(mean(df$revenu_mensuel, na.rm = TRUE))\nrev <- df$revenu_mensuel\nrev[is.na(rev)] <- median(rev, na.rm = TRUE)\nprint(sum(is.na(rev)))",
+   "question_reflexion": "Pourquoi mean(x) renvoie-t-il NA par défaut ?",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210' y='22' text-anchor='middle' font-size='13.5' font-weight='700' fill='#0b2a4a'>Repérer les NA</text><rect x='60' y='40' width='100' height='24' fill='#0b2a4a'/><text x='110' y='56' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>id</text><rect x='160' y='40' width='100' height='24' fill='#0b2a4a'/><text x='210' y='56' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>age_chef</text><rect x='260' y='40' width='100' height='24' fill='#0b2a4a'/><text x='310' y='56' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>revenu</text><rect x='60' y='64' width='100' height='24' fill='#fff' stroke='#cfd9e6'/><text x='110' y='80' text-anchor='middle' font-size='10.5' fill='#1f2933'>1</text><rect x='160' y='64' width='100' height='24' fill='#fff' stroke='#cfd9e6'/><text x='210' y='80' text-anchor='middle' font-size='10.5' fill='#1f2933'>44</text><rect x='260' y='64' width='100' height='24' fill='#fff' stroke='#cfd9e6'/><text x='310' y='80' text-anchor='middle' font-size='10.5' fill='#1f2933'>214500</text><rect x='60' y='88' width='100' height='24' fill='#eaf1f8' stroke='#cfd9e6'/><text x='110' y='104' text-anchor='middle' font-size='10.5' fill='#1f2933'>2</text><rect x='160' y='88' width='100' height='24' fill='#eaf1f8' stroke='#cfd9e6'/><text x='210' y='104' text-anchor='middle' font-size='10.5' fill='#1f2933'>NA</text><rect x='260' y='88' width='100' height='24' fill='#eaf1f8' stroke='#cfd9e6'/><text x='310' y='104' text-anchor='middle' font-size='10.5' fill='#1f2933'>98700</text><rect x='60' y='112' width='100' height='24' fill='#fff' stroke='#cfd9e6'/><text x='110' y='128' text-anchor='middle' font-size='10.5' fill='#1f2933'>3</text><rect x='160' y='112' width='100' height='24' fill='#fff' stroke='#cfd9e6'/><text x='210' y='128' text-anchor='middle' font-size='10.5' fill='#1f2933'>51</text><rect x='260' y='112' width='100' height='24' fill='#fff' stroke='#cfd9e6'/><text x='310' y='128' text-anchor='middle' font-size='10.5' fill='#1f2933'>NA</text><text x='210' y='210' text-anchor='middle' font-size='11.5' fill='#52606d'>is.na() les repère, na.rm = TRUE les ignore</text></svg>",
+   "exercice": {
+    "enonce": "Compte les valeurs manquantes de `age_chef`, puis affiche la moyenne de `age_chef` en ignorant les NA, arrondie à 1 décimale.",
+    "indice": "sum(is.na(df$age_chef)) puis round(mean(df$age_chef, na.rm = TRUE), 1).",
+    "solution_attendue": "df <- read.csv('menages.csv')\nprint(sum(is.na(df$age_chef)))\nprint(round(mean(df$age_chef, na.rm = TRUE), 1))",
+    "mots_cles": [
+     "is.na",
+     "sum",
+     "na.rm",
+     "mean",
+     "age_chef"
+    ]
+   },
+   "id": "r_int_3"
+  },
+  {
+   "titre": "Créer de nouvelles colonnes",
+   "objectif": "Calculer des indicateurs",
+   "explication": "On crée une colonne par affectation : `df$part_alim <- df$depenses_alimentaires / df$depenses_totales`. Le calcul est vectorisé sur tout le tableau.\n\n`ifelse()` crée une colonne catégorielle, `cut(x, breaks = c(...), labels = c(...))` découpe en tranches.\n\nUn indicateur classique : la **part des dépenses alimentaires** (loi d'Engel).",
+   "code_exemple": "df <- read.csv('menages.csv')\ndf$part_alim <- df$depenses_alimentaires / df$depenses_totales\ndf$pauvre <- ifelse(df$revenu_mensuel < 100000, 'Oui', 'Non')\nprint(round(mean(df$part_alim), 3))\nprint(table(df$pauvre))",
+   "question_reflexion": "Pourquoi la part alimentaire baisse-t-elle quand le revenu augmente ?",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210' y='22' text-anchor='middle' font-size='13.5' font-weight='700' fill='#0b2a4a'>Colonne calculée</text><rect x='20' y='78' width='82' height='64' rx='10' fill='#0b2a4a'/><text x='61' y='106' text-anchor='middle' font-size='11.5' font-weight='600' fill='#fff'>depenses_alim</text><path d='M104 110 L116 110' stroke='#52606d' stroke-width='2.2'/><path d='M116 105 L122 110 L116 115' fill='none' stroke='#52606d' stroke-width='2.2'/><rect x='120' y='78' width='82' height='64' rx='10' fill='#1f5f99'/><text x='160' y='106' text-anchor='middle' font-size='11.5' font-weight='600' fill='#fff'>/</text><path d='M204 110 L216 110' stroke='#52606d' stroke-width='2.2'/><path d='M216 105 L221 110 L216 115' fill='none' stroke='#52606d' stroke-width='2.2'/><rect x='219' y='78' width='82' height='64' rx='10' fill='#c2a15a'/><text x='260' y='106' text-anchor='middle' font-size='11.5' font-weight='600' fill='#0b2a4a'>depenses_tot</text><path d='M304 110 L316 110' stroke='#52606d' stroke-width='2.2'/><path d='M316 105 L320 110 L316 115' fill='none' stroke='#52606d' stroke-width='2.2'/><rect x='318' y='78' width='82' height='64' rx='10' fill='#5b9bd5'/><text x='359' y='106' text-anchor='middle' font-size='11.5' font-weight='600' fill='#fff'>part_alim</text><text x='210' y='210' text-anchor='middle' font-size='11.5' fill='#52606d'>Une nouvelle colonne pour les 3 000 ménages</text></svg>",
+   "exercice": {
+    "enonce": "Crée la colonne `taux_epargne` = `epargne_mensuelle` / `revenu_mensuel`. Affiche sa moyenne arrondie à 3 décimales (en ignorant les NA).",
+    "indice": "mean(df$taux_epargne, na.rm = TRUE) avec round(..., 3).",
+    "solution_attendue": "df <- read.csv('menages.csv')\ndf$taux_epargne <- df$epargne_mensuelle / df$revenu_mensuel\nprint(round(mean(df$taux_epargne, na.rm = TRUE), 3))",
+    "mots_cles": [
+     "taux_epargne",
+     "epargne_mensuelle",
+     "revenu_mensuel",
+     "mean",
+     "na.rm"
+    ]
+   },
+   "id": "r_int_4"
+  },
+  {
+   "titre": "Compter avec table",
+   "objectif": "Effectifs et proportions",
+   "explication": "`table(df$milieu)` compte les occurrences de chaque modalité. `prop.table(table(...))` donne des proportions, et `round(..., 3)` les arrondit.\n\nAvec deux variables, `table(df$milieu, df$mobile_money)` produit un **tableau croisé**. `prop.table(tab, 1)` calcule les proportions par ligne.\n\n`sort(table(x), decreasing = TRUE)` classe du plus fréquent au moins fréquent.",
+   "code_exemple": "df <- read.csv('menages.csv')\nprint(table(df$milieu))\nprint(round(prop.table(table(df$milieu)), 3))\nprint(table(df$milieu, df$mobile_money))\nprint(head(sort(table(df$region), decreasing = TRUE), 3))",
+   "question_reflexion": "Quelle région compte le plus de ménages, et pourquoi ?",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210' y='22' text-anchor='middle' font-size='13.5' font-weight='700' fill='#0b2a4a'>Effectifs par région (top 4)</text><rect x='86' y='40' width='52' height='130' rx='4' fill='#c2a15a'/><text x='112' y='34' text-anchor='middle' font-size='10' fill='#1f2933'>660</text><text x='112' y='188' text-anchor='middle' font-size='10' fill='#1f2933'>Abidjan</text><rect x='148' y='99' width='52' height='71' rx='4' fill='#1f5f99'/><text x='174' y='93' text-anchor='middle' font-size='10' fill='#1f2933'>360</text><text x='174' y='188' text-anchor='middle' font-size='10' fill='#1f2933'>V.Bandama</text><rect x='210' y='117' width='52' height='53' rx='4' fill='#1f5f99'/><text x='236' y='111' text-anchor='middle' font-size='10' fill='#1f2933'>270</text><text x='236' y='188' text-anchor='middle' font-size='10' fill='#1f2933'>S.-Marahoué</text><rect x='272' y='123' width='52' height='47' rx='4' fill='#1f5f99'/><text x='298' y='117' text-anchor='middle' font-size='10' fill='#1f2933'>240</text><text x='298' y='188' text-anchor='middle' font-size='10' fill='#1f2933'>Savanes</text><text x='210' y='210' text-anchor='middle' font-size='11.5' fill='#52606d'>table() puis sort()</text></svg>",
+   "exercice": {
+    "enonce": "Affiche les 3 secteurs d'activité les plus fréquents avec leurs effectifs (sort décroissant, head).",
+    "indice": "head(sort(table(df$secteur), decreasing = TRUE), 3).",
+    "solution_attendue": "df <- read.csv('menages.csv')\nprint(head(sort(table(df$secteur), decreasing = TRUE), 3))",
+    "mots_cles": [
+     "table",
+     "secteur",
+     "sort",
+     "head",
+     "decreasing"
+    ]
+   },
+   "id": "r_int_5"
+  },
+  {
+   "titre": "Regrouper avec aggregate",
+   "objectif": "Comparer des groupes",
+   "explication": "`aggregate(revenu_mensuel ~ milieu, data = df, FUN = mean)` calcule la moyenne du revenu par milieu : la **formule** `y ~ groupe` se lit « y selon groupe ».\n\nAvec plusieurs groupes : `aggregate(revenu_mensuel ~ milieu + niveau_educ, data = df, FUN = median)`.\n\n`tapply(df$revenu_mensuel, df$milieu, mean, na.rm = TRUE)` fait la même chose et renvoie un vecteur nommé. Les NA sont retirés automatiquement par `aggregate` avec une formule.",
+   "code_exemple": "df <- read.csv('menages.csv')\nprint(aggregate(revenu_mensuel ~ milieu, data = df, FUN = mean))\nprint(round(tapply(df$revenu_mensuel, df$niveau_educ, median, na.rm = TRUE)))",
+   "question_reflexion": "Quelle conclusion tirez-vous de la comparaison urbain / rural ?",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210' y='22' text-anchor='middle' font-size='13.5' font-weight='700' fill='#0b2a4a'>Split, apply, combine</text><rect x='30' y='46' width='110' height='120' rx='10' fill='#eaf1f8' stroke='#1f5f99'/><circle cx='55' cy='80' r='9' fill='#c2a15a'/><circle cx='85' cy='80' r='9' fill='#7a8ea3'/><circle cx='115' cy='80' r='9' fill='#7a8ea3'/><circle cx='55' cy='112' r='9' fill='#c2a15a'/><circle cx='85' cy='112' r='9' fill='#1f5f99'/><circle cx='115' cy='112' r='9' fill='#1f5f99'/><circle cx='55' cy='144' r='9' fill='#c2a15a'/><circle cx='85' cy='144' r='9' fill='#7a8ea3'/><circle cx='115' cy='144' r='9' fill='#7a8ea3'/><path d='M150 106 L205 106' stroke='#0b2a4a' stroke-width='3'/><path d='M200 99 L211 106 L200 113' fill='none' stroke='#0b2a4a' stroke-width='3'/><rect x='225' y='66' width='38' height='100' rx='4' fill='#c2a15a'/><rect x='277' y='104' width='38' height='62' rx='4' fill='#1f5f99'/><rect x='329' y='128' width='38' height='38' rx='4' fill='#7a8ea3'/><text x='210' y='210' text-anchor='middle' font-size='11.5' fill='#52606d'>Un résumé par groupe</text></svg>",
+   "exercice": {
+    "enonce": "Calcule le revenu mensuel médian par `secteur` avec aggregate et affiche le résultat.",
+    "indice": "aggregate(revenu_mensuel ~ secteur, data = df, FUN = median).",
+    "solution_attendue": "df <- read.csv('menages.csv')\nprint(aggregate(revenu_mensuel ~ secteur, data = df, FUN = median))",
+    "mots_cles": [
+     "aggregate",
+     "secteur",
+     "median",
+     "revenu_mensuel"
+    ]
+   },
+   "id": "r_int_6"
+  },
+  {
+   "titre": "Trier avec order",
+   "objectif": "Classer les lignes",
+   "explication": "`order(x)` renvoie les positions qui trient x. On trie un data.frame avec `df[order(df$revenu_mensuel), ]`, et du plus grand au plus petit avec `decreasing = TRUE` ou `-df$revenu_mensuel`.\n\nPour trier sur plusieurs critères : `order(df$region, -df$revenu_mensuel)`.\n\n`head(df[order(...), ], n)` donne les n premiers : c'est un **classement**.",
+   "code_exemple": "df <- read.csv('menages.csv')\ntop <- df[order(df$revenu_mensuel, decreasing = TRUE), ]\nprint(head(top[, c('region', 'revenu_mensuel')], 3))\nprint(head(sort(df$taille_menage, decreasing = TRUE), 5))",
+   "question_reflexion": "Comment obtenir les 3 plus petits revenus ?",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210' y='22' text-anchor='middle' font-size='13.5' font-weight='700' fill='#0b2a4a'>Un classement : les 4 plus grosses ventes</text><rect x='86' y='40' width='52' height='130' rx='4' fill='#c2a15a'/><text x='112' y='34' text-anchor='middle' font-size='10' fill='#1f2933'>300</text><text x='112' y='188' text-anchor='middle' font-size='10' fill='#1f2933'>A</text><rect x='148' y='62' width='52' height='108' rx='4' fill='#1f5f99'/><text x='174' y='56' text-anchor='middle' font-size='10' fill='#1f2933'>250</text><text x='174' y='188' text-anchor='middle' font-size='10' fill='#1f2933'>B</text><rect x='210' y='75' width='52' height='95' rx='4' fill='#1f5f99'/><text x='236' y='69' text-anchor='middle' font-size='10' fill='#1f2933'>220</text><text x='236' y='188' text-anchor='middle' font-size='10' fill='#1f2933'>C</text><rect x='272' y='79' width='52' height='91' rx='4' fill='#1f5f99'/><text x='298' y='73' text-anchor='middle' font-size='10' fill='#1f2933'>210</text><text x='298' y='188' text-anchor='middle' font-size='10' fill='#1f2933'>D</text><text x='210' y='210' text-anchor='middle' font-size='11.5' fill='#52606d'>order() trie, head() garde les premiers</text></svg>",
+   "exercice": {
+    "enonce": "Affiche les colonnes `region` et `depenses_totales` des 3 ménages aux plus grandes dépenses totales.",
+    "indice": "df[order(df$depenses_totales, decreasing = TRUE), c('region','depenses_totales')] puis head(, 3).",
+    "solution_attendue": "df <- read.csv('menages.csv')\ntop <- df[order(df$depenses_totales, decreasing = TRUE), c('region', 'depenses_totales')]\nprint(head(top, 3))",
+    "mots_cles": [
+     "order",
+     "depenses_totales",
+     "decreasing",
+     "head"
+    ]
+   },
+   "id": "r_int_7"
+  },
+  {
+   "titre": "Fusionner des tables",
+   "objectif": "Joindre ventes, clients et produits avec merge",
+   "explication": "`merge(ventes, clients, by = 'id_client')` joint deux data.frames sur une clé commune. Par défaut seule l'intersection est gardée ; `all.x = TRUE` conserve toutes les lignes de la table de gauche (jointure à gauche).\n\nAprès la fusion, on agrège : `aggregate(montant ~ segment, data = m, FUN = sum)` donne le chiffre d'affaires par segment.\n\nLes tables `ventes` (12 000 lignes), `clients` (800) et `produits` (20) se joignent ainsi.",
+   "code_exemple": "ventes <- read.csv('ventes.csv')\nclients <- read.csv('clients.csv')\nm <- merge(ventes, clients[, c('id_client', 'segment')], by = 'id_client')\nprint(dim(m))\nprint(aggregate(montant ~ segment, data = m, FUN = sum))",
+   "question_reflexion": "Que donne all.x = TRUE si un client est absent de clients ?",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210' y='22' text-anchor='middle' font-size='13.5' font-weight='700' fill='#0b2a4a'>Fusion de deux tables sur une clé</text><rect x='28' y='50' width='110' height='84' rx='8' fill='#eaf1f8' stroke='#1f5f99'/><text x='83' y='68' text-anchor='middle' font-size='11' font-weight='700' fill='#0b2a4a'>ventes</text><rect x='282' y='50' width='110' height='84' rx='8' fill='#eaf1f8' stroke='#1f5f99'/><text x='337' y='68' text-anchor='middle' font-size='11' font-weight='700' fill='#0b2a4a'>clients</text><rect x='38' y='78' width='90' height='11' rx='3' fill='#1f5f99' opacity='.35'/><rect x='292' y='78' width='90' height='11' rx='3' fill='#1f5f99' opacity='.35'/><rect x='38' y='95' width='90' height='11' rx='3' fill='#1f5f99' opacity='.35'/><rect x='292' y='95' width='90' height='11' rx='3' fill='#1f5f99' opacity='.35'/><rect x='38' y='112' width='90' height='11' rx='3' fill='#1f5f99' opacity='.35'/><rect x='292' y='112' width='90' height='11' rx='3' fill='#1f5f99' opacity='.35'/><rect x='38' y='78' width='38' height='11' rx='3' fill='#c2a15a'/><rect x='292' y='78' width='38' height='11' rx='3' fill='#c2a15a'/><path d='M138 84 C190 84 230 84 292 84' fill='none' stroke='#c2a15a' stroke-width='3' stroke-dasharray='6 4'/><text x='210' y='78' text-anchor='middle' font-size='11' font-weight='700' fill='#0b2a4a'>id_client</text><rect x='90' y='150' width='240' height='40' rx='8' fill='#0b2a4a'/><text x='210' y='175' text-anchor='middle' font-size='11.5' font-weight='600' fill='#fff'>Table fusionnée : ventes + clients</text><text x='210' y='210' text-anchor='middle' font-size='11.5' fill='#52606d'>merge(ventes, clients, by = &#39;id_client&#39;)</text></svg>",
+   "exercice": {
+    "enonce": "Fusionne `ventes` avec `produits` sur la colonne `produit`. Calcule le chiffre d'affaires total (somme de `montant`) par `fournisseur_pays` avec aggregate et affiche-le.",
+    "indice": "m <- merge(ventes, produits, by = 'produit') puis aggregate(montant ~ fournisseur_pays, ...).",
+    "solution_attendue": "ventes <- read.csv('ventes.csv')\nproduits <- read.csv('produits.csv')\nm <- merge(ventes, produits, by = 'produit')\nprint(aggregate(montant ~ fournisseur_pays, data = m, FUN = sum))",
+    "mots_cles": [
+     "merge",
+     "produit",
+     "fournisseur_pays",
+     "aggregate",
+     "montant"
+    ]
+   },
+   "id": "r_int_8"
+  },
+  {
+   "titre": "Dates et fonctions apply",
+   "objectif": "Extraire l'année et appliquer une fonction à des groupes",
+   "explication": "`as.Date('2024-03-15')` convertit un texte en date. `format(date, '%Y')` extrait l'année, `format(date, '%m')` le mois.\n\nLa famille **apply** remplace les boucles : `sapply(liste, fonction)` applique une fonction à chaque élément, `tapply(valeur, groupe, fonction)` à chaque groupe.\n\nPour suivre une évolution : `tapply(montant, format(date, '%Y'), sum)` donne le total par année.",
+   "code_exemple": "v <- read.csv('ventes.csv')\nv$date <- as.Date(v$date)\nv$annee <- format(v$date, '%Y')\nprint(tapply(v$montant, v$annee, sum))\nprint(sapply(list(1:3, 4:9), length))",
+   "question_reflexion": "Quelle évolution observez-vous entre 2022 et 2024 ?",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210' y='22' text-anchor='middle' font-size='13.5' font-weight='700' fill='#0b2a4a'>Évolution annuelle des ventes</text><path d='M50 175 H380 M50 40 V175' stroke='#cfd9e6' stroke-width='1.5'/><polyline points='50,170 210,104 370,50' fill='none' stroke='#1f5f99' stroke-width='3' stroke-linejoin='round'/><circle cx='50' cy='170' r='4' fill='#c2a15a'/><circle cx='210' cy='104' r='4' fill='#c2a15a'/><circle cx='370' cy='50' r='4' fill='#c2a15a'/><text x='210' y='210' text-anchor='middle' font-size='11.5' fill='#52606d'>tapply() agrège par période</text></svg>",
+   "exercice": {
+    "enonce": "Dans `ventes.csv`, convertis `date` en date, crée la colonne `annee`, puis affiche le montant total des ventes par année avec tapply.",
+    "indice": "tapply(v$montant, v$annee, sum).",
+    "solution_attendue": "v <- read.csv('ventes.csv')\nv$date <- as.Date(v$date)\nv$annee <- format(v$date, '%Y')\nprint(tapply(v$montant, v$annee, sum))",
+    "mots_cles": [
+     "as.date",
+     "format",
+     "annee",
+     "tapply",
+     "montant"
+    ]
+   },
+   "id": "r_int_9"
+  }
+ ]
+}

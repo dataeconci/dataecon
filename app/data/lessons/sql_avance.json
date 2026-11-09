@@ -1,0 +1,194 @@
+{
+ "outil": "sql",
+ "niveau": "avance",
+ "titre": "SQL avancé",
+ "description": "CTE, fonctions de fenêtre, cumuls, variations, parts du total, EXISTS, UNION et tableaux croisés.",
+ "concepts": [
+  {
+   "id": "sql_ava_1",
+   "titre": "Les CTE avec WITH",
+   "objectif": "Découper une requête complexe en étapes lisibles",
+   "explication": "Une **CTE** (Common Table Expression) est une requête temporaire nommée, introduite par `WITH`. On l'utilise ensuite comme une table.\n\nElle rend les requêtes longues **lisibles** : on calcule d'abord un résultat intermédiaire, puis on l'exploite. Plusieurs CTE peuvent être enchaînées, séparées par des virgules.\n\n**Important** : une CTE n'existe que pendant l'exécution de la requête.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>WITH ... SELECT</text><rect x='25' y='55' width='150' height='50' rx='8' fill='#0b2a4a'/><text x='100.0' y='77.0' text-anchor='middle' font-size='11' font-weight='700' fill='#fff'>WITH ca AS (</text><text x='100.0' y='91.0' text-anchor='middle' font-size='11' font-weight='700' fill='#fff'>  calcul intermédiaire)</text><line x1='177' y1='80' x2='214.0' y2='80.0' stroke='#1f5f99' stroke-width='2.5'/><polygon points='222,80 214.0,85.0 214.0,75.0' fill='#1f5f99'/><rect x='225' y='55' width='170' height='50' rx='8' fill='#c2a15a'/><text x='310.0' y='77.0' text-anchor='middle' font-size='11' font-weight='700' fill='#0b2a4a'>SELECT ... FROM ca</text><text x='310.0' y='91.0' text-anchor='middle' font-size='11' font-weight='700' fill='#0b2a4a'>WHERE ...</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>Étape 1 : préparer. Étape 2 : exploiter</text></svg>",
+   "code_exemple": "WITH ca_ville AS (\n  SELECT ville,\n         SUM(quantite * prix_unitaire) AS ca\n  FROM ventes\n  GROUP BY ville\n)\nSELECT * FROM ca_ville\nWHERE ca > 100000;",
+   "question_reflexion": "Quel avantage une CTE a-t-elle sur une sous-requête imbriquée ?",
+   "exercice": {
+    "enonce": "À l'aide d'une CTE nommée `ca_ville` (chiffre d'affaires = quantité * prix unitaire par ville, colonne `ca`), affiche les villes dont le chiffre d'affaires dépasse 300000. Colonnes : `ville` et `ca`.",
+    "indice": "WITH ca_ville AS (...) SELECT ville, ca FROM ca_ville WHERE ca > 300000.",
+    "solution_attendue": "WITH ca_ville AS (SELECT ville, SUM(quantite * prix_unitaire) AS ca FROM ventes GROUP BY ville) SELECT ville, ca FROM ca_ville WHERE ca > 300000;",
+    "mots_cles": [
+     "with",
+     "ca_ville",
+     "select",
+     "sum",
+     "group by",
+     "where",
+     "300000"
+    ]
+   }
+  },
+  {
+   "id": "sql_ava_2",
+   "titre": "Classer avec RANK",
+   "objectif": "Attribuer un rang sans perdre le détail des lignes",
+   "explication": "Les **fonctions de fenêtre** calculent sur un ensemble de lignes **sans les regrouper** : chaque ligne reste visible, avec une colonne en plus.\n\n`RANK() OVER (ORDER BY quantite DESC)` donne le rang de chaque vente. Avec `PARTITION BY produit`, le classement recommence pour chaque produit. En cas d'égalité, les lignes ont le même rang.\n\n**Important** : `OVER (...)` est ce qui transforme une fonction en fonction de fenêtre.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>RANK() OVER (ORDER BY quantite DESC)</text><rect x='70' y='40' width='90' height='22' fill='#0b2a4a'/><text x='115.0' y='55' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>ville</text><rect x='160' y='40' width='90' height='22' fill='#0b2a4a'/><text x='205.0' y='55' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>quantite</text><rect x='250' y='40' width='90' height='22' fill='#c2a15a'/><text x='295.0' y='55' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>rang</text><rect x='70' y='62' width='90' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='115.0' y='77' text-anchor='middle' font-size='10.5' fill='#1f2933'>Abidjan</text><rect x='160' y='62' width='90' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='205.0' y='77' text-anchor='middle' font-size='10.5' fill='#1f2933'>300</text><rect x='250' y='62' width='90' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='295.0' y='77' text-anchor='middle' font-size='10.5' fill='#1f2933'>1</text><rect x='70' y='84' width='90' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='115.0' y='99' text-anchor='middle' font-size='10.5' fill='#1f2933'>Abidjan</text><rect x='160' y='84' width='90' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='205.0' y='99' text-anchor='middle' font-size='10.5' fill='#1f2933'>280</text><rect x='250' y='84' width='90' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='295.0' y='99' text-anchor='middle' font-size='10.5' fill='#1f2933'>2</text><rect x='70' y='106' width='90' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='115.0' y='121' text-anchor='middle' font-size='10.5' fill='#1f2933'>San-Pédro</text><rect x='160' y='106' width='90' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='205.0' y='121' text-anchor='middle' font-size='10.5' fill='#1f2933'>250</text><rect x='250' y='106' width='90' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='295.0' y='121' text-anchor='middle' font-size='10.5' fill='#1f2933'>3</text><rect x='70' y='128' width='90' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='115.0' y='143' text-anchor='middle' font-size='10.5' fill='#1f2933'>Korhogo</text><rect x='160' y='128' width='90' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='205.0' y='143' text-anchor='middle' font-size='10.5' fill='#1f2933'>220</text><rect x='250' y='128' width='90' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='295.0' y='143' text-anchor='middle' font-size='10.5' fill='#1f2933'>4</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>Chaque ligne garde son détail et reçoit un rang</text></svg>",
+   "code_exemple": "SELECT produit, id, quantite,\n       RANK() OVER (\n         PARTITION BY produit\n         ORDER BY quantite DESC\n       ) AS rang\nFROM ventes;",
+   "question_reflexion": "Quelle différence entre GROUP BY et une fonction de fenêtre ?",
+   "exercice": {
+    "enonce": "Affiche `id`, `ville`, `quantite` et le rang de la vente selon la quantité décroissante, dans une colonne `rang` (utilise `RANK()`).",
+    "indice": "RANK() OVER (ORDER BY quantite DESC) AS rang",
+    "solution_attendue": "SELECT id, ville, quantite, RANK() OVER (ORDER BY quantite DESC) AS rang FROM ventes;",
+    "mots_cles": [
+     "select",
+     "rank",
+     "over",
+     "order by",
+     "quantite",
+     "desc",
+     "rang"
+    ]
+   }
+  },
+  {
+   "id": "sql_ava_3",
+   "titre": "Cumuls avec SUM OVER",
+   "objectif": "Calculer un total cumulé dans le temps",
+   "explication": "Un **cumul** additionne les valeurs au fur et à mesure. On l'obtient avec `SUM(quantite) OVER (ORDER BY date)`.\n\nChaque ligne affiche la somme de toutes les lignes jusqu'à la sienne, dans l'ordre de la date. C'est l'outil idéal pour suivre un objectif de ventes.\n\n**Important** : sans `ORDER BY` dans le `OVER`, on obtient le total général sur chaque ligne.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>SUM(quantite) OVER (ORDER BY date)</text><line x1='50' y1='165' x2='370' y2='165' stroke='#9aa5b1'/><polygon points='50,165 50.0,155.6 103.3,140.1 156.7,126.0 210.0,106.6 263.3,90.2 316.7,68.4 370.0,45.0 370,165' fill='#1f5f99' fill-opacity='.18'/><polyline points='50.0,155.6 103.3,140.1 156.7,126.0 210.0,106.6 263.3,90.2 316.7,68.4 370.0,45.0' fill='none' stroke='#1f5f99' stroke-width='3' stroke-linejoin='round'/><circle cx='50.0' cy='155.6' r='4' fill='#c2a15a'/><text x='50.0' y='180' text-anchor='middle' font-size='10' font-weight='400' fill='#52606d'>1</text><circle cx='103.3' cy='140.1' r='4' fill='#c2a15a'/><text x='103.33333333333334' y='180' text-anchor='middle' font-size='10' font-weight='400' fill='#52606d'>2</text><circle cx='156.7' cy='126.0' r='4' fill='#c2a15a'/><text x='156.66666666666669' y='180' text-anchor='middle' font-size='10' font-weight='400' fill='#52606d'>3</text><circle cx='210.0' cy='106.6' r='4' fill='#c2a15a'/><text x='210.0' y='180' text-anchor='middle' font-size='10' font-weight='400' fill='#52606d'>4</text><circle cx='263.3' cy='90.2' r='4' fill='#c2a15a'/><text x='263.33333333333337' y='180' text-anchor='middle' font-size='10' font-weight='400' fill='#52606d'>5</text><circle cx='316.7' cy='68.4' r='4' fill='#c2a15a'/><text x='316.6666666666667' y='180' text-anchor='middle' font-size='10' font-weight='400' fill='#52606d'>6</text><circle cx='370.0' cy='45.0' r='4' fill='#c2a15a'/><text x='370.0' y='180' text-anchor='middle' font-size='10' font-weight='400' fill='#52606d'>7</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>Cumul des ventes de Cacao</text></svg>",
+   "code_exemple": "SELECT date, quantite,\n       SUM(quantite) OVER (ORDER BY date) AS cumul\nFROM ventes;",
+   "question_reflexion": "Que représente la dernière ligne de la colonne cumul ?",
+   "exercice": {
+    "enonce": "Affiche `date`, `quantite` et le cumul des quantités dans l'ordre des dates (colonne `cumul`), uniquement pour les ventes de `Cacao`.",
+    "indice": "SUM(quantite) OVER (ORDER BY date) AS cumul, avec WHERE produit = 'Cacao'.",
+    "solution_attendue": "SELECT date, quantite, SUM(quantite) OVER (ORDER BY date) AS cumul FROM ventes WHERE produit = 'Cacao';",
+    "mots_cles": [
+     "select",
+     "sum",
+     "over",
+     "order by",
+     "date",
+     "cumul",
+     "cacao"
+    ]
+   }
+  },
+  {
+   "id": "sql_ava_4",
+   "titre": "Comparer à la ligne précédente avec LAG",
+   "objectif": "Mesurer une variation entre deux observations",
+   "explication": "`LAG(colonne)` renvoie la valeur de la **ligne précédente** dans l'ordre choisi. En soustrayant, on obtient une **variation**.\n\n`prix_unitaire - LAG(prix_unitaire) OVER (ORDER BY date)` donne l'évolution du prix d'une vente à l'autre. La première ligne n'a pas de précédente : le résultat est `NULL`.\n\n**Important** : `LEAD` fait l'inverse et regarde la ligne suivante.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>LAG : la valeur précédente</text><rect x='60' y='40' width='75' height='22' fill='#0b2a4a'/><text x='97.5' y='55' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>date</text><rect x='135' y='40' width='75' height='22' fill='#0b2a4a'/><text x='172.5' y='55' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>prix</text><rect x='210' y='40' width='75' height='22' fill='#0b2a4a'/><text x='247.5' y='55' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>prec.</text><rect x='285' y='40' width='75' height='22' fill='#c2a15a'/><text x='322.5' y='55' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>variation</text><rect x='60' y='62' width='75' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='97.5' y='77' text-anchor='middle' font-size='10.5' fill='#1f2933'>jan</text><rect x='135' y='62' width='75' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='172.5' y='77' text-anchor='middle' font-size='10.5' fill='#1f2933'>1500</text><rect x='210' y='62' width='75' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='247.5' y='77' text-anchor='middle' font-size='10.5' fill='#1f2933'>NULL</text><rect x='285' y='62' width='75' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='322.5' y='77' text-anchor='middle' font-size='10.5' fill='#1f2933'>NULL</text><rect x='60' y='84' width='75' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='97.5' y='99' text-anchor='middle' font-size='10.5' fill='#1f2933'>fév</text><rect x='135' y='84' width='75' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='172.5' y='99' text-anchor='middle' font-size='10.5' fill='#1f2933'>1520</text><rect x='210' y='84' width='75' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='247.5' y='99' text-anchor='middle' font-size='10.5' fill='#1f2933'>1500</text><rect x='285' y='84' width='75' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='322.5' y='99' text-anchor='middle' font-size='10.5' fill='#1f2933'>+20</text><rect x='60' y='106' width='75' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='97.5' y='121' text-anchor='middle' font-size='10.5' fill='#1f2933'>mar</text><rect x='135' y='106' width='75' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='172.5' y='121' text-anchor='middle' font-size='10.5' fill='#1f2933'>1550</text><rect x='210' y='106' width='75' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='247.5' y='121' text-anchor='middle' font-size='10.5' fill='#1f2933'>1520</text><rect x='285' y='106' width='75' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='322.5' y='121' text-anchor='middle' font-size='10.5' fill='#1f2933'>+30</text><rect x='60' y='128' width='75' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='97.5' y='143' text-anchor='middle' font-size='10.5' fill='#1f2933'>avr</text><rect x='135' y='128' width='75' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='172.5' y='143' text-anchor='middle' font-size='10.5' fill='#1f2933'>1600</text><rect x='210' y='128' width='75' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='247.5' y='143' text-anchor='middle' font-size='10.5' fill='#1f2933'>1550</text><rect x='285' y='128' width='75' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='322.5' y='143' text-anchor='middle' font-size='10.5' fill='#1f2933'>+50</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>variation = prix - prix précédent</text></svg>",
+   "code_exemple": "SELECT date, prix_unitaire,\n       prix_unitaire - LAG(prix_unitaire)\n         OVER (ORDER BY date) AS variation\nFROM ventes\nWHERE produit = 'Cacao';",
+   "question_reflexion": "Pourquoi la première ligne vaut-elle NULL ?",
+   "exercice": {
+    "enonce": "Pour les ventes de `Cacao`, affiche `date`, `prix_unitaire` et la variation du prix par rapport à la vente précédente de Cacao (colonne `variation`), dans l'ordre des dates.",
+    "indice": "prix_unitaire - LAG(prix_unitaire) OVER (ORDER BY date) AS variation, avec WHERE produit = 'Cacao'.",
+    "solution_attendue": "SELECT date, prix_unitaire, prix_unitaire - LAG(prix_unitaire) OVER (ORDER BY date) AS variation FROM ventes WHERE produit = 'Cacao';",
+    "mots_cles": [
+     "select",
+     "lag",
+     "over",
+     "order by",
+     "prix_unitaire",
+     "variation",
+     "cacao"
+    ]
+   }
+  },
+  {
+   "id": "sql_ava_5",
+   "titre": "Part du total en pourcentage",
+   "objectif": "Calculer le poids de chaque groupe dans l'ensemble",
+   "explication": "Pour exprimer un groupe en **pourcentage du total**, on divise sa somme par la somme de tous les groupes.\n\n`SUM(SUM(montant)) OVER ()` calcule le total général sur chaque ligne du résultat groupé. On multiplie par `100.0` (avec un point décimal) pour éviter la division entière.\n\n**Important** : `OVER ()` vide signifie « toutes les lignes du résultat ».",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Part de chaque produit</text><path d='M120 125 L120.0 55.0 A70 70 0 0 1 129.5 194.3 Z' fill='#0b2a4a' stroke='#fff' stroke-width='2'/><path d='M120 125 L129.5 194.3 A70 70 0 0 1 75.8 179.3 Z' fill='#1f5f99' stroke='#fff' stroke-width='2'/><path d='M120 125 L75.8 179.3 A70 70 0 0 1 60.2 88.6 Z' fill='#c2a15a' stroke='#fff' stroke-width='2'/><path d='M120 125 L60.2 88.6 A70 70 0 0 1 120.0 55.0 Z' fill='#5b9bd5' stroke='#fff' stroke-width='2'/><rect x='214' y='61' width='12' height='12' rx='2' fill='#0b2a4a'/><text x='232' y='71' text-anchor='start' font-size='11' font-weight='400' fill='#1f2933'>Cacao 48 %</text><rect x='214' y='83' width='12' height='12' rx='2' fill='#1f5f99'/><text x='232' y='93' text-anchor='start' font-size='11' font-weight='400' fill='#1f2933'>Café 13 %</text><rect x='214' y='105' width='12' height='12' rx='2' fill='#c2a15a'/><text x='232' y='115' text-anchor='start' font-size='11' font-weight='400' fill='#1f2933'>Anacarde 23 %</text><rect x='214' y='127' width='12' height='12' rx='2' fill='#5b9bd5'/><text x='232' y='137' text-anchor='start' font-size='11' font-weight='400' fill='#1f2933'>Coton 16 %</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>Poids de chaque produit dans la quantité totale</text></svg>",
+   "code_exemple": "SELECT produit,\n       SUM(quantite) AS total,\n       ROUND(100.0 * SUM(quantite)\n             / SUM(SUM(quantite)) OVER (), 1) AS part_pct\nFROM ventes\nGROUP BY produit;",
+   "question_reflexion": "Pourquoi multiplier par 100.0 et pas par 100 ?",
+   "exercice": {
+    "enonce": "Calcule la part de chaque ville dans le chiffre d'affaires total (quantité * prix unitaire). Colonnes : `ville`, `ca` et `part_pct` (pourcentage arrondi à 1 décimale).",
+    "indice": "ROUND(100.0 * SUM(quantite * prix_unitaire) / SUM(SUM(quantite * prix_unitaire)) OVER (), 1) AS part_pct",
+    "solution_attendue": "SELECT ville, SUM(quantite * prix_unitaire) AS ca, ROUND(100.0 * SUM(quantite * prix_unitaire) / SUM(SUM(quantite * prix_unitaire)) OVER (), 1) AS part_pct FROM ventes GROUP BY ville;",
+    "mots_cles": [
+     "select",
+     "sum",
+     "over",
+     "round",
+     "100.0",
+     "part_pct",
+     "group by",
+     "ville"
+    ]
+   }
+  },
+  {
+   "id": "sql_ava_6",
+   "titre": "EXISTS et NOT EXISTS",
+   "objectif": "Tester la présence ou l'absence de lignes liées",
+   "explication": "`EXISTS` vérifie si une sous-requête renvoie **au moins une ligne**. `NOT EXISTS` vérifie qu'elle n'en renvoie aucune.\n\nC'est la façon propre de chercher ce qui **n'a pas de correspondance** : les villes sans vente, les clients sans commande. La sous-requête est **corrélée** : elle fait référence à la ligne de la requête principale.\n\n**Important** : dans `SELECT 1`, la valeur importe peu, seul compte le fait qu'une ligne existe.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>NOT EXISTS</text><defs><clipPath id='ca'><circle cx='178' cy='120' r='55'/></clipPath><clipPath id='cb'><circle cx='242' cy='120' r='55'/></clipPath></defs><circle cx='178' cy='120' r='55' fill='#fff' stroke='#0b2a4a' stroke-width='2'/><circle cx='242' cy='120' r='55' fill='#fff' stroke='#0b2a4a' stroke-width='2'/><circle cx='178' cy='120' r='55' fill='#c2a15a'/><circle cx='242' cy='120' r='55' fill='#fff' stroke='#0b2a4a' stroke-width='2'/><circle cx='178' cy='120' r='55' fill='none' stroke='#0b2a4a' stroke-width='2'/><circle cx='242' cy='120' r='55' fill='none' stroke='#0b2a4a' stroke-width='2'/><text x='140' y='124' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>villes</text><text x='280' y='124' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>ventes</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>Les villes qui ne sont reliées à aucune vente</text></svg>",
+   "code_exemple": "SELECT p.produit\nFROM produits p\nWHERE NOT EXISTS (\n  SELECT 1 FROM ventes v\n  WHERE v.produit = p.produit\n);",
+   "question_reflexion": "Quel produit de la table produits n'a jamais été vendu ?",
+   "exercice": {
+    "enonce": "Affiche les villes de la table `villes` qui n'ont aucune vente. Colonne : `ville`.",
+    "indice": "WHERE NOT EXISTS (SELECT 1 FROM ventes v WHERE v.ville = vi.ville)",
+    "solution_attendue": "SELECT ville FROM villes vi WHERE NOT EXISTS (SELECT 1 FROM ventes v WHERE v.ville = vi.ville);",
+    "mots_cles": [
+     "select",
+     "from villes",
+     "not exists",
+     "from ventes",
+     "where",
+     "ville"
+    ]
+   }
+  },
+  {
+   "id": "sql_ava_7",
+   "titre": "Combiner des résultats avec UNION",
+   "objectif": "Empiler les résultats de deux requêtes",
+   "explication": "`UNION` **empile** les résultats de deux `SELECT` et supprime les doublons. `UNION ALL` empile sans supprimer les doublons.\n\nLes deux requêtes doivent avoir le **même nombre de colonnes**, avec des types compatibles. On place `ORDER BY` une seule fois, à la fin.\n\n**Important** : UNION n'est pas un JOIN. Un JOIN ajoute des colonnes, un UNION ajoute des lignes.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>UNION</text><defs><clipPath id='ca'><circle cx='178' cy='120' r='55'/></clipPath><clipPath id='cb'><circle cx='242' cy='120' r='55'/></clipPath></defs><circle cx='178' cy='120' r='55' fill='#fff' stroke='#0b2a4a' stroke-width='2'/><circle cx='242' cy='120' r='55' fill='#fff' stroke='#0b2a4a' stroke-width='2'/><circle cx='178' cy='120' r='55' fill='#c2a15a'/><circle cx='242' cy='120' r='55' fill='#c2a15a'/><circle cx='178' cy='120' r='55' fill='none' stroke='#0b2a4a' stroke-width='2'/><circle cx='242' cy='120' r='55' fill='none' stroke='#0b2a4a' stroke-width='2'/><text x='140' y='124' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>ventes</text><text x='280' y='124' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>produits</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>Tout ce qui est dans l&#39;une ou l&#39;autre, sans doublon</text></svg>",
+   "code_exemple": "SELECT ville FROM ventes\nUNION\nSELECT ville FROM villes\nORDER BY ville;",
+   "question_reflexion": "Quelle différence entre UNION et UNION ALL ?",
+   "exercice": {
+    "enonce": "Affiche la liste unique de tous les produits qui apparaissent dans `ventes` ou dans `produits`, triée par ordre alphabétique. Colonne : `produit`.",
+    "indice": "SELECT produit FROM ventes UNION SELECT produit FROM produits ORDER BY produit",
+    "solution_attendue": "SELECT produit FROM ventes UNION SELECT produit FROM produits ORDER BY produit;",
+    "mots_cles": [
+     "select",
+     "produit",
+     "from ventes",
+     "union",
+     "from produits",
+     "order by"
+    ]
+   }
+  },
+  {
+   "id": "sql_ava_8",
+   "titre": "Tableau croisé avec CASE",
+   "objectif": "Transformer des lignes en colonnes (pivot)",
+   "explication": "Un **tableau croisé** place les valeurs d'une catégorie en colonnes. En SQL, on le construit avec `SUM(CASE WHEN ... THEN valeur ELSE 0 END)`.\n\nChaque colonne additionne seulement les lignes qui respectent sa condition. C'est très utilisé pour les rapports : un produit par colonne, une période par colonne.\n\n**Important** : le `ELSE 0` évite que les lignes non concernées donnent NULL.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Pivot : lignes vers colonnes</text><rect x='15' y='45' width='62' height='22' fill='#0b2a4a'/><text x='46.0' y='60' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>ville</text><rect x='77' y='45' width='62' height='22' fill='#0b2a4a'/><text x='108.0' y='60' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>produit</text><rect x='139' y='45' width='62' height='22' fill='#0b2a4a'/><text x='170.0' y='60' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>qte</text><rect x='15' y='67' width='62' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='46.0' y='82' text-anchor='middle' font-size='10.5' fill='#1f2933'>Abidjan</text><rect x='77' y='67' width='62' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='108.0' y='82' text-anchor='middle' font-size='10.5' fill='#1f2933'>Cacao</text><rect x='139' y='67' width='62' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='170.0' y='82' text-anchor='middle' font-size='10.5' fill='#1f2933'>120</text><rect x='15' y='89' width='62' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='46.0' y='104' text-anchor='middle' font-size='10.5' fill='#1f2933'>Abidjan</text><rect x='77' y='89' width='62' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='108.0' y='104' text-anchor='middle' font-size='10.5' fill='#1f2933'>Café</text><rect x='139' y='89' width='62' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='170.0' y='104' text-anchor='middle' font-size='10.5' fill='#1f2933'>85</text><rect x='15' y='111' width='62' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='46.0' y='126' text-anchor='middle' font-size='10.5' fill='#1f2933'>Daloa</text><rect x='77' y='111' width='62' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='108.0' y='126' text-anchor='middle' font-size='10.5' fill='#1f2933'>Café</text><rect x='139' y='111' width='62' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='170.0' y='126' text-anchor='middle' font-size='10.5' fill='#1f2933'>60</text><line x1='208' y1='95' x2='230.0' y2='95.0' stroke='#1f5f99' stroke-width='2.5'/><polygon points='238,95 230.0,100.0 230.0,90.0' fill='#1f5f99'/><rect x='245' y='45' width='56' height='22' fill='#0b2a4a'/><text x='273.0' y='60' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>ville</text><rect x='301' y='45' width='56' height='22' fill='#c2a15a'/><text x='329.0' y='60' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>cacao</text><rect x='357' y='45' width='56' height='22' fill='#c2a15a'/><text x='385.0' y='60' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>café</text><rect x='245' y='67' width='56' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='273.0' y='82' text-anchor='middle' font-size='10.5' fill='#1f2933'>Abidjan</text><rect x='301' y='67' width='56' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='329.0' y='82' text-anchor='middle' font-size='10.5' fill='#1f2933'>120</text><rect x='357' y='67' width='56' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='385.0' y='82' text-anchor='middle' font-size='10.5' fill='#1f2933'>85</text><rect x='245' y='89' width='56' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='273.0' y='104' text-anchor='middle' font-size='10.5' fill='#1f2933'>Daloa</text><rect x='301' y='89' width='56' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='329.0' y='104' text-anchor='middle' font-size='10.5' fill='#1f2933'>0</text><rect x='357' y='89' width='56' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='385.0' y='104' text-anchor='middle' font-size='10.5' fill='#1f2933'>60</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>Un produit par colonne</text></svg>",
+   "code_exemple": "SELECT produit,\n  SUM(CASE WHEN date < '2024-07-01'\n           THEN quantite ELSE 0 END) AS s1,\n  SUM(CASE WHEN date >= '2024-07-01'\n           THEN quantite ELSE 0 END) AS s2\nFROM ventes\nGROUP BY produit;",
+   "question_reflexion": "Que se passerait-il sans le ELSE 0 ?",
+   "exercice": {
+    "enonce": "Pour chaque ville, affiche la quantité vendue de `Cacao` (colonne `cacao`) et de `Café` (colonne `cafe`) à l'aide de `SUM(CASE WHEN ...)`.",
+    "indice": "Deux colonnes SUM(CASE WHEN produit = '...' THEN quantite ELSE 0 END), avec GROUP BY ville.",
+    "solution_attendue": "SELECT ville, SUM(CASE WHEN produit = 'Cacao' THEN quantite ELSE 0 END) AS cacao, SUM(CASE WHEN produit = 'Café' THEN quantite ELSE 0 END) AS cafe FROM ventes GROUP BY ville;",
+    "mots_cles": [
+     "select",
+     "sum",
+     "case",
+     "when",
+     "cacao",
+     "café",
+     "then",
+     "else",
+     "group by",
+     "ville"
+    ]
+   }
+  }
+ ]
+}

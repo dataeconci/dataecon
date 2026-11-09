@@ -1,0 +1,200 @@
+{
+ "outil": "r",
+ "niveau": "avance",
+ "titre": "R avancé : statistiques et économétrie",
+ "description": "Quantiles, corrélation, tests t et khi-deux, régressions linéaire, multiple et logistique, séries temporelles et bootstrap.",
+ "datasets": [
+  "menages",
+  "exportations"
+ ],
+ "concepts": [
+  {
+   "titre": "Statistiques descriptives avancées",
+   "objectif": "Quantiles, dispersion et valeurs aberrantes",
+   "explication": "`quantile(x, 0.9, na.rm = TRUE)` donne le 9e décile. `sd()` l'écart-type, `IQR()` l'écart interquartile, `var()` la variance.\n\nUne distribution de revenu est **asymétrique à droite** : la moyenne dépasse la médiane. Règle de l'**IQR** : une valeur est suspecte si elle sort de [Q1 - 1,5 x IQR ; Q3 + 1,5 x IQR].\n\nLe rapport **D9/D1** mesure l'inégalité : le revenu du 9e décile divisé par celui du 1er.",
+   "code_exemple": "df <- read.csv('menages.csv')\nr <- df$revenu_mensuel[!is.na(df$revenu_mensuel)]\nq <- quantile(r, c(0.25, 0.75))\niqr <- q[2] - q[1]\nprint(round(sd(r)))\nprint(sum(r < q[1] - 1.5 * iqr | r > q[2] + 1.5 * iqr))",
+   "question_reflexion": "Pourquoi la médiane est-elle plus robuste que la moyenne ?",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210' y='22' text-anchor='middle' font-size='13.5' font-weight='700' fill='#0b2a4a'>Boîtes à moustaches : médiane, quartiles, extrêmes</text><path d='M50 175 H385' stroke='#cfd9e6' stroke-width='1.5'/><path d='M115 149.0 V32.0' stroke='#0b2a4a' stroke-width='2'/><rect x='90' y='64.5' width='50' height='52.0' rx='4' fill='#1f5f99'/><path d='M90 97.0 H140' stroke='#fff' stroke-width='3'/><path d='M225 142.5 V12.5' stroke='#0b2a4a' stroke-width='2'/><rect x='200' y='45.0' width='50' height='58.5' rx='4' fill='#c2a15a'/><path d='M200 77.5 H250' stroke='#fff' stroke-width='3'/><path d='M335 151.6 V51.5' stroke='#0b2a4a' stroke-width='2'/><rect x='310' y='84.0' width='50' height='45.5' rx='4' fill='#7a8ea3'/><path d='M310 110.0 H360' stroke='#fff' stroke-width='3'/><text x='210' y='210' text-anchor='middle' font-size='11.5' fill='#52606d'>La boîte contient 50 % des observations</text></svg>",
+   "exercice": {
+    "enonce": "Calcule le rapport interdécile D9/D1 de `depenses_totales` (quantile 0.9 divisé par quantile 0.1) et affiche-le arrondi à 2 décimales.",
+    "indice": "unname(quantile(x, 0.9) / quantile(x, 0.1)).",
+    "solution_attendue": "df <- read.csv('menages.csv')\nd <- df$depenses_totales\nprint(round(unname(quantile(d, 0.9) / quantile(d, 0.1)), 2))",
+    "mots_cles": [
+     "quantile",
+     "0.9",
+     "0.1",
+     "depenses_totales",
+     "round"
+    ]
+   },
+   "id": "r_ava_1"
+  },
+  {
+   "titre": "Corrélation",
+   "objectif": "cor et cor.test",
+   "explication": "Le **coefficient de Pearson** `r` varie de -1 à +1. `cor(x, y)` le calcule ; avec des NA, ajoutez `use = 'complete.obs'`.\n\n`cor.test(x, y)` ajoute un test : l'objet résultat contient `$estimate` (r) et `$p.value`.\n\nUne matrice de corrélation s'obtient avec `cor(df[, c('revenu_mensuel','depenses_totales','taille_menage')], use = 'complete.obs')`.\n\n**Corrélation n'est pas causalité.**",
+   "code_exemple": "df <- read.csv('menages.csv')\nprint(round(cor(df$revenu_mensuel, df$depenses_totales, use = 'complete.obs'), 3))\nprint(round(cor(df[, c('revenu_mensuel', 'depenses_totales', 'taille_menage')], use = 'complete.obs'), 2))",
+   "question_reflexion": "Peut-on parler de causalité à partir de cette corrélation ?",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210' y='22' text-anchor='middle' font-size='13.5' font-weight='700' fill='#0b2a4a'>Corrélation positive forte</text><path d='M50 175 H385 M50 40 V175' stroke='#cfd9e6' stroke-width='1.5'/><circle cx='60' cy='152' r='4' fill='#1f5f99' opacity='.75'/><circle cx='71' cy='158' r='4' fill='#1f5f99' opacity='.75'/><circle cx='82' cy='148' r='4' fill='#1f5f99' opacity='.75'/><circle cx='93' cy='152' r='4' fill='#1f5f99' opacity='.75'/><circle cx='104' cy='149' r='4' fill='#1f5f99' opacity='.75'/><circle cx='115' cy='127' r='4' fill='#1f5f99' opacity='.75'/><circle cx='126' cy='122' r='4' fill='#1f5f99' opacity='.75'/><circle cx='137' cy='144' r='4' fill='#1f5f99' opacity='.75'/><circle cx='148' cy='122' r='4' fill='#1f5f99' opacity='.75'/><circle cx='159' cy='117' r='4' fill='#1f5f99' opacity='.75'/><circle cx='170' cy='138' r='4' fill='#1f5f99' opacity='.75'/><circle cx='181' cy='117' r='4' fill='#1f5f99' opacity='.75'/><circle cx='192' cy='125' r='4' fill='#1f5f99' opacity='.75'/><circle cx='203' cy='110' r='4' fill='#1f5f99' opacity='.75'/><circle cx='214' cy='111' r='4' fill='#1f5f99' opacity='.75'/><circle cx='225' cy='92' r='4' fill='#1f5f99' opacity='.75'/><circle cx='236' cy='104' r='4' fill='#1f5f99' opacity='.75'/><circle cx='247' cy='107' r='4' fill='#1f5f99' opacity='.75'/><circle cx='258' cy='92' r='4' fill='#1f5f99' opacity='.75'/><circle cx='269' cy='96' r='4' fill='#1f5f99' opacity='.75'/><circle cx='280' cy='89' r='4' fill='#1f5f99' opacity='.75'/><circle cx='291' cy='66' r='4' fill='#1f5f99' opacity='.75'/><circle cx='302' cy='85' r='4' fill='#1f5f99' opacity='.75'/><circle cx='313' cy='76' r='4' fill='#1f5f99' opacity='.75'/><circle cx='324' cy='62' r='4' fill='#1f5f99' opacity='.75'/><circle cx='335' cy='50' r='4' fill='#1f5f99' opacity='.75'/><circle cx='346' cy='73' r='4' fill='#1f5f99' opacity='.75'/><circle cx='357' cy='57' r='4' fill='#1f5f99' opacity='.75'/><circle cx='368' cy='61' r='4' fill='#1f5f99' opacity='.75'/><path d='M55 164 L380 50' stroke='#c2a15a' stroke-width='3.5'/><text x='210' y='210' text-anchor='middle' font-size='11.5' fill='#52606d'>r proche de +1 : les points suivent une droite</text></svg>",
+   "exercice": {
+    "enonce": "Calcule la corrélation entre `revenu_mensuel` et `epargne_mensuelle` (use = 'complete.obs'), arrondie à 3 décimales.",
+    "indice": "round(cor(x, y, use = 'complete.obs'), 3).",
+    "solution_attendue": "df <- read.csv('menages.csv')\nprint(round(cor(df$revenu_mensuel, df$epargne_mensuelle, use = 'complete.obs'), 3))",
+    "mots_cles": [
+     "cor",
+     "revenu_mensuel",
+     "epargne_mensuelle",
+     "complete.obs",
+     "round"
+    ]
+   },
+   "id": "r_ava_2"
+  },
+  {
+   "titre": "Test t de Student",
+   "objectif": "Comparer deux moyennes",
+   "explication": "Un **test d'hypothèse** départage hasard et vraie différence. On pose H0 (pas de différence), on calcule une **p-value** : si `p < 0,05`, on rejette H0.\n\n`t.test(revenu_mensuel ~ milieu, data = df)` compare le revenu moyen des deux milieux. Le résultat contient `$statistic`, `$p.value` et `$conf.int` (intervalle de confiance).\n\nUne différence **significative** n'est pas forcément **importante** : regardez aussi son ampleur.",
+   "code_exemple": "df <- read.csv('menages.csv')\nres <- t.test(revenu_mensuel ~ milieu, data = df)\nprint(round(unname(res$statistic), 2))\nprint(res$p.value < 0.05)",
+   "question_reflexion": "Que signifie p < 0,05 en une phrase ?",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210' y='22' text-anchor='middle' font-size='13.5' font-weight='700' fill='#0b2a4a'>Logique d&#39;un test</text><rect x='20' y='78' width='82' height='64' rx='10' fill='#0b2a4a'/><text x='61' y='99' text-anchor='middle' font-size='11.5' font-weight='600' fill='#fff'>H0 : pas</text><text x='61' y='115' text-anchor='middle' font-size='11.5' font-weight='600' fill='#fff'>de différence</text><path d='M104 110 L116 110' stroke='#52606d' stroke-width='2.2'/><path d='M116 105 L122 110 L116 115' fill='none' stroke='#52606d' stroke-width='2.2'/><rect x='120' y='78' width='82' height='64' rx='10' fill='#1f5f99'/><text x='160' y='99' text-anchor='middle' font-size='11.5' font-weight='600' fill='#fff'>statistique</text><text x='160' y='115' text-anchor='middle' font-size='11.5' font-weight='600' fill='#fff'>t</text><path d='M204 110 L216 110' stroke='#52606d' stroke-width='2.2'/><path d='M216 105 L221 110 L216 115' fill='none' stroke='#52606d' stroke-width='2.2'/><rect x='219' y='78' width='82' height='64' rx='10' fill='#c2a15a'/><text x='260' y='106' text-anchor='middle' font-size='11.5' font-weight='600' fill='#0b2a4a'>p-value</text><path d='M304 110 L316 110' stroke='#52606d' stroke-width='2.2'/><path d='M316 105 L320 110 L316 115' fill='none' stroke='#52606d' stroke-width='2.2'/><rect x='318' y='78' width='82' height='64' rx='10' fill='#5b9bd5'/><text x='359' y='99' text-anchor='middle' font-size='11.5' font-weight='600' fill='#fff'>p &lt; 0,05 ?</text><text x='359' y='115' text-anchor='middle' font-size='11.5' font-weight='600' fill='#fff'>rejet de H0</text><text x='210' y='210' text-anchor='middle' font-size='11.5' fill='#52606d'>Une petite p-value rend H0 peu crédible</text></svg>",
+   "exercice": {
+    "enonce": "Teste si le revenu moyen diffère selon `sexe_chef` avec t.test (formule). Affiche `res$p.value < 0.05`.",
+    "indice": "t.test(revenu_mensuel ~ sexe_chef, data = df).",
+    "solution_attendue": "df <- read.csv('menages.csv')\nres <- t.test(revenu_mensuel ~ sexe_chef, data = df)\nprint(res$p.value < 0.05)",
+    "mots_cles": [
+     "t.test",
+     "sexe_chef",
+     "revenu_mensuel",
+     "p.value"
+    ]
+   },
+   "id": "r_ava_3"
+  },
+  {
+   "titre": "Test du khi-deux",
+   "objectif": "Tester l'indépendance de deux variables qualitatives",
+   "explication": "Le test du **khi-deux** vérifie si deux variables qualitatives sont liées. On part d'un tableau croisé : `tab <- table(df$milieu, df$electricite)`, puis `chisq.test(tab)`.\n\nSi `p < 0,05`, les deux variables ne sont pas indépendantes : par exemple, l'accès à l'électricité dépend du milieu.\n\nLe résultat contient `$statistic`, `$p.value` et `$expected` (effectifs attendus sous H0).",
+   "code_exemple": "df <- read.csv('menages.csv')\ntab <- table(df$milieu, df$electricite)\nprint(tab)\nres <- chisq.test(tab)\nprint(res$p.value < 0.05)",
+   "question_reflexion": "Que signifie « variables indépendantes » ?",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210' y='22' text-anchor='middle' font-size='13.5' font-weight='700' fill='#0b2a4a'>Tableau croisé</text><rect x='60' y='40' width='100' height='24' fill='#0b2a4a'/><text x='110' y='56' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>milieu</text><rect x='160' y='40' width='100' height='24' fill='#0b2a4a'/><text x='210' y='56' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>Non</text><rect x='260' y='40' width='100' height='24' fill='#0b2a4a'/><text x='310' y='56' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>Oui</text><rect x='60' y='64' width='100' height='24' fill='#fff' stroke='#cfd9e6'/><text x='110' y='80' text-anchor='middle' font-size='10.5' fill='#1f2933'>Rural</text><rect x='160' y='64' width='100' height='24' fill='#fff' stroke='#cfd9e6'/><text x='210' y='80' text-anchor='middle' font-size='10.5' fill='#1f2933'>380</text><rect x='260' y='64' width='100' height='24' fill='#fff' stroke='#cfd9e6'/><text x='310' y='80' text-anchor='middle' font-size='10.5' fill='#1f2933'>790</text><rect x='60' y='88' width='100' height='24' fill='#eaf1f8' stroke='#cfd9e6'/><text x='110' y='104' text-anchor='middle' font-size='10.5' fill='#1f2933'>Urbain</text><rect x='160' y='88' width='100' height='24' fill='#eaf1f8' stroke='#cfd9e6'/><text x='210' y='104' text-anchor='middle' font-size='10.5' fill='#1f2933'>70</text><rect x='260' y='88' width='100' height='24' fill='#eaf1f8' stroke='#cfd9e6'/><text x='310' y='104' text-anchor='middle' font-size='10.5' fill='#1f2933'>1760</text></svg>",
+   "exercice": {
+    "enonce": "Teste si l'utilisation du mobile money (`mobile_money`) dépend du niveau d'éducation (`niveau_educ`). Affiche `res$p.value < 0.05`.",
+    "indice": "chisq.test(table(df$niveau_educ, df$mobile_money)).",
+    "solution_attendue": "df <- read.csv('menages.csv')\ntab <- table(df$niveau_educ, df$mobile_money)\nres <- chisq.test(tab)\nprint(res$p.value < 0.05)",
+    "mots_cles": [
+     "chisq.test",
+     "table",
+     "mobile_money",
+     "niveau_educ",
+     "p.value"
+    ]
+   },
+   "id": "r_ava_4"
+  },
+  {
+   "titre": "Régression linéaire simple",
+   "objectif": "lm : estimer l'effet d'une variable",
+   "explication": "`lm(depenses_totales ~ revenu_mensuel, data = df)` ajuste la droite `y = a + b x`. `coef(modele)` donne les coefficients, `summary(modele)$r.squared` le R².\n\nLa pente mesure l'effet moyen d'une unité de x sur y : ici, la **propension marginale à consommer**.\n\nR retire automatiquement les lignes avec NA dans les variables du modèle.",
+   "code_exemple": "df <- read.csv('menages.csv')\nmod <- lm(depenses_totales ~ revenu_mensuel, data = df)\nprint(round(coef(mod), 3))\nprint(round(summary(mod)$r.squared, 3))",
+   "question_reflexion": "Comment interpréter une pente de 0,85 entre revenu et dépenses ?",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210' y='22' text-anchor='middle' font-size='13.5' font-weight='700' fill='#0b2a4a'>Droite de régression : y = a + b x</text><path d='M50 175 H385 M50 40 V175' stroke='#cfd9e6' stroke-width='1.5'/><circle cx='60' cy='152' r='4' fill='#1f5f99' opacity='.75'/><circle cx='71' cy='158' r='4' fill='#1f5f99' opacity='.75'/><circle cx='82' cy='148' r='4' fill='#1f5f99' opacity='.75'/><circle cx='93' cy='152' r='4' fill='#1f5f99' opacity='.75'/><circle cx='104' cy='149' r='4' fill='#1f5f99' opacity='.75'/><circle cx='115' cy='127' r='4' fill='#1f5f99' opacity='.75'/><circle cx='126' cy='122' r='4' fill='#1f5f99' opacity='.75'/><circle cx='137' cy='144' r='4' fill='#1f5f99' opacity='.75'/><circle cx='148' cy='122' r='4' fill='#1f5f99' opacity='.75'/><circle cx='159' cy='117' r='4' fill='#1f5f99' opacity='.75'/><circle cx='170' cy='138' r='4' fill='#1f5f99' opacity='.75'/><circle cx='181' cy='117' r='4' fill='#1f5f99' opacity='.75'/><circle cx='192' cy='125' r='4' fill='#1f5f99' opacity='.75'/><circle cx='203' cy='110' r='4' fill='#1f5f99' opacity='.75'/><circle cx='214' cy='111' r='4' fill='#1f5f99' opacity='.75'/><circle cx='225' cy='92' r='4' fill='#1f5f99' opacity='.75'/><circle cx='236' cy='104' r='4' fill='#1f5f99' opacity='.75'/><circle cx='247' cy='107' r='4' fill='#1f5f99' opacity='.75'/><circle cx='258' cy='92' r='4' fill='#1f5f99' opacity='.75'/><circle cx='269' cy='96' r='4' fill='#1f5f99' opacity='.75'/><circle cx='280' cy='89' r='4' fill='#1f5f99' opacity='.75'/><circle cx='291' cy='66' r='4' fill='#1f5f99' opacity='.75'/><circle cx='302' cy='85' r='4' fill='#1f5f99' opacity='.75'/><circle cx='313' cy='76' r='4' fill='#1f5f99' opacity='.75'/><circle cx='324' cy='62' r='4' fill='#1f5f99' opacity='.75'/><circle cx='335' cy='50' r='4' fill='#1f5f99' opacity='.75'/><circle cx='346' cy='73' r='4' fill='#1f5f99' opacity='.75'/><circle cx='357' cy='57' r='4' fill='#1f5f99' opacity='.75'/><circle cx='368' cy='61' r='4' fill='#1f5f99' opacity='.75'/><path d='M55 164 L380 50' stroke='#c2a15a' stroke-width='3.5'/><text x='210' y='210' text-anchor='middle' font-size='11.5' fill='#52606d'>La pente b est l&#39;effet moyen d&#39;une unité de x</text></svg>",
+   "exercice": {
+    "enonce": "Régresse `depenses_alimentaires` sur `revenu_mensuel` et affiche la pente (le deuxième coefficient) arrondie à 3 décimales.",
+    "indice": "unname(coef(mod)[2]).",
+    "solution_attendue": "df <- read.csv('menages.csv')\nmod <- lm(depenses_alimentaires ~ revenu_mensuel, data = df)\nprint(round(unname(coef(mod)[2]), 3))",
+    "mots_cles": [
+     "lm",
+     "depenses_alimentaires",
+     "revenu_mensuel",
+     "coef",
+     "round"
+    ]
+   },
+   "id": "r_ava_5"
+  },
+  {
+   "titre": "Régression multiple",
+   "objectif": "Plusieurs variables explicatives et variables qualitatives",
+   "explication": "Avec `+`, on ajoute des variables : `lm(log(revenu_mensuel) ~ taille_menage + niveau_educ + milieu, data = df)`. Les variables texte deviennent automatiquement des **facteurs** (indicatrices).\n\nEn prenant le logarithme du revenu, un coefficient `b` se lit comme un effet d'environ `100 x b` %.\n\n`summary(mod)` détaille coefficients, erreurs-types, p-values et R². On extrait : `summary(mod)$r.squared`, `summary(mod)$coefficients`.",
+   "code_exemple": "df <- read.csv('menages.csv')\nmod <- lm(log(revenu_mensuel) ~ taille_menage + niveau_educ + milieu, data = df)\nprint(round(summary(mod)$r.squared, 3))\nprint(round(coef(mod), 3))",
+   "question_reflexion": "Que signifie le coefficient associé à milieuUrbain ?",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210' y='22' text-anchor='middle' font-size='13.5' font-weight='700' fill='#0b2a4a'>Régression multiple</text><rect x='20' y='78' width='82' height='64' rx='10' fill='#0b2a4a'/><text x='61' y='106' text-anchor='middle' font-size='11.5' font-weight='600' fill='#fff'>revenu</text><path d='M104 110 L116 110' stroke='#52606d' stroke-width='2.2'/><path d='M116 105 L122 110 L116 115' fill='none' stroke='#52606d' stroke-width='2.2'/><rect x='120' y='78' width='82' height='64' rx='10' fill='#1f5f99'/><text x='160' y='106' text-anchor='middle' font-size='11.5' font-weight='600' fill='#fff'>=</text><path d='M204 110 L216 110' stroke='#52606d' stroke-width='2.2'/><path d='M216 105 L221 110 L216 115' fill='none' stroke='#52606d' stroke-width='2.2'/><rect x='219' y='78' width='82' height='64' rx='10' fill='#c2a15a'/><text x='260' y='106' text-anchor='middle' font-size='11.5' font-weight='600' fill='#0b2a4a'>éducation + milieu</text><path d='M304 110 L316 110' stroke='#52606d' stroke-width='2.2'/><path d='M316 105 L320 110 L316 115' fill='none' stroke='#52606d' stroke-width='2.2'/><rect x='318' y='78' width='82' height='64' rx='10' fill='#5b9bd5'/><text x='359' y='106' text-anchor='middle' font-size='11.5' font-weight='600' fill='#fff'>+ taille + erreur</text><text x='210' y='210' text-anchor='middle' font-size='11.5' fill='#52606d'>Chaque coefficient isole un effet, toutes choses égales par ailleurs</text></svg>",
+   "exercice": {
+    "enonce": "Estime `log(revenu_mensuel) ~ age_chef + sexe_chef + milieu` et affiche le R² arrondi à 3 décimales.",
+    "indice": "summary(mod)$r.squared.",
+    "solution_attendue": "df <- read.csv('menages.csv')\nmod <- lm(log(revenu_mensuel) ~ age_chef + sexe_chef + milieu, data = df)\nprint(round(summary(mod)$r.squared, 3))",
+    "mots_cles": [
+     "lm",
+     "log",
+     "age_chef",
+     "r.squared",
+     "summary"
+    ]
+   },
+   "id": "r_ava_6"
+  },
+  {
+   "titre": "Régression logistique",
+   "objectif": "Expliquer une variable oui / non avec glm",
+   "explication": "Pour expliquer une variable binaire (utilise le mobile money : oui ou non), on utilise la **régression logistique** : `glm(y ~ x, data = df, family = binomial)`.\n\nOn crée d'abord la variable 0/1 : `df$mm <- ifelse(df$mobile_money == 'Oui', 1, 0)`. Les coefficients sont des **log-odds** ; `exp(coef(mod))` donne des **odds ratios** : au-dessus de 1, la variable augmente la probabilité.\n\n`predict(mod, type = 'response')` donne les probabilités prédites.",
+   "code_exemple": "df <- read.csv('menages.csv')\ndf$mm <- ifelse(df$mobile_money == 'Oui', 1, 0)\nmod <- glm(mm ~ milieu + niveau_educ, data = df, family = binomial)\nprint(round(exp(coef(mod)), 2))",
+   "question_reflexion": "Comment interpréter un odds ratio de 2,5 ?",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210' y='22' text-anchor='middle' font-size='13.5' font-weight='700' fill='#0b2a4a'>Régression logistique</text><rect x='20' y='78' width='82' height='64' rx='10' fill='#0b2a4a'/><text x='61' y='106' text-anchor='middle' font-size='11.5' font-weight='600' fill='#fff'>variables x</text><path d='M104 110 L116 110' stroke='#52606d' stroke-width='2.2'/><path d='M116 105 L122 110 L116 115' fill='none' stroke='#52606d' stroke-width='2.2'/><rect x='120' y='78' width='82' height='64' rx='10' fill='#1f5f99'/><text x='160' y='99' text-anchor='middle' font-size='11.5' font-weight='600' fill='#fff'>combinaison</text><text x='160' y='115' text-anchor='middle' font-size='11.5' font-weight='600' fill='#fff'>linéaire</text><path d='M204 110 L216 110' stroke='#52606d' stroke-width='2.2'/><path d='M216 105 L221 110 L216 115' fill='none' stroke='#52606d' stroke-width='2.2'/><rect x='219' y='78' width='82' height='64' rx='10' fill='#c2a15a'/><text x='260' y='99' text-anchor='middle' font-size='11.5' font-weight='600' fill='#0b2a4a'>fonction</text><text x='260' y='115' text-anchor='middle' font-size='11.5' font-weight='600' fill='#0b2a4a'>logistique</text><path d='M304 110 L316 110' stroke='#52606d' stroke-width='2.2'/><path d='M316 105 L320 110 L316 115' fill='none' stroke='#52606d' stroke-width='2.2'/><rect x='318' y='78' width='82' height='64' rx='10' fill='#5b9bd5'/><text x='359' y='99' text-anchor='middle' font-size='11.5' font-weight='600' fill='#fff'>probabilité</text><text x='359' y='115' text-anchor='middle' font-size='11.5' font-weight='600' fill='#fff'>entre 0 et 1</text><text x='210' y='210' text-anchor='middle' font-size='11.5' fill='#52606d'>On prédit la probabilité d&#39;un événement oui / non</text></svg>",
+   "exercice": {
+    "enonce": "Crée `elec` (1 si `electricite` vaut 'Oui', sinon 0). Estime `glm(elec ~ milieu, family = binomial)` et affiche l'odds ratio de milieuUrbain arrondi à 2 décimales (exp du deuxième coefficient).",
+    "indice": "round(unname(exp(coef(mod)[2])), 2).",
+    "solution_attendue": "df <- read.csv('menages.csv')\ndf$elec <- ifelse(df$electricite == 'Oui', 1, 0)\nmod <- glm(elec ~ milieu, data = df, family = binomial)\nprint(round(unname(exp(coef(mod)[2])), 2))",
+    "mots_cles": [
+     "glm",
+     "binomial",
+     "elec",
+     "exp",
+     "coef"
+    ]
+   },
+   "id": "r_ava_7"
+  },
+  {
+   "titre": "Séries temporelles",
+   "objectif": "Tendance, croissance et cumul",
+   "explication": "On regroupe les exportations par date : `agg <- aggregate(valeur_millions_fcfa ~ date, data = cacao, FUN = sum)`. `diff(x)` calcule les variations d'une période à l'autre, `cumsum(x)` le cumul.\n\nLa **croissance annuelle** vaut `(x[t] / x[t-1] - 1) * 100`.\n\n`ts(x, start = c(2015, 1), frequency = 12)` crée un objet série temporelle mensuelle et `window()` en extrait une période.",
+   "code_exemple": "ex <- read.csv('exportations.csv')\ncacao <- ex[ex$produit == 'Cacao', ]\nannuel <- tapply(cacao$valeur_millions_fcfa, cacao$annee, sum)\nprint(round(annuel))\nprint(round((annuel[-1] / annuel[-length(annuel)] - 1) * 100, 1))",
+   "question_reflexion": "Pourquoi comparer des années complètes plutôt que des mois ?",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210' y='22' text-anchor='middle' font-size='13.5' font-weight='700' fill='#0b2a4a'>Exportations annuelles</text><path d='M50 175 H380 M50 40 V175' stroke='#cfd9e6' stroke-width='1.5'/><polyline points='50,170 86,156 121,145 157,131 192,118 228,123 263,102 299,82 334,69 370,50' fill='none' stroke='#1f5f99' stroke-width='3' stroke-linejoin='round'/><circle cx='50' cy='170' r='4' fill='#c2a15a'/><circle cx='86' cy='156' r='4' fill='#c2a15a'/><circle cx='121' cy='145' r='4' fill='#c2a15a'/><circle cx='157' cy='131' r='4' fill='#c2a15a'/><circle cx='192' cy='118' r='4' fill='#c2a15a'/><circle cx='228' cy='123' r='4' fill='#c2a15a'/><circle cx='263' cy='102' r='4' fill='#c2a15a'/><circle cx='299' cy='82' r='4' fill='#c2a15a'/><circle cx='334' cy='69' r='4' fill='#c2a15a'/><circle cx='370' cy='50' r='4' fill='#c2a15a'/><text x='210' y='210' text-anchor='middle' font-size='11.5' fill='#52606d'>tapply() agrège par année</text></svg>",
+   "exercice": {
+    "enonce": "Calcule la valeur annuelle des exportations d'Or (tapply de valeur_millions_fcfa par annee) et affiche la croissance en pourcentage de 2024 par rapport à 2023, arrondie à 1 décimale.",
+    "indice": "annuel['2024'] / annuel['2023'] - 1, fois 100.",
+    "solution_attendue": "ex <- read.csv('exportations.csv')\nor_ <- ex[ex$produit == 'Or', ]\nannuel <- tapply(or_$valeur_millions_fcfa, or_$annee, sum)\nprint(round(unname((annuel['2024'] / annuel['2023'] - 1) * 100), 1))",
+    "mots_cles": [
+     "tapply",
+     "annee",
+     "valeur_millions_fcfa",
+     "2024",
+     "2023"
+    ]
+   },
+   "id": "r_ava_8"
+  },
+  {
+   "titre": "Simulation et bootstrap",
+   "objectif": "Mesurer l'incertitude par rééchantillonnage",
+   "explication": "`set.seed(123)` fixe le hasard pour obtenir toujours les mêmes tirages. `sample(x, size, replace = TRUE)` tire un échantillon **avec remise**.\n\nLe **bootstrap** estime l'incertitude d'une statistique : on tire 1 000 échantillons avec remise, on calcule la statistique pour chacun avec `replicate()`, puis on regarde la distribution. `quantile(boot, c(0.025, 0.975))` donne un intervalle de confiance à 95 %.\n\nCette méthode ne suppose aucune forme particulière de la distribution.",
+   "code_exemple": "df <- read.csv('menages.csv')\nset.seed(123)\nr <- df$revenu_mensuel[!is.na(df$revenu_mensuel)]\nboot <- replicate(1000, mean(sample(r, length(r), replace = TRUE)))\nprint(round(mean(boot)))\nprint(round(quantile(boot, c(0.025, 0.975))))",
+   "question_reflexion": "Pourquoi tire-t-on avec remise ?",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210' y='22' text-anchor='middle' font-size='13.5' font-weight='700' fill='#0b2a4a'>Bootstrap</text><rect x='20' y='78' width='82' height='64' rx='10' fill='#0b2a4a'/><text x='61' y='99' text-anchor='middle' font-size='11.5' font-weight='600' fill='#fff'>échantillon</text><text x='61' y='115' text-anchor='middle' font-size='11.5' font-weight='600' fill='#fff'>d&#39;origine</text><path d='M104 110 L116 110' stroke='#52606d' stroke-width='2.2'/><path d='M116 105 L122 110 L116 115' fill='none' stroke='#52606d' stroke-width='2.2'/><rect x='120' y='78' width='82' height='64' rx='10' fill='#1f5f99'/><text x='160' y='99' text-anchor='middle' font-size='11.5' font-weight='600' fill='#fff'>tirages</text><text x='160' y='115' text-anchor='middle' font-size='11.5' font-weight='600' fill='#fff'>avec remise</text><path d='M204 110 L216 110' stroke='#52606d' stroke-width='2.2'/><path d='M216 105 L221 110 L216 115' fill='none' stroke='#52606d' stroke-width='2.2'/><rect x='219' y='78' width='82' height='64' rx='10' fill='#c2a15a'/><text x='260' y='99' text-anchor='middle' font-size='11.5' font-weight='600' fill='#0b2a4a'>statistique</text><text x='260' y='115' text-anchor='middle' font-size='11.5' font-weight='600' fill='#0b2a4a'>x 1000</text><path d='M304 110 L316 110' stroke='#52606d' stroke-width='2.2'/><path d='M316 105 L320 110 L316 115' fill='none' stroke='#52606d' stroke-width='2.2'/><rect x='318' y='78' width='82' height='64' rx='10' fill='#5b9bd5'/><text x='359' y='99' text-anchor='middle' font-size='11.5' font-weight='600' fill='#fff'>intervalle</text><text x='359' y='115' text-anchor='middle' font-size='11.5' font-weight='600' fill='#fff'>de confiance</text><text x='210' y='210' text-anchor='middle' font-size='11.5' fill='#52606d'>Rééchantillonner pour mesurer l&#39;incertitude</text></svg>",
+   "exercice": {
+    "enonce": "Avec set.seed(42), tire 500 moyennes bootstrap de `depenses_totales` (replicate(500, ...)) et affiche l'écart-type de ces moyennes arrondi à l'entier. C'est l'erreur-type de la moyenne.",
+    "indice": "round(sd(boot)).",
+    "solution_attendue": "df <- read.csv('menages.csv')\nset.seed(42)\nd <- df$depenses_totales\nboot <- replicate(500, mean(sample(d, length(d), replace = TRUE)))\nprint(round(sd(boot)))",
+    "mots_cles": [
+     "set.seed",
+     "replicate",
+     "sample",
+     "replace",
+     "sd"
+    ]
+   },
+   "id": "r_ava_9"
+  }
+ ]
+}

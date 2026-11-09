@@ -1,0 +1,126 @@
+{
+ "outil": "tableau",
+ "niveau": "intermediaire",
+ "titre": "Tableau intermédiaire",
+ "description": "Filtres, tris, Top N, choix du bon graphique et lecture de tendances dans le Mini-Tableau.",
+ "concepts": [
+  {
+   "id": "tab_int_1",
+   "titre": "Filtrer les données",
+   "objectif": "Réduire les données à ce qui vous intéresse avec un filtre",
+   "explication": "Un **filtre** limite les données affichées. Dans le Mini-Tableau, les listes **Produit**, **Ville** et **Période** servent à filtrer.\n\nFiltrer permet de répondre à une question précise : « Que se passe-t-il à Abidjan ? ». Le graphique ne montre alors que les lignes concernées, et les totaux changent.\n\n**Important** : un filtre ne supprime pas les données, il les masque seulement. Remettre « Toutes » les fait réapparaître.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Filtre Ville = Abidjan</text><rect x='20' y='42' width='64' height='22' fill='#0b2a4a'/><text x='52.0' y='57' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>ville</text><rect x='84' y='42' width='64' height='22' fill='#0b2a4a'/><text x='116.0' y='57' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>produit</text><rect x='148' y='42' width='64' height='22' fill='#0b2a4a'/><text x='180.0' y='57' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>ca</text><rect x='20' y='64' width='64' height='22' fill='#fbf3df' stroke='#cfd9e6'/><text x='52.0' y='79' text-anchor='middle' font-size='10.5' fill='#1f2933'>Abidjan</text><rect x='84' y='64' width='64' height='22' fill='#fbf3df' stroke='#cfd9e6'/><text x='116.0' y='79' text-anchor='middle' font-size='10.5' fill='#1f2933'>Cacao</text><rect x='148' y='64' width='64' height='22' fill='#fbf3df' stroke='#cfd9e6'/><text x='180.0' y='79' text-anchor='middle' font-size='10.5' fill='#1f2933'>180k</text><rect x='20' y='86' width='64' height='22' fill='#f3f5f8' stroke='#cfd9e6'/><text x='52.0' y='101' text-anchor='middle' font-size='10.5' fill='#9aa5b1'>Daloa</text><rect x='84' y='86' width='64' height='22' fill='#f3f5f8' stroke='#cfd9e6'/><text x='116.0' y='101' text-anchor='middle' font-size='10.5' fill='#9aa5b1'>Café</text><rect x='148' y='86' width='64' height='22' fill='#f3f5f8' stroke='#cfd9e6'/><text x='180.0' y='101' text-anchor='middle' font-size='10.5' fill='#9aa5b1'>71k</text><rect x='20' y='108' width='64' height='22' fill='#fbf3df' stroke='#cfd9e6'/><text x='52.0' y='123' text-anchor='middle' font-size='10.5' fill='#1f2933'>Abidjan</text><rect x='84' y='108' width='64' height='22' fill='#fbf3df' stroke='#cfd9e6'/><text x='116.0' y='123' text-anchor='middle' font-size='10.5' fill='#1f2933'>Café</text><rect x='148' y='108' width='64' height='22' fill='#fbf3df' stroke='#cfd9e6'/><text x='180.0' y='123' text-anchor='middle' font-size='10.5' fill='#1f2933'>102k</text><rect x='20' y='130' width='64' height='22' fill='#f3f5f8' stroke='#cfd9e6'/><text x='52.0' y='145' text-anchor='middle' font-size='10.5' fill='#9aa5b1'>Man</text><rect x='84' y='130' width='64' height='22' fill='#f3f5f8' stroke='#cfd9e6'/><text x='116.0' y='145' text-anchor='middle' font-size='10.5' fill='#9aa5b1'>Café</text><rect x='148' y='130' width='64' height='22' fill='#f3f5f8' stroke='#cfd9e6'/><text x='180.0' y='145' text-anchor='middle' font-size='10.5' fill='#9aa5b1'>138k</text><line x1='222' y1='98' x2='254.0' y2='98.0' stroke='#1f5f99' stroke-width='2.5'/><polygon points='262,98 254.0,103.0 254.0,93.0' fill='#1f5f99'/><line x1='275' y1='145' x2='395' y2='145' stroke='#9aa5b1'/><rect x='287.0' y='55.0' width='36.0' height='90.0' rx='3' fill='#c2a15a'/><text x='305.0' y='50.0' text-anchor='middle' font-size='10' font-weight='700' fill='#1f2933'></text><text x='305.0' y='160' text-anchor='middle' font-size='10.5' font-weight='400' fill='#52606d'>Cacao</text><rect x='347.0' y='93.7' width='36.0' height='51.3' rx='3' fill='#1f5f99'/><text x='365.0' y='88.7' text-anchor='middle' font-size='10' font-weight='700' fill='#1f2933'></text><text x='365.0' y='160' text-anchor='middle' font-size='10.5' font-weight='400' fill='#52606d'>Café</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>Seules les lignes d&#39;Abidjan sont conservées</text></svg>",
+   "code_exemple": "# Dans le Mini-Tableau :\n# Filtre Ville = Abidjan\n# Dimension = Produit, Mesure = Chiffre d'affaires\n# Type = Barres, puis cliquer sur Générer",
+   "question_reflexion": "Que se passerait-il si on filtrait aussi sur Produit = Cacao ?",
+   "exercice": {
+    "enonce": "Générez un graphique en **barres** du **chiffre d'affaires par produit** en filtrant la **ville Abidjan**. Puis indiquez quel produit domine à Abidjan.",
+    "indice": "Dimension = Produit, Mesure = Chiffre d'affaires, Type = Barres, Ville = Abidjan.",
+    "solution_attendue": "À Abidjan, le Cacao domine avec 954 000 FCFA, devant le Café.",
+    "mots_cles": [
+     "cacao",
+     "abidjan"
+    ],
+    "attendu": {
+     "dim": "produit",
+     "mes": "ca",
+     "type": "bar",
+     "ville": "Abidjan"
+    }
+   }
+  },
+  {
+   "id": "tab_int_2",
+   "titre": "Trier pour comparer",
+   "objectif": "Ordonner les barres pour repérer le meilleur et le moins bon",
+   "explication": "Un graphique trié se lit **beaucoup plus vite**. Avec le tri **décroissant**, la plus grande valeur est à gauche, la plus petite à droite.\n\nPour comparer des catégories, triez presque toujours par valeur. Réservez l'ordre alphabétique aux cas où le lecteur cherche un nom précis. Pour des dates, gardez l'ordre chronologique.\n\n**Important** : ne triez jamais une série de dates par valeur, vous casseriez la lecture du temps.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Tri décroissant</text><line x1='30' y1='155' x2='180' y2='155' stroke='#9aa5b1'/><rect x='37.5' y='118.3' width='22.5' height='36.7' rx='3' fill='#1f5f99'/><text x='48.75' y='113.33333333333334' text-anchor='middle' font-size='10' font-weight='700' fill='#1f2933'>40</text><text x='48.75' y='170' text-anchor='middle' font-size='10.5' font-weight='400' fill='#52606d'>B</text><rect x='75.0' y='81.7' width='22.5' height='73.3' rx='3' fill='#1f5f99'/><text x='86.25' y='76.66666666666667' text-anchor='middle' font-size='10' font-weight='700' fill='#1f2933'>80</text><text x='86.25' y='170' text-anchor='middle' font-size='10.5' font-weight='400' fill='#52606d'>D</text><rect x='112.5' y='45.0' width='22.5' height='110.0' rx='3' fill='#1f5f99'/><text x='123.75' y='40.0' text-anchor='middle' font-size='10' font-weight='700' fill='#1f2933'>120</text><text x='123.75' y='170' text-anchor='middle' font-size='10.5' font-weight='400' fill='#52606d'>A</text><rect x='150.0' y='100.0' width='22.5' height='55.0' rx='3' fill='#1f5f99'/><text x='161.25' y='95.0' text-anchor='middle' font-size='10' font-weight='700' fill='#1f2933'>60</text><text x='161.25' y='170' text-anchor='middle' font-size='10.5' font-weight='400' fill='#52606d'>C</text><line x1='190' y1='100' x2='222.0' y2='100.0' stroke='#1f5f99' stroke-width='2.5'/><polygon points='230,100 222.0,105.0 222.0,95.0' fill='#1f5f99'/><line x1='235' y1='155' x2='385' y2='155' stroke='#9aa5b1'/><rect x='242.5' y='45.0' width='22.5' height='110.0' rx='3' fill='#c2a15a'/><text x='253.75' y='40.0' text-anchor='middle' font-size='10' font-weight='700' fill='#1f2933'>120</text><text x='253.75' y='170' text-anchor='middle' font-size='10.5' font-weight='400' fill='#52606d'>A</text><rect x='280.0' y='81.7' width='22.5' height='73.3' rx='3' fill='#1f5f99'/><text x='291.25' y='76.66666666666667' text-anchor='middle' font-size='10' font-weight='700' fill='#1f2933'>80</text><text x='291.25' y='170' text-anchor='middle' font-size='10.5' font-weight='400' fill='#52606d'>D</text><rect x='317.5' y='100.0' width='22.5' height='55.0' rx='3' fill='#1f5f99'/><text x='328.75' y='95.0' text-anchor='middle' font-size='10' font-weight='700' fill='#1f2933'>60</text><text x='328.75' y='170' text-anchor='middle' font-size='10.5' font-weight='400' fill='#52606d'>C</text><rect x='355.0' y='118.3' width='22.5' height='36.7' rx='3' fill='#1f5f99'/><text x='366.25' y='113.33333333333334' text-anchor='middle' font-size='10' font-weight='700' fill='#1f2933'>40</text><text x='366.25' y='170' text-anchor='middle' font-size='10.5' font-weight='400' fill='#52606d'>B</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>Même données, lecture plus rapide</text></svg>",
+   "code_exemple": "# Dans le Mini-Tableau :\n# Dimension = Ville, Mesure = Quantité totale\n# Tri = Décroissant, Type = Barres",
+   "question_reflexion": "Dans quel cas ne faut-il pas trier par valeur ?",
+   "exercice": {
+    "enonce": "Générez un graphique en **barres** de la **quantité totale par ville**, avec un **tri décroissant**. Quelle ville vend le plus ?",
+    "indice": "Dimension = Ville, Mesure = Quantité totale, Tri = Décroissant.",
+    "solution_attendue": "Abidjan vend le plus avec 685 unités.",
+    "mots_cles": [
+     "abidjan"
+    ],
+    "attendu": {
+     "dim": "ville",
+     "mes": "quantite",
+     "type": "bar",
+     "tri": "desc"
+    }
+   }
+  },
+  {
+   "id": "tab_int_3",
+   "titre": "Afficher le Top N",
+   "objectif": "Se concentrer sur les premiers éléments d'un classement",
+   "explication": "Quand il y a beaucoup de catégories, on n'affiche que les **meilleures** : c'est le **Top N**. L'option **Afficher** du Mini-Tableau propose Top 3 et Top 5.\n\nCombiné avec un tri décroissant, le Top 3 montre les trois plus grandes valeurs. Les **barres horizontales** conviennent bien aux classements : les noms sont longs et se lisent facilement.\n\n**Important** : le Top N doit toujours être appliqué **après** le tri.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Top 3</text><text x='92' y='65' text-anchor='end' font-size='11' font-weight='400' fill='#1f2933'>Abidjan</text><rect x='100' y='52' width='260.0' height='22' rx='3' fill='#c2a15a'/><text x='366.0' y='67' text-anchor='start' font-size='10' font-weight='700' fill='#1f2933'>1532k</text><text x='92' y='99' text-anchor='end' font-size='11' font-weight='400' fill='#1f2933'>Bouaké</text><rect x='100' y='86' width='116.6' height='22' rx='3' fill='#1f5f99'/><text x='222.59268929503918' y='101' text-anchor='start' font-size='10' font-weight='700' fill='#1f2933'>687k</text><text x='92' y='133' text-anchor='end' font-size='11' font-weight='400' fill='#1f2933'>San-Pédro</text><rect x='100' y='120' width='112.0' height='22' rx='3' fill='#1f5f99'/><text x='218.01044386422979' y='135' text-anchor='start' font-size='10' font-weight='700' fill='#1f2933'>660k</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>Seules les 3 premières lignes sont gardées</text></svg>",
+   "code_exemple": "# Dans le Mini-Tableau :\n# Dimension = Ville, Mesure = Chiffre d'affaires\n# Type = Barres horizontales, Tri = Décroissant\n# Afficher = Top 3",
+   "question_reflexion": "Pourquoi les barres horizontales sont-elles pratiques pour un classement ?",
+   "exercice": {
+    "enonce": "Générez un graphique en **barres horizontales** du **chiffre d'affaires par ville**, trié du plus grand au plus petit, en n'affichant que le **Top 3**. Citez les trois villes.",
+    "indice": "Type = Barres horizontales, Tri = Décroissant, Afficher = Top 3.",
+    "solution_attendue": "Le top 3 est : Abidjan, San-Pédro et Korhogo.",
+    "mots_cles": [
+     "abidjan",
+     "san-pédro",
+     "korhogo"
+    ],
+    "attendu": {
+     "dim": "ville",
+     "mes": "ca",
+     "type": "barh",
+     "tri": "desc",
+     "top": "3"
+    }
+   }
+  },
+  {
+   "id": "tab_int_4",
+   "titre": "Choisir le bon graphique : les parts",
+   "objectif": "Utiliser un camembert pour montrer des proportions",
+   "explication": "Le **camembert** montre la **part** de chaque catégorie dans un total. Il fonctionne bien avec **peu de catégories** (5 au maximum) dont la somme a un sens.\n\nÀ éviter : comparer des valeurs proches, ou afficher beaucoup de parts. Dans ces cas, un graphique en barres est plus lisible.\n\n**Important** : posez-vous toujours la question « quelle comparaison veut-on faire ? » avant de choisir le type de graphique.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Répartition des quantités</text><path d='M120 125 L120.0 53.0 A72 72 0 0 1 139.9 194.2 Z' fill='#0b2a4a' stroke='#fff' stroke-width='2'/><path d='M120 125 L139.9 194.2 A72 72 0 0 1 52.7 150.7 Z' fill='#1f5f99' stroke='#fff' stroke-width='2'/><path d='M120 125 L52.7 150.7 A72 72 0 0 1 61.8 82.6 Z' fill='#c2a15a' stroke='#fff' stroke-width='2'/><path d='M120 125 L61.8 82.6 A72 72 0 0 1 120.0 53.0 Z' fill='#5b9bd5' stroke='#fff' stroke-width='2'/><rect x='216' y='59' width='12' height='12' rx='2' fill='#0b2a4a'/><text x='234' y='69' text-anchor='start' font-size='11' font-weight='400' fill='#1f2933'>Cacao</text><rect x='216' y='81' width='12' height='12' rx='2' fill='#1f5f99'/><text x='234' y='91' text-anchor='start' font-size='11' font-weight='400' fill='#1f2933'>Anacarde</text><rect x='216' y='103' width='12' height='12' rx='2' fill='#c2a15a'/><text x='234' y='113' text-anchor='start' font-size='11' font-weight='400' fill='#1f2933'>Coton</text><rect x='216' y='125' width='12' height='12' rx='2' fill='#5b9bd5'/><text x='234' y='135' text-anchor='start' font-size='11' font-weight='400' fill='#1f2933'>Café</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>Part de chaque produit dans la quantité totale</text></svg>",
+   "code_exemple": "# Dans le Mini-Tableau :\n# Dimension = Produit, Mesure = Quantité totale\n# Type = Camembert",
+   "question_reflexion": "Un camembert est-il adapté pour comparer 12 mois ?",
+   "exercice": {
+    "enonce": "Générez un **camembert** de la **quantité totale par produit**. Quel produit représente la plus grande part ?",
+    "indice": "Type = Camembert, Dimension = Produit, Mesure = Quantité totale.",
+    "solution_attendue": "Cacao représente la plus grande part avec 1050 unités.",
+    "mots_cles": [
+     "cacao"
+    ],
+    "attendu": {
+     "dim": "produit",
+     "mes": "quantite",
+     "type": "pie"
+    }
+   }
+  },
+  {
+   "id": "tab_int_5",
+   "titre": "Lire une tendance dans le temps",
+   "objectif": "Utiliser un graphique en lignes pour suivre une évolution",
+   "explication": "Pour suivre une évolution, on utilise un **graphique en lignes** avec le **temps** en abscisse. Chaque point est une période, la ligne montre la **tendance**.\n\nOn peut combiner avec un filtre pour suivre un seul produit. Cherchez trois choses : le **sommet**, le **creux** et la **direction générale**.\n\n**Important** : en dimension Mois, les données restent en ordre chronologique, ne triez pas.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Évolution mensuelle du Cacao</text><line x1='50' y1='160' x2='370' y2='160' stroke='#9aa5b1'/><polyline points='50.0,114.0 130.0,83.3 210.0,91.0 290.0,64.2 370.0,45.0' fill='none' stroke='#1f5f99' stroke-width='3' stroke-linejoin='round'/><circle cx='50.0' cy='114.0' r='4' fill='#c2a15a'/><text x='50.0' y='175' text-anchor='middle' font-size='10' font-weight='400' fill='#52606d'>01</text><circle cx='130.0' cy='83.3' r='4' fill='#c2a15a'/><text x='130.0' y='175' text-anchor='middle' font-size='10' font-weight='400' fill='#52606d'>02</text><circle cx='210.0' cy='91.0' r='4' fill='#c2a15a'/><text x='210.0' y='175' text-anchor='middle' font-size='10' font-weight='400' fill='#52606d'>03</text><circle cx='290.0' cy='64.2' r='4' fill='#c2a15a'/><text x='290.0' y='175' text-anchor='middle' font-size='10' font-weight='400' fill='#52606d'>04</text><circle cx='370.0' cy='45.0' r='4' fill='#c2a15a'/><text x='370.0' y='175' text-anchor='middle' font-size='10' font-weight='400' fill='#52606d'>06</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>Quantité de Cacao vendue par mois</text></svg>",
+   "code_exemple": "# Dans le Mini-Tableau :\n# Dimension = Mois, Mesure = Quantité totale\n# Filtre Produit = Cacao, Type = Lignes",
+   "question_reflexion": "Une ligne qui monte puis redescend indique-t-elle forcément un problème ?",
+   "exercice": {
+    "enonce": "Générez un graphique en **lignes** de la **quantité par mois** pour le produit **Cacao**. Quel mois correspond au sommet ?",
+    "indice": "Dimension = Mois, Type = Lignes, Produit = Cacao.",
+    "solution_attendue": "Le sommet est atteint en juin (2024-06) avec 300 unités.",
+    "mots_cles": [
+     "juin|2024-06"
+    ],
+    "attendu": {
+     "dim": "date",
+     "mes": "quantite",
+     "type": "line",
+     "produit": "Cacao"
+    }
+   }
+  }
+ ]
+}

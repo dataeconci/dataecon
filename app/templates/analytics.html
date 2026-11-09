@@ -46,14 +46,21 @@
                                             <td>{{ ds.columns }}</td>
                                             <td>{{ ds.numeric_cols }}</td>
                                             <td>
-                                                <a href="{{ url_for('view_dataset', dataset_id=loop.index) }}" 
+                                                <a href="{{ url_for('view_dataset', dataset_id=ds.id) }}" 
                                                    class="btn btn-primary btn-sm">
                                                     <i class="fas fa-eye"></i> Voir
                                                 </a>
-                                                <button class="btn btn-success btn-sm" 
-                                                        onclick="generateChart({{ loop.index0 }})">
-                                                    <i class="fas fa-chart-bar"></i> Graphique
-                                                </button>
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                                        <i class="fas fa-chart-bar"></i> Graphique
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li><a class="dropdown-item" href="{{ url_for('generate_chart', dataset_id=ds.id, chart_type='histogram') }}">Histogramme</a></li>
+                                                        <li><a class="dropdown-item" href="{{ url_for('generate_chart', dataset_id=ds.id, chart_type='boxplot') }}">Boîtes à moustaches</a></li>
+                                                        <li><a class="dropdown-item" href="{{ url_for('generate_chart', dataset_id=ds.id, chart_type='scatter') }}">Nuage de points</a></li>
+                                                        <li><a class="dropdown-item" href="{{ url_for('generate_chart', dataset_id=ds.id, chart_type='correlation') }}">Matrice de corrélation</a></li>
+                                                    </ul>
+                                                </div>
                                             </td>
                                         </tr>
                                     {% endfor %}
@@ -195,7 +202,7 @@
         <div class="card-body text-center" id="chart-container">
             <p class="text-muted">
                 <i class="fas fa-info-circle"></i> 
-                Sélectionnez un dataset et cliquez sur "Graphique" pour afficher la visualisation.
+                Cliquez sur « Graphique » dans la ligne d'un dataset, puis choisissez le type de visualisation.
             </p>
             <div class="row" id="chart-area">
                 <!-- Les graphiques seront affichés ici -->
@@ -244,23 +251,5 @@
     </div>
 </div>
 
-<script>
-function generateChart(index) {
-    // Fonction pour générer un graphique (à implémenter avec Chart.js ou autre)
-    const chartArea = document.getElementById('chart-area');
-    chartArea.innerHTML = `
-        <div class="col-12">
-            <div class="alert alert-info">
-                <i class="fas fa-chart-line"></i> 
-                Graphique pour le dataset sélectionné (à implémenter avec Chart.js)
-                <br>
-                <small>Utilisez Chart.js, Plotly ou Matplotlib pour les visualisations</small>
-            </div>
-            <div style="height: 400px; background: #f8f9fa; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                <p class="text-muted">Graphique à venir...</p>
-            </div>
-        </div>
-    `;
-}
-</script>
+
 {% endblock %}

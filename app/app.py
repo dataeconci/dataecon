@@ -144,6 +144,8 @@ app.config['SERVER_NAME'] = os.environ.get('SERVER_NAME')  # None en production,
 # Interdire le cache navigateur et Cloudflare pour les pages dynamiques
 @app.after_request
 def add_no_cache_headers(response):
+    if request.endpoint == 'static':
+        return response
     response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
     response.headers['Pragma'] = 'no-cache'
     response.headers['Expires'] = '0'
@@ -1191,6 +1193,7 @@ def analytics():
         try:
             df = read_dataset_file(ds)
             dataset_stats.append({
+                'id': ds.id,
                 'name': ds.name,
                 'rows': len(df),
                 'columns': len(df.columns),
@@ -1983,8 +1986,45 @@ application = app
 # ==================== FORMATION PRATIQUE ====================
 @app.route('/formations')
 def formations():
-    """Page de formation pratique avec instructeur IA"""
-    return render_template('formations.html')
+    """Catalogue des cours interactifs (Python, R, SQL, Tableau) + bac à sable"""
+    import json as _json
+    outils = [
+        ('python', 'Python', 'pandas, NumPy, matplotlib, scikit-learn', 'Analysez des données économiques ivoiriennes avec le langage le plus utilisé en data science.'),
+        ('r', 'R', 'base R, statistiques, régression', 'Le langage des statisticiens : manipulez, résumez et modélisez des données.'),
+        ('sql', 'SQL', 'SELECT, jointures, fenêtres', 'Interrogez des bases de ventes avec de vraies requêtes exécutées dans votre navigateur.'),
+        ('tableau', 'Tableau', 'visualisation, tableaux de bord', 'Apprenez à choisir le bon graphique et à raconter une histoire avec les données.'),
+    ]
+    niveaux = [('debutant', 'Débutant'), ('intermediaire', 'Intermédiaire'), ('avance', 'Avancé')]
+    catalogue = []
+    for code, nom, libs, desc in outils:
+        lignes = []
+        total = 0
+        for ncode, nnom in niveaux:
+            chemin = os.path.join(os.path.dirname(__file__), 'data', 'lessons', f'{code}_{ncode}.json')
+            nb = 0
+            titre = ''
+            if os.path.exists(chemin):
+                try:
+                    with open(chemin, 'r', encoding='utf-8') as f:
+                        d = _json.load(f)
+                    nb = len(d.get('concepts', []))
+                    titre = d.get('titre', '')
+                except Exception:
+                    nb = 0
+            total += nb
+            lignes.append({'code': ncode, 'nom': nnom, 'nb': nb, 'titre': titre})
+        catalogue.append({'code': code, 'nom': nom, 'libs': libs, 'desc': desc, 'niveaux': lignes, 'total': total})
+    return render_template('formations.html', catalogue=catalogue)
+
+
+@app.route('/formations/cours/<outil>/<niveau>')
+def formations_player(outil, niveau):
+    """Lecteur de cours interactif (type DataCamp) avec voix et illustrations"""
+    if outil not in ['python', 'r', 'sql', 'tableau']:
+        return redirect(url_for('formations'))
+    if niveau not in ['debutant', 'intermediaire', 'avance']:
+        return redirect(url_for('formations'))
+    return render_template('player.html', outil=outil, niveau=niveau)
 
 
 # Client Groq (initialisé une seule fois)
@@ -2013,7 +2053,7 @@ Ton rôle :
 
 Style :
 - Réponses courtes (3-5 phrases max sauf si explication complexe)
-- Utilise des emojis avec modération 
+- N’utilise aucun emoji : un ton chaleureux mais professionnel
 - Tutoiement amical mais professionnel
 - Si on te pose une question hors sujet (politique, religion, etc.), ramène poliment vers l'apprentissage
 
@@ -2352,7 +2392,13 @@ def payer_abonnement(plan):
         flash("Plan invalide.", "danger")
         return redirect(url_for('subscription'))
     
-    # 1. Enregistrer la demande en base de données
+    # 1. Enregistrer la demande (une seule demande en attente par utilisateur et par plan)
+    demande_existante = DemandePaiement.query.filter_by(
+        user_id=current_user.id, plan_demande=nom_plan, statut='En attente'
+    ).first()
+    if demande_existante:
+        return render_template('instructions_paiement.html', plan=nom_plan, montant=montant)
+
     nouvelle_demande = DemandePaiement(
         user_id=current_user.id,
         username=current_user.username,
@@ -2364,29 +2410,26 @@ def payer_abonnement(plan):
     
     # 2. Envoyer l'e-mail à l'administrateur (dataeconci@gmail.com)
     try:
+        from markupsafe import escape
         sujet = f"Nouvelle demande d'abonnement : {nom_plan} - {current_user.username}"
         contenu_html = f"""
         <h3>Nouvelle demande d'abonnement</h3>
-        <p><strong>Utilisateur :</strong> {current_user.username}</p>
-        <p><strong>Email de l'utilisateur :</strong> {current_user.email}</p>
+        <p><strong>Utilisateur :</strong> {escape(current_user.username)}</p>
+        <p><strong>Email de l'utilisateur :</strong> {escape(current_user.email)}</p>
         <p><strong>Plan choisi :</strong> {nom_plan}</p>
         <p><strong>Montant :</strong> {montant} FCFA</p>
         <p>Veuillez vérifier la réception du paiement sur votre compte Wave, puis valider la demande depuis votre espace Administration.</p>
         """
-        
-        # On utilise la fonction brevo_send_email qui est déjà définie dans ton fichier
         email_envoye = brevo_send_email(
             to_email='dataeconci@gmail.com', 
             to_name='Admin DataEcon', 
             subject=sujet, 
             html_content=contenu_html
         )
-        
         if email_envoye:
             print(f"E-mail admin envoyé pour la demande de {current_user.username}", flush=True)
         else:
-            print(f"Échec de l'envoi de l'e-mail admin (vérifie BREVO_API_KEY)", flush=True)
-            
+            print("Échec de l'envoi de l'e-mail admin (vérifie BREVO_API_KEY)", flush=True)
     except Exception as e:
         print(f"Erreur envoi email admin: {e}", flush=True)
     

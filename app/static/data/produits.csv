@@ -1,0 +1,21 @@
+produit,categorie,cout_unitaire,fournisseur_pays
+Riz local,Alimentaire,520,Côte d'Ivoire
+Riz importé,Alimentaire,610,France
+Huile de palme,Alimentaire,900,Côte d'Ivoire
+Attiéké,Alimentaire,350,Côte d'Ivoire
+Igname,Alimentaire,300,Côte d'Ivoire
+Banane plantain,Alimentaire,280,Côte d'Ivoire
+Sucre,Alimentaire,640,France
+Farine de blé,Alimentaire,560,France
+Lait en poudre,Alimentaire,2200,Inde
+Eau minérale,Boissons,250,Côte d'Ivoire
+Jus de fruit,Boissons,480,Inde
+Bière,Boissons,700,Ghana
+Savon,Hygiène,300,Inde
+Dentifrice,Hygiène,650,Côte d'Ivoire
+Détergent,Hygiène,1200,Côte d'Ivoire
+Engrais NPK,Agricole,14500,France
+Semences de maïs,Agricole,2300,Inde
+Pesticide,Agricole,6200,Côte d'Ivoire
+Téléphone basique,Électronique,9500,Côte d'Ivoire
+Lampe solaire,Électronique,7800,Côte d'Ivoire

@@ -1,0 +1,182 @@
+{
+ "outil": "sql",
+ "niveau": "debutant",
+ "titre": "SQL pour débutants",
+ "description": "Interrogez une base de données de ventes ivoirienne : SELECT, WHERE, ORDER BY, GROUP BY, alias, filtres, comptage et dates.",
+ "concepts": [
+  {
+   "id": "sql_deb_1",
+   "titre": "Lire des données avec SELECT",
+   "objectif": "Afficher des colonnes d'une table avec SELECT et FROM",
+   "explication": "Une **base de données** range l'information dans des **tables**, comme des feuilles Excel. La table `ventes` contient une ligne par vente avec les colonnes `produit`, `ville`, `quantite`, `prix_unitaire` et `date`.\n\nPour lire des données, on écrit `SELECT` suivi des colonnes voulues, puis `FROM` suivi du nom de la table. Pour tout afficher, on utilise `*`.\n\n**Important** : SQL se lit presque comme une phrase en anglais. Chaque requête se termine par un point-virgule.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>SELECT produit, ville FROM ventes</text><rect x='60' y='40' width='62' height='24' fill='#0b2a4a'/><text x='91.0' y='56' text-anchor='middle' font-size='11' font-weight='700' fill='#fff'>produit</text><rect x='122' y='40' width='62' height='24' fill='#0b2a4a'/><text x='153.0' y='56' text-anchor='middle' font-size='11' font-weight='700' fill='#fff'>ville</text><rect x='184' y='40' width='62' height='24' fill='#0b2a4a'/><text x='215.0' y='56' text-anchor='middle' font-size='11' font-weight='700' fill='#fff'>quantite</text><rect x='60' y='64' width='62' height='24' fill='#ffffff' stroke='#cfd9e6'/><text x='91.0' y='80' text-anchor='middle' font-size='11' fill='#1f2933'>Cacao</text><rect x='122' y='64' width='62' height='24' fill='#ffffff' stroke='#cfd9e6'/><text x='153.0' y='80' text-anchor='middle' font-size='11' fill='#1f2933'>Abidjan</text><rect x='184' y='64' width='62' height='24' fill='#ffffff' stroke='#cfd9e6'/><text x='215.0' y='80' text-anchor='middle' font-size='11' fill='#1f2933'>120</text><rect x='60' y='88' width='62' height='24' fill='#eaf1f8' stroke='#cfd9e6'/><text x='91.0' y='104' text-anchor='middle' font-size='11' fill='#1f2933'>Café</text><rect x='122' y='88' width='62' height='24' fill='#eaf1f8' stroke='#cfd9e6'/><text x='153.0' y='104' text-anchor='middle' font-size='11' fill='#1f2933'>Daloa</text><rect x='184' y='88' width='62' height='24' fill='#eaf1f8' stroke='#cfd9e6'/><text x='215.0' y='104' text-anchor='middle' font-size='11' fill='#1f2933'>60</text><rect x='60' y='112' width='62' height='24' fill='#ffffff' stroke='#cfd9e6'/><text x='91.0' y='128' text-anchor='middle' font-size='11' fill='#1f2933'>Cacao</text><rect x='122' y='112' width='62' height='24' fill='#ffffff' stroke='#cfd9e6'/><text x='153.0' y='128' text-anchor='middle' font-size='11' fill='#1f2933'>Bouaké</text><rect x='184' y='112' width='62' height='24' fill='#ffffff' stroke='#cfd9e6'/><text x='215.0' y='128' text-anchor='middle' font-size='11' fill='#1f2933'>200</text><rect x='60' y='136' width='62' height='24' fill='#eaf1f8' stroke='#cfd9e6'/><text x='91.0' y='152' text-anchor='middle' font-size='11' fill='#1f2933'>Coton</text><rect x='122' y='136' width='62' height='24' fill='#eaf1f8' stroke='#cfd9e6'/><text x='153.0' y='152' text-anchor='middle' font-size='11' fill='#1f2933'>Korhogo</text><rect x='184' y='136' width='62' height='24' fill='#eaf1f8' stroke='#cfd9e6'/><text x='215.0' y='152' text-anchor='middle' font-size='11' fill='#1f2933'>95</text><rect x='60' y='40' width='124' height='120' fill='none' stroke='#c2a15a' stroke-width='3' rx='4'/><text x='210' y='190' text-anchor='middle' font-size='12' fill='#52606d'>On choisit les colonnes à afficher</text></svg>",
+   "code_exemple": "SELECT produit, ville\nFROM ventes;\n\nSELECT *\nFROM ventes\nLIMIT 5;",
+   "question_reflexion": "Quelle différence y a-t-il entre SELECT * et SELECT produit ?",
+   "exercice": {
+    "enonce": "Affiche uniquement les colonnes `produit` et `quantite` de la table `ventes`.",
+    "indice": "Sépare les noms de colonnes par une virgule après SELECT.",
+    "solution_attendue": "SELECT produit, quantite FROM ventes;",
+    "mots_cles": [
+     "select",
+     "produit",
+     "quantite",
+     "from",
+     "ventes"
+    ]
+   }
+  },
+  {
+   "id": "sql_deb_2",
+   "titre": "Filtrer avec WHERE",
+   "objectif": "Garder seulement les lignes qui respectent une condition",
+   "explication": "Avec `WHERE`, on filtre les lignes. On peut comparer avec `=`, `>`, `<`, `>=`, `<=` ou `<>` (différent).\n\nPour combiner plusieurs conditions, on utilise `AND` (les deux doivent être vraies) ou `OR` (l'une des deux suffit). Les textes s'écrivent entre **apostrophes** : `'Cacao'`.\n\n**Important** : WHERE se place après FROM.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>WHERE produit = 'Cacao'</text><rect x='60' y='40' width='62' height='24' fill='#0b2a4a'/><text x='91.0' y='56' text-anchor='middle' font-size='11' font-weight='700' fill='#fff'>produit</text><rect x='122' y='40' width='62' height='24' fill='#0b2a4a'/><text x='153.0' y='56' text-anchor='middle' font-size='11' font-weight='700' fill='#fff'>ville</text><rect x='184' y='40' width='62' height='24' fill='#0b2a4a'/><text x='215.0' y='56' text-anchor='middle' font-size='11' font-weight='700' fill='#fff'>quantite</text><rect x='60' y='64' width='62' height='24' fill='#fff7e0' stroke='#cfd9e6'/><text x='91.0' y='80' text-anchor='middle' font-size='11' fill='#1f2933'>Cacao</text><rect x='122' y='64' width='62' height='24' fill='#fff7e0' stroke='#cfd9e6'/><text x='153.0' y='80' text-anchor='middle' font-size='11' fill='#1f2933'>Abidjan</text><rect x='184' y='64' width='62' height='24' fill='#fff7e0' stroke='#cfd9e6'/><text x='215.0' y='80' text-anchor='middle' font-size='11' fill='#1f2933'>120</text><rect x='60' y='88' width='62' height='24' fill='#eaf1f8' stroke='#cfd9e6'/><text x='91.0' y='104' text-anchor='middle' font-size='11' fill='#1f2933'>Café</text><rect x='122' y='88' width='62' height='24' fill='#eaf1f8' stroke='#cfd9e6'/><text x='153.0' y='104' text-anchor='middle' font-size='11' fill='#1f2933'>Daloa</text><rect x='184' y='88' width='62' height='24' fill='#eaf1f8' stroke='#cfd9e6'/><text x='215.0' y='104' text-anchor='middle' font-size='11' fill='#1f2933'>60</text><rect x='60' y='112' width='62' height='24' fill='#fff7e0' stroke='#cfd9e6'/><text x='91.0' y='128' text-anchor='middle' font-size='11' fill='#1f2933'>Cacao</text><rect x='122' y='112' width='62' height='24' fill='#fff7e0' stroke='#cfd9e6'/><text x='153.0' y='128' text-anchor='middle' font-size='11' fill='#1f2933'>Bouaké</text><rect x='184' y='112' width='62' height='24' fill='#fff7e0' stroke='#cfd9e6'/><text x='215.0' y='128' text-anchor='middle' font-size='11' fill='#1f2933'>200</text><rect x='60' y='136' width='62' height='24' fill='#eaf1f8' stroke='#cfd9e6'/><text x='91.0' y='152' text-anchor='middle' font-size='11' fill='#1f2933'>Coton</text><rect x='122' y='136' width='62' height='24' fill='#eaf1f8' stroke='#cfd9e6'/><text x='153.0' y='152' text-anchor='middle' font-size='11' fill='#1f2933'>Korhogo</text><rect x='184' y='136' width='62' height='24' fill='#eaf1f8' stroke='#cfd9e6'/><text x='215.0' y='152' text-anchor='middle' font-size='11' fill='#1f2933'>95</text><text x='210' y='190' text-anchor='middle' font-size='12' fill='#52606d'>Seules les lignes qui respectent la condition restent</text></svg>",
+   "code_exemple": "SELECT *\nFROM ventes\nWHERE produit = 'Cacao';\n\nSELECT produit, quantite\nFROM ventes\nWHERE quantite > 150 AND ville = 'Abidjan';",
+   "question_reflexion": "Que renvoie WHERE quantite > 150 OR ville = 'Daloa' par rapport à AND ?",
+   "exercice": {
+    "enonce": "Affiche toutes les colonnes des ventes de `Café` dont la quantité est supérieure à 80.",
+    "indice": "Combine deux conditions avec AND.",
+    "solution_attendue": "SELECT * FROM ventes WHERE produit = 'Café' AND quantite > 80;",
+    "mots_cles": [
+     "select",
+     "where",
+     "café",
+     "quantite",
+     "and",
+     "80"
+    ]
+   }
+  },
+  {
+   "id": "sql_deb_3",
+   "titre": "Trier et limiter",
+   "objectif": "Ordonner les résultats avec ORDER BY et en garder quelques-uns avec LIMIT",
+   "explication": "`ORDER BY` trie les résultats : `ASC` du plus petit au plus grand (valeur par défaut), `DESC` du plus grand au plus petit.\n\n`LIMIT n` ne garde que les `n` premières lignes. Ensemble, ils donnent un **classement** : les 3 plus grosses ventes, par exemple.\n\n**Important** : l'ordre des mots-clés est SELECT, FROM, WHERE, ORDER BY, LIMIT.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>ORDER BY quantite DESC LIMIT 2</text><rect x='70' y='44' width='280' height='26' rx='4' fill='#c2a15a' opacity='1'/><text x='358' y='62' font-size='12' fill='#1f2933'>Cacao - 200</text><rect x='70' y='78' width='168' height='26' rx='4' fill='#c2a15a' opacity='1'/><text x='246' y='96' font-size='12' fill='#1f2933'>Cacao - 120</text><rect x='70' y='112' width='133' height='26' rx='4' fill='#1f5f99' opacity='0.45'/><text x='211' y='130' font-size='12' fill='#1f2933'>Coton - 95</text><rect x='70' y='146' width='84' height='26' rx='4' fill='#1f5f99' opacity='0.45'/><text x='162' y='164' font-size='12' fill='#1f2933'>Café - 60</text><text x='210' y='200' text-anchor='middle' font-size='12' fill='#52606d'>On trie du plus grand au plus petit, puis on garde 2 lignes</text></svg>",
+   "code_exemple": "SELECT produit, ville, quantite\nFROM ventes\nORDER BY quantite DESC\nLIMIT 3;",
+   "question_reflexion": "Comment obtenir les 3 plus petites ventes ?",
+   "exercice": {
+    "enonce": "Affiche les 3 ventes avec le plus grand `prix_unitaire` (colonnes `produit` et `prix_unitaire`).",
+    "indice": "ORDER BY prix_unitaire DESC puis LIMIT 3.",
+    "solution_attendue": "SELECT produit, prix_unitaire FROM ventes ORDER BY prix_unitaire DESC LIMIT 3;",
+    "mots_cles": [
+     "select",
+     "order by",
+     "desc",
+     "limit",
+     "prix_unitaire"
+    ]
+   }
+  },
+  {
+   "id": "sql_deb_4",
+   "titre": "Regrouper et calculer",
+   "objectif": "Calculer des totaux et des moyennes par groupe avec GROUP BY",
+   "explication": "Les **fonctions d'agrégation** résument plusieurs lignes en une valeur : `COUNT(*)` (nombre de lignes), `SUM(col)` (somme), `AVG(col)` (moyenne), `MIN`, `MAX`.\n\n`GROUP BY` forme des groupes avant de calculer. Pour obtenir la quantité totale par produit : `SELECT produit, SUM(quantite) FROM ventes GROUP BY produit;`\n\n**Important** : toute colonne affichée sans fonction doit apparaître dans GROUP BY. Utilise `AS` pour nommer une colonne calculée.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>GROUP BY produit</text><g><rect x='40' y='50' width='110' height='110' rx='8' fill='#eaf1f8' stroke='#1f5f99'/><text x='95' y='70' text-anchor='middle' font-size='11' fill='#0b2a4a'>ventes (20 lignes)</text><circle cx='70' cy='95' r='9' fill='#c2a15a'/><circle cx='95' cy='95' r='9' fill='#1f5f99'/><circle cx='120' cy='95' r='9' fill='#7a8ea3'/><circle cx='70' cy='125' r='9' fill='#c2a15a'/><circle cx='95' cy='125' r='9' fill='#1f5f99'/><circle cx='120' cy='125' r='9' fill='#c2a15a'/></g><path d='M160 105 L215 105' stroke='#0b2a4a' stroke-width='2.5' marker-end='url(#a)'/><defs><marker id='a' markerWidth='8' markerHeight='8' refX='6' refY='3' orient='auto'><path d='M0,0 L7,3 L0,6 z' fill='#0b2a4a'/></marker></defs><rect x='230' y='85' width='36' height='75' fill='#c2a15a'/><rect x='276' y='115' width='36' height='45' fill='#1f5f99'/><rect x='322' y='135' width='36' height='25' fill='#7a8ea3'/><text x='248' y='178' text-anchor='middle' font-size='10' fill='#1f2933'>Cacao</text><text x='294' y='178' text-anchor='middle' font-size='10' fill='#1f2933'>Café</text><text x='340' y='178' text-anchor='middle' font-size='10' fill='#1f2933'>Coton</text><text x='210' y='205' text-anchor='middle' font-size='12' fill='#52606d'>On regroupe, puis on calcule SUM, AVG, COUNT par groupe</text></svg>",
+   "code_exemple": "SELECT produit, SUM(quantite) AS total\nFROM ventes\nGROUP BY produit\nORDER BY total DESC;",
+   "question_reflexion": "Pourquoi ne peut-on pas écrire SELECT produit, SUM(quantite) sans GROUP BY ?",
+   "exercice": {
+    "enonce": "Calcule le nombre de ventes par ville : affiche `ville` et `COUNT(*)` nommé `nb_ventes`.",
+    "indice": "GROUP BY ville, et COUNT(*) AS nb_ventes.",
+    "solution_attendue": "SELECT ville, COUNT(*) AS nb_ventes FROM ventes GROUP BY ville;",
+    "mots_cles": [
+     "select",
+     "count",
+     "group by",
+     "ville",
+     "nb_ventes"
+    ]
+   }
+  },
+  {
+   "id": "sql_deb_5",
+   "titre": "Colonnes calculées et alias",
+   "objectif": "Créer une nouvelle colonne avec un calcul et la nommer avec AS",
+   "explication": "On peut **calculer** de nouvelles colonnes directement dans le `SELECT` : `quantite * prix_unitaire` donne le montant de chaque vente.\n\nLe mot `AS` donne un **nom** (un alias) à la colonne obtenue, pour que le résultat soit lisible : `quantite * prix_unitaire AS montant`.\n\n**Important** : le calcul n'abîme pas la table. Il ne change que ce que vous voyez dans le résultat.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>quantite * prix_unitaire AS montant</text><rect x='40' y='40' width='72' height='22' fill='#0b2a4a'/><text x='76.0' y='55' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>produit</text><rect x='112' y='40' width='72' height='22' fill='#0b2a4a'/><text x='148.0' y='55' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>quantite</text><rect x='184' y='40' width='72' height='22' fill='#0b2a4a'/><text x='220.0' y='55' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>prix_unitaire</text><rect x='40' y='62' width='72' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='76.0' y='77' text-anchor='middle' font-size='10.5' fill='#1f2933'>Cacao</text><rect x='112' y='62' width='72' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='148.0' y='77' text-anchor='middle' font-size='10.5' fill='#1f2933'>120</text><rect x='184' y='62' width='72' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='220.0' y='77' text-anchor='middle' font-size='10.5' fill='#1f2933'>1500</text><rect x='40' y='84' width='72' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='76.0' y='99' text-anchor='middle' font-size='10.5' fill='#1f2933'>Café</text><rect x='112' y='84' width='72' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='148.0' y='99' text-anchor='middle' font-size='10.5' fill='#1f2933'>85</text><rect x='184' y='84' width='72' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='220.0' y='99' text-anchor='middle' font-size='10.5' fill='#1f2933'>1200</text><rect x='40' y='106' width='72' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='76.0' y='121' text-anchor='middle' font-size='10.5' fill='#1f2933'>Cacao</text><rect x='112' y='106' width='72' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='148.0' y='121' text-anchor='middle' font-size='10.5' fill='#1f2933'>200</text><rect x='184' y='106' width='72' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='220.0' y='121' text-anchor='middle' font-size='10.5' fill='#1f2933'>1520</text><line x1='262' y1='95' x2='292.0' y2='95.0' stroke='#1f5f99' stroke-width='2.5'/><polygon points='300,95 292.0,100.0 292.0,90.0' fill='#1f5f99'/><rect x='305' y='40' width='80' height='22' fill='#c2a15a'/><text x='345.0' y='55' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>montant</text><rect x='305' y='62' width='80' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='345.0' y='77' text-anchor='middle' font-size='10.5' fill='#1f2933'>180000</text><rect x='305' y='84' width='80' height='22' fill='#eaf1f8' stroke='#cfd9e6'/><text x='345.0' y='99' text-anchor='middle' font-size='10.5' fill='#1f2933'>102000</text><rect x='305' y='106' width='80' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='345.0' y='121' text-anchor='middle' font-size='10.5' fill='#1f2933'>304000</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>Une colonne calculée, nommée avec AS</text></svg>",
+   "code_exemple": "SELECT produit,\n       quantite * prix_unitaire AS montant\nFROM ventes;",
+   "question_reflexion": "Pourquoi donner un alias à une colonne calculée ?",
+   "exercice": {
+    "enonce": "Affiche le produit, la ville et le montant (quantité multipliée par prix unitaire) sous le nom `montant`, pour les ventes de `Café` uniquement.",
+    "indice": "Écrivez le calcul quantite * prix_unitaire AS montant, puis filtrez avec WHERE.",
+    "solution_attendue": "SELECT produit, ville, quantite * prix_unitaire AS montant FROM ventes WHERE produit = 'Café';",
+    "mots_cles": [
+     "select",
+     "montant",
+     "as",
+     "where",
+     "café"
+    ]
+   }
+  },
+  {
+   "id": "sql_deb_6",
+   "titre": "IN, BETWEEN et LIKE",
+   "objectif": "Écrire des filtres plus courts et plus lisibles",
+   "explication": "Trois outils rendent le `WHERE` plus puissant.\n\n`IN ('Daloa', 'Man')` vérifie qu'une valeur fait partie d'une liste, c'est plus court que plusieurs `OR`. `BETWEEN 60 AND 100` garde les valeurs comprises entre deux bornes, **bornes incluses**. `LIKE 'B%'` cherche un texte qui commence par B : le signe `%` remplace n'importe quelle suite de lettres.\n\n**Important** : les textes s'écrivent toujours entre apostrophes.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Trois filtres utiles</text><rect x='30' y='45' width='360' height='36' rx='8' fill='#0b2a4a'/><text x='210.0' y='67.0' text-anchor='middle' font-size='12' font-weight='700' fill='#fff'>ville IN (&#39;Daloa&#39;, &#39;Man&#39;)   liste de valeurs</text><rect x='30' y='95' width='360' height='36' rx='8' fill='#1f5f99'/><text x='210.0' y='117.0' text-anchor='middle' font-size='12' font-weight='700' fill='#fff'>quantite BETWEEN 60 AND 100   intervalle</text><rect x='30' y='145' width='360' height='36' rx='8' fill='#c2a15a'/><text x='210.0' y='167.0' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>ville LIKE &#39;B%&#39;   commence par B</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>% remplace n&#39;importe quelle suite de caractères</text></svg>",
+   "code_exemple": "SELECT * FROM ventes\nWHERE ville IN ('Daloa', 'Man');\n\nSELECT * FROM ventes\nWHERE quantite BETWEEN 100 AND 200;\n\nSELECT DISTINCT ville FROM ventes\nWHERE ville LIKE 'B%';",
+   "question_reflexion": "BETWEEN 100 AND 200 inclut-il la valeur 200 ?",
+   "exercice": {
+    "enonce": "Affiche toutes les ventes réalisées à `Daloa` ou à `Man` dont la quantité est comprise entre 60 et 100 (bornes incluses).",
+    "indice": "Combinez IN pour les villes et BETWEEN pour la quantité avec AND.",
+    "solution_attendue": "SELECT * FROM ventes WHERE ville IN ('Daloa', 'Man') AND quantite BETWEEN 60 AND 100;",
+    "mots_cles": [
+     "select",
+     "where",
+     "in",
+     "daloa",
+     "man",
+     "between",
+     "60",
+     "100"
+    ]
+   }
+  },
+  {
+   "id": "sql_deb_7",
+   "titre": "Compter et éviter les doublons",
+   "objectif": "Utiliser COUNT et DISTINCT pour dénombrer",
+   "explication": "`COUNT(*)` compte les lignes. `COUNT(colonne)` compte les valeurs non vides de cette colonne.\n\n`DISTINCT` supprime les **doublons**. Ainsi `SELECT DISTINCT ville FROM ventes` liste chaque ville une seule fois, et `COUNT(DISTINCT ville)` donne le **nombre de villes différentes**.\n\n**Important** : sans DISTINCT, une ville vendue dix fois serait comptée dix fois.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>COUNT(DISTINCT ville)</text><rect x='40' y='40' width='100' height='22' fill='#0b2a4a'/><text x='90.0' y='55' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>ville</text><rect x='40' y='62' width='100' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='90.0' y='77' text-anchor='middle' font-size='10.5' fill='#1f2933'>Abidjan</text><rect x='40' y='84' width='100' height='22' fill='#f3f5f8' stroke='#cfd9e6'/><text x='90.0' y='99' text-anchor='middle' font-size='10.5' fill='#9aa5b1'>Abidjan</text><rect x='40' y='106' width='100' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='90.0' y='121' text-anchor='middle' font-size='10.5' fill='#1f2933'>Daloa</text><rect x='40' y='128' width='100' height='22' fill='#f3f5f8' stroke='#cfd9e6'/><text x='90.0' y='143' text-anchor='middle' font-size='10.5' fill='#9aa5b1'>Abidjan</text><rect x='40' y='150' width='100' height='22' fill='#ffffff' stroke='#cfd9e6'/><text x='90.0' y='165' text-anchor='middle' font-size='10.5' fill='#1f2933'>Daloa</text><line x1='160' y1='110' x2='202.0' y2='110.0' stroke='#1f5f99' stroke-width='2.5'/><polygon points='210,110 202.0,115.0 202.0,105.0' fill='#1f5f99'/><rect x='220' y='70' width='100' height='22' fill='#0b2a4a'/><text x='270.0' y='85' text-anchor='middle' font-size='10.5' font-weight='700' fill='#fff'>ville</text><rect x='220' y='92' width='100' height='22' fill='#fbf3df' stroke='#cfd9e6'/><text x='270.0' y='107' text-anchor='middle' font-size='10.5' fill='#1f2933'>Abidjan</text><rect x='220' y='114' width='100' height='22' fill='#fbf3df' stroke='#cfd9e6'/><text x='270.0' y='129' text-anchor='middle' font-size='10.5' fill='#1f2933'>Daloa</text><text x='270' y='150' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>COUNT(DISTINCT) = 2</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>Les doublons grisés sont ignorés</text></svg>",
+   "code_exemple": "SELECT COUNT(*) AS nb_ventes FROM ventes;\n\nSELECT DISTINCT produit FROM ventes;\n\nSELECT COUNT(DISTINCT ville) AS nb_villes\nFROM ventes;",
+   "question_reflexion": "Quelle différence entre COUNT(ville) et COUNT(DISTINCT ville) ?",
+   "exercice": {
+    "enonce": "Combien de villes différentes apparaissent dans la table `ventes` ? Nomme la colonne `nb_villes`.",
+    "indice": "Placez DISTINCT à l'intérieur de COUNT.",
+    "solution_attendue": "SELECT COUNT(DISTINCT ville) AS nb_villes FROM ventes;",
+    "mots_cles": [
+     "select",
+     "count",
+     "distinct",
+     "ville",
+     "nb_villes"
+    ]
+   }
+  },
+  {
+   "id": "sql_deb_8",
+   "titre": "Filtrer par période",
+   "objectif": "Sélectionner les ventes d'une période grâce aux dates",
+   "explication": "Dans cette table, la date est un **texte** au format `AAAA-MM-JJ`, par exemple `2024-03-15`. Ce format se trie dans le bon ordre, donc on peut utiliser `>=`, `<=` et `BETWEEN` comme avec des nombres.\n\nPour le premier trimestre 2024 : `date BETWEEN '2024-01-01' AND '2024-03-31'`.\n\n**Important** : écrivez toujours les dates avec l'année en premier, sinon le tri et les comparaisons sont faux.",
+   "image_svg": "<svg viewBox='0 0 420 220' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><text x='210.0' y='24' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>date BETWEEN &#39;2024-01-01&#39; AND &#39;2024-03-31&#39;</text><rect x='30' y='70' width='52' height='34' rx='8' fill='#0b2a4a'/><text x='56.0' y='91.0' text-anchor='middle' font-size='12' font-weight='700' fill='#fff'>jan</text><rect x='88' y='70' width='52' height='34' rx='8' fill='#0b2a4a'/><text x='114.0' y='91.0' text-anchor='middle' font-size='12' font-weight='700' fill='#fff'>fév</text><rect x='146' y='70' width='52' height='34' rx='8' fill='#0b2a4a'/><text x='172.0' y='91.0' text-anchor='middle' font-size='12' font-weight='700' fill='#fff'>mar</text><rect x='204' y='70' width='52' height='34' rx='8' fill='#d5dde6'/><text x='230.0' y='91.0' text-anchor='middle' font-size='12' font-weight='700' fill='#7b8794'>avr</text><rect x='262' y='70' width='52' height='34' rx='8' fill='#d5dde6'/><text x='288.0' y='91.0' text-anchor='middle' font-size='12' font-weight='700' fill='#7b8794'>mai</text><rect x='320' y='70' width='52' height='34' rx='8' fill='#d5dde6'/><text x='346.0' y='91.0' text-anchor='middle' font-size='12' font-weight='700' fill='#7b8794'>juin</text><rect x='28' y='64' width='180' height='46' rx='8' fill='none' stroke='#c2a15a' stroke-width='3'/><text x='118' y='135' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>1er trimestre</text><line x1='118' y1='142' x2='118.0' y2='164.0' stroke='#1f5f99' stroke-width='2.5'/><polygon points='118,172 113.0,164.0 123.0,164.0' fill='#1f5f99'/><rect x='60' y='172' width='116' height='30' rx='8' fill='#c2a15a'/><text x='118.0' y='191.0' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>lignes gardées</text><text x='210.0' y='212' text-anchor='middle' font-size='11' fill='#52606d'>Les dates AAAA-MM-JJ se comparent comme des nombres</text></svg>",
+   "code_exemple": "SELECT *\nFROM ventes\nWHERE date >= '2024-04-01'\n  AND date <= '2024-06-30';",
+   "question_reflexion": "Pourquoi le format AAAA-MM-JJ est-il pratique pour trier ?",
+   "exercice": {
+    "enonce": "Calcule la quantité totale vendue au premier trimestre 2024 (du 1er janvier au 31 mars). Nomme la colonne `total`.",
+    "indice": "Utilisez SUM(quantite) avec WHERE date BETWEEN ... AND ...",
+    "solution_attendue": "SELECT SUM(quantite) AS total FROM ventes WHERE date BETWEEN '2024-01-01' AND '2024-03-31';",
+    "mots_cles": [
+     "select",
+     "sum",
+     "quantite",
+     "total",
+     "between",
+     "2024-01-01",
+     "2024-03-31"
+    ]
+   }
+  }
+ ]
+}
