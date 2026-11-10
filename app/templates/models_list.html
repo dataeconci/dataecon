@@ -2,144 +2,298 @@
 
 {% block title %}Modèles - DataEcon.Ci{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/models.css') }}">
+{% endblock %}
+
 {% block content %}
-<div class="container py-4">
-    <h2 class="fw-bold" style="color: var(--primary);">
-        <i class="fas fa-calculator"></i> Modèles Avancés
-    </h2>
-    <p class="text-muted">Sélectionnez un jeu de données et un modèle pour l'analyse</p>
+<div class="container py-4 mdl">
 
-    <div class="row">
-        <div class="col-lg-8">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-cog"></i> Configuration de l'analyse</h5>
-                </div>
-                <div class="card-body">
-                    <form method="POST" action="{{ url_for('models_analyze') }}" id="modelForm">
-                        <div class="mb-3">
-                            <label class="form-label">Jeu de données</label>
-                            <select name="dataset_id" class="form-select" required>
-                                <option value="">-- Sélectionnez un dataset --</option>
-                                {% for dataset in datasets %}
-                                    <option value="{{ dataset.id }}">{{ dataset.name }}</option>
-                                {% endfor %}
-                            </select>
-                            {% if not datasets %}
-                                <div class="form-text text-danger">
-                                    <i class="fas fa-exclamation-triangle"></i> 
-                                    Aucun jeu de données disponible. 
-                                    <a href="{{ url_for('datasets') }}">Importez-en un</a>.
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Type de modèle</label>
-                            <select name="model_type" class="form-select" id="modelType" required>
-                                <option value="">-- Choisissez un modèle --</option>
-                                <option value="time_series">Séries Temporelles (ARIMA)</option>
-                                <option value="financial_series">Séries Financières</option>
-                                <option value="regression">Régression (Linéaire/Ridge/Lasso)</option>
-                                <option value="machine_learning">Machine Learning (Random Forest, Gradient Boosting)</option>
-                                <option value="deep_learning">Deep Learning (Neural Networks)</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Variable cible (Y)</label>
-                            <input type="text" name="target_col" class="form-control" placeholder="Nom de la colonne cible" required>
-                            <div class="form-text">La variable que vous voulez expliquer ou prédire.</div>
-                        </div>
-
-                        <div class="mb-3" id="featuresDiv">
-                            <label class="form-label">Variables explicatives (X) - séparées par des virgules</label>
-                            <input type="text" name="feature_cols" class="form-control" placeholder="ex: revenu, age, education">
-                            <div class="form-text">Laissez vide pour les modèles de séries temporelles.</div>
-                        </div>
-
-                        <div class="mb-3" id="forecastDiv" style="display:none;">
-                            <label class="form-label">Nombre de périodes de prévision</label>
-                            <input type="number" name="forecast_steps" class="form-control" value="12" min="1" max="100">
-                            <div class="form-text">Pour les modèles de séries temporelles uniquement.</div>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary" {% if not datasets %}disabled{% endif %}>
-                            <i class="fas fa-play"></i> Lancer l'analyse
-                        </button>
-                    </form>
-                </div>
-            </div>
+    <section class="mdl-hero">
+        <h1><i class="fas fa-diagram-project"></i> Modèles avancés</h1>
+        <p>Importez vos données, indiquez la variable à expliquer et les variables explicatives : la plateforme analyse la nature des données et vous propose automatiquement les modèles les plus adaptés, avec les raisons du choix.</p>
+        <div class="mdl-families">
+            <span>Régression</span><span>Panel</span><span>Séries temporelles (AR, MA, ARIMA, SARIMA)</span>
+            <span>Volatilité (ARCH, GARCH)</span><span>Classification</span><span>Machine learning</span><span>Deep learning</span>
         </div>
+    </section>
 
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-info-circle"></i> Informations</h5>
-                </div>
-                <div class="card-body">
-                    <p class="small text-muted">
-                        <strong>Séries Temporelles</strong><br>
-                        Analyse ARIMA avec tests de stationnarité et prévisions.
-                    </p>
-                    <p class="small text-muted">
-                        <strong>Séries Financières</strong><br>
-                        Analyse des rendements, volatilité, VaR et ratio de Sharpe.
-                    </p>
-                    <p class="small text-muted">
-                        <strong>Régression</strong><br>
-                        Régression linéaire, Ridge, Lasso avec interprétation économique.
-                    </p>
-                    <p class="small text-muted">
-                        <strong>Machine Learning</strong><br>
-                        Random Forest, Gradient Boosting pour des relations non-linéaires.
-                    </p>
-                    <p class="small text-muted">
-                        <strong>Deep Learning</strong><br>
-                        Réseaux de neurones pour des modèles complexes.
-                    </p>
-                    <hr>
-                    <p class="small text-muted">
-                        <i class="fas fa-file-word"></i> 
-                        <strong>Rapport automatique</strong><br>
-                        Un rapport Word structuré sera généré avec :
-                        <ul class="small">
-                            <li>Statistiques descriptives</li>
-                            <li>Résultats du modèle</li>
-                            <li>Interprétation économique</li>
-                            <li>Interprétation financière</li>
-                            <li>Décisions stratégiques</li>
-                        </ul>
-                    </p>
-                </div>
-            </div>
-        </div>
+    <div class="mdl-steps" id="steps">
+        <div class="mdl-step active" data-s="1"><span class="n">1</span> Données</div>
+        <div class="mdl-step" data-s="2"><span class="n">2</span> Variables</div>
+        <div class="mdl-step" data-s="3"><span class="n">3</span> Modèles recommandés</div>
     </div>
+
+    <!-- Étape 1 -->
+    <section class="mdl-card" id="card1">
+        <header><h2><i class="fas fa-database"></i> 1. Choisir le jeu de données</h2></header>
+        <div class="body">
+            <label class="mdl-label" for="dsSelect">Jeu de données</label>
+            <select id="dsSelect" class="form-select" {% if not datasets %}disabled{% endif %}>
+                <option value="">-- Sélectionnez un jeu de données --</option>
+                {% for dataset in datasets %}
+                <option value="{{ dataset.id }}">{{ dataset.name }}</option>
+                {% endfor %}
+            </select>
+            {% if not datasets %}
+            <div class="mdl-hint" style="color:#a23b3b"><i class="fas fa-triangle-exclamation"></i> Aucun jeu de données disponible. <a href="{{ url_for('datasets') }}">Importez-en un</a>.</div>
+            {% endif %}
+            <div id="dsErr" class="mdl-err" style="display:none"></div>
+            <div id="dsInfo" style="display:none">
+                <div class="mdl-meta">
+                    <div><strong id="nRows">0</strong>observations</div>
+                    <div><strong id="nCols">0</strong>variables</div>
+                    <div><strong id="nNum">0</strong>numériques</div>
+                    <div><strong id="nCat">0</strong>catégorielles</div>
+                </div>
+                <div class="mdl-preview"><table id="prevTable"></table></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Étape 2 -->
+    <section class="mdl-card" id="card2" style="display:none">
+        <header><h2><i class="fas fa-sliders"></i> 2. Définir les variables</h2></header>
+        <div class="body">
+            <div class="mdl-grid2">
+                <div>
+                    <label class="mdl-label" for="targetSel">Variable cible (Y) : ce que vous voulez expliquer ou prévoir</label>
+                    <select id="targetSel" class="form-select"></select>
+                    <div class="mdl-hint" id="targetHint"></div>
+                </div>
+                <div>
+                    <label class="mdl-label">Structure temporelle (détectée automatiquement)</label>
+                    <div class="mdl-grid2" style="gap:10px">
+                        <div>
+                            <select id="timeSel" class="form-select"></select>
+                            <div class="mdl-hint">Colonne de temps</div>
+                        </div>
+                        <div>
+                            <select id="entSel" class="form-select"></select>
+                            <div class="mdl-hint">Colonne d'entité (panel)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top:20px">
+                <label class="mdl-label">Variables explicatives (X)</label>
+                <div class="mdl-tools">
+                    <button type="button" class="mdl-link" id="xAll">Tout sélectionner</button>
+                    <button type="button" class="mdl-link" id="xNum">Numériques seulement</button>
+                    <button type="button" class="mdl-link" id="xNone">Aucune (série temporelle univariée)</button>
+                </div>
+                <div class="mdl-vars" id="xList"></div>
+                <div class="mdl-hint">Pour une série temporelle univariée (ARIMA, GARCH...), décochez toutes les variables explicatives.</div>
+            </div>
+
+            <div id="errBox" class="mdl-err" style="display:none"></div>
+            <div style="margin-top:20px">
+                <button type="button" class="mdl-btn primary" id="analyzeBtn"><i class="fas fa-wand-magic-sparkles"></i> Analyser mes données et proposer les modèles</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Étape 3 -->
+    <section class="mdl-card" id="card3" style="display:none">
+        <header>
+            <h2><i class="fas fa-list-check"></i> 3. Modèles recommandés pour vos données</h2>
+            <span class="mdl-hint" id="structTag"></span>
+        </header>
+        <div class="body">
+            <h3 style="font-size:.95rem;color:#0b2a4a;margin-bottom:10px">Ce que nous avons détecté</h3>
+            <div class="mdl-diag" id="diagBox"></div>
+            <div id="ctxNotes"></div>
+            <div id="famBox"></div>
+            <div class="mdl-na-list" id="naBox"></div>
+        </div>
+        <form method="POST" action="{{ url_for('models_analyze') }}" id="runForm" class="mdl-runbar">
+            <span class="count" id="selCount">0 modèle sélectionné</span>
+            <span id="fcBox" style="display:none">
+                <label class="mdl-hint" style="margin-right:6px" for="fcSteps">Périodes de prévision</label>
+                <input type="number" id="fcSteps" name="forecast_steps" value="12" min="1" max="60" class="form-control d-inline-block" style="width:90px">
+            </span>
+            <button type="submit" class="mdl-btn gold" id="runBtn" style="margin-left:auto" disabled><i class="fas fa-play"></i> Lancer les modèles sélectionnés</button>
+            <div id="hid"></div>
+        </form>
+    </section>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const modelType = document.getElementById('modelType');
-    const featuresDiv = document.getElementById('featuresDiv');
-    const forecastDiv = document.getElementById('forecastDiv');
+<div class="mdl-loading" id="loading"><div class="box"><div class="mdl-spin"></div><strong style="color:#0b2a4a">Estimation en cours</strong><p class="mdl-hint" style="margin-top:6px">Les modèles sont estimés et comparés. Cela peut prendre jusqu'à une minute selon la taille des données.</p></div></div>
+{% endblock %}
 
-    modelType.addEventListener('change', function() {
-        const value = this.value;
-        
-        // Afficher/masquer les variables explicatives
-        if (value === 'time_series' || value === 'financial_series') {
-            featuresDiv.style.display = 'none';
-        } else {
-            featuresDiv.style.display = 'block';
-        }
-        
-        // Afficher/masquer les prévisions
-        if (value === 'time_series') {
-            forecastDiv.style.display = 'block';
-        } else {
-            forecastDiv.style.display = 'none';
-        }
+{% block extra_js %}
+<script>
+(function () {
+    var $ = function (id) { return document.getElementById(id); };
+    var COLS = [], KIND = {}, DATASET = null, LAST = null;
+    var KIND_LABEL = { numeric: 'numérique', binary: 'binaire', categorical: 'catégorielle', datetime: 'date', text: 'texte' };
+
+    function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+    function setStep(n) {
+        document.querySelectorAll('#steps .mdl-step').forEach(function (el) {
+            var s = +el.dataset.s;
+            el.classList.toggle('active', s === n);
+            el.classList.toggle('done', s < n);
+        });
+    }
+    function showErr(el, msg) { el.textContent = msg; el.style.display = msg ? 'block' : 'none'; }
+
+    // ---- Étape 1
+    $('dsSelect').addEventListener('change', function () {
+        var id = this.value;
+        $('card2').style.display = 'none'; $('card3').style.display = 'none';
+        $('dsInfo').style.display = 'none'; showErr($('dsErr'), '');
+        if (!id) { setStep(1); return; }
+        DATASET = id;
+        fetch('/models/api/columns/' + id).then(function (r) { return r.json(); }).then(function (d) {
+            if (d.error) { showErr($('dsErr'), d.error); return; }
+            COLS = d.columns; KIND = {};
+            COLS.forEach(function (c) { KIND[c.name] = c.kind; });
+            $('nRows').textContent = d.n_rows.toLocaleString('fr-FR');
+            $('nCols').textContent = d.n_cols;
+            $('nNum').textContent = COLS.filter(function (c) { return c.kind === 'numeric' || c.kind === 'binary'; }).length;
+            $('nCat').textContent = COLS.filter(function (c) { return c.kind === 'categorical' || c.kind === 'text'; }).length;
+            var t = '<thead><tr>' + d.preview_columns.map(function (c) { return '<th>' + esc(c) + '</th>'; }).join('') + '</tr></thead><tbody>' +
+                d.preview.map(function (row) { return '<tr>' + row.map(function (v) { return '<td>' + esc(v) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody>';
+            $('prevTable').innerHTML = t;
+            $('dsInfo').style.display = 'block';
+            buildStep2(d.suggest || {});
+            $('card2').style.display = 'block';
+            setStep(2);
+        }).catch(function () { showErr($('dsErr'), 'Impossible de lire ce jeu de données.'); });
     });
-});
+
+    // ---- Étape 2
+    function opt(v, l) { return '<option value="' + esc(v) + '">' + esc(l) + '</option>'; }
+    function buildStep2(sg) {
+        var targets = COLS.filter(function (c) { return c.kind !== 'text' && c.kind !== 'datetime'; });
+        $('targetSel').innerHTML = '<option value="">-- Choisissez la variable cible --</option>' +
+            targets.map(function (c) { return opt(c.name, c.name + '  (' + KIND_LABEL[c.kind] + ')'); }).join('');
+        var times = COLS.filter(function (c) { return c.kind === 'datetime' || c.kind === 'numeric'; });
+        $('timeSel').innerHTML = '<option value="">Aucune</option>' + times.map(function (c) { return opt(c.name, c.name); }).join('');
+        var ents = COLS.filter(function (c) { return c.kind !== 'datetime'; });
+        $('entSel').innerHTML = '<option value="">Aucune</option>' + ents.map(function (c) { return opt(c.name, c.name); }).join('');
+        $('timeSel').value = sg.time_col || '';
+        $('entSel').value = sg.panel ? (sg.entity_col || '') : '';
+        $('targetHint').textContent = '';
+        renderX();
+        $('card3').style.display = 'none';
+    }
+    function renderX() {
+        var target = $('targetSel').value, tc = $('timeSel').value, ec = $('entSel').value;
+        var prev = {};
+        document.querySelectorAll('#xList input').forEach(function (i) { prev[i.value] = i.checked; });
+        var had = Object.keys(prev).length > 0;
+        $('xList').innerHTML = COLS.map(function (c) {
+            var dis = (c.name === target || c.name === tc || c.name === ec || c.kind === 'text' || c.kind === 'datetime');
+            var chk = !dis && (had ? !!prev[c.name] : true);
+            return '<label class="mdl-var' + (chk ? ' checked' : '') + (dis ? ' disabled' : '') + '"><input type="checkbox" value="' + esc(c.name) + '"' +
+                (chk ? ' checked' : '') + (dis ? ' disabled' : '') + '> <span>' + esc(c.name) + '</span><span class="mdl-badge ' + c.kind + '">' + KIND_LABEL[c.kind] + '</span></label>';
+        }).join('');
+        document.querySelectorAll('#xList input').forEach(function (i) {
+            i.addEventListener('change', function () { i.parentNode.classList.toggle('checked', i.checked); });
+        });
+    }
+    ['targetSel', 'timeSel', 'entSel'].forEach(function (id) {
+        $(id).addEventListener('change', function () {
+            if (id === 'targetSel') {
+                var c = COLS.filter(function (x) { return x.name === this.value; }.bind(this))[0];
+                var h = '';
+                if (c) {
+                    h = 'Type détecté : ' + KIND_LABEL[c.kind] + ' (' + c.n_unique + ' valeurs distinctes' + (c.missing_pct ? ', ' + c.missing_pct + ' % de valeurs manquantes' : '') + ')';
+                }
+                $('targetHint').textContent = h;
+            }
+            renderX();
+        });
+    });
+    function setAll(filter) {
+        document.querySelectorAll('#xList input').forEach(function (i) {
+            if (i.disabled) return;
+            i.checked = filter(i.value); i.parentNode.classList.toggle('checked', i.checked);
+        });
+    }
+    $('xAll').onclick = function () { setAll(function () { return true; }); };
+    $('xNone').onclick = function () { setAll(function () { return false; }); };
+    $('xNum').onclick = function () { setAll(function (v) { return KIND[v] === 'numeric' || KIND[v] === 'binary'; }); };
+
+    function selectedX() {
+        return Array.prototype.slice.call(document.querySelectorAll('#xList input:checked')).map(function (i) { return i.value; });
+    }
+
+    $('analyzeBtn').addEventListener('click', function () {
+        var target = $('targetSel').value;
+        showErr($('errBox'), '');
+        if (!target) { showErr($('errBox'), 'Choisissez d\'abord la variable cible.'); return; }
+        var btn = this; btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyse en cours...';
+        fetch('/models/api/recommend', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ dataset_id: DATASET, target: target, features: selectedX(), time_col: $('timeSel').value, entity_col: $('entSel').value })
+        }).then(function (r) { return r.json(); }).then(function (d) {
+            btn.disabled = false; btn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Analyser mes données et proposer les modèles';
+            if (d.error) { showErr($('errBox'), d.error); return; }
+            LAST = d; renderRecs(d);
+            $('card3').style.display = 'block'; setStep(3);
+            $('card3').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }).catch(function () {
+            btn.disabled = false; btn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Analyser mes données et proposer les modèles';
+            showErr($('errBox'), 'Erreur de communication avec le serveur.');
+        });
+    });
+
+    // ---- Étape 3
+    function lvlClass(s) { return s >= 75 ? 's3' : (s >= 55 ? 's2' : (s >= 35 ? 's1' : 's0')); }
+    function renderRecs(d) {
+        var names = { timeseries: 'fa-chart-line', volatility: 'fa-wave-square', panel: 'fa-table-cells', regression: 'fa-square-root-variable', classification: 'fa-tags', ml: 'fa-tree', deep: 'fa-brain' };
+        var structTxt = { panel: 'Données de panel', time_series: 'Série temporelle', cross_section: 'Coupe transversale' };
+        $('structTag').textContent = structTxt[d.structure] || '';
+        $('diagBox').innerHTML = d.diagnostics.map(function (x) {
+            return '<div class="mdl-diag-item ' + x.status + '"><div class="l">' + esc(x.label) + '</div>' + esc(x.value) + '</div>';
+        }).join('');
+        $('ctxNotes').innerHTML = (d.notes || []).map(function (n) { return '<div class="mdl-warnbox">' + esc(n) + '</div>'; }).join('');
+        var html = '';
+        d.family_order.forEach(function (f) {
+            var items = d.recommendations.filter(function (r) { return r.family === f && r.available; });
+            if (!items.length) return;
+            html += '<div class="mdl-fam"><h3><i class="fas ' + names[f] + '"></i> ' + esc(d.family_labels[f]) + '</h3><div class="mdl-recs">' +
+                items.map(function (r) {
+                    return '<label class="mdl-rec' + (r.selected ? ' selected' : '') + '"><div class="top"><input type="checkbox" value="' + esc(r.id) + '"' + (r.selected ? ' checked' : '') + '>' +
+                        '<div><div class="name">' + esc(r.name) + '</div><div class="lvl ' + lvlClass(r.score) + '">' + esc(r.level) + '</div></div>' +
+                        '<div class="mdl-score">' + r.score + '<small>/ 100</small></div></div>' +
+                        '<div class="mdl-bar"><div style="width:' + r.score + '%"></div></div>' +
+                        '<ul>' + r.reasons.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></label>';
+                }).join('') + '</div></div>';
+        });
+        $('famBox').innerHTML = html || '<div class="mdl-err">Aucun modèle applicable : vérifiez vos variables.</div>';
+        var na = d.recommendations.filter(function (r) { return !r.available; });
+        var groups = {};
+        na.forEach(function (r) { (groups[r.why_not] = groups[r.why_not] || []).push(r.name); });
+        $('naBox').innerHTML = Object.keys(groups).length ?
+            '<strong>Non applicables pour l\'instant</strong><ul style="margin:6px 0 0;padding-left:18px">' +
+            Object.keys(groups).map(function (k) { return '<li>' + esc(groups[k].join(', ')) + ' : ' + esc(k) + '</li>'; }).join('') + '</ul>' : '';
+        document.querySelectorAll('#famBox .mdl-rec input').forEach(function (i) {
+            i.addEventListener('change', function () { i.closest('.mdl-rec').classList.toggle('selected', i.checked); updateCount(); });
+        });
+        updateCount();
+    }
+    function updateCount() {
+        var sel = Array.prototype.slice.call(document.querySelectorAll('#famBox .mdl-rec input:checked'));
+        $('selCount').textContent = sel.length + ' modèle' + (sel.length > 1 ? 's' : '') + ' sélectionné' + (sel.length > 1 ? 's' : '');
+        $('runBtn').disabled = sel.length === 0;
+        var tsIds = ['ar', 'ma', 'arma', 'arima', 'sarima', 'arimax', 'holtwinters', 'var', 'mlp_ts', 'garch', 'arch', 'egarch', 'gjr'];
+        $('fcBox').style.display = sel.some(function (i) { return tsIds.indexOf(i.value) >= 0; }) ? 'inline-block' : 'none';
+    }
+
+    $('runForm').addEventListener('submit', function () {
+        var hid = $('hid'); hid.innerHTML = '';
+        function add(n, v) { var i = document.createElement('input'); i.type = 'hidden'; i.name = n; i.value = v; hid.appendChild(i); }
+        add('dataset_id', DATASET); add('target_col', $('targetSel').value);
+        add('time_col', LAST && LAST.time_col ? LAST.time_col : ''); add('entity_col', LAST && LAST.entity_col ? LAST.entity_col : '');
+        selectedX().forEach(function (v) { add('feature_cols', v); });
+        document.querySelectorAll('#famBox .mdl-rec input:checked').forEach(function (i) { add('models', i.value); });
+        $('loading').classList.add('on');
+    });
+})();
 </script>
 {% endblock %}

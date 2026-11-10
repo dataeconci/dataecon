@@ -28,6 +28,9 @@ import traceback
 from apscheduler.schedulers.background import BackgroundScheduler
 from models.models import EconometricModels
 from models.report_generator import create_econometric_report, create_latex_report
+from models.analysis import (profile_columns, detect_structure_columns, analyze_problem, recommend, FAMILY_LABELS, FAMILY_ORDER)
+from models.runners import run_model
+from models.report_generic import create_report as create_generic_report, create_latex as create_generic_latex
 import tempfile
 import chardet
 import boto3
@@ -1635,7 +1638,7 @@ def toggle_admin(user_id):
 @app.route('/models')
 @login_required
 def models_list():
-    """Page de sélection des modèles"""
+    """Page de sélection des modèles (assistant : données, variables, recommandations)"""
     if not current_user.can_access_models():
         flash('Vous devez avoir un abonnement Premium pour accéder aux modèles.', 'warning')
         return redirect(url_for('subscription'))
@@ -1643,111 +1646,132 @@ def models_list():
     datasets = Dataset.query.all()
     return render_template('models_list.html', datasets=datasets)
 
+
+def _models_load_df(dataset_id):
+    dataset = Dataset.query.get_or_404(dataset_id)
+    df = read_dataset_file(dataset)
+    if df is None or len(df) == 0:
+        raise ValueError("Le jeu de données est vide ou illisible.")
+    df.columns = [str(c).strip() for c in df.columns]
+    return dataset, df
+
+
+@app.route('/models/api/columns/<int:dataset_id>')
+@login_required
+def models_api_columns(dataset_id):
+    """Profil des colonnes d'un jeu de données (types détectés, structure probable)"""
+    if not current_user.can_access_models():
+        return jsonify({'error': 'Abonnement Premium requis.'}), 403
+    try:
+        dataset, df = _models_load_df(dataset_id)
+        prof = profile_columns(df)
+        det = detect_structure_columns(df, prof)
+        preview = df.head(5).astype(object).where(df.head(5).notna(), '').astype(str).values.tolist()
+        return jsonify({
+            'name': dataset.name, 'n_rows': int(len(df)), 'n_cols': int(df.shape[1]),
+            'columns': prof, 'suggest': det, 'preview_columns': list(df.columns), 'preview': preview,
+        })
+    except Exception as e:
+        print(f"Erreur profil colonnes: {e}", flush=True)
+        return jsonify({'error': str(e)}), 400
+
+
+@app.route('/models/api/recommend', methods=['POST'])
+@login_required
+def models_api_recommend():
+    """Analyse les données et propose automatiquement les modèles adaptés"""
+    if not current_user.can_access_models():
+        return jsonify({'error': 'Abonnement Premium requis.'}), 403
+    data = request.get_json(silent=True) or {}
+    try:
+        dataset, df = _models_load_df(int(data.get('dataset_id')))
+        target = data.get('target')
+        features = [f for f in (data.get('features') or []) if f]
+        time_col = data.get('time_col') or None
+        entity_col = data.get('entity_col') or None
+        if not target:
+            return jsonify({'error': 'Choisissez la variable cible.'}), 400
+        ctx = analyze_problem(df, target, features, time_col, entity_col)
+        recs = recommend(ctx)
+        return jsonify({
+            'diagnostics': ctx['diagnostics'], 'notes': ctx.get('notes', []),
+            'structure': ctx['structure'], 'target_kind': ctx['target_kind'],
+            'recommendations': recs, 'family_order': FAMILY_ORDER, 'family_labels': FAMILY_LABELS,
+            'time_col': ctx.get('time_col'), 'entity_col': ctx.get('entity_col'),
+        })
+    except Exception as e:
+        print(f"Erreur recommandation: {e}", flush=True)
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 400
+
+
 @app.route('/models/analyze', methods=['POST'])
 @login_required
 def models_analyze():
-    """Exécuter l'analyse choisie"""
+    """Exécuter les modèles choisis et afficher les résultats comparés"""
     if not current_user.can_access_models():
         flash('Vous devez avoir un abonnement Premium pour accéder aux modèles.', 'warning')
         return redirect(url_for('subscription'))
     
-    dataset_id = request.form.get('dataset_id')
-    model_type = request.form.get('model_type')
-    target_col = request.form.get('target_col')
-    feature_cols = request.form.get('feature_cols', '')
-    forecast_steps = int(request.form.get('forecast_steps', 12))
-    
-    dataset = Dataset.query.get_or_404(dataset_id)
-    
     try:
-        # Utiliser la fonction de lecture automatique
-        df = read_dataset_file(dataset)
-        
-        print(f"Colonnes disponibles: {list(df.columns)}", flush=True)
-        
-        # Initialiser les modèles
-        models = EconometricModels(df)
-        
-        # Exécuter le modèle choisi
-        features = [f.strip() for f in feature_cols.split(',') if f.strip()] if feature_cols else []
-        
-        if model_type == 'time_series':
-            results = models.time_series_analysis(target_col, forecast_steps=forecast_steps)
-        elif model_type == 'regression':
-            if not features:
-                flash('Veuillez entrer au moins une variable explicative.', 'danger')
-                return redirect(url_for('models_list'))
-            results = models.regression_analysis(target_col, features)
-        elif model_type == 'machine_learning':
-            if not features:
-                flash('Veuillez entrer au moins une variable explicative.', 'danger')
-                return redirect(url_for('models_list'))
-            results = models.machine_learning_analysis(target_col, features)
-        elif model_type == 'deep_learning':
-            if not features:
-                flash('Veuillez entrer au moins une variable explicative.', 'danger')
-                return redirect(url_for('models_list'))
-            results = models.deep_learning_analysis(target_col, features)
-        elif model_type == 'financial_series':
-            results = models.financial_series_analysis(target_col)
-        else:
-            flash('Type de modèle non reconnu.', 'danger')
+        dataset_id = int(request.form.get('dataset_id'))
+        target = request.form.get('target_col', '').strip()
+        features = [f.strip() for f in request.form.getlist('feature_cols') if f.strip()]
+        time_col = request.form.get('time_col') or None
+        entity_col = request.form.get('entity_col') or None
+        model_ids = [m for m in request.form.getlist('models') if m][:12]
+        try:
+            steps = max(1, min(60, int(request.form.get('forecast_steps', 12))))
+        except ValueError:
+            steps = 12
+        if not target or not model_ids:
+            flash('Choisissez la variable cible et au moins un modèle.', 'danger')
             return redirect(url_for('models_list'))
         
-        # Vérifier les erreurs
-        if results.get('errors'):
-            for error in results['errors']:
-                flash(f'{error}', 'danger')
-            return render_template('models_results.html', 
-                                 results=results, 
-                                 model_type=model_type,
-                                 dataset=dataset,
-                                 report_data=None,
-                                 report_name=None)
+        dataset, df = _models_load_df(dataset_id)
+        ctx = analyze_problem(df, target, features, time_col, entity_col)
+        recs = recommend(ctx)
+        by_id = {r['id']: r for r in recs}
         
-        # Générer le rapport Word
-        report = create_econometric_report(
-            data=df,
-            model_results=results,
-            model_type=model_type,
-            variable_names=[target_col] + features
-        )
+        results = []
+        for mid in model_ids:
+            r = by_id.get(mid)
+            if r is None or not r['available']:
+                continue
+            out = run_model(mid, df, target, ctx['features'], ctx.get('time_col'), ctx.get('entity_col'), steps)
+            out['score'] = r['score']
+            out['level'] = r['level']
+            out['reasons'] = r['reasons']
+            out['family_label'] = r['family_label']
+            results.append(out)
+        if not results:
+            flash("Aucun des modèles choisis n'est applicable à ces données.", 'danger')
+            return redirect(url_for('models_list'))
         
-        # Sauvegarder dans un fichier unique
+        # Rapports Word et LaTeX
         report_id = str(uuid.uuid4())
         report_dir = '/tmp/reports'
         os.makedirs(report_dir, exist_ok=True)
-        report_filename = f"{report_id}.docx"
-        report_path = os.path.join(report_dir, report_filename)
-        report.save(report_path)
-        
-        # Générer aussi le LaTeX
         try:
-            latex_content = create_latex_report(
-                data=df,
-                model_results=results,
-                model_type=model_type,
-                variable_names=[target_col] + features
-            )
-            latex_path = os.path.join(report_dir, f"{report_id}.tex")
-            with open(latex_path, 'w', encoding='utf-8') as f:
-                f.write(latex_content)
+            doc = create_generic_report(dataset.name, target, ctx['features'], ctx, recs, results, ctx.get('time_col'), ctx.get('entity_col'))
+            doc.save(os.path.join(report_dir, f"{report_id}.docx"))
+            with open(os.path.join(report_dir, f"{report_id}.tex"), 'w', encoding='utf-8') as f:
+                f.write(create_generic_latex(dataset.name, target, ctx['features'], ctx, recs, results, ctx.get('time_col'), ctx.get('entity_col')))
+            session['report_id'] = report_id
+            session['report_name'] = f'rapport_modeles_{datetime.now().strftime("%Y%m%d_%H%M%S")}'
+            has_report = True
         except Exception as e:
-            print(f"Erreur génération LaTeX: {e}", flush=True)
+            print(f"Erreur génération rapport: {e}", flush=True)
+            traceback.print_exc()
+            has_report = False
         
-        # Stocker le chemin dans la session
-        session['report_id'] = report_id
-        session['report_name'] = f'rapport_{model_type}_{datetime.now().strftime("%Y%m%d_%H%M%S")}'
-        
-        return render_template('models_results.html', 
-                             results=results, 
-                             model_type=model_type,
-                             dataset=dataset,
-                             has_report=True,
-                             report_name=session['report_name'])
+        return render_template('models_results.html', results=results, ctx=ctx, dataset=dataset,
+                               target=target, features=ctx['features'], has_report=has_report,
+                               family_order=FAMILY_ORDER)
     
     except Exception as e:
-        flash(f'Erreur lors de l\'analyse : {str(e)}', 'danger')
+        traceback.print_exc()
+        flash(f"Erreur lors de l'analyse : {str(e)}", 'danger')
         return redirect(url_for('models_list'))
 
 
