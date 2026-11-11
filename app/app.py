@@ -1924,6 +1924,11 @@ def generate_chart(dataset_id, chart_type):
         return redirect(url_for('analytics'))
 
 # ==================== INITIALISATION ====================
+# ==================== EXAMENS ET CERTIFICATS ====================
+from certification import init_certification
+ExamAttempt, Certificate = init_certification(app, db, User)
+
+
 def init_db():
     with app.app_context():
         db.create_all()
@@ -2073,11 +2078,6 @@ def formations_player(outil, niveau):
     if niveau not in ['debutant', 'intermediaire', 'avance']:
         return redirect(url_for('formations'))
     return render_template('player.html', outil=outil, niveau=niveau)
-
-
-# ==================== EXAMENS ET CERTIFICATS ====================
-from certification import init_certification
-ExamAttempt, Certificate = init_certification(app, db, User)
 
 
 # Client Groq (initialisé une seule fois)
