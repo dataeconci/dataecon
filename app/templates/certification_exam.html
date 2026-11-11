@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block title %}Examen {{ outil_nom }} {{ niveau_nom }} - DataEcon.Ci{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/certification.css') }}">{% endblock %}
+{% block content %}
+<div class="cert">
+  <div class="ex-bar"><div class="container in">
+    <strong>{{ outil_nom }} - {{ niveau_nom }}</strong>
+    <span id="answered">0 / {{ questions|length }} répondues</span>
+    <span class="ex-timer" id="timer" data-left="{{ reste }}">--:--</span>
+  </div></div>
+  <div class="container" style="max-width:860px;margin-top:22px">
+    <form method="post" id="exform" action="{{ url_for('certification_submit', attempt_id=att.id) }}">
+      {% for q in questions %}
+      <div class="ex-q">
+        <div class="th">Question {{ loop.index }} / {{ questions|length }} - {{ q.theme }}</div>
+        <h3>{{ q.question }}</h3>
+        {% if q.code %}<pre>{{ q.code }}</pre>{% endif %}
+        {% set qi = loop.index0 %}
+        {% for o in q.options %}
+        <label class="ex-opt"><input type="radio" name="q_{{ q.id }}" value="{{ loop.index0 }}"><span>{{ o }}</span></label>
+        {% endfor %}
+      </div>
+      {% endfor %}
+      <div class="text-center mb-5">
+        <button class="cert-btn" type="submit" id="send">Terminer et corriger</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+(function(){
+  var left = parseInt(document.getElementById('timer').dataset.left, 10), t = document.getElementById('timer'), f = document.getElementById('exform');
+  var total = {{ questions|length }};
+  function fmt(s){ var m=Math.floor(s/60), r=s%60; return (m<10?'0':'')+m+':'+(r<10?'0':'')+r; }
+  function tick(){ t.textContent = fmt(Math.max(left,0)); if(left<=60) t.classList.add('low'); if(left<=0){ f.submit(); return; } left--; setTimeout(tick,1000); }
+  tick();
+  f.addEventListener('change', function(){ document.getElementById('answered').textContent = f.querySelectorAll('input:checked').length + ' / ' + total + ' répondues'; });
+  f.addEventListener('submit', function(e){
+    var n = f.querySelectorAll('input:checked').length;
+    if (left > 0 && n < total && !confirm('Il reste ' + (total-n) + ' question(s) sans réponse. Terminer quand même ?')) { e.preventDefault(); }
+  });
+})();
+</script>
+{% endblock %}

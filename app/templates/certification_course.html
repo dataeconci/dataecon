@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+{% block title %}Examen {{ outil_nom }} {{ niveau_nom }} - DataEcon.Ci{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/certification.css') }}">{% endblock %}
+{% block content %}
+<div class="cert">
+  <section class="cert-hero"><div class="container">
+    <h1>Examen de certification : {{ outil_nom }} - {{ niveau_nom }}</h1>
+    <p>Terminez le cours interactif, puis validez vos acquis pour obtenir votre certificat.</p>
+  </div></section>
+  <div class="container" style="max-width:860px">
+    {% if cert %}
+    <div class="cert-card"><header>Certificat obtenu</header><div class="body">
+      <p>Félicitations, vous avez validé cet examen le {{ cert.issued_at.strftime('%d/%m/%Y') }} avec {{ '%.0f'|format(cert.score) }} %.</p>
+      <p>Code de vérification : <strong>{{ cert.code }}</strong></p>
+      <a class="cert-btn gold" href="{{ url_for('certificat_download', code=cert.code) }}">Télécharger le certificat (PDF)</a>
+      <a class="cert-btn light" href="{{ url_for('certificat_verify', code=cert.code) }}">Page de vérification</a>
+    </div></div>
+    {% else %}
+    <div class="cert-card"><header>Règles de l'examen</header><div class="body">
+      <ul class="cert-list">
+        <li>{{ regles.nb }} questions à choix multiple tirées au hasard, options mélangées.</li>
+        <li>Durée : {{ regles.duree }} minutes. Une fois le temps écoulé, l'examen est clôturé et corrigé automatiquement.</li>
+        <li>Note de réussite : {{ regles.seuil }} %.</li>
+        <li>Vous disposez de {{ regles.essais }} tentatives. Après deux échecs, vous devez attendre {{ regles.jours }} jours avant de recommencer.</li>
+        <li>Quitter la page ne suspend pas le chronomètre.</li>
+      </ul>
+      {% if not disponible %}
+        <p class="text-muted mb-0">Cet examen n'est pas encore disponible.</p>
+      {% elif not acces %}
+        <p>Les examens des niveaux Intermédiaire et Avancé nécessitent un abonnement Standard ou Premium.</p>
+        <a class="cert-btn" href="{{ url_for('subscription') }}">Voir les abonnements</a>
+      {% elif etat.bloque %}
+        <p><span class="cert-badge bad">Tentatives épuisées</span> Vous pourrez recommencer à partir du <strong>{{ etat.bloque_jusqu_au.strftime('%d/%m/%Y') }}</strong>. Profitez-en pour revoir le cours.</p>
+        <a class="cert-btn light" href="{{ url_for('formations_player', outil=outil, niveau=niveau) }}">Revoir le cours</a>
+      {% elif ouverte %}
+        <p>Un examen est en cours.</p>
+        <a class="cert-btn" href="{{ url_for('certification_exam', attempt_id=ouverte.id) }}">Reprendre l'examen</a>
+      {% else %}
+        <p><span class="cert-badge neutral">{{ etat.restantes }} tentative(s) restante(s)</span></p>
+        <form method="post" action="{{ url_for('certification_start', outil=outil, niveau=niveau) }}" onsubmit="return confirm('Le chronomètre démarre immédiatement. Commencer l\'examen ?')">
+          <button class="cert-btn" type="submit">Commencer l'examen</button>
+          <a class="cert-btn light" href="{{ url_for('formations_player', outil=outil, niveau=niveau) }}">Revoir le cours</a>
+        </form>
+      {% endif %}
+    </div></div>
+    {% endif %}
+    {% if historique %}
+    <div class="cert-card"><header>Historique des tentatives</header><div class="body">
+      {% for a in historique %}
+      <div class="cert-row"><div class="nm">{{ a.submitted_at.strftime('%d/%m/%Y %H:%M') }}</div>
+        <div>{{ '%.0f'|format(a.score) }} % <span class="cert-badge {{ 'ok' if a.passed else 'bad' }}">{{ 'Réussi' if a.passed else 'Échec' }}</span>
+        <a href="{{ url_for('certification_result', attempt_id=a.id) }}">Corrigé</a></div></div>
+      {% endfor %}
+    </div></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

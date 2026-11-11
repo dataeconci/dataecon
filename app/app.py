@@ -31,6 +31,9 @@ from models.report_generator import create_econometric_report, create_latex_repo
 from models.analysis import (profile_columns, detect_structure_columns, analyze_problem, recommend, FAMILY_LABELS, FAMILY_ORDER)
 from models.runners import run_model
 from models.report_generic import create_report as create_generic_report, create_latex as create_generic_latex
+from models.descriptive import build_data_report, build_conclusion
+from models.robustness import run_robustness
+import time as _time
 import tempfile
 import chardet
 import boto3
@@ -1733,12 +1736,29 @@ def models_analyze():
         recs = recommend(ctx)
         by_id = {r['id']: r for r in recs}
         
+        report_title = (request.form.get('report_title') or '').strip()[:160]
+        report_context = (request.form.get('report_context') or '').strip()[:2500]
+        report_problem = (request.form.get('report_problem') or '').strip()[:1500]
+        t_start = _time.time()
+        try:
+            data_report = build_data_report(df, target, ctx['features'], ctx, ctx.get('time_col'), ctx.get('entity_col'),
+                                            dataset.name, report_context, report_problem, report_title)
+        except Exception as e:
+            traceback.print_exc()
+            data_report = {'sections': [], 'context': report_context, 'problem': report_problem}
+
         results = []
         for mid in model_ids:
             r = by_id.get(mid)
             if r is None or not r['available']:
                 continue
             out = run_model(mid, df, target, ctx['features'], ctx.get('time_col'), ctx.get('entity_col'), steps)
+            if out.get('status') == 'ok':
+                if _time.time() - t_start < 200:
+                    out['robustness'] = run_robustness(mid, df, target, ctx['features'], ctx.get('time_col'), ctx.get('entity_col'), name=out.get('name'))
+                else:
+                    out['robustness'] = {'status': 'error', 'verdict': '', 'checks': [], 'tables': [], 'charts': [], 'text': [],
+                                         'error': "Tests de robustesse omis : le temps de calcul alloué à l'analyse est épuisé. Relancez ce modèle seul."}
             out['score'] = r['score']
             out['level'] = r['level']
             out['reasons'] = r['reasons']
@@ -1748,15 +1768,19 @@ def models_analyze():
             flash("Aucun des modèles choisis n'est applicable à ces données.", 'danger')
             return redirect(url_for('models_list'))
         
+        conclusion = build_conclusion(results, ctx, target)
+        data_report['title'] = report_title or f"Analyse de {target}"
+        data_report['conclusion'] = conclusion
+
         # Rapports Word et LaTeX
         report_id = str(uuid.uuid4())
         report_dir = '/tmp/reports'
         os.makedirs(report_dir, exist_ok=True)
         try:
-            doc = create_generic_report(dataset.name, target, ctx['features'], ctx, recs, results, ctx.get('time_col'), ctx.get('entity_col'))
+            doc = create_generic_report(dataset.name, target, ctx['features'], ctx, recs, results, ctx.get('time_col'), ctx.get('entity_col'), data_report=data_report)
             doc.save(os.path.join(report_dir, f"{report_id}.docx"))
             with open(os.path.join(report_dir, f"{report_id}.tex"), 'w', encoding='utf-8') as f:
-                f.write(create_generic_latex(dataset.name, target, ctx['features'], ctx, recs, results, ctx.get('time_col'), ctx.get('entity_col')))
+                f.write(create_generic_latex(dataset.name, target, ctx['features'], ctx, recs, results, ctx.get('time_col'), ctx.get('entity_col'), data_report=data_report))
             session['report_id'] = report_id
             session['report_name'] = f'rapport_modeles_{datetime.now().strftime("%Y%m%d_%H%M%S")}'
             has_report = True
@@ -1767,7 +1791,7 @@ def models_analyze():
         
         return render_template('models_results.html', results=results, ctx=ctx, dataset=dataset,
                                target=target, features=ctx['features'], has_report=has_report,
-                               family_order=FAMILY_ORDER)
+                               family_order=FAMILY_ORDER, data_report=data_report, conclusion=conclusion)
     
     except Exception as e:
         traceback.print_exc()
@@ -2049,6 +2073,11 @@ def formations_player(outil, niveau):
     if niveau not in ['debutant', 'intermediaire', 'avance']:
         return redirect(url_for('formations'))
     return render_template('player.html', outil=outil, niveau=niveau)
+
+
+# ==================== EXAMENS ET CERTIFICATS ====================
+from certification import init_certification
+ExamAttempt, Certificate = init_certification(app, db, User)
 
 
 # Client Groq (initialisé une seule fois)

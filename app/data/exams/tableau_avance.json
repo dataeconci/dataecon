@@ -1,0 +1,258 @@
+{
+ "outil": "tableau",
+ "niveau": "avance",
+ "questions": [
+  {
+   "id": "q1",
+   "theme": "Filtres cumulés",
+   "question": "Ventes :\nProduit | Ville | Période | Quantité\nCacao | Abidjan | T1 | 40\nCacao | Daloa | T1 | 30\nCafé | Abidjan | T1 | 20\nCacao | Abidjan | T2 | 50\nCacao | Abidjan | T1 | 25\nCafé | Daloa | T2 | 35\nAvec Produit = Cacao, Ville = Abidjan et Période = T1, quelle est la Quantité totale ?",
+   "code": "",
+   "options": [
+    "65",
+    "40",
+    "155",
+    "115"
+   ],
+   "correct": 0,
+   "explication": "Les filtres se cumulent : seules les lignes Cacao, Abidjan, T1 restent (40 + 25 = 65)."
+  },
+  {
+   "id": "q2",
+   "theme": "Taille d'échantillon",
+   "question": "Quel risque présente l'empilement de trop de filtres ?",
+   "code": "",
+   "options": [
+    "Les données sont supprimées définitivement",
+    "Il reste trop peu de lignes pour conclure",
+    "Les mesures deviennent des dimensions",
+    "Le graphique change automatiquement de type"
+   ],
+   "correct": 1,
+   "explication": "Il faut surveiller la taille de l'échantillon après filtrage."
+  },
+  {
+   "id": "q3",
+   "theme": "Mesure calculée",
+   "question": "Comment se calcule le prix moyen dans la leçon ?",
+   "code": "",
+   "options": [
+    "Quantité divisée par chiffre d'affaires",
+    "Moyenne simple des prix de chaque ligne",
+    "Chiffre d'affaires divisé par quantité",
+    "Chiffre d'affaires multiplié par quantité"
+   ],
+   "correct": 2,
+   "explication": "Prix moyen = CA / quantité, c'est une moyenne pondérée."
+  },
+  {
+   "id": "q4",
+   "theme": "Moyenne pondérée",
+   "question": "Deux ventes de Café :\nQuantité | Prix unitaire (FCFA)\n100 | 500\n300 | 400\nQuel est le prix moyen au sens de la mesure calculée CA / quantité ?",
+   "code": "",
+   "options": [
+    "450 FCFA",
+    "400 FCFA",
+    "500 FCFA",
+    "425 FCFA"
+   ],
+   "correct": 3,
+   "explication": "CA = 50 000 + 120 000 = 170 000 ; quantité = 400 ; 170 000 / 400 = 425."
+  },
+  {
+   "id": "q5",
+   "theme": "Moyenne simple ou pondérée",
+   "question": "Pour les mêmes ventes (100 unités à 500 FCFA et 300 unités à 400 FCFA), pourquoi la moyenne simple des prix (450) est-elle trompeuse ?",
+   "code": "",
+   "options": [
+    "Elle utilise une dimension",
+    "Elle ignore que les gros volumes pèsent plus",
+    "Elle est toujours égale à la médiane",
+    "Elle ne peut pas être calculée dans Tableau"
+   ],
+   "correct": 1,
+   "explication": "La moyenne simple donne le même poids à chaque vente ; la moyenne pondérée tient compte des quantités."
+  },
+  {
+   "id": "q6",
+   "theme": "Formule explicite",
+   "question": "Pourquoi définir une mesure calculée avec sa formule ?",
+   "code": "",
+   "options": [
+    "Pour la transformer en dimension",
+    "Pour éviter d'avoir à la filtrer",
+    "Pour que tout le monde l'interprète de la même façon",
+    "Pour supprimer les valeurs extrêmes"
+   ],
+   "correct": 2,
+   "explication": "La formule explicite évite les divergences d'interprétation."
+  },
+  {
+   "id": "q7",
+   "theme": "Comparer deux périodes",
+   "question": "Comment compare-t-on deux périodes dans Tableau d'après la leçon ?",
+   "code": "",
+   "options": [
+    "Deux graphiques de types différents",
+    "Un seul graphique sans filtre",
+    "Un camembert par ville",
+    "Même graphique avec deux filtres de période différents"
+   ],
+   "correct": 3,
+   "explication": "On génère le même graphique avec deux filtres de période, puis on compare."
+  },
+  {
+   "id": "q8",
+   "theme": "Périodes comparables",
+   "question": "Quelle précaution prendre avant de comparer deux périodes ?",
+   "code": "",
+   "options": [
+    "Qu'elles aient la même durée",
+    "Qu'elles se chevauchent",
+    "Que la première soit la plus longue",
+    "Qu'elles contiennent des villes différentes"
+   ],
+   "correct": 0,
+   "explication": "On compare des périodes de même durée, par exemple deux trimestres."
+  },
+  {
+   "id": "q9",
+   "theme": "Variation et tendance",
+   "question": "Un produit progresse entre deux trimestres. Que faut-il vérifier avant de parler de tendance ?",
+   "code": "",
+   "options": [
+    "Si le graphique est un camembert",
+    "Si le produit est en dimension",
+    "Si l'écart est durable",
+    "Si le nombre de filtres est pair"
+   ],
+   "correct": 2,
+   "explication": "Une variation n'est pas forcément une tendance."
+  },
+  {
+   "id": "q10",
+   "theme": "Variation en pourcentage",
+   "question": "Le CA du Cacao est de 400 M FCFA au T1 et 460 M FCFA au T2. Quelle est la variation du T1 au T2 ?",
+   "code": "",
+   "options": [
+    "+13 %",
+    "+60 %",
+    "+6 %",
+    "+15 %"
+   ],
+   "correct": 3,
+   "explication": "(460 - 400) / 400 = 0,15, soit +15 %."
+  },
+  {
+   "id": "q11",
+   "theme": "Nombre de ventes",
+   "question": "Quelle est la différence entre Nombre de ventes et Quantité ?",
+   "code": "",
+   "options": [
+    "Le premier compte les transactions, la seconde additionne les unités",
+    "Le premier additionne les unités, la seconde compte les transactions",
+    "Les deux mesurent la même chose",
+    "Le premier est une dimension"
+   ],
+   "correct": 0,
+   "explication": "Nombre de ventes compte les transactions ; la quantité additionne les unités vendues."
+  },
+  {
+   "id": "q12",
+   "theme": "Taille moyenne d'une vente",
+   "question": "Données :\nVille | Nombre de ventes | Quantité\nAbidjan | 20 | 500\nDaloa | 50 | 400\nQuelle est la taille moyenne d'une vente à Abidjan ?",
+   "code": "",
+   "options": [
+    "20 unités",
+    "25 unités",
+    "500 unités",
+    "8 unités"
+   ],
+   "correct": 1,
+   "explication": "Quantité / nombre de ventes = 500 / 20 = 25."
+  },
+  {
+   "id": "q13",
+   "theme": "Activité commerciale",
+   "question": "Dans le tableau précédent, quelle ville a l'activité commerciale la plus intense et pourquoi ?",
+   "code": "",
+   "options": [
+    "Abidjan, car sa quantité par vente est plus élevée",
+    "Abidjan, car elle a le moins de ventes",
+    "Elles sont égales, car la quantité totale est identique",
+    "Daloa, car elle compte le plus de transactions"
+   ],
+   "correct": 3,
+   "explication": "L'activité se juge au nombre de transactions : Daloa en a 50 contre 20 pour Abidjan, avec des ventes plus petites."
+  },
+  {
+   "id": "q14",
+   "theme": "Méthode en trois temps",
+   "question": "Quel est l'ordre de la méthode pour raconter une histoire avec les données ?",
+   "code": "",
+   "options": [
+    "Choisir le graphique, mettre en avant l'élément clé, conclure avec un chiffre",
+    "Conclure, puis choisir les couleurs, puis filtrer",
+    "Filtrer, trier, puis supprimer le titre",
+    "Ajouter des graphiques, puis un tableau, puis une légende"
+   ],
+   "correct": 0,
+   "explication": "Trois temps : graphique qui prouve l'idée, élément mis en avant, phrase de conclusion chiffrée."
+  },
+  {
+   "id": "q15",
+   "theme": "Titre-message",
+   "question": "Quel titre est le meilleur selon la leçon ?",
+   "code": "",
+   "options": [
+    "Graphique en lignes du chiffre d'affaires",
+    "Le chiffre d'affaires culmine en juin",
+    "Chiffre d'affaires par mois",
+    "Données de ventes 2026"
+   ],
+   "correct": 1,
+   "explication": "Un titre doit annoncer le résultat, pas décrire le graphique."
+  },
+  {
+   "id": "q16",
+   "theme": "Conclusion chiffrée",
+   "question": "Pourquoi terminer par une phrase de conclusion avec un chiffre ?",
+   "code": "",
+   "options": [
+    "Pour remplacer le graphique",
+    "Pour éviter d'utiliser des filtres",
+    "Un décideur retient une phrase, pas un graphique",
+    "Parce que Tableau l'exige"
+   ],
+   "correct": 2,
+   "explication": "La phrase chiffrée est ce qui reste en mémoire du décideur."
+  },
+  {
+   "id": "q17",
+   "theme": "Marge calculée",
+   "question": "Champ calculé Marge = (CA - Coût) / CA.\nVille | CA | Coût\nAbidjan | 1000 | 600\nDaloa | 500 | 350\nQuelle est la marge globale, calculée sur les totaux des deux villes ?",
+   "code": "",
+   "options": [
+    "Environ 36,7 %",
+    "35 %",
+    "40 %",
+    "30 %"
+   ],
+   "correct": 0,
+   "explication": "Totaux : CA 1 500, coût 950 ; (1 500 - 950) / 1 500 = 36,67 %. La moyenne simple de 40 % et 30 % (35 %) est fausse, car elle ignore les poids."
+  },
+  {
+   "id": "q18",
+   "theme": "Croiser les mesures",
+   "question": "Pourquoi croiser le nombre de ventes avec la quantité ?",
+   "code": "",
+   "options": [
+    "Pour transformer la quantité en dimension",
+    "Pour remplacer le filtre de période",
+    "Pour comprendre la taille moyenne d'une vente",
+    "Pour obtenir automatiquement un camembert"
+   ],
+   "correct": 2,
+   "explication": "Le croisement des deux mesures révèle si une ville fait beaucoup de petites ventes ou peu de grosses ventes."
+  }
+ ]
+}

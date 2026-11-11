@@ -33,3 +33,4 @@ psycopg[binary]==3.2.3
 openai>=1.0.0
 arch==6.3.0
 linearmodels==5.3
+reportlab>=4.0

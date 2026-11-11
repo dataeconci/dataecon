@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% block title %}Résultat - DataEcon.Ci{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/certification.css') }}">{% endblock %}
+{% block content %}
+<div class="cert">
+  <section class="cert-hero"><div class="container"><h1>Résultat : {{ outil_nom }} - {{ niveau_nom }}</h1></div></section>
+  <div class="container" style="max-width:860px">
+    <div class="cert-card"><div class="body ex-score {{ 'pass' if att.passed else 'fail' }}">
+      <div class="big">{{ '%.0f'|format(att.score) }} %</div>
+      {% if att.passed %}
+        <h3 class="mt-2">Examen réussi</h3>
+        <p>Votre certificat est disponible.</p>
+        {% if cert %}<a class="cert-btn gold" href="{{ url_for('certificat_download', code=cert.code) }}">Télécharger le certificat (PDF)</a>{% endif %}
+      {% else %}
+        <h3 class="mt-2">Examen non validé (seuil : {{ regles.seuil }} %)</h3>
+        {% if etat.bloque %}
+          <p>Vous avez utilisé vos {{ regles.essais }} tentatives. Une nouvelle tentative sera possible à partir du <strong>{{ etat.bloque_jusqu_au.strftime('%d/%m/%Y') }}</strong>.</p>
+        {% else %}
+          <p>Il vous reste <strong>{{ etat.restantes }}</strong> tentative(s). Relisez le corrigé ci-dessous et revoyez le cours avant de réessayer.</p>
+          <form method="post" action="{{ url_for('certification_start', outil=att.outil, niveau=att.niveau) }}" class="d-inline">
+            <button class="cert-btn" type="submit">Réessayer</button></form>
+        {% endif %}
+        <a class="cert-btn light" href="{{ url_for('formations_player', outil=att.outil, niveau=att.niveau) }}">Revoir le cours</a>
+      {% endif %}
+    </div></div>
+    <h2 class="h5 mb-3" style="color:#0b2a4a">Corrigé détaillé</h2>
+    {% for d in details %}
+    <div class="ex-q">
+      <div class="th">Question {{ loop.index }} - {{ d.theme }} <span class="cert-badge {{ 'ok' if d.ok else 'bad' }}">{{ 'Correct' if d.ok else 'Incorrect' }}</span></div>
+      <h3>{{ d.question }}</h3>
+      {% if d.code %}<pre>{{ d.code }}</pre>{% endif %}
+      {% for o in d.options %}
+      <div class="rv-opt {{ 'good' if loop.index0 == d.bonne else ('wrong' if loop.index0 == d.choisi else '') }}">{{ o }}
+        {% if loop.index0 == d.bonne %}<strong> - bonne réponse</strong>{% elif loop.index0 == d.choisi %} - votre réponse{% endif %}</div>
+      {% endfor %}
+      {% if d.explication %}<div class="rv-expl">{{ d.explication }}</div>{% endif %}
+    </div>
+    {% endfor %}
+    <p><a href="{{ url_for('certification_hub') }}">Retour aux certifications</a></p>
+  </div>
+</div>
+{% endblock %}

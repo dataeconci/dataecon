@@ -1,0 +1,258 @@
+{
+ "outil": "python",
+ "niveau": "avance",
+ "questions": [
+  {
+   "id": "q1",
+   "theme": "Choix du graphique",
+   "question": "Quel graphique matplotlib est le plus adapté pour visualiser la relation entre le revenu et les dépenses totales des ménages ?",
+   "code": "",
+   "options": [
+    "Un diagramme en barres (plt.bar)",
+    "Un histogramme (plt.hist)",
+    "Une courbe temporelle (plt.plot) sur l'indice des ménages",
+    "Un nuage de points (plt.scatter)"
+   ],
+   "correct": 3,
+   "explication": "Le nuage de points représente chaque observation selon deux variables et révèle la forme de leur relation ; l'histogramme ne décrit qu'une seule variable."
+  },
+  {
+   "id": "q2",
+   "theme": "Asymétrie et moyenne",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\ns = pd.Series([10, 12, 13, 15, 200])\nprint(s.mean() > s.median(), round(s.skew(), 2))",
+   "options": [
+    "False 2.23",
+    "True 2.23",
+    "True -2.23",
+    "False 0.0"
+   ],
+   "correct": 1,
+   "explication": "La valeur extrême 200 tire la moyenne (50) au-dessus de la médiane (13) : l'asymétrie à droite est positive."
+  },
+  {
+   "id": "q3",
+   "theme": "Règle de l'IQR",
+   "question": "Combien de valeurs aberrantes la règle de l'IQR détecte-t-elle ici ?",
+   "code": "import pandas as pd\nr = pd.Series([10, 12, 13, 14, 15, 16, 17, 60])\nq1, q3 = r.quantile(0.25), r.quantile(0.75)\niqr = q3 - q1\nprint(int(((r < q1 - 1.5 * iqr) | (r > q3 + 1.5 * iqr)).sum()))",
+   "options": [
+    "0",
+    "2",
+    "1",
+    "3"
+   ],
+   "correct": 2,
+   "explication": "Q1 = 12,75, Q3 = 16,25 et IQR = 3,5 : seules les valeurs hors de [7,5 ; 21,5] sont suspectes, soit uniquement 60."
+  },
+  {
+   "id": "q4",
+   "theme": "Histogramme",
+   "question": "Quel graphique faut-il choisir pour examiner la distribution d'une variable continue comme le revenu mensuel ?",
+   "code": "",
+   "options": [
+    "Un histogramme",
+    "Un nuage de points",
+    "Un diagramme en barres comparant les régions",
+    "Un camembert"
+   ],
+   "correct": 0,
+   "explication": "L'histogramme découpe la variable en classes et montre sa forme : asymétrie, étendue et valeurs extrêmes."
+  },
+  {
+   "id": "q5",
+   "theme": "Corrélation de Pearson",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\nx = pd.Series([1, 2, 3, 4])\ny = pd.Series([8, 6, 4, 2])\nprint(x.corr(y))",
+   "options": [
+    "-1.0",
+    "1.0",
+    "0.0",
+    "-0.5"
+   ],
+   "correct": 0,
+   "explication": "y diminue de façon parfaitement linéaire quand x augmente : la corrélation de Pearson vaut -1."
+  },
+  {
+   "id": "q6",
+   "theme": "Corrélation et causalité",
+   "question": "Deux variables ont une corrélation de 0,85. Que peut-on conclure ?",
+   "code": "",
+   "options": [
+    "La première cause la seconde",
+    "85 % des observations sont expliquées par la relation",
+    "Elles évoluent ensemble, mais cela ne prouve pas que l'une cause l'autre",
+    "La relation est forcément due au hasard"
+   ],
+   "correct": 2,
+   "explication": "Une forte corrélation peut venir d'un troisième facteur ; corrélation n'est pas causalité."
+  },
+  {
+   "id": "q7",
+   "theme": "Interprétation de la p-value",
+   "question": "Un test donne p = 0,03 avec un seuil de 5 %. Quelle est la conclusion correcte ?",
+   "code": "",
+   "options": [
+    "On accepte H0 car p est inférieur à 0,05",
+    "On rejette H0 : la différence observée est statistiquement significative",
+    "H0 est vraie avec une probabilité de 97 %",
+    "La différence est forcément importante en pratique"
+   ],
+   "correct": 1,
+   "explication": "Comme p < 0,05, on rejette H0 ; significatif ne veut pas dire important, il faut aussi regarder l'ampleur de l'écart."
+  },
+  {
+   "id": "q8",
+   "theme": "Test t de Student",
+   "question": "Qu'affiche ce code ?",
+   "code": "from scipy import stats\na = [10, 12, 11, 13, 12]\nb = [20, 22, 21, 23, 22]\nt, p = stats.ttest_ind(a, b)\nprint(t < 0, p < 0.05)",
+   "options": [
+    "True False",
+    "False True",
+    "False False",
+    "True True"
+   ],
+   "correct": 3,
+   "explication": "La moyenne du groupe a (11,6) est inférieure à celle de b (21,6) donc t est négatif, et l'écart est très significatif (p < 0,05)."
+  },
+  {
+   "id": "q9",
+   "theme": "Test du khi-deux",
+   "question": "Quel test permet d'évaluer l'indépendance entre deux variables qualitatives, comme le milieu et la possession de mobile money ?",
+   "code": "",
+   "options": [
+    "ttest_ind appliqué aux deux colonnes",
+    "linregress entre les deux colonnes",
+    "chi2_contingency appliqué à pd.crosstab des deux variables",
+    "corr() de Pearson entre les deux colonnes"
+   ],
+   "correct": 2,
+   "explication": "Le khi-deux compare un tableau croisé observé à celui attendu sous indépendance ; t de Student et Pearson exigent des variables quantitatives."
+  },
+  {
+   "id": "q10",
+   "theme": "Régression linéaire simple",
+   "question": "Que affiche ce code ? (pente puis ordonnée à l'origine)",
+   "code": "from scipy import stats\nres = stats.linregress([1, 2, 3, 4, 5], [3, 5, 7, 9, 11])\nprint(round(res.slope, 2), round(res.intercept, 2))",
+   "options": [
+    "2.0 1.0",
+    "1.0 2.0",
+    "2.0 3.0",
+    "3.0 1.0"
+   ],
+   "correct": 0,
+   "explication": "Les points vérifient exactement y = 1 + 2x : la pente vaut 2 et l'ordonnée à l'origine 1."
+  },
+  {
+   "id": "q11",
+   "theme": "Coefficient de détermination",
+   "question": "Une régression a un R² de 0,64. Que signifie ce résultat ?",
+   "code": "",
+   "options": [
+    "La pente vaut 0,64",
+    "64 % des prédictions sont exactes",
+    "La variable explicative cause 64 % de y",
+    "Le modèle explique 64 % de la variance de la variable dépendante"
+   ],
+   "correct": 3,
+   "explication": "Le R² mesure la part de la variance de y expliquée par le modèle ; il ne dit rien sur la causalité ni sur la pente."
+  },
+  {
+   "id": "q12",
+   "theme": "Modèle log-linéaire",
+   "question": "Le coefficient de x vaut 0,05 dans le modèle sur log(y). Comment l'interpréter ?",
+   "code": "import numpy as np\nimport pandas as pd\nimport statsmodels.formula.api as smf\nx = np.arange(1, 11)\ndf = pd.DataFrame({'x': x, 'y': np.exp(0.05 * x + 1)})\nres = smf.ols('np.log(y) ~ x', data=df).fit()\nprint(round(res.params['x'], 2))",
+   "options": [
+    "Une unité de x supplémentaire augmente y de 0,05 unité",
+    "Une unité de x supplémentaire augmente y d'environ 5 %",
+    "Une unité de x supplémentaire augmente y de 0,05 %",
+    "Une unité de x supplémentaire augmente y de 50 %"
+   ],
+   "correct": 1,
+   "explication": "Avec une variable dépendante en logarithme, un coefficient b se lit comme une variation d'environ 100 x b %, soit 5 %."
+  },
+  {
+   "id": "q13",
+   "theme": "Variables qualitatives dans statsmodels",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\nimport statsmodels.formula.api as smf\ndf = pd.DataFrame({'y': [1, 2, 3, 4, 5, 6], 'm': ['R', 'U', 'R', 'U', 'R', 'U']})\nres = smf.ols('y ~ C(m)', data=df).fit()\nprint(list(res.params.index))",
+   "options": [
+    "['Intercept', 'C(m)[T.R]', 'C(m)[T.U]']",
+    "['Intercept', 'm']",
+    "['Intercept', 'C(m)[T.U]']",
+    "['C(m)[T.U]']"
+   ],
+   "correct": 2,
+   "explication": "C(m) crée des indicatrices et omet la première modalité (R) prise comme référence ; il reste le paramètre de U et la constante."
+  },
+  {
+   "id": "q14",
+   "theme": "Tableau croisé normalisé",
+   "question": "Quelle valeur affiche ce code ?",
+   "code": "import pandas as pd\na = ['R', 'R', 'U', 'U', 'U']\nb = ['oui', 'non', 'oui', 'oui', 'non']\nct = pd.crosstab(pd.Series(a), pd.Series(b), normalize='index')\nprint(round(ct.loc['U', 'oui'], 3))",
+   "options": [
+    "0.667",
+    "0.4",
+    "0.5",
+    "1.0"
+   ],
+   "correct": 0,
+   "explication": "Avec normalize='index', chaque ligne somme à 1 : parmi les 3 ménages urbains, 2 répondent « oui », soit 2/3."
+  },
+  {
+   "id": "q15",
+   "theme": "Moyenne mobile",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\ns = pd.Series([100, 120, 150, 180])\nprint(s.rolling(2).mean().dropna().tolist())",
+   "options": [
+    "[100.0, 120.0, 150.0, 180.0]",
+    "[110.0, 135.0, 165.0]",
+    "[120.0, 150.0, 180.0]",
+    "[110.0, 135.0, 165.0, 180.0]"
+   ],
+   "correct": 1,
+   "explication": "rolling(2).mean() moyenne chaque valeur avec la précédente ; la première position est NaN et dropna() la supprime."
+  },
+  {
+   "id": "q16",
+   "theme": "Croissance avec pct_change",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\ns = pd.Series([100, 120, 150, 240])\nprint(s.pct_change(2).dropna().tolist())",
+   "options": [
+    "[0.2, 0.25, 0.6]",
+    "[50.0, 100.0]",
+    "[1.5, 2.0]",
+    "[0.5, 1.0]"
+   ],
+   "correct": 3,
+   "explication": "pct_change(2) compare chaque valeur à celle de deux périodes plus tôt : 150/100 - 1 = 0,5 et 240/120 - 1 = 1,0."
+  },
+  {
+   "id": "q17",
+   "theme": "Séparation apprentissage et test",
+   "question": "Pourquoi sépare-t-on les données avec train_test_split avant d'évaluer un modèle ?",
+   "code": "",
+   "options": [
+    "Pour mesurer la performance sur des données que le modèle n'a jamais vues",
+    "Pour accélérer le calcul du modèle",
+    "Pour supprimer les valeurs manquantes",
+    "Pour augmenter le R² sur l'échantillon d'apprentissage"
+   ],
+   "correct": 0,
+   "explication": "Évaluer sur l'échantillon test, non utilisé pour ajuster le modèle, donne une estimation honnête de sa capacité de prédiction."
+  },
+  {
+   "id": "q18",
+   "theme": "Variables indicatrices",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\nm = pd.Series(['R', 'U', 'R'])\nprint(pd.get_dummies(m, drop_first=True).columns.tolist())",
+   "options": [
+    "['R', 'U']",
+    "['U']",
+    "['R']",
+    "['milieu']"
+   ],
+   "correct": 1,
+   "explication": "get_dummies avec drop_first=True supprime la première modalité (R) pour éviter la colinéarité parfaite avec la constante."
+  }
+ ]
+}

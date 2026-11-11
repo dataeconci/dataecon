@@ -1,0 +1,258 @@
+{
+ "outil": "tableau",
+ "niveau": "intermediaire",
+ "questions": [
+  {
+   "id": "q1",
+   "theme": "Filtre",
+   "question": "Que fait un filtre dans le Mini-Tableau ?",
+   "code": "",
+   "options": [
+    "Il masque des données sans les supprimer",
+    "Il supprime définitivement les lignes exclues",
+    "Il trie les données par valeur",
+    "Il remplace la mesure par une moyenne"
+   ],
+   "correct": 0,
+   "explication": "Un filtre masque les données ; remettre « Toutes » les fait réapparaître."
+  },
+  {
+   "id": "q2",
+   "theme": "Effet d'un filtre",
+   "question": "Ventes :\nVille | Produit | Quantité\nAbidjan | Cacao | 40\nDaloa | Café | 30\nAbidjan | Café | 25\nBouaké | Cacao | 50\nAbidjan | Cacao | 35\nAprès le filtre Ville = Abidjan, quel est le total de la Quantité ?",
+   "code": "",
+   "options": [
+    "140",
+    "100",
+    "155",
+    "65"
+   ],
+   "correct": 1,
+   "explication": "Abidjan : 40 + 25 + 35 = 100 ; les totaux changent avec le filtre."
+  },
+  {
+   "id": "q3",
+   "theme": "Tri décroissant",
+   "question": "Avec un tri décroissant sur la mesure, où se trouve la plus grande valeur ?",
+   "code": "",
+   "options": [
+    "À droite du graphique",
+    "Au centre",
+    "À gauche du graphique",
+    "Elle est masquée"
+   ],
+   "correct": 2,
+   "explication": "Le tri décroissant place la plus grande valeur à gauche et la plus petite à droite."
+  },
+  {
+   "id": "q4",
+   "theme": "Tri alphabétique",
+   "question": "Dans quel cas réserve-t-on l'ordre alphabétique ?",
+   "code": "",
+   "options": [
+    "Quand on compare des valeurs proches",
+    "Quand on affiche un classement",
+    "Quand l'axe est un mois",
+    "Quand le lecteur cherche un nom précis"
+   ],
+   "correct": 3,
+   "explication": "Pour comparer, on trie par valeur ; l'ordre alphabétique sert à retrouver un nom."
+  },
+  {
+   "id": "q5",
+   "theme": "Tri et dates",
+   "question": "Quelle règle s'applique à une série de dates ?",
+   "code": "",
+   "options": [
+    "La trier par valeur décroissante",
+    "Garder l'ordre chronologique, sans tri par valeur",
+    "La trier par ordre alphabétique",
+    "La transformer en camembert"
+   ],
+   "correct": 1,
+   "explication": "Trier des dates par valeur casserait la lecture du temps."
+  },
+  {
+   "id": "q6",
+   "theme": "Top N",
+   "question": "Quel est le bon ordre pour obtenir les trois meilleures villes ?",
+   "code": "",
+   "options": [
+    "Appliquer le Top 3, puis trier",
+    "Appliquer le Top 3 sans aucun tri",
+    "Trier d'abord en décroissant, puis appliquer le Top 3",
+    "Trier par ordre alphabétique puis afficher le Top 3"
+   ],
+   "correct": 2,
+   "explication": "Le Top N doit toujours être appliqué après le tri."
+  },
+  {
+   "id": "q7",
+   "theme": "Top 3",
+   "question": "Chiffre d'affaires par ville :\nVille | CA\nAbidjan | 520\nDaloa | 310\nBouaké | 450\nKorhogo | 180\nYamoussoukro | 270\nSan-Pédro | 90\nQuelle est la somme du CA des trois meilleures villes (Top 3) ?",
+   "code": "",
+   "options": [
+    "1 190",
+    "1 780",
+    "1 430",
+    "1280"
+   ],
+   "correct": 3,
+   "explication": "Top 3 : Abidjan 520, Bouaké 450, Daloa 310 ; 520 + 450 + 310 = 1 280."
+  },
+  {
+   "id": "q8",
+   "theme": "Classement",
+   "question": "Pourquoi les barres horizontales conviennent-elles aux classements ?",
+   "code": "",
+   "options": [
+    "Les noms longs se lisent plus facilement",
+    "Elles n'acceptent que des dates",
+    "Elles évitent d'avoir à trier",
+    "Elles affichent automatiquement des parts"
+   ],
+   "correct": 0,
+   "explication": "Pour un classement, les noms sont longs et se lisent bien sur l'axe vertical."
+  },
+  {
+   "id": "q9",
+   "theme": "Camembert",
+   "question": "Dans quel cas un camembert est-il approprié ?",
+   "code": "",
+   "options": [
+    "Comparer 15 villes",
+    "Suivre un prix mois par mois",
+    "Répartir un total entre 4 catégories dont la somme a un sens",
+    "Comparer des valeurs presque identiques"
+   ],
+   "correct": 2,
+   "explication": "Le camembert fonctionne avec peu de catégories (5 au maximum) formant un total."
+  },
+  {
+   "id": "q10",
+   "theme": "Parts proches",
+   "question": "Trois produits pèsent 33 %, 33 % et 34 % du CA. Que choisir ?",
+   "code": "",
+   "options": [
+    "Un camembert à trois parts",
+    "Un graphique en lignes",
+    "Un tri alphabétique sans graphique",
+    "Des barres, plus lisibles pour comparer"
+   ],
+   "correct": 3,
+   "explication": "Quand les valeurs sont proches, les barres sont plus lisibles qu'un camembert."
+  },
+  {
+   "id": "q11",
+   "theme": "Choix du graphique",
+   "question": "Quelle question faut-il se poser avant de choisir un type de graphique ?",
+   "code": "",
+   "options": [
+    "Quelle comparaison veut-on faire ?",
+    "Quelle couleur est la plus joyeuse ?",
+    "Combien de filtres peut-on empiler ?",
+    "Quel graphique est le plus original ?"
+   ],
+   "correct": 0,
+   "explication": "Le type de graphique dépend de la comparaison à mettre en évidence."
+  },
+  {
+   "id": "q12",
+   "theme": "Lire une tendance",
+   "question": "Quels trois éléments cherche-t-on dans un graphique en lignes ?",
+   "code": "",
+   "options": [
+    "La moyenne, la médiane et le mode",
+    "Le sommet, le creux et la direction générale",
+    "Le Top 3, le tri et le filtre",
+    "La dimension, la mesure et la légende"
+   ],
+   "correct": 1,
+   "explication": "La leçon invite à repérer le sommet, le creux et la direction générale."
+  },
+  {
+   "id": "q13",
+   "theme": "Mois et tri",
+   "question": "Avec la dimension Mois, que faire de l'ordre des données ?",
+   "code": "",
+   "options": [
+    "Le trier par valeur décroissante",
+    "Le trier par ordre alphabétique",
+    "Garder seulement le Top 3",
+    "Le laisser chronologique, sans trier"
+   ],
+   "correct": 3,
+   "explication": "En dimension Mois, les données restent chronologiques ; on ne trie pas."
+  },
+  {
+   "id": "q14",
+   "theme": "Filtre et tendance",
+   "question": "Comment suivre l'évolution d'un seul produit dans le temps ?",
+   "code": "",
+   "options": [
+    "Un graphique en lignes avec un filtre sur le produit",
+    "Un camembert sans filtre",
+    "Un tri alphabétique des produits",
+    "Des barres avec le temps sur l'axe Y"
+   ],
+   "correct": 0,
+   "explication": "On combine le graphique en lignes (temps en abscisse) avec un filtre produit."
+  },
+  {
+   "id": "q15",
+   "theme": "Filtre produit",
+   "question": "Ventes :\nProduit | Période | Quantité\nCacao | T1 | 80\nCafé | T1 | 50\nCacao | T2 | 95\nCacao | T1 | 70\nCafé | T2 | 60\nAvec le filtre Produit = Cacao (toutes périodes), quelle est la Quantité totale ?",
+   "code": "",
+   "options": [
+    "150",
+    "245",
+    "110",
+    "355"
+   ],
+   "correct": 1,
+   "explication": "Cacao : 80 + 95 + 70 = 245."
+  },
+  {
+   "id": "q16",
+   "theme": "Part du Top 2",
+   "question": "Ventes par ville :\nVille | Ventes\nA | 300\nB | 200\nC | 100\nD | 250\nE | 150\nQuelle part du total représentent les deux meilleures villes ?",
+   "code": "",
+   "options": [
+    "30 %",
+    "60 %",
+    "55 %",
+    "50 %"
+   ],
+   "correct": 2,
+   "explication": "Total = 1 000 ; les deux meilleures valent 300 + 250 = 550, soit 55 %."
+  },
+  {
+   "id": "q17",
+   "theme": "Sommet et creux",
+   "question": "Ventes mensuelles :\nMois | Ventes\nJanv | 120\nFévr | 95\nMars | 140\nAvr | 180\nMai | 110\nJuin | 160\nQuel est l'écart entre le sommet et le creux ?",
+   "code": "",
+   "options": [
+    "85",
+    "60",
+    "45",
+    "275"
+   ],
+   "correct": 0,
+   "explication": "Sommet = 180 (avril), creux = 95 (février) ; 180 - 95 = 85."
+  },
+  {
+   "id": "q18",
+   "theme": "Top N sans tri",
+   "question": "Que risque-t-on en appliquant un Top 3 sans avoir trié les villes par valeur ?",
+   "code": "",
+   "options": [
+    "Afficher les trois plus grandes valeurs quand même",
+    "Supprimer définitivement les autres villes",
+    "Afficher trois villes qui ne sont pas forcément les meilleures",
+    "Transformer la dimension en mesure"
+   ],
+   "correct": 2,
+   "explication": "Le Top N doit être appliqué après un tri décroissant ; sans tri, il ne garantit pas les meilleures valeurs."
+  }
+ ]
+}

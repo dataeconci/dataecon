@@ -1,0 +1,258 @@
+{
+ "outil": "sql",
+ "niveau": "debutant",
+ "questions": [
+  {
+   "id": "q1",
+   "theme": "SELECT et FROM",
+   "question": "Dans une requête SQL, quelle clause indique la table dans laquelle on lit les données ?",
+   "code": "",
+   "options": [
+    "SELECT",
+    "WHERE",
+    "FROM",
+    "ORDER BY"
+   ],
+   "correct": 2,
+   "explication": "FROM est suivi du nom de la table ; SELECT, lui, liste les colonnes à afficher."
+  },
+  {
+   "id": "q2",
+   "theme": "WHERE",
+   "question": "Combien de lignes renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT * FROM ventes WHERE produit = 'Cacao';",
+   "options": [
+    "2",
+    "3",
+    "4",
+    "8"
+   ],
+   "correct": 1,
+   "explication": "Trois ventes (id 1, 3 et 6) concernent le cacao ; WHERE ne garde que ces lignes."
+  },
+  {
+   "id": "q3",
+   "theme": "AND / OR",
+   "question": "Combien de lignes renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT id FROM ventes WHERE quantite > 150 OR ville = 'Man';",
+   "options": [
+    "1",
+    "2",
+    "4",
+    "3"
+   ],
+   "correct": 3,
+   "explication": "Avec OR, une ligne suffit à remplir une condition : id 3 (quantité 200), id 4 et id 7 (ville Man). La quantité NULL de l'id 7 est quand même gardée grâce à la ville."
+  },
+  {
+   "id": "q4",
+   "theme": "SELECT *",
+   "question": "Que renvoie la requête SELECT * FROM ventes LIMIT 5; ?",
+   "code": "",
+   "options": [
+    "Uniquement la colonne * des 5 premières lignes",
+    "Les 5 lignes ayant les plus grandes valeurs",
+    "Le nombre 5",
+    "Toutes les colonnes des 5 premières lignes"
+   ],
+   "correct": 3,
+   "explication": "L'étoile * désigne toutes les colonnes, et LIMIT 5 ne garde que les 5 premières lignes, sans tri particulier."
+  },
+  {
+   "id": "q5",
+   "theme": "ORDER BY et LIMIT",
+   "question": "Quels id sont renvoyés, dans cet ordre ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT id FROM ventes\nORDER BY quantite DESC\nLIMIT 2;",
+   "options": [
+    "1 puis 3",
+    "3 puis 1",
+    "3 puis 5",
+    "5 puis 3"
+   ],
+   "correct": 2,
+   "explication": "Le tri décroissant place la quantité 200 (id 3) puis 150 (id 5) en tête, et LIMIT 2 garde ces deux lignes."
+  },
+  {
+   "id": "q6",
+   "theme": "Ordre des clauses",
+   "question": "Cette requête provoque une erreur. Quelle en est la cause ?",
+   "code": "SELECT produit, quantite\nFROM ventes\nORDER BY quantite DESC\nWHERE ville = 'Man';",
+   "options": [
+    "WHERE doit être placé avant ORDER BY",
+    "Il manque la clause GROUP BY",
+    "DESC n'est pas autorisé avec ORDER BY",
+    "Le nom de ville doit être écrit sans guillemets"
+   ],
+   "correct": 0,
+   "explication": "L'ordre est SELECT, FROM, WHERE, puis ORDER BY. Placer WHERE après ORDER BY est une erreur de syntaxe."
+  },
+  {
+   "id": "q7",
+   "theme": "GROUP BY",
+   "question": "Quelle valeur la colonne total prend-elle pour le Café ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT produit, SUM(quantite) AS total\nFROM ventes\nGROUP BY produit;",
+   "options": [
+    "60",
+    "150",
+    "810",
+    "320"
+   ],
+   "correct": 3,
+   "explication": "Le Café apparaît trois fois (60, 150 et 110) : 60 + 150 + 110 = 320."
+  },
+  {
+   "id": "q8",
+   "theme": "Colonnes calculées",
+   "question": "Quelle valeur la colonne montant affiche-t-elle ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT quantite * prix_unitaire AS montant\nFROM ventes\nWHERE id = 3;",
+   "options": [
+    "1250",
+    "200",
+    "201250",
+    "250000"
+   ],
+   "correct": 3,
+   "explication": "On multiplie la quantité par le prix : 200 x 1250 = 250 000."
+  },
+  {
+   "id": "q9",
+   "theme": "Alias AS",
+   "question": "À quoi sert le mot AS dans SELECT quantite * prix_unitaire AS montant ?",
+   "code": "",
+   "options": [
+    "Donner un nom lisible à la colonne calculée",
+    "Filtrer les lignes dont le montant est positif",
+    "Trier les résultats par montant",
+    "Créer définitivement une nouvelle colonne dans la table"
+   ],
+   "correct": 0,
+   "explication": "AS définit un alias : un nom d'affichage pour la colonne du résultat, sans modifier la table."
+  },
+  {
+   "id": "q10",
+   "theme": "IN",
+   "question": "Combien de lignes renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT * FROM ventes\nWHERE ville IN ('Daloa', 'Man');",
+   "options": [
+    "2",
+    "4",
+    "3",
+    "5"
+   ],
+   "correct": 1,
+   "explication": "Daloa compte 2 ventes (id 2 et 3) et Man 2 ventes (id 4 et 7), soit 4 lignes."
+  },
+  {
+   "id": "q11",
+   "theme": "BETWEEN",
+   "question": "Combien de lignes renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT * FROM ventes\nWHERE quantite BETWEEN 80 AND 120;",
+   "options": [
+    "2",
+    "3",
+    "4",
+    "5"
+   ],
+   "correct": 2,
+   "explication": "BETWEEN inclut les bornes : quantités 120, 80, 90 et 110. La valeur NULL n'est jamais retenue."
+  },
+  {
+   "id": "q12",
+   "theme": "LIKE",
+   "question": "Combien de villes différentes renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT DISTINCT ville FROM ventes\nWHERE ville LIKE '%an';",
+   "options": [
+    "1",
+    "3",
+    "2",
+    "4"
+   ],
+   "correct": 2,
+   "explication": "Seules Abidjan et Man se terminent par « an » : le symbole % remplace n'importe quel début."
+  },
+  {
+   "id": "q13",
+   "theme": "COUNT(colonne)",
+   "question": "Que renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT COUNT(quantite) FROM ventes;",
+   "options": [
+    "8",
+    "6",
+    "7",
+    "810"
+   ],
+   "correct": 2,
+   "explication": "COUNT(colonne) ignore les valeurs NULL : la quantité de la vente 7 est vide, donc 7 valeurs sur 8 lignes."
+  },
+  {
+   "id": "q14",
+   "theme": "COUNT DISTINCT",
+   "question": "Que renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT COUNT(DISTINCT ville) FROM ventes;",
+   "options": [
+    "8",
+    "4",
+    "3",
+    "5"
+   ],
+   "correct": 1,
+   "explication": "Les villes distinctes sont Abidjan, Daloa, Man et Bouaké."
+  },
+  {
+   "id": "q15",
+   "theme": "Filtrer par période",
+   "question": "Combien de lignes renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT * FROM ventes\nWHERE date >= '2024-04-01'\n  AND date <= '2024-06-30';",
+   "options": [
+    "3",
+    "2",
+    "4",
+    "5"
+   ],
+   "correct": 0,
+   "explication": "Les dates du 20 avril, du 2 mai et du 18 juin sont dans l'intervalle. Les dates en texte AAAA-MM-JJ se comparent correctement."
+  },
+  {
+   "id": "q16",
+   "theme": "AVG et NULL",
+   "question": "Que renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT ROUND(AVG(quantite), 1) FROM ventes;",
+   "options": [
+    "101.3",
+    "115.7",
+    "810.0",
+    "120.0"
+   ],
+   "correct": 1,
+   "explication": "AVG ignore les NULL : 810 divisé par 7 valeurs donne environ 115,7 (et non 810 / 8)."
+  },
+  {
+   "id": "q17",
+   "theme": "Opérateur différent",
+   "question": "Combien de lignes renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT * FROM ventes\nWHERE produit <> 'Cacao';",
+   "options": [
+    "5",
+    "3",
+    "8",
+    "6"
+   ],
+   "correct": 0,
+   "explication": "L'opérateur <> signifie différent de : 8 lignes moins les 3 ventes de cacao."
+  },
+  {
+   "id": "q18",
+   "theme": "Guillemets et texte",
+   "question": "Cette requête provoque une erreur. Pourquoi ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT * FROM ventes\nWHERE ville = Daloa;",
+   "options": [
+    "Le texte Daloa n'est pas entre guillemets simples",
+    "WHERE ne peut pas être utilisé avec =",
+    "La colonne ville n'existe pas dans ventes",
+    "Il manque une clause ORDER BY"
+   ],
+   "correct": 0,
+   "explication": "Sans guillemets, SQL prend Daloa pour un nom de colonne. Les valeurs texte s'écrivent entre apostrophes."
+  }
+ ]
+}

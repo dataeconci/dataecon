@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block title %}Vérifier un certificat - DataEcon.Ci{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/certification.css') }}">{% endblock %}
+{% block content %}
+<div class="cert">
+  <section class="cert-hero"><div class="container"><h1>Vérification de certificat</h1><p>Saisissez le code figurant sur le certificat pour confirmer son authenticité.</p></div></section>
+  <div class="container vf">
+    <div class="cert-card"><div class="body">
+      <form method="post" class="d-flex gap-2">
+        <input class="form-control" name="code" placeholder="DEC-XXXXXXXXXX" value="{{ code or '' }}" required>
+        <button class="cert-btn" type="submit">Vérifier</button>
+      </form>
+    </div></div>
+    {% if code %}
+      {% if cert %}
+      <div class="cert-card"><header>Certificat authentique</header><div class="body">
+        <p><span class="cert-badge ok">Valide</span></p>
+        <div class="cert-row"><span>Titulaire</span><strong>{{ cert.holder_name }}</strong></div>
+        <div class="cert-row"><span>Cours</span><strong>{{ outils[cert.outil] }} - {{ niveaux[cert.niveau] }}</strong></div>
+        <div class="cert-row"><span>Note</span><strong>{{ '%.0f'|format(cert.score) }} %</strong></div>
+        <div class="cert-row"><span>Délivré le</span><strong>{{ cert.issued_at.strftime('%d/%m/%Y') }}</strong></div>
+        <div class="cert-row"><span>Code</span><strong>{{ cert.code }}</strong></div>
+      </div></div>
+      {% else %}
+      <div class="cert-card"><div class="body"><span class="cert-badge bad">Introuvable</span> Aucun certificat ne correspond au code « {{ code }} ».</div></div>
+      {% endif %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+.cert { --navy:#0b2a4a; --steel:#1f5f99; --gold:#c2a15a; --line:#e3e8ef; --soft:#f5f7fa; --ok:#2e7d5b; --warn:#a8791f; --bad:#a23b3b; padding-bottom:50px; background:#f8f9fa; min-height:70vh; }
+.cert-hero { background:linear-gradient(135deg,#0b2a4a,#123a63 60%,#1f5f99); color:#fff; padding:38px 0 30px; margin-bottom:28px; }
+.cert-hero h1 { font-size:1.8rem; font-weight:700; margin:0 0 6px; }
+.cert-hero p { margin:0; opacity:.85; max-width:780px; }
+.cert-rules { display:flex; flex-wrap:wrap; gap:12px; margin-top:18px; }
+.cert-rules div { background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22); border-radius:10px; padding:8px 14px; font-size:.85rem; }
+.cert-rules strong { display:block; font-size:1.1rem; }
+.cert-card { background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 2px 12px rgba(11,42,74,.06); margin-bottom:20px; overflow:hidden; }
+.cert-card > header { padding:14px 22px; border-bottom:1px solid var(--line); font-weight:700; color:var(--navy); font-size:1.05rem; }
+.cert-card .body { padding:20px 22px; }
+.cert-row { display:flex; align-items:center; justify-content:space-between; gap:14px; padding:12px 0; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+.cert-row:last-child { border-bottom:0; }
+.cert-row .nm { font-weight:600; color:var(--navy); }
+.cert-row .st { font-size:.85rem; color:#64748b; }
+.cert-badge { display:inline-block; padding:3px 10px; border-radius:99px; font-size:.75rem; font-weight:600; }
+.cert-badge.ok { background:#e5f3ec; color:var(--ok); }
+.cert-badge.warn { background:#fbf1de; color:var(--warn); }
+.cert-badge.bad { background:#f7e4e4; color:var(--bad); }
+.cert-badge.neutral { background:var(--soft); color:#475569; }
+.cert-btn { display:inline-block; background:var(--navy); color:#fff; border:0; border-radius:9px; padding:9px 18px; font-weight:600; font-size:.9rem; text-decoration:none; cursor:pointer; }
+.cert-btn:hover { background:var(--steel); color:#fff; }
+.cert-btn.gold { background:var(--gold); color:#0b2a4a; }
+.cert-btn.light { background:#fff; color:var(--navy); border:1px solid var(--navy); }
+.cert-btn[disabled], .cert-btn.disabled { opacity:.5; pointer-events:none; }
+.cert-list { margin:0; padding-left:20px; color:#334155; }
+.cert-list li { margin-bottom:6px; }
+/* examen */
+.ex-bar { position:sticky; top:0; z-index:20; background:var(--navy); color:#fff; padding:10px 0; }
+.ex-bar .in { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+.ex-timer { font-variant-numeric:tabular-nums; font-weight:700; font-size:1.2rem; background:rgba(255,255,255,.14); padding:4px 14px; border-radius:8px; }
+.ex-timer.low { background:var(--bad); }
+.ex-q { background:#fff; border:1px solid var(--line); border-radius:14px; padding:20px 22px; margin-bottom:16px; }
+.ex-q .th { font-size:.75rem; text-transform:uppercase; letter-spacing:.05em; color:var(--steel); font-weight:700; }
+.ex-q h3 { font-size:1.05rem; margin:6px 0 10px; color:var(--navy); }
+.ex-q pre { background:#0f1b2d; color:#e6edf6; border-radius:8px; padding:12px 14px; font-size:.85rem; overflow-x:auto; }
+.ex-opt { display:flex; gap:10px; align-items:flex-start; border:1px solid var(--line); border-radius:10px; padding:10px 14px; margin-top:8px; cursor:pointer; }
+.ex-opt:hover { border-color:var(--steel); background:#f3f8fd; }
+.ex-opt input { margin-top:4px; }
+.ex-opt:has(input:checked) { border-color:var(--navy); background:#eaf1f9; }
+.ex-score { text-align:center; padding:30px 20px; }
+.ex-score .big { font-size:3.2rem; font-weight:800; color:var(--navy); line-height:1; }
+.ex-score.pass .big { color:var(--ok); }
+.ex-score.fail .big { color:var(--bad); }
+.rv-opt { padding:8px 12px; border-radius:8px; margin-top:6px; border:1px solid var(--line); font-size:.92rem; }
+.rv-opt.good { background:#e5f3ec; border-color:#a9d6bf; }
+.rv-opt.wrong { background:#f7e4e4; border-color:#e3b2b2; }
+.rv-expl { margin-top:10px; font-size:.88rem; color:#475569; background:var(--soft); border-left:3px solid var(--gold); padding:8px 12px; border-radius:0 8px 8px 0; }
+.vf { max-width:640px; margin:0 auto; }

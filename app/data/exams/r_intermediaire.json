@@ -1,0 +1,258 @@
+{
+  "outil": "r",
+  "niveau": "intermediaire",
+  "questions": [
+    {
+      "id": "q1",
+      "theme": "Exploration",
+      "question": "Quelle fonction affiche la structure d'un data.frame (type de chaque colonne) ?",
+      "code": "",
+      "options": [
+        "str()",
+        "names()",
+        "head()",
+        "length()"
+      ],
+      "correct": 0,
+      "explication": "str() résume les dimensions, les noms de colonnes, leurs types et les premières valeurs."
+    },
+    {
+      "id": "q2",
+      "theme": "Exploration",
+      "question": "Quelle fonction affiche les 6 premières lignes d'un data.frame ?",
+      "code": "",
+      "options": [
+        "top()",
+        "head()",
+        "first()",
+        "summary()"
+      ],
+      "correct": 1,
+      "explication": "head(df) affiche par défaut les 6 premières lignes ; summary() donne des statistiques par colonne."
+    },
+    {
+      "id": "q3",
+      "theme": "Filtrer",
+      "question": "Quel est le résultat affiché par ce code ?",
+      "code": "df <- data.frame(milieu = c('Rural','Urbain','Rural','Rural'),\n                 taille = c(8, 3, 5, 9))\nprint(nrow(subset(df, milieu == 'Rural' & taille >= 8)))",
+      "options": [
+        "[1] 3",
+        "[1] 1",
+        "[1] 2",
+        "[1] 4"
+      ],
+      "correct": 2,
+      "explication": "Deux lignes sont rurales avec une taille d'au moins 8 (8 et 9)."
+    },
+    {
+      "id": "q4",
+      "theme": "Filtrer",
+      "question": "Quelle expression sélectionne les lignes rurales d'un data.frame df ?",
+      "code": "",
+      "options": [
+        "subset(df, milieu = 'Rural')",
+        "subset(df, milieu := 'Rural')",
+        "subset(df, milieu === 'Rural')",
+        "subset(df, milieu == 'Rural')"
+      ],
+      "correct": 3,
+      "explication": "Le test d'égalité s'écrit == ; un seul = est une affectation d'argument et provoque une erreur."
+    },
+    {
+      "id": "q5",
+      "theme": "Valeurs manquantes",
+      "question": "Quel est le résultat affiché par ce code ?",
+      "code": "x <- c(10, 20, NA, 40)\nprint(mean(x))",
+      "options": [
+        "[1] 23.33333",
+        "[1] 17.5",
+        "[1] NA",
+        "[1] 70"
+      ],
+      "correct": 2,
+      "explication": "Sans na.rm = TRUE, toute opération sur un vecteur contenant NA renvoie NA."
+    },
+    {
+      "id": "q6",
+      "theme": "Valeurs manquantes",
+      "question": "Quelle expression compte les valeurs manquantes d'un vecteur x ?",
+      "code": "",
+      "options": [
+        "sum(is.na(x))",
+        "length(is.na(x))",
+        "sum(x == NA)",
+        "count(NA, x)"
+      ],
+      "correct": 0,
+      "explication": "is.na(x) donne un vecteur logique ; sum compte les TRUE. Comparer à NA avec == renvoie toujours NA."
+    },
+    {
+      "id": "q7",
+      "theme": "Imputation",
+      "question": "Quelle instruction remplace les valeurs manquantes de x par la médiane des valeurs observées ?",
+      "code": "",
+      "options": [
+        "x[is.na(x)] <- median(x)",
+        "x <- na.omit(x)",
+        "x[!is.na(x)] <- median(x, na.rm = TRUE)",
+        "x[is.na(x)] <- median(x, na.rm = TRUE)"
+      ],
+      "correct": 3,
+      "explication": "Il faut calculer la médiane avec na.rm = TRUE et n'affecter qu'aux positions où is.na(x) est vrai."
+    },
+    {
+      "id": "q8",
+      "theme": "Nouvelles colonnes",
+      "question": "Quel est le résultat affiché par ce code ?",
+      "code": "df <- data.frame(rev = c(80000, 120000, 95000))\ndf$pauvre <- ifelse(df$rev < 100000, 'Oui', 'Non')\nprint(df$pauvre)",
+      "options": [
+        "[1] \"Non\" \"Oui\" \"Non\"",
+        "[1] \"Oui\" \"Non\" \"Oui\"",
+        "[1] \"Oui\" \"Oui\" \"Oui\"",
+        "[1] 2"
+      ],
+      "correct": 1,
+      "explication": "80000 et 95000 sont inférieurs à 100000, donc Oui ; 120000 donne Non."
+    },
+    {
+      "id": "q9",
+      "theme": "table",
+      "question": "Que renvoie prop.table(table(x)) ?",
+      "code": "",
+      "options": [
+        "Les effectifs de chaque modalité de x",
+        "Les proportions de chaque modalité de x",
+        "Le nombre de modalités distinctes",
+        "Les pourcentages arrondis sans décimales"
+      ],
+      "correct": 1,
+      "explication": "prop.table divise chaque effectif par le total : on obtient des fréquences relatives sommant à 1."
+    },
+    {
+      "id": "q10",
+      "theme": "table",
+      "question": "Quel est le résultat affiché par ce code ?",
+      "code": "x <- c('a', 'b', 'a', 'c', 'a')\nprint(names(which.max(table(x))))",
+      "options": [
+        "[1] 3",
+        "[1] \"c\"",
+        "[1] \"b\"",
+        "[1] \"a\""
+      ],
+      "correct": 3,
+      "explication": "table(x) compte 3 fois a ; which.max renvoie la modalité la plus fréquente et names en donne le nom."
+    },
+    {
+      "id": "q11",
+      "theme": "aggregate",
+      "question": "Quelle syntaxe calcule le revenu moyen par milieu ?",
+      "code": "",
+      "options": [
+        "aggregate(revenu ~ milieu, data = df, FUN = mean)",
+        "aggregate(milieu ~ revenu, data = df, FUN = mean)",
+        "aggregate(df$revenu, FUN = mean)",
+        "tapply(df$milieu, df$revenu, mean)"
+      ],
+      "correct": 0,
+      "explication": "La formule s'écrit variable_numérique ~ variable_de_groupe."
+    },
+    {
+      "id": "q12",
+      "theme": "tapply",
+      "question": "Que fait tapply(x, g, mean) ?",
+      "code": "",
+      "options": [
+        "Calcule la moyenne globale de x",
+        "Trie x selon les groupes de g",
+        "Calcule la moyenne de x pour chaque groupe défini par g",
+        "Applique mean à chaque colonne d'un data.frame"
+      ],
+      "correct": 2,
+      "explication": "tapply applique une fonction à un vecteur, séparément pour chaque modalité du facteur de groupe."
+    },
+    {
+      "id": "q13",
+      "theme": "order",
+      "question": "Quel est le résultat affiché par ce code ?",
+      "code": "v <- c(30, 10, 20)\nprint(order(v))",
+      "options": [
+        "[1] 10 20 30",
+        "[1] 3 1 2",
+        "[1] 2 3 1",
+        "[1] 1 3 2"
+      ],
+      "correct": 2,
+      "explication": "order renvoie les positions qui trient le vecteur : la plus petite valeur est en position 2, puis 3, puis 1."
+    },
+    {
+      "id": "q14",
+      "theme": "order",
+      "question": "Pourquoi écrit-on une virgule dans df[order(df$revenu), ] ?",
+      "code": "",
+      "options": [
+        "Pour trier les colonnes par ordre alphabétique",
+        "Pour garder toutes les colonnes : on ne réordonne que les lignes",
+        "Pour supprimer la colonne revenu",
+        "Pour trier en ordre décroissant"
+      ],
+      "correct": 1,
+      "explication": "Dans df[i, j], l'indice avant la virgule désigne les lignes ; vide après la virgule, il sélectionne toutes les colonnes."
+    },
+    {
+      "id": "q15",
+      "theme": "merge",
+      "question": "Quel est le résultat affiché par ce code ?",
+      "code": "a <- data.frame(id = c(1, 2, 3), v = c(5, 6, 7))\nb <- data.frame(id = c(1, 3, 4), w = c('x', 'y', 'z'))\nprint(nrow(merge(a, b, by = 'id')))",
+      "options": [
+        "[1] 2",
+        "[1] 3",
+        "[1] 4",
+        "[1] 6"
+      ],
+      "correct": 0,
+      "explication": "Par défaut merge fait une jointure interne : seuls les identifiants 1 et 3 sont communs."
+    },
+    {
+      "id": "q16",
+      "theme": "merge",
+      "question": "Quel argument de merge conserve toutes les lignes de la première table ?",
+      "code": "",
+      "options": [
+        "by.x = TRUE",
+        "all = FALSE",
+        "keep = 'left'",
+        "all.x = TRUE"
+      ],
+      "correct": 3,
+      "explication": "all.x = TRUE réalise une jointure à gauche et complète par NA les lignes sans correspondance."
+    },
+    {
+      "id": "q17",
+      "theme": "Dates",
+      "question": "Quel est le résultat affiché par ce code ?",
+      "code": "d <- as.Date('2024-03-15')\nprint(format(d, '%d/%m'))",
+      "options": [
+        "[1] \"15/03\"",
+        "[1] \"03/15\"",
+        "[1] \"2024/03\"",
+        "[1] \"15/2024\""
+      ],
+      "correct": 0,
+      "explication": "%d donne le jour et %m le mois sur deux chiffres."
+    },
+    {
+      "id": "q18",
+      "theme": "sapply",
+      "question": "Quel est le résultat affiché par ce code ?",
+      "code": "print(sapply(list(1:3, 4:9), length))",
+      "options": [
+        "[1] 9",
+        "[1] 3 4",
+        "[1] 3 6",
+        "[1] 6 9"
+      ],
+      "correct": 2,
+      "explication": "sapply applique length à chaque élément de la liste : 3 et 6 éléments."
+    }
+  ]
+}

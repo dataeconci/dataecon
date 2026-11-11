@@ -7,6 +7,18 @@
 {% endblock %}
 
 {% block content %}
+{% macro render_section(sec) %}
+    {% for t in sec.text %}<p class="mdl-para">{{ t }}</p>{% endfor %}
+    {% for t in sec.tables %}
+    <div class="mdl-tbl-title">{{ t.title }}</div>
+    <div class="mdl-tbl-wrap"><table class="mdl-tbl">
+        <thead><tr>{% for c in t.columns %}<th>{{ c }}</th>{% endfor %}</tr></thead>
+        <tbody>{% for row in t.rows %}<tr>{% for v in row %}<td>{{ v }}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div>
+    {% endfor %}
+    {% for c in sec.charts %}
+    <figure class="mdl-chart"><img src="data:image/png;base64,{{ c.img }}" alt="{{ c.title }}"><figcaption>{{ c.title }}</figcaption></figure>
+    {% endfor %}
+{% endmacro %}
 {% set cols = [('R2','R²'),('RMSE','RMSE'),('MAE','MAE'),('Accuracy','Exactitude'),('AUC','AUC'),('F1','F1'),('AIC','AIC'),('BIC','BIC')] %}
 {% set ok_results = results | selectattr('status', 'equalto', 'ok') | list %}
 <div class="container py-4 mdl">
@@ -32,6 +44,18 @@
         {% endif %}
     </div>
 
+    <div class="mdl-rtabs" id="rtabs">
+        {% for sec in data_report.sections %}<button type="button" class="mdl-rtab {% if loop.first %}active{% endif %}" data-r="{{ sec.id }}">{{ sec.title }}</button>{% endfor %}
+        <button type="button" class="mdl-rtab" data-r="modeles">Modèles et robustesse</button>
+        <button type="button" class="mdl-rtab" data-r="conclusion">Conclusion</button>
+    </div>
+    {% for sec in data_report.sections %}
+    <section class="mdl-card mdl-rpane {% if loop.first %}active{% endif %}" data-r="{{ sec.id }}">
+        <header><h2>{{ loop.index }}. {{ sec.title }}</h2></header>
+        <div class="body">{{ render_section(sec) }}</div>
+    </section>
+    {% endfor %}
+    <div class="mdl-rpane" data-r="modeles">
     {% if ok_results %}
     <section class="mdl-card">
         <header><h2><i class="fas fa-scale-balanced"></i> Comparaison des modèles</h2></header>
@@ -112,10 +136,39 @@
                     </table>
                 </div>
                 {% endfor %}
+
+                {% set rb = r.robustness %}
+                {% if rb %}
+                <div class="mdl-rob">
+                    <h3><i class="fas fa-shield-halved"></i> Tests de robustesse
+                        {% if rb.verdict %}<span class="mdl-verdict v-{{ 'ok' if rb.verdict == 'Robuste' else ('mid' if rb.verdict == 'Globalement robuste' else 'ko') }}">{{ rb.verdict }}</span>{% endif %}</h3>
+                    {% if rb.status != 'ok' %}
+                        <div class="mdl-err">{{ rb.error }}</div>
+                    {% else %}
+                        {% for t in rb.text %}<p class="mdl-para">{{ t }}</p>{% endfor %}
+                        <ul class="mdl-checks">
+                        {% for c in rb.checks %}<li class="{{ 'ok' if c.ok else 'ko' }}"><span>{{ 'Satisfait' if c.ok else 'À surveiller' }}</span> {{ c.label }}{% if c.detail %} <em>({{ c.detail }})</em>{% endif %}</li>{% endfor %}
+                        </ul>
+                        {% for t in rb.tables %}
+                        <div class="mdl-tbl-title">{{ t.title }}</div>
+                        <div class="mdl-tbl-wrap"><table class="mdl-tbl">
+                            <thead><tr>{% for c in t.columns %}<th>{{ c }}</th>{% endfor %}</tr></thead>
+                            <tbody>{% for row in t.rows %}<tr>{% for v in row %}<td>{{ v }}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div>
+                        {% endfor %}
+                        {% for c in rb.charts %}<figure class="mdl-chart"><img src="data:image/png;base64,{{ c.img }}" alt="{{ c.title }}"><figcaption>{{ c.title }}</figcaption></figure>{% endfor %}
+                    {% endif %}
+                </div>
+                {% endif %}
             {% endif %}
         </div>
     </section>
     {% endfor %}
+    </div>
+
+    <section class="mdl-card mdl-rpane" data-r="conclusion">
+        <header><h2>Conclusion, limites et recommandations</h2></header>
+        <div class="body">{{ render_section(conclusion) }}</div>
+    </section>
 
     <p class="mdl-hint">Ces résultats sont une aide à l'analyse : vérifiez les hypothèses de chaque modèle et la qualité de vos données avant toute décision.</p>
 </div>
@@ -123,6 +176,13 @@
 
 {% block extra_js %}
 <script>
+document.querySelectorAll('#rtabs .mdl-rtab').forEach(function (b) {
+    b.addEventListener('click', function () {
+        document.querySelectorAll('#rtabs .mdl-rtab').forEach(function (x) { x.classList.toggle('active', x === b); });
+        document.querySelectorAll('.mdl-rpane').forEach(function (p) { p.classList.toggle('active', p.dataset.r === b.dataset.r); });
+        window.scrollTo({ top: document.getElementById('rtabs').offsetTop - 80, behavior: 'smooth' });
+    });
+});
 document.querySelectorAll('#tabs .mdl-tab').forEach(function (b) {
     b.addEventListener('click', function () {
         var i = b.dataset.i;

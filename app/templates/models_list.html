@@ -107,7 +107,24 @@
             <div id="famBox"></div>
             <div class="mdl-na-list" id="naBox"></div>
         </div>
-        <form method="POST" action="{{ url_for('models_analyze') }}" id="runForm" class="mdl-runbar">
+        <form method="POST" action="{{ url_for('models_analyze') }}" id="runForm">
+            <div class="body" style="border-top:1px solid var(--line)">
+                <h3 style="font-size:.95rem;color:#0b2a4a;margin-bottom:4px">Contexte du rapport (facultatif)</h3>
+                <p class="mdl-hint" style="margin-bottom:12px">Si vous laissez ces champs vides, le contexte et la problématique sont rédigés automatiquement à partir de vos données.</p>
+                <label class="mdl-label" for="repTitle">Titre du rapport</label>
+                <input type="text" class="form-control mb-3" id="repTitle" name="report_title" maxlength="160" placeholder="Ex. : Déterminants du revenu des ménages">
+                <div class="mdl-grid2">
+                    <div>
+                        <label class="mdl-label" for="repCtx">Contexte</label>
+                        <textarea class="form-control" id="repCtx" name="report_context" rows="4" maxlength="2500" placeholder="Présentez le cadre de l'étude : pays, période, source des données, enjeu."></textarea>
+                    </div>
+                    <div>
+                        <label class="mdl-label" for="repProb">Problématique</label>
+                        <textarea class="form-control" id="repProb" name="report_problem" rows="4" maxlength="1500" placeholder="Quelle question de recherche l'analyse doit-elle éclairer ?"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="mdl-runbar">
             <span class="count" id="selCount">0 modèle sélectionné</span>
             <span id="fcBox" style="display:none">
                 <label class="mdl-hint" style="margin-right:6px" for="fcSteps">Périodes de prévision</label>
@@ -115,6 +132,7 @@
             </span>
             <button type="submit" class="mdl-btn gold" id="runBtn" style="margin-left:auto" disabled><i class="fas fa-play"></i> Lancer les modèles sélectionnés</button>
             <div id="hid"></div>
+            </div>
         </form>
     </section>
 </div>

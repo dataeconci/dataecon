@@ -1,0 +1,258 @@
+{
+ "outil": "tableau",
+ "niveau": "debutant",
+ "questions": [
+  {
+   "id": "q1",
+   "theme": "Dimensions",
+   "question": "Dans Tableau, quel champ est une dimension ?",
+   "code": "",
+   "options": [
+    "Ville",
+    "Quantité",
+    "Prix",
+    "Chiffre d'affaires"
+   ],
+   "correct": 0,
+   "explication": "Une dimension est une catégorie (texte, date), comme Ville ; les autres champs sont des mesures numériques."
+  },
+  {
+   "id": "q2",
+   "theme": "Mesures",
+   "question": "Laquelle de ces variables est une mesure ?",
+   "code": "",
+   "options": [
+    "Produit",
+    "Chiffre d'affaires",
+    "Ville",
+    "Date"
+   ],
+   "correct": 1,
+   "explication": "Une mesure est un nombre que l'on peut calculer (somme, moyenne), comme le chiffre d'affaires."
+  },
+  {
+   "id": "q3",
+   "theme": "Rôle des axes",
+   "question": "Selon la règle de base, à quoi sert une dimension dans un graphique ?",
+   "code": "",
+   "options": [
+    "À calculer une somme",
+    "À fixer l'échelle de l'axe Y",
+    "À regrouper ou filtrer les données",
+    "À remplacer une mesure manquante"
+   ],
+   "correct": 2,
+   "explication": "La dimension regroupe ou filtre (axe X), tandis que la mesure est calculée (axe Y)."
+  },
+  {
+   "id": "q4",
+   "theme": "Graphique en barres",
+   "question": "Quel graphique convient le mieux pour comparer les ventes de cinq villes ?",
+   "code": "",
+   "options": [
+    "Un graphique en lignes",
+    "Un nuage de mots",
+    "Une carte thermique sans légende",
+    "Un graphique en barres"
+   ],
+   "correct": 3,
+   "explication": "Le graphique en barres est idéal pour comparer des catégories entre elles."
+  },
+  {
+   "id": "q5",
+   "theme": "Limites des barres",
+   "question": "Au-delà de combien de catégories un graphique en barres devient-il en général illisible ?",
+   "code": "",
+   "options": [
+    "Environ 2 à 3",
+    "Environ 10 à 15",
+    "Environ 4 à 5",
+    "Plus de 100 exactement"
+   ],
+   "correct": 1,
+   "explication": "La leçon recommande d'éviter plus de 10 à 15 catégories pour rester lisible."
+  },
+  {
+   "id": "q6",
+   "theme": "Camembert",
+   "question": "Quel est l'usage principal d'un camembert ?",
+   "code": "",
+   "options": [
+    "Suivre une évolution dans le temps",
+    "Comparer précisément des valeurs proches",
+    "Montrer la répartition d'un total entre catégories",
+    "Afficher une corrélation entre deux mesures"
+   ],
+   "correct": 2,
+   "explication": "Le camembert représente la part de chaque catégorie dans un total."
+  },
+  {
+   "id": "q7",
+   "theme": "Limites du camembert",
+   "question": "Combien de parts un camembert ne devrait-il pas dépasser ?",
+   "code": "",
+   "options": [
+    "2 parts",
+    "12 parts",
+    "20 parts",
+    "5 à 7 parts"
+   ],
+   "correct": 3,
+   "explication": "Au-delà de 5 à 7 parts, le camembert devient illisible."
+  },
+  {
+   "id": "q8",
+   "theme": "Choix du graphique",
+   "question": "Quatre produits ont des parts presque identiques (24 %, 25 %, 25 %, 26 %). Quel graphique permet de les comparer précisément ?",
+   "code": "",
+   "options": [
+    "Un graphique en barres",
+    "Un camembert",
+    "Un graphique en lignes",
+    "Aucun graphique n'est possible"
+   ],
+   "correct": 0,
+   "explication": "Quand les parts sont très proches, il faut préférer les barres pour comparer précisément."
+  },
+  {
+   "id": "q9",
+   "theme": "Graphique en lignes",
+   "question": "Quel graphique est le plus adapté pour montrer l'évolution mensuelle des ventes ?",
+   "code": "",
+   "options": [
+    "Un camembert",
+    "Un graphique en barres empilées par ville uniquement",
+    "Un graphique en lignes",
+    "Un tableau de dimensions"
+   ],
+   "correct": 2,
+   "explication": "Le graphique en lignes montre une évolution, souvent dans le temps."
+  },
+  {
+   "id": "q10",
+   "theme": "Axe du temps",
+   "question": "Dans un graphique en lignes, que place-t-on normalement sur l'axe X ?",
+   "code": "",
+   "options": [
+    "Une mesure comme la quantité",
+    "Le nom des villes",
+    "Le total du chiffre d'affaires",
+    "Le temps (date, mois, année)"
+   ],
+   "correct": 3,
+   "explication": "Règle d'or : l'axe X porte le temps et l'axe Y porte la mesure."
+  },
+  {
+   "id": "q11",
+   "theme": "Erreur de choix",
+   "question": "Pourquoi est-il trompeur de relier par une ligne les ventes d'Abidjan, Daloa et Bouaké ?",
+   "code": "",
+   "options": [
+    "Une ligne suggère une évolution entre des catégories qui n'ont pas d'ordre",
+    "Les lignes ne peuvent afficher que des dates",
+    "Les villes sont des mesures",
+    "Une ligne ne peut avoir que deux points"
+   ],
+   "correct": 0,
+   "explication": "Les lignes servent à l'évolution ; pour comparer des villes, on utilise des barres."
+  },
+  {
+   "id": "q12",
+   "theme": "Axes incohérents",
+   "question": "Quel graphique est incohérent selon la règle dimension/mesure ?",
+   "code": "",
+   "options": [
+    "Ville sur l'axe X et Quantité sur l'axe Y",
+    "Mesure sur l'axe X et dimension sur l'axe Y",
+    "Mois sur l'axe X et Prix sur l'axe Y",
+    "Produit sur l'axe X et Chiffre d'affaires sur l'axe Y"
+   ],
+   "correct": 1,
+   "explication": "La leçon indique qu'une mesure en X et une dimension en Y donne un graphique incohérent."
+  },
+  {
+   "id": "q13",
+   "theme": "Somme par ville",
+   "question": "Table des ventes :\nVille | Quantité\nAbidjan | 120\nDaloa | 85\nBouaké | 95\nAbidjan | 60\nQuelle est la somme de la Quantité pour Abidjan ?",
+   "code": "",
+   "options": [
+    "120",
+    "60",
+    "360",
+    "180"
+   ],
+   "correct": 3,
+   "explication": "Abidjan regroupe deux lignes : 120 + 60 = 180."
+  },
+  {
+   "id": "q14",
+   "theme": "Moyenne",
+   "question": "Prix d'un produit sur 4 marchés : 450, 500, 550 et 500 FCFA. Quelle est la moyenne du prix ?",
+   "code": "",
+   "options": [
+    "500 FCFA",
+    "450 FCFA",
+    "525 FCFA",
+    "2 000 FCFA"
+   ],
+   "correct": 0,
+   "explication": "(450 + 500 + 550 + 500) / 4 = 2 000 / 4 = 500."
+  },
+  {
+   "id": "q15",
+   "theme": "Part du total",
+   "question": "Chiffre d'affaires (millions FCFA) :\nProduit | CA\nCacao | 600\nCafé | 300\nAnacarde | 100\nQuelle est la part du Cacao dans le CA total ?",
+   "code": "",
+   "options": [
+    "30 %",
+    "60 %",
+    "50 %",
+    "6 %"
+   ],
+   "correct": 1,
+   "explication": "Total = 1 000 ; 600 / 1 000 = 60 %."
+  },
+  {
+   "id": "q16",
+   "theme": "Chiffre d'affaires",
+   "question": "Une vente porte sur 12 unités à 500 FCFA l'unité. Quel est le chiffre d'affaires de cette vente ?",
+   "code": "",
+   "options": [
+    "512 FCFA",
+    "488 FCFA",
+    "6 000 FCFA",
+    "60 000 FCFA"
+   ],
+   "correct": 2,
+   "explication": "Chiffre d'affaires = quantité × prix = 12 × 500 = 6 000."
+  },
+  {
+   "id": "q17",
+   "theme": "Choix du graphique",
+   "question": "Vous voulez comparer le salaire moyen de six postes. Quel graphique est le plus adapté ?",
+   "code": "",
+   "options": [
+    "Un graphique en barres, un poste par barre",
+    "Un graphique en lignes reliant les postes",
+    "Un camembert à six parts très proches",
+    "Un graphique dont le poste est placé en mesure"
+   ],
+   "correct": 0,
+   "explication": "Comparer des catégories (postes) se fait avec des barres, la hauteur représentant la mesure."
+  },
+  {
+   "id": "q18",
+   "theme": "Dimension date",
+   "question": "Dans la leçon, la colonne Date est classée comme :",
+   "code": "",
+   "options": [
+    "Une mesure",
+    "Un filtre",
+    "Une dimension",
+    "Un camembert"
+   ],
+   "correct": 2,
+   "explication": "Les dimensions regroupent les catégories de type texte ou date."
+  }
+ ]
+}

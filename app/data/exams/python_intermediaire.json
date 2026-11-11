@@ -1,0 +1,258 @@
+{
+ "outil": "python",
+ "niveau": "intermediaire",
+ "questions": [
+  {
+   "id": "q1",
+   "theme": "NumPy : moyenne et médiane",
+   "question": "Qu'affiche ce code ?",
+   "code": "import numpy as np\nprix = np.array([1500, 1200, 800, 950, 2200])\nprint(prix.mean(), np.median(prix))",
+   "options": [
+    "1330.0 1330.0",
+    "1330.0 1200.0",
+    "1200.0 1330.0",
+    "1200.0 950.0"
+   ],
+   "correct": 1,
+   "explication": "La moyenne vaut 6650 / 5 = 1330 et la médiane est la valeur centrale du tableau trié, soit 1200."
+  },
+  {
+   "id": "q2",
+   "theme": "NumPy : masque booléen",
+   "question": "Qu'affiche ce code ?",
+   "code": "import numpy as np\nprix = np.array([1500, 1200, 800, 950, 2200])\nprint(prix[prix > 1000])",
+   "options": [
+    "[ True  True False False  True]",
+    "[1500 1200 800 950 2200]",
+    "[2200]",
+    "[1500 1200 2200]"
+   ],
+   "correct": 3,
+   "explication": "La comparaison produit un tableau de booléens qui sert de masque : seules les valeurs supérieures à 1000 sont conservées."
+  },
+  {
+   "id": "q3",
+   "theme": "Explorer un DataFrame",
+   "question": "Quelle méthode donne d'un coup la moyenne, l'écart-type et les quartiles des colonnes numériques ?",
+   "code": "",
+   "options": [
+    "df.describe()",
+    "df.dtypes",
+    "df.shape",
+    "df['region'].unique()"
+   ],
+   "correct": 0,
+   "explication": "describe() résume les colonnes numériques ; dtypes donne les types, shape les dimensions et unique() les modalités d'une colonne."
+  },
+  {
+   "id": "q4",
+   "theme": "nunique et unique",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\nregion = pd.Series(['A', 'B', 'A', 'C', 'B'])\nprint(region.nunique())",
+   "options": [
+    "5",
+    "2",
+    "3",
+    "['A', 'B', 'C']"
+   ],
+   "correct": 2,
+   "explication": "nunique() compte les modalités distinctes (A, B, C), alors que unique() les listerait."
+  },
+  {
+   "id": "q5",
+   "theme": "Filtres combinés",
+   "question": "Quelle instruction sélectionne les ménages ruraux de taille supérieure ou égale à 8 ?",
+   "code": "",
+   "options": [
+    "df[df['milieu'] == 'Rural' & df['taille_menage'] >= 8]",
+    "df[(df['milieu'] == 'Rural') and (df['taille_menage'] >= 8)]",
+    "df[(df['milieu'] == 'Rural') & (df['taille_menage'] >= 8)]",
+    "df[df['milieu'] == 'Rural', df['taille_menage'] >= 8]"
+   ],
+   "correct": 2,
+   "explication": "Il faut utiliser & avec chaque condition entre parenthèses ; and ne fonctionne pas sur des Series et sans parenthèses la priorité des opérateurs fausse le calcul."
+  },
+  {
+   "id": "q6",
+   "theme": "Méthode isin",
+   "question": "Combien de lignes sont conservées par ce code ?",
+   "code": "import pandas as pd\ndf = pd.DataFrame({'region': ['Savanes', 'Zanzan', 'Bas-Sassandra', 'Zanzan']})\nprint(len(df[df['region'].isin(['Savanes', 'Zanzan'])]))",
+   "options": [
+    "3",
+    "2",
+    "4",
+    "1"
+   ],
+   "correct": 0,
+   "explication": "isin() teste l'appartenance à la liste : Savanes apparaît une fois et Zanzan deux fois, soit 3 lignes."
+  },
+  {
+   "id": "q7",
+   "theme": "Valeurs manquantes et moyenne",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\ns = pd.Series([10, 20, None, 40])\nprint(round(s.mean(), 2))",
+   "options": [
+    "17.5",
+    "nan",
+    "30.0",
+    "23.33"
+   ],
+   "correct": 3,
+   "explication": "mean() ignore les NaN par défaut : (10 + 20 + 40) / 3 = 23,33."
+  },
+  {
+   "id": "q8",
+   "theme": "Imputation par la médiane",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\ns = pd.Series([10, 20, None, 30, 100])\nprint(s.fillna(s.median()).tolist())",
+   "options": [
+    "[10.0, 20.0, 40.0, 30.0, 100.0]",
+    "[10.0, 20.0, 25.0, 30.0, 100.0]",
+    "[10.0, 20.0, 0.0, 30.0, 100.0]",
+    "[10.0, 20.0, nan, 30.0, 100.0]"
+   ],
+   "correct": 1,
+   "explication": "La médiane des valeurs connues (10, 20, 30, 100) vaut 25 ; elle remplace le NaN et résiste mieux à la valeur extrême 100 que la moyenne (40)."
+  },
+  {
+   "id": "q9",
+   "theme": "np.where",
+   "question": "Qu'affiche ce code ?",
+   "code": "import numpy as np\nrev = np.array([50000, 120000, 80000, 200000])\nprint(np.where(rev < 100000, 'Oui', 'Non').tolist())",
+   "options": [
+    "['Oui', 'Non', 'Oui', 'Non']",
+    "['Non', 'Oui', 'Non', 'Oui']",
+    "['Oui', 'Oui', 'Oui', 'Non']",
+    "[True, False, True, False]"
+   ],
+   "correct": 0,
+   "explication": "np.where renvoie 'Oui' quand la condition est vraie (revenu inférieur à 100000) et 'Non' sinon, ligne par ligne."
+  },
+  {
+   "id": "q10",
+   "theme": "pd.cut et bornes",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\ns = pd.Series([10, 11, 20])\nprint(pd.cut(s, bins=[0, 10, 20, 30], labels=['bas', 'moyen', 'haut']).tolist())",
+   "options": [
+    "['bas', 'bas', 'moyen']",
+    "['moyen', 'moyen', 'haut']",
+    "['bas', 'moyen', 'moyen']",
+    "['bas', 'moyen', 'haut']"
+   ],
+   "correct": 2,
+   "explication": "Par défaut, les intervalles de pd.cut sont fermés à droite : 10 appartient à ]0, 10], 11 et 20 à ]10, 20]."
+  },
+  {
+   "id": "q11",
+   "theme": "groupby et moyenne",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\ndf = pd.DataFrame({'milieu': ['Urbain', 'Rural', 'Urbain', 'Rural'], 'rev': [200, 100, 300, 50]})\nprint(df.groupby('milieu')['rev'].mean().to_dict())",
+   "options": [
+    "{'Rural': 150.0, 'Urbain': 150.0}",
+    "{'Rural': 75.0, 'Urbain': 250.0}",
+    "{'Rural': 150, 'Urbain': 500}",
+    "{'Urbain': 75.0, 'Rural': 250.0}"
+   ],
+   "correct": 1,
+   "explication": "groupby calcule la moyenne par milieu : (100 + 50) / 2 = 75 en rural et (200 + 300) / 2 = 250 en urbain."
+  },
+  {
+   "id": "q12",
+   "theme": "Split, apply, combine",
+   "question": "Que décrit la logique « split, apply, combine » de groupby ?",
+   "code": "",
+   "options": [
+    "Trier, filtrer puis compter les lignes",
+    "Fusionner deux tables, nettoyer puis exporter",
+    "Supprimer les doublons, imputer puis agréger",
+    "Découper en groupes, appliquer un calcul à chaque groupe, puis recoller les résultats"
+   ],
+   "correct": 3,
+   "explication": "groupby sépare les données par modalité, calcule une statistique par groupe et rassemble les résultats dans un seul tableau."
+  },
+  {
+   "id": "q13",
+   "theme": "Jointure how='left'",
+   "question": "Que conserve pd.merge(a, b, on='id', how='left') ?",
+   "code": "",
+   "options": [
+    "Uniquement les lignes présentes dans les deux tables",
+    "Toutes les lignes de la table de droite",
+    "Les lignes absentes de la table de droite",
+    "Toutes les lignes de la table de gauche, avec NaN si pas de correspondance"
+   ],
+   "correct": 3,
+   "explication": "La jointure à gauche garde chaque ligne de la première table ; les colonnes de la seconde sont à NaN en l'absence de correspondance."
+  },
+  {
+   "id": "q14",
+   "theme": "Trier et nlargest",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\ns = pd.Series({'a': 3, 'b': 9, 'c': 5})\nprint(s.nlargest(2).index.tolist())",
+   "options": [
+    "['a', 'b']",
+    "['b', 'c']",
+    "['b', 'a']",
+    "[9, 5]"
+   ],
+   "correct": 1,
+   "explication": "nlargest(2) garde les deux plus grandes valeurs (9 puis 5) ; leur index est b puis c."
+  },
+  {
+   "id": "q15",
+   "theme": "value_counts normalisé",
+   "question": "Quelle valeur affiche ce code ?",
+   "code": "import pandas as pd\ns = pd.Series(['R', 'U', 'R', 'R'])\nprint(s.value_counts(normalize=True)['R'])",
+   "options": [
+    "3",
+    "0.25",
+    "0.75",
+    "0.3"
+   ],
+   "correct": 2,
+   "explication": "Avec normalize=True, value_counts renvoie des proportions : 3 'R' sur 4 observations donnent 0,75."
+  },
+  {
+   "id": "q16",
+   "theme": "Jointure interne par défaut",
+   "question": "Combien de lignes contient le résultat ?",
+   "code": "import pandas as pd\nv = pd.DataFrame({'id': [1, 2, 3], 'montant': [10, 20, 30]})\nc = pd.DataFrame({'id': [1, 2, 4], 'segment': ['A', 'B', 'A']})\nprint(len(pd.merge(v, c, on='id')))",
+   "options": [
+    "2",
+    "3",
+    "4",
+    "6"
+   ],
+   "correct": 0,
+   "explication": "La jointure est interne par défaut : seuls les identifiants 1 et 2, présents dans les deux tables, sont conservés."
+  },
+  {
+   "id": "q17",
+   "theme": "Dates avec pandas",
+   "question": "Que affiche ce code ? (0 = lundi)",
+   "code": "import pandas as pd\nprint(pd.to_datetime('2024-03-15').dayofweek)",
+   "options": [
+    "5",
+    "4",
+    "3",
+    "15"
+   ],
+   "correct": 1,
+   "explication": "Le 15 mars 2024 est un vendredi ; dayofweek compte à partir de 0 pour le lundi, donc 4."
+  },
+  {
+   "id": "q18",
+   "theme": "Regrouper par année",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\ndf = pd.DataFrame({'date': pd.to_datetime(['2023-05-01', '2023-11-10', '2024-02-01']), 'montant': [10, 20, 40]})\nprint(df.groupby(df['date'].dt.year)['montant'].sum().to_dict())",
+   "options": [
+    "{2023: 30, 2024: 40}",
+    "{2023: 10, 2024: 40}",
+    "{2023: 70}",
+    "{2023: 15.0, 2024: 40.0}"
+   ],
+   "correct": 0,
+   "explication": "Le regroupement par année cumule les montants de 2023 (10 + 20) et ceux de 2024 (40)."
+  }
+ ]
+}

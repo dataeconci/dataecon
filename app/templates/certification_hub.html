@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block title %}Certifications - DataEcon.Ci{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/certification.css') }}">{% endblock %}
+{% block content %}
+<div class="cert">
+  <section class="cert-hero"><div class="container">
+    <h1>Certifications DataEcon.Ci</h1>
+    <p>Validez vos compétences à la fin de chaque cours en réussissant un examen. En cas de réussite, vous téléchargez votre certificat au format PDF, vérifiable en ligne grâce à un code unique.</p>
+    <div class="cert-rules">
+      <div><strong>{{ regles.nb }}</strong>questions</div>
+      <div><strong>{{ regles.duree }} min</strong>par examen</div>
+      <div><strong>{{ regles.seuil }} %</strong>pour réussir</div>
+      <div><strong>{{ regles.essais }}</strong>tentatives, puis {{ regles.jours }} jours d'attente</div>
+    </div>
+  </div></section>
+  <div class="container">
+    {% for o in lignes %}
+    <div class="cert-card">
+      <header>{{ o.nom }}</header>
+      <div class="body">
+        {% for n in o.niveaux %}
+        <div class="cert-row">
+          <div><div class="nm">{{ o.nom }} - {{ n.nom }}</div>
+            <div class="st">
+              {% if n.cert %}Certificat obtenu le {{ n.cert.issued_at.strftime('%d/%m/%Y') }}, note {{ '%.0f'|format(n.cert.score) }} %
+              {% elif n.etat.bloque %}Nouvelle tentative possible le {{ n.etat.bloque_jusqu_au.strftime('%d/%m/%Y') }}
+              {% else %}{{ n.etat.restantes }} tentative(s) restante(s){% endif %}
+            </div></div>
+          <div>
+            {% if n.cert %}<span class="cert-badge ok">Certifié</span> <a class="cert-btn gold" href="{{ url_for('certificat_download', code=n.cert.code) }}">Télécharger</a>
+            {% elif n.etat.bloque %}<span class="cert-badge bad">Attente</span>
+            {% elif not n.acces %}<span class="cert-badge neutral">Abonnement requis</span> <a class="cert-btn light" href="{{ url_for('subscription') }}">Voir les offres</a>
+            {% else %}<a class="cert-btn" href="{{ url_for('certification_course', outil=o.code, niveau=n.code) }}">Passer l'examen</a>{% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+    <p class="text-muted">Vérifier l'authenticité d'un certificat : <a href="{{ url_for('certificat_verify') }}">page de vérification</a>.</p>
+  </div>
+</div>
+{% endblock %}

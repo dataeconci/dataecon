@@ -1,0 +1,258 @@
+{
+ "outil": "python",
+ "niveau": "debutant",
+ "questions": [
+  {
+   "id": "q1",
+   "theme": "Noms de variables",
+   "question": "Lequel de ces noms de variable est valide en Python ?",
+   "code": "",
+   "options": [
+    "2ville",
+    "taux change",
+    "_total",
+    "prix-unitaire"
+   ],
+   "correct": 2,
+   "explication": "Un nom commence par une lettre ou un underscore et ne contient ni espace ni tiret ; il ne peut pas commencer par un chiffre."
+  },
+  {
+   "id": "q2",
+   "theme": "Sensibilité à la casse",
+   "question": "Que se passe-t-il à l'exécution de ce code ?",
+   "code": "Age = 25\nprint(age)",
+   "options": [
+    "Une erreur NameError car age n'est pas définie",
+    "Il affiche 25 car Age et age sont identiques",
+    "Il affiche None",
+    "Une erreur SyntaxError à la première ligne"
+   ],
+   "correct": 0,
+   "explication": "Python distingue majuscules et minuscules : Age et age sont deux noms différents, donc age n'est pas définie."
+  },
+  {
+   "id": "q3",
+   "theme": "Types de données",
+   "question": "Quel est le résultat de ce code ?",
+   "code": "print(type(10 / 2))",
+   "options": [
+    "<class 'int'>",
+    "<class 'str'>",
+    "<class 'bool'>",
+    "<class 'float'>"
+   ],
+   "correct": 3,
+   "explication": "L'opérateur / réalise toujours une division décimale : le résultat est un float, même si la division tombe juste."
+  },
+  {
+   "id": "q4",
+   "theme": "Conversion de types",
+   "question": "Quelle fonction convertit le texte '12' en nombre entier utilisable dans un calcul ?",
+   "code": "",
+   "options": [
+    "str('12')",
+    "int('12')",
+    "type('12')",
+    "len('12')"
+   ],
+   "correct": 1,
+   "explication": "int() convertit un texte représentant un entier en nombre ; str() fait l'inverse, type() donne le type et len() la longueur."
+  },
+  {
+   "id": "q5",
+   "theme": "Opérateurs // et %",
+   "question": "Qu'affiche ce code ?",
+   "code": "print(17 // 5, 17 % 5)",
+   "options": [
+    "3.4 2",
+    "3 2",
+    "2 3",
+    "3 3"
+   ],
+   "correct": 1,
+   "explication": "17 // 5 donne le quotient entier (3) et 17 % 5 donne le reste (2)."
+  },
+  {
+   "id": "q6",
+   "theme": "Premières lignes d'un DataFrame",
+   "question": "Quelle instruction affiche les 5 premières lignes d'un DataFrame nommé df ?",
+   "code": "",
+   "options": [
+    "df.shape",
+    "df.columns",
+    "df.info()",
+    "df.head()"
+   ],
+   "correct": 3,
+   "explication": "head() renvoie les premières lignes ; shape donne les dimensions, columns les noms et info() les types."
+  },
+  {
+   "id": "q7",
+   "theme": "Dimensions d'un DataFrame",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\ndf = pd.DataFrame({'a': [1, 2, 3], 'b': [4, 5, 6]})\nprint(df.shape)",
+   "options": [
+    "(3, 2)",
+    "(2, 3)",
+    "6",
+    "(3, 3)"
+   ],
+   "correct": 0,
+   "explication": "df.shape renvoie le tuple (nombre de lignes, nombre de colonnes)."
+  },
+  {
+   "id": "q8",
+   "theme": "Indices de chaînes",
+   "question": "Pour texte = 'Bouaké', que vaut texte[-1] ?",
+   "code": "",
+   "options": [
+    "'B'",
+    "'k'",
+    "'é'",
+    "Une erreur IndexError"
+   ],
+   "correct": 2,
+   "explication": "L'indice -1 désigne le dernier caractère de la chaîne, ici « é »."
+  },
+  {
+   "id": "q9",
+   "theme": "f-strings",
+   "question": "Qu'affiche ce code ?",
+   "code": "nom = 'Awa'\nprint(f\"{nom.upper()} a {2+3} ans\")",
+   "options": [
+    "{nom.upper()} a {2+3} ans",
+    "Awa a 23 ans",
+    "AWA a 2+3 ans",
+    "AWA a 5 ans"
+   ],
+   "correct": 3,
+   "explication": "Dans une f-string, les expressions entre accolades sont évaluées : nom.upper() donne AWA et 2+3 donne 5."
+  },
+  {
+   "id": "q10",
+   "theme": "Découper un texte",
+   "question": "Quelle méthode transforme 'cacao,café,coton' en liste de trois éléments ?",
+   "code": "",
+   "options": [
+    "'cacao,café,coton'.replace(',')",
+    "'cacao,café,coton'.split(',')",
+    "'cacao,café,coton'.upper()",
+    "len('cacao,café,coton')"
+   ],
+   "correct": 1,
+   "explication": "split(',') coupe le texte à chaque virgule et renvoie une liste ; len() ne renvoie qu'un nombre."
+  },
+  {
+   "id": "q11",
+   "theme": "Ajouter à une liste",
+   "question": "Qu'affiche ce code ?",
+   "code": "prix = [1500, 1200, 800]\nprix.append(950)\nprint(prix[-1], len(prix))",
+   "options": [
+    "800 3",
+    "950 3",
+    "950 4",
+    "1500 4"
+   ],
+   "correct": 2,
+   "explication": "append() ajoute 950 à la fin : le dernier élément est 950 et la liste compte désormais 4 éléments."
+  },
+  {
+   "id": "q12",
+   "theme": "Slicing",
+   "question": "Que vaut liste[1:3] pour liste = [10, 20, 30, 40, 50] ?",
+   "code": "",
+   "options": [
+    "[20, 30]",
+    "[10, 20, 30]",
+    "[20, 30, 40]",
+    "[10, 20]"
+   ],
+   "correct": 0,
+   "explication": "Le slicing commence à l'indice 1 inclus et s'arrête avant l'indice 3 : on obtient les éléments d'indices 1 et 2."
+  },
+  {
+   "id": "q13",
+   "theme": "Dictionnaires",
+   "question": "Qu'affiche ce code ?",
+   "code": "menage = {'region': 'Savanes', 'taille': 6}\nmenage['milieu'] = 'Rural'\nprint(len(menage))",
+   "options": [
+    "2",
+    "3",
+    "4",
+    "Une erreur KeyError"
+   ],
+   "correct": 1,
+   "explication": "Affecter une nouvelle clé ajoute une entrée : le dictionnaire passe de 2 à 3 clés."
+  },
+  {
+   "id": "q14",
+   "theme": "Conditions if/elif/else",
+   "question": "Qu'affiche ce code ?",
+   "code": "revenu = 150000\nif revenu < 60000:\n    print('Faible')\nelif revenu < 150000:\n    print('Moyen')\nelse:\n    print('Élevé')",
+   "options": [
+    "Moyen",
+    "Faible",
+    "Une erreur",
+    "Élevé"
+   ],
+   "correct": 3,
+   "explication": "150000 n'est pas strictement inférieur à 150000 : les deux premières conditions sont fausses et le bloc else s'exécute."
+  },
+  {
+   "id": "q15",
+   "theme": "Indentation",
+   "question": "Pourquoi ce code produit-il une erreur ?",
+   "code": "note = 12\nif note >= 10:\nprint('Admis')",
+   "options": [
+    "Le bloc après le if n'est pas indenté",
+    "La condition note >= 10 est mal écrite",
+    "La variable note est de type str",
+    "Il manque un else"
+   ],
+   "correct": 0,
+   "explication": "Après les deux-points, le bloc doit être indenté ; sans indentation, Python lève une IndentationError."
+  },
+  {
+   "id": "q16",
+   "theme": "Boucle et accumulateur",
+   "question": "Qu'affiche ce code ?",
+   "code": "total = 0\nfor i in range(4):\n    total = total + i\nprint(total)",
+   "options": [
+    "10",
+    "4",
+    "6",
+    "3"
+   ],
+   "correct": 2,
+   "explication": "range(4) génère 0, 1, 2, 3 et leur somme cumulée vaut 6."
+  },
+  {
+   "id": "q17",
+   "theme": "Paramètre par défaut",
+   "question": "Qu'affiche ce code ?",
+   "code": "def tva(prix, taux=0.18):\n    return prix * (1 + taux)\n\nprint(tva(1000, 0.09))",
+   "options": [
+    "1090.0",
+    "1180.0",
+    "90.0",
+    "1009.0"
+   ],
+   "correct": 0,
+   "explication": "Le taux 0.09 remplace la valeur par défaut 0.18 : 1000 * 1.09 donne 1090.0."
+  },
+  {
+   "id": "q18",
+   "theme": "print versus return",
+   "question": "Qu'affiche ce code ?",
+   "code": "def double(x):\n    print(x * 2)\n\ny = double(3)\nprint(y)",
+   "options": [
+    "6 puis 6",
+    "6 puis None",
+    "None puis 6",
+    "Une erreur"
+   ],
+   "correct": 1,
+   "explication": "La fonction affiche 6 mais ne contient pas de return : elle renvoie None, donc y vaut None."
+  }
+ ]
+}

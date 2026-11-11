@@ -474,7 +474,8 @@
     body.innerHTML = '<section class="pl-end"><div class="medal"><i class="fas fa-trophy"></i></div><h2>Cours terminé</h2>' +
       '<p data-speak="' + esc('Félicitations ! Vous avez terminé le cours ' + lecon.titre + '. Vous avez gagné ' + etat.xp + ' points.') + '">Vous avez terminé « ' + esc(lecon.titre) + ' ».</p>' +
       '<div class="stats"><div class="stat"><strong>' + ok + ' / ' + total + '</strong>exercices réussis</div><div class="stat"><strong>' + etat.xp + '</strong>points XP</div></div>' +
-      '<a class="pl-cta" href="/formations" style="text-decoration:none"><i class="fas fa-layer-group"></i> Choisir un autre cours</a> ' +
+      '<a class="pl-cta" href="/certification/' + OUTIL + '/' + NIVEAU + '" style="text-decoration:none"><i class="fas fa-certificate"></i> Passer l\'examen et obtenir le certificat</a> ' +
+      '<a class="pl-link" href="/formations" style="margin-left:8px;text-decoration:none">Choisir un autre cours</a> ' +
       '<button class="pl-link" id="redo" style="margin-left:8px">Refaire le cours</button></section>';
     $('#redo').onclick = () => { etat = { xp: 0, valides: {}, auto: etat.auto }; save(); aller(-1); };
   }

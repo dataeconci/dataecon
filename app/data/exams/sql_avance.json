@@ -1,0 +1,286 @@
+{
+ "outil": "sql",
+ "niveau": "avance",
+ "questions": [
+  {
+   "id": "q1",
+   "theme": "CTE",
+   "question": "Quel est l'intérêt principal d'une CTE introduite par WITH ?",
+   "code": "",
+   "options": [
+    "Stocker définitivement le résultat dans la base de données",
+    "Accélérer systématiquement la requête grâce à un index automatique",
+    "Découper une requête complexe en étapes nommées et lisibles, valables pour la durée de la requête",
+    "Modifier les données des tables sources"
+   ],
+   "correct": 2,
+   "explication": "Une CTE est une requête temporaire nommée ; elle n'existe que pendant l'exécution de l'instruction."
+  },
+  {
+   "id": "q2",
+   "theme": "Fonctions de fenêtre",
+   "question": "Quelle est la différence entre RANK() et DENSE_RANK() en cas d'égalité ?",
+   "code": "",
+   "options": [
+    "RANK ignore les ex aequo, DENSE_RANK les numérote dans l'ordre d'apparition",
+    "DENSE_RANK laisse des trous, RANK n'en laisse pas",
+    "Il n'y a aucune différence entre les deux",
+    "RANK laisse des trous dans la numérotation après les ex aequo, DENSE_RANK n'en laisse pas"
+   ],
+   "correct": 3,
+   "explication": "Deux ex aequo au rang 1 donnent ensuite le rang 3 avec RANK, mais le rang 2 avec DENSE_RANK."
+  },
+  {
+   "id": "q3",
+   "theme": "Fonctions de fenêtre",
+   "question": "Quelle différence fondamentale existe entre SUM() OVER (...) et SUM() avec GROUP BY ?",
+   "code": "",
+   "options": [
+    "La fonction de fenêtre ne peut pas utiliser ORDER BY",
+    "La fonction de fenêtre conserve toutes les lignes, GROUP BY réduit le résultat à une ligne par groupe",
+    "GROUP BY conserve toutes les lignes, la fonction de fenêtre les regroupe",
+    "Aucune : les deux produisent le même nombre de lignes"
+   ],
+   "correct": 1,
+   "explication": "Une fonction de fenêtre calcule sur un ensemble de lignes sans les fusionner."
+  },
+  {
+   "id": "q4",
+   "theme": "Fonctions de fenêtre",
+   "question": "Que fait la clause PARTITION BY dans une fonction de fenêtre ?",
+   "code": "",
+   "options": [
+    "Elle supprime les lignes en double",
+    "Elle trie le résultat final",
+    "Elle recommence le calcul séparément pour chaque groupe de lignes",
+    "Elle limite le nombre de lignes renvoyées"
+   ],
+   "correct": 2,
+   "explication": "PARTITION BY définit des sous-ensembles indépendants, par exemple un classement par produit."
+  },
+  {
+   "id": "q5",
+   "theme": "Normalisation",
+   "question": "Quel est l'objectif principal de la normalisation d'une base de données ?",
+   "code": "",
+   "options": [
+    "Réduire la redondance et éviter les anomalies de mise à jour",
+    "Accélérer toutes les requêtes de lecture quelle que soit leur forme",
+    "Regrouper toutes les données dans une seule grande table",
+    "Chiffrer les données sensibles"
+   ],
+   "correct": 0,
+   "explication": "En séparant les informations dans des tables liées, une donnée n'est stockée qu'à un seul endroit."
+  },
+  {
+   "id": "q6",
+   "theme": "Transactions",
+   "question": "Que garantit la propriété d'atomicité d'une transaction ?",
+   "code": "",
+   "options": [
+    "Soit toutes les opérations sont validées, soit aucune ne l'est",
+    "Les transactions s'exécutent toujours en parallèle",
+    "Les données validées ne peuvent jamais être modifiées",
+    "Chaque requête est exécutée en moins d'une seconde"
+   ],
+   "correct": 0,
+   "explication": "En cas d'erreur, ROLLBACK annule l'ensemble des opérations de la transaction."
+  },
+  {
+   "id": "q7",
+   "theme": "Pièges NULL",
+   "question": "Pourquoi NOT IN (sous-requête) peut-il renvoyer un résultat vide si la sous-requête contient une valeur NULL ?",
+   "code": "",
+   "options": [
+    "Parce que NULL est converti en 0 et fausse la liste",
+    "Parce que SQL interdit NULL dans une sous-requête",
+    "Parce que la comparaison avec NULL est inconnue, donc la condition n'est jamais vraie",
+    "Parce que NOT IN ne fonctionne qu'avec des nombres"
+   ],
+   "correct": 2,
+   "explication": "NOT IN équivaut à une série de différences ; avec NULL, le test est inconnu. NOT EXISTS n'a pas ce défaut."
+  },
+  {
+   "id": "q8",
+   "theme": "UNION",
+   "question": "Quelle est la différence entre UNION et UNION ALL ?",
+   "code": "",
+   "options": [
+    "UNION ALL trie le résultat, UNION ne le trie pas",
+    "UNION supprime les doublons du résultat, UNION ALL les conserve",
+    "UNION exige des colonnes de types différents",
+    "UNION ALL ne fonctionne qu'avec deux tables"
+   ],
+   "correct": 1,
+   "explication": "UNION ALL est plus rapide car il n'élimine pas les doublons."
+  },
+  {
+   "id": "q9",
+   "theme": "Performance",
+   "question": "Quel outil SQLite permet d'examiner comment une requête sera exécutée (usage d'un index ou parcours complet) ?",
+   "code": "",
+   "options": [
+    "SHOW PLAN",
+    "DESCRIBE QUERY",
+    "ANALYZE TABLE",
+    "EXPLAIN QUERY PLAN"
+   ],
+   "correct": 3,
+   "explication": "EXPLAIN QUERY PLAN précède la requête et décrit la stratégie choisie par le moteur."
+  },
+  {
+   "id": "q10",
+   "theme": "Sécurité",
+   "question": "Quelle pratique protège le mieux une application contre les injections SQL ?",
+   "code": "",
+   "options": [
+    "Retirer les espaces des saisies des utilisateurs",
+    "Écrire les mots-clés SQL en majuscules",
+    "Utiliser des requêtes paramétrées plutôt que concaténer les saisies dans le texte SQL",
+    "Limiter les requêtes à 100 caractères"
+   ],
+   "correct": 2,
+   "explication": "Avec des paramètres, les valeurs saisies ne sont jamais interprétées comme du code SQL."
+  },
+  {
+   "id": "q11",
+   "theme": "DENSE_RANK",
+   "question": "Quelle valeur renvoie cette requête ?",
+   "code": "SELECT MAX(r) FROM (SELECT DENSE_RANK() OVER (ORDER BY ville) AS r FROM ventes);",
+   "options": [
+    "5",
+    "7",
+    "20",
+    "6"
+   ],
+   "correct": 3,
+   "explication": "DENSE_RANK numérote les valeurs distinctes de ville sans trou : le maximum égale le nombre de villes distinctes."
+  },
+  {
+   "id": "q12",
+   "theme": "Cumul",
+   "question": "Quelle valeur renvoie cette requête ?",
+   "code": "SELECT cumul FROM (SELECT id, SUM(quantite) OVER (ORDER BY date) AS cumul FROM ventes) WHERE id = 5;",
+   "options": [
+    "615",
+    "60",
+    "545",
+    "880"
+   ],
+   "correct": 0,
+   "explication": "Le cumul additionne les quantités des ventes 1 à 5, triées par date."
+  },
+  {
+   "id": "q13",
+   "theme": "LAG",
+   "question": "Combien de lignes renvoie cette requête ?",
+   "code": "SELECT * FROM (SELECT quantite - LAG(quantite) OVER (ORDER BY date) AS ecart FROM ventes) WHERE ecart > 0;",
+   "options": [
+    "8",
+    "10",
+    "12",
+    "19"
+   ],
+   "correct": 1,
+   "explication": "LAG renvoie NULL pour la première ligne ; on compte les ventes dont la quantité dépasse celle de la vente précédente."
+  },
+  {
+   "id": "q14",
+   "theme": "Part du total",
+   "question": "Quelle valeur renvoie cette requête ?",
+   "code": "SELECT ROUND(100.0 * SUM(quantite) / (SELECT SUM(quantite) FROM ventes), 1) FROM ventes WHERE produit = 'Cacao';",
+   "options": [
+    "25",
+    "40.5",
+    "47.8",
+    "55"
+   ],
+   "correct": 2,
+   "explication": "La somme des quantités de cacao est rapportée à la quantité totale, en pourcentage."
+  },
+  {
+   "id": "q15",
+   "theme": "NOT EXISTS",
+   "question": "Quelle ville renvoie cette requête ?",
+   "code": "SELECT ville FROM villes vi WHERE NOT EXISTS (SELECT 1 FROM ventes v WHERE v.ville = vi.ville);",
+   "options": [
+    "Yamoussoukro",
+    "Man",
+    "Korhogo",
+    "Daloa"
+   ],
+   "correct": 0,
+   "explication": "NOT EXISTS isole les villes pour lesquelles la sous-requête ne trouve aucune vente."
+  },
+  {
+   "id": "q16",
+   "theme": "UNION",
+   "question": "Combien de lignes renvoie cette requête ?",
+   "code": "SELECT ville FROM ventes UNION SELECT ville FROM villes;",
+   "options": [
+    "6",
+    "20",
+    "27",
+    "7"
+   ],
+   "correct": 3,
+   "explication": "UNION élimine les doublons : on obtient la liste des villes distinctes des deux tables."
+  },
+  {
+   "id": "q17",
+   "theme": "CTE",
+   "question": "Quel produit renvoie cette requête ?",
+   "code": "WITH ca AS (SELECT produit, SUM(quantite * prix_unitaire) AS total FROM ventes GROUP BY produit) SELECT produit FROM ca ORDER BY total DESC LIMIT 1;",
+   "options": [
+    "Café",
+    "Cacao",
+    "Anacarde",
+    "Coton"
+   ],
+   "correct": 1,
+   "explication": "La CTE calcule le chiffre d'affaires par produit, puis on retient le plus élevé."
+  },
+  {
+   "id": "q18",
+   "theme": "Tableau croisé",
+   "question": "Quelle valeur renvoie cette requête ?",
+   "code": "SELECT SUM(CASE WHEN produit = 'Cacao' AND ville = 'Abidjan' THEN quantite ELSE 0 END) FROM ventes;",
+   "options": [
+    "300",
+    "880",
+    "400",
+    "1340"
+   ],
+   "correct": 1,
+   "explication": "Seules les quantités des ventes de cacao à Abidjan sont additionnées, les autres comptent pour 0."
+  },
+  {
+   "id": "q19",
+   "theme": "NOT IN et NULL",
+   "question": "Combien de lignes renvoie cette requête ?",
+   "code": "SELECT * FROM villes WHERE ville NOT IN (SELECT ville FROM ventes UNION SELECT NULL);",
+   "options": [
+    "1",
+    "6",
+    "7",
+    "0"
+   ],
+   "correct": 3,
+   "explication": "La présence de NULL dans la liste rend la condition NOT IN jamais vraie : aucune ligne n'est renvoyée."
+  },
+  {
+   "id": "q20",
+   "theme": "Choix de requête",
+   "question": "Quelle requête renvoie, pour chaque produit, la vente de plus grande quantité (une ligne par produit) ?",
+   "code": "",
+   "options": [
+    "SELECT id FROM (SELECT id, ROW_NUMBER() OVER (PARTITION BY produit ORDER BY quantite DESC) AS rn FROM ventes) WHERE rn = 1 ORDER BY id;",
+    "SELECT id FROM (SELECT id, ROW_NUMBER() OVER (ORDER BY quantite DESC) AS rn FROM ventes) WHERE rn = 1 ORDER BY id;",
+    "SELECT id FROM (SELECT id, ROW_NUMBER() OVER (PARTITION BY produit ORDER BY quantite) AS rn FROM ventes) WHERE rn = 1 ORDER BY id;",
+    "SELECT id FROM (SELECT id, ROW_NUMBER() OVER (PARTITION BY ville ORDER BY quantite DESC) AS rn FROM ventes) WHERE rn = 1 ORDER BY id;"
+   ],
+   "correct": 0,
+   "explication": "PARTITION BY produit recommence la numérotation pour chaque produit, et le tri décroissant place la plus grande quantité au rang 1."
+  }
+ ]
+}

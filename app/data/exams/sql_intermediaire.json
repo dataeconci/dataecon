@@ -1,0 +1,286 @@
+{
+ "outil": "sql",
+ "niveau": "intermediaire",
+ "questions": [
+  {
+   "id": "q1",
+   "theme": "HAVING",
+   "question": "Quelle est la différence entre WHERE et HAVING ?",
+   "code": "",
+   "options": [
+    "WHERE filtre les groupes, HAVING filtre les lignes individuelles",
+    "WHERE filtre les lignes avant le regroupement, HAVING filtre les groupes après agrégation",
+    "HAVING remplace WHERE et ne peut pas être combiné avec lui",
+    "WHERE accepte les fonctions d'agrégation, HAVING les refuse"
+   ],
+   "correct": 1,
+   "explication": "WHERE s'applique aux lignes brutes ; HAVING s'applique aux résultats des fonctions d'agrégation."
+  },
+  {
+   "id": "q2",
+   "theme": "Jointures",
+   "question": "Que renvoie une jointure INNER JOIN entre deux tables ?",
+   "code": "",
+   "options": [
+    "Toutes les lignes de la table de gauche, avec NULL si absence de correspondance",
+    "Uniquement les lignes pour lesquelles la condition de jointure est vérifiée dans les deux tables",
+    "Toutes les lignes des deux tables, quelles que soient les correspondances",
+    "Le produit cartésien des deux tables"
+   ],
+   "correct": 1,
+   "explication": "INNER JOIN écarte les lignes sans correspondance ; c'est LEFT JOIN qui les conserve."
+  },
+  {
+   "id": "q3",
+   "theme": "LEFT JOIN",
+   "question": "Dans une requête avec LEFT JOIN, que contiennent les colonnes de la table de droite pour une ligne de gauche sans correspondance ?",
+   "code": "",
+   "options": [
+    "0",
+    "Une chaîne vide",
+    "La valeur de la ligne précédente",
+    "NULL"
+   ],
+   "correct": 3,
+   "explication": "En l'absence de correspondance, les colonnes de droite valent NULL."
+  },
+  {
+   "id": "q4",
+   "theme": "Clés",
+   "question": "Qu'est-ce qu'une clé étrangère ?",
+   "code": "",
+   "options": [
+    "Une colonne qui référence la clé primaire d'une autre table",
+    "Une colonne dont les valeurs sont toujours uniques dans sa table",
+    "Une colonne chiffrée pour des raisons de sécurité",
+    "Une colonne calculée à partir d'autres colonnes"
+   ],
+   "correct": 0,
+   "explication": "La clé étrangère matérialise le lien entre deux tables, par exemple ventes.produit vers produits.produit."
+  },
+  {
+   "id": "q5",
+   "theme": "CASE",
+   "question": "À quoi sert l'expression CASE WHEN ... THEN ... ELSE ... END ?",
+   "code": "",
+   "options": [
+    "À filtrer les lignes d'une table comme le fait WHERE",
+    "À joindre deux tables selon une condition",
+    "À créer une valeur conditionnelle, par exemple une catégorie, selon des tests",
+    "À trier le résultat selon plusieurs colonnes"
+   ],
+   "correct": 2,
+   "explication": "CASE évalue des conditions dans l'ordre et renvoie la valeur du premier test vrai, sinon celle du ELSE."
+  },
+  {
+   "id": "q6",
+   "theme": "Sous-requêtes",
+   "question": "Qu'est-ce qu'une sous-requête ?",
+   "code": "",
+   "options": [
+    "Une requête exécutée uniquement la nuit",
+    "Une copie physique d'une table",
+    "Un index créé automatiquement",
+    "Une requête SELECT imbriquée dans une autre requête"
+   ],
+   "correct": 3,
+   "explication": "Une sous-requête peut servir de valeur, de liste ou de table temporaire dans une requête englobante."
+  },
+  {
+   "id": "q7",
+   "theme": "Dates",
+   "question": "Quelle fonction SQLite permet d'extraire le mois d'une date au format texte AAAA-MM-JJ ?",
+   "code": "",
+   "options": [
+    "MONTH(date)",
+    "strftime('%m', date)",
+    "EXTRACT(MONTH FROM date)",
+    "DATEPART(month, date)"
+   ],
+   "correct": 1,
+   "explication": "SQLite ne dispose pas de MONTH() ni d'EXTRACT() : on utilise strftime avec le format %m."
+  },
+  {
+   "id": "q8",
+   "theme": "GROUP BY",
+   "question": "Dans une requête avec GROUP BY, que doit-on faire d'une colonne du SELECT qui n'est pas dans une fonction d'agrégation ?",
+   "code": "",
+   "options": [
+    "La placer dans la clause HAVING",
+    "La faire précéder de DISTINCT",
+    "La faire figurer dans la clause GROUP BY",
+    "Rien : SQL la gère automatiquement"
+   ],
+   "correct": 2,
+   "explication": "Chaque colonne non agrégée doit être un critère de regroupement pour que le résultat soit bien défini."
+  },
+  {
+   "id": "q9",
+   "theme": "NULL",
+   "question": "Quelle est la différence entre COUNT(*) et COUNT(colonne) ?",
+   "code": "",
+   "options": [
+    "COUNT(colonne) ignore les lignes où la colonne vaut NULL, COUNT(*) compte toutes les lignes",
+    "COUNT(*) ignore les lignes où une colonne vaut NULL",
+    "COUNT(colonne) compte les valeurs distinctes",
+    "Les deux sont toujours identiques"
+   ],
+   "correct": 0,
+   "explication": "COUNT(*) compte les lignes ; COUNT(colonne) compte les valeurs non nulles."
+  },
+  {
+   "id": "q10",
+   "theme": "Index",
+   "question": "Quel est l'intérêt principal d'un index sur une colonne fréquemment filtrée ?",
+   "code": "",
+   "options": [
+    "Accélérer les recherches et les jointures sur cette colonne",
+    "Réduire la taille de la table",
+    "Garantir que la colonne ne contient jamais de NULL",
+    "Trier définitivement les lignes de la table"
+   ],
+   "correct": 0,
+   "explication": "Un index évite de parcourir toute la table, au prix d'un peu d'espace et de ralentir les écritures."
+  },
+  {
+   "id": "q11",
+   "theme": "GROUP BY",
+   "question": "Combien de lignes renvoie cette requête ?",
+   "code": "SELECT produit, SUM(quantite) FROM ventes GROUP BY produit;",
+   "options": [
+    "5",
+    "20",
+    "4",
+    "8"
+   ],
+   "correct": 2,
+   "explication": "Une ligne par produit présent dans ventes ; Hévéa n'y figure pas."
+  },
+  {
+   "id": "q12",
+   "theme": "HAVING",
+   "question": "Combien de lignes renvoie cette requête ?",
+   "code": "SELECT ville, SUM(quantite) AS total FROM ventes GROUP BY ville HAVING SUM(quantite) > 400;",
+   "options": [
+    "2",
+    "4",
+    "3",
+    "5"
+   ],
+   "correct": 1,
+   "explication": "On ne garde que les villes dont la quantité totale dépasse 400."
+  },
+  {
+   "id": "q13",
+   "theme": "JOIN",
+   "question": "Quelle valeur renvoie cette requête ?",
+   "code": "SELECT COUNT(*) FROM ventes v JOIN produits p ON v.produit = p.produit;",
+   "options": [
+    "5",
+    "15",
+    "25",
+    "20"
+   ],
+   "correct": 3,
+   "explication": "Chaque vente a un produit correspondant dans produits : aucune ligne n'est perdue."
+  },
+  {
+   "id": "q14",
+   "theme": "LEFT JOIN",
+   "question": "Combien de lignes renvoie cette requête ?",
+   "code": "SELECT p.produit FROM produits p LEFT JOIN ventes v ON p.produit = v.produit WHERE v.id IS NULL;",
+   "options": [
+    "0",
+    "2",
+    "1",
+    "5"
+   ],
+   "correct": 2,
+   "explication": "Le filtre IS NULL isole les produits sans aucune vente."
+  },
+  {
+   "id": "q15",
+   "theme": "LEFT JOIN",
+   "question": "Quelle valeur renvoie cette requête ?",
+   "code": "SELECT COUNT(*) FROM villes vi LEFT JOIN ventes v ON vi.ville = v.ville;",
+   "options": [
+    "7",
+    "14",
+    "20",
+    "21"
+   ],
+   "correct": 3,
+   "explication": "Chaque vente est conservée ; Yamoussoukro, sans vente, ajoute une ligne avec NULL."
+  },
+  {
+   "id": "q16",
+   "theme": "Sous-requête",
+   "question": "Combien de lignes renvoie cette requête ?",
+   "code": "SELECT * FROM ventes WHERE quantite > (SELECT AVG(quantite) FROM ventes);",
+   "options": [
+    "9",
+    "5",
+    "10",
+    "20"
+   ],
+   "correct": 0,
+   "explication": "On compare chaque quantité à la moyenne globale calculée par la sous-requête."
+  },
+  {
+   "id": "q17",
+   "theme": "strftime",
+   "question": "Combien de lignes renvoie cette requête ?",
+   "code": "SELECT strftime('%m', date) AS mois, COUNT(*) FROM ventes GROUP BY mois;",
+   "options": [
+    "6",
+    "10",
+    "12",
+    "20"
+   ],
+   "correct": 1,
+   "explication": "Une ligne par mois ayant au moins une vente, et non par mois de l'année."
+  },
+  {
+   "id": "q18",
+   "theme": "CASE",
+   "question": "Quelle valeur renvoie cette requête ?",
+   "code": "SELECT COUNT(*) FROM ventes WHERE CASE WHEN quantite >= 200 THEN 'Gros' ELSE 'Petit' END = 'Gros';",
+   "options": [
+    "5",
+    "8",
+    "6",
+    "11"
+   ],
+   "correct": 2,
+   "explication": "CASE classe chaque vente en Gros ou Petit ; on compte les quantités d'au moins 200."
+  },
+  {
+   "id": "q19",
+   "theme": "Jointure et agrégation",
+   "question": "Quelle région renvoie cette requête ?",
+   "code": "SELECT vi.region FROM ventes v JOIN villes vi ON v.ville = vi.ville GROUP BY vi.region ORDER BY SUM(v.quantite * v.prix_unitaire) DESC LIMIT 1;",
+   "options": [
+    "Lagunes",
+    "Savanes",
+    "Vallée du Bandama",
+    "Bas-Sassandra"
+   ],
+   "correct": 0,
+   "explication": "On calcule le chiffre d'affaires par région puis on retient la plus élevée."
+  },
+  {
+   "id": "q20",
+   "theme": "Choix de requête",
+   "question": "Quelle requête donne, pour chaque produit, la marge totale (prix de vente moins coût unitaire, multipliée par la quantité) ?",
+   "code": "",
+   "options": [
+    "SELECT v.produit, SUM(v.prix_unitaire - p.cout_unitaire) FROM ventes v JOIN produits p ON v.produit = p.produit GROUP BY v.produit ORDER BY 1;",
+    "SELECT v.produit, (v.prix_unitaire - p.cout_unitaire) * v.quantite FROM ventes v JOIN produits p ON v.produit = p.produit ORDER BY 1;",
+    "SELECT v.produit, SUM(v.prix_unitaire) - SUM(p.cout_unitaire) FROM ventes v JOIN produits p ON v.produit = p.produit GROUP BY v.produit ORDER BY 1;",
+    "SELECT v.produit, SUM((v.prix_unitaire - p.cout_unitaire) * v.quantite) FROM ventes v JOIN produits p ON v.produit = p.produit GROUP BY v.produit ORDER BY 1;"
+   ],
+   "correct": 3,
+   "explication": "Il faut joindre les deux tables, calculer la marge ligne par ligne en tenant compte de la quantité, puis sommer par produit."
+  }
+ ]
+}
