@@ -142,3 +142,8 @@ figure.mdl-chart figcaption { font-size:.8rem; color:#64748b; margin-top:6px; }
 .mdl-checks li span { display:inline-block; min-width:92px; font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.03em; margin-right:8px; }
 .mdl-checks li.ok span { color:var(--ok); } .mdl-checks li.ko span { color:var(--bad); }
 .mdl-checks em { color:#64748b; }
+
+.mdl-prep { margin:14px 0; border:1px solid var(--line); border-left:4px solid var(--gold); border-radius:10px; padding:10px 16px; background:#fff; }
+.mdl-prep summary { cursor:pointer; font-weight:700; color:var(--navy); }
+.mdl-prep p { margin:8px 0 0; color:#334155; font-size:.9rem; }
+.mdl-prep .mdl-tbl td, .mdl-prep .mdl-tbl th { text-align:left !important; font-size:.82rem; }

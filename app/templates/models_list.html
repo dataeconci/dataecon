@@ -269,7 +269,16 @@
         $('diagBox').innerHTML = d.diagnostics.map(function (x) {
             return '<div class="mdl-diag-item ' + x.status + '"><div class="l">' + esc(x.label) + '</div>' + esc(x.value) + '</div>';
         }).join('');
-        $('ctxNotes').innerHTML = (d.notes || []).map(function (n) { return '<div class="mdl-warnbox">' + esc(n) + '</div>'; }).join('');
+        var pp = (d.preprocess && d.preprocess.steps) || [];
+        $('ctxNotes').innerHTML = (d.preprocess && d.preprocess.summary || []).concat([]).map(function (n) { return ''; }).join('');
+        var prepHtml = '<details class="mdl-prep" ' + (pp.length ? 'open' : '') + '><summary>Préparation automatique des données (' + pp.length + ' traitement' + (pp.length > 1 ? 's' : '') + ')</summary>';
+        prepHtml += (d.preprocess && d.preprocess.summary || []).map(function (n) { return '<p>' + esc(n) + '</p>'; }).join('');
+        if (pp.length) {
+            prepHtml += '<div class="mdl-tbl-wrap"><table class="mdl-tbl"><thead><tr><th>Variable</th><th>Constat</th><th>Traitement</th><th>Justification</th></tr></thead><tbody>' +
+                pp.map(function (s) { return '<tr><td>' + esc(s.variable) + '</td><td>' + esc(s.probleme) + '</td><td>' + esc(s.traitement) + '</td><td>' + esc(s.detail || '') + '</td></tr>'; }).join('') + '</tbody></table></div>';
+        }
+        prepHtml += '</details>';
+        $('ctxNotes').innerHTML = prepHtml + (d.notes || []).map(function (n) { return '<div class="mdl-warnbox">' + esc(n) + '</div>'; }).join('');
         var html = '';
         d.family_order.forEach(function (f) {
             var items = d.recommendations.filter(function (r) { return r.family === f && r.available; });
@@ -312,6 +321,15 @@
         document.querySelectorAll('#famBox .mdl-rec input:checked').forEach(function (i) { add('models', i.value); });
         $('loading').classList.add('on');
     });
+    {% if preselect %}
+    (function () {
+        var sel = $('dsSelect');
+        if (sel && Array.prototype.some.call(sel.options, function (o) { return o.value === '{{ preselect }}'; })) {
+            sel.value = '{{ preselect }}';
+            sel.dispatchEvent(new Event('change'));
+        }
+    })();
+    {% endif %}
 })();
 </script>
 {% endblock %}

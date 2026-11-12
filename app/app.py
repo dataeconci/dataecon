@@ -31,7 +31,8 @@ from models.report_generator import create_econometric_report, create_latex_repo
 from models.analysis import (profile_columns, detect_structure_columns, analyze_problem, recommend, FAMILY_LABELS, FAMILY_ORDER)
 from models.runners import run_model
 from models.report_generic import create_report as create_generic_report, create_latex as create_generic_latex
-from models.descriptive import build_data_report, build_conclusion
+from models.descriptive import build_data_report, build_conclusion, preprocess_section
+from models.preprocess import preprocess_dataframe
 from models.robustness import run_robustness
 import time as _time
 import tempfile
@@ -1216,6 +1217,8 @@ def econometric_model():
     if not current_user.can_access_models():
         flash('Vous devez avoir un abonnement Premium pour utiliser les modèles.', 'warning')
         return redirect(url_for('subscription'))
+    if request.method == 'GET':
+        return redirect(url_for('models_list', dataset=request.args.get('dataset', '')))
     
     result_html = None
     model_info = None
@@ -1647,7 +1650,15 @@ def models_list():
         return redirect(url_for('subscription'))
     
     datasets = Dataset.query.all()
-    return render_template('models_list.html', datasets=datasets)
+    return render_template('models_list.html', datasets=datasets, preselect=request.args.get('dataset', type=int))
+
+
+def _structure_guess(time_col, entity_col):
+    if time_col and entity_col:
+        return 'panel'
+    if time_col:
+        return 'time_series'
+    return 'cross_section'
 
 
 def _models_load_df(dataset_id):
@@ -1694,9 +1705,11 @@ def models_api_recommend():
         entity_col = data.get('entity_col') or None
         if not target:
             return jsonify({'error': 'Choisissez la variable cible.'}), 400
+        df, prep = preprocess_dataframe(df, target, features, time_col, entity_col, _structure_guess(time_col, entity_col))
         ctx = analyze_problem(df, target, features, time_col, entity_col)
         recs = recommend(ctx)
         return jsonify({
+            'preprocess': prep,
             'diagnostics': ctx['diagnostics'], 'notes': ctx.get('notes', []),
             'structure': ctx['structure'], 'target_kind': ctx['target_kind'],
             'recommendations': recs, 'family_order': FAMILY_ORDER, 'family_labels': FAMILY_LABELS,
@@ -1731,7 +1744,8 @@ def models_analyze():
             flash('Choisissez la variable cible et au moins un modèle.', 'danger')
             return redirect(url_for('models_list'))
         
-        dataset, df = _models_load_df(dataset_id)
+        dataset, df_raw = _models_load_df(dataset_id)
+        df, prep = preprocess_dataframe(df_raw, target, features, time_col, entity_col, _structure_guess(time_col, entity_col))
         ctx = analyze_problem(df, target, features, time_col, entity_col)
         recs = recommend(ctx)
         by_id = {r['id']: r for r in recs}
@@ -1741,7 +1755,7 @@ def models_analyze():
         report_problem = (request.form.get('report_problem') or '').strip()[:1500]
         t_start = _time.time()
         try:
-            data_report = build_data_report(df, target, ctx['features'], ctx, ctx.get('time_col'), ctx.get('entity_col'),
+            data_report = build_data_report(df_raw, target, ctx['features'], ctx, ctx.get('time_col'), ctx.get('entity_col'),
                                             dataset.name, report_context, report_problem, report_title)
         except Exception as e:
             traceback.print_exc()
@@ -1768,6 +1782,12 @@ def models_analyze():
             flash("Aucun des modèles choisis n'est applicable à ces données.", 'danger')
             return redirect(url_for('models_list'))
         
+        try:
+            secs = data_report['sections']
+            pos = next((i for i, x in enumerate(secs) if x['id'] == 'descriptives'), 0) + 1
+            secs.insert(pos, preprocess_section(prep))
+        except Exception:
+            traceback.print_exc()
         conclusion = build_conclusion(results, ctx, target)
         data_report['title'] = report_title or f"Analyse de {target}"
         data_report['conclusion'] = conclusion

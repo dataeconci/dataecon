@@ -22,7 +22,7 @@ import pandas as pd
 from scipy import stats
 
 from models.analysis import (prepare_series, prepare_xy, stationarity, detect_seasonality,
-                             volatility_input, arch_effect, _is_datetime_like)
+                             volatility_input, volatility_prepare, arch_effect, _is_datetime_like)
 
 warnings.filterwarnings('ignore')
 
@@ -1051,6 +1051,34 @@ def run_mlp_ts(df, target, features, time_col=None, forecast_steps=12, **kw):
 # ----------------------------------------------------------------------------
 # Volatilité
 # ----------------------------------------------------------------------------
+
+def _returns_block(r, series, ret, nature, meta):
+    """Tableau et graphique des rendements calculés (niveaux -> rendements)."""
+    x = ret.values
+    jb = stats.jarque_bera(x) if len(x) > 7 else (float('nan'), float('nan'))
+    lab = {'log_returns': 'Rendements logarithmiques (%)', 'difference': 'Variations absolues', 'scaled': 'Rendements (x100)', 'as_is': 'Série utilisée'}[nature]
+    r.table(f'{lab} : statistiques descriptives', ['Indicateur', 'Valeur'], [
+        ['Observations', len(x)], ['Moyenne', fmt(x.mean(), 4)], ['Écart-type', fmt(x.std(), 4)],
+        ['Minimum', fmt(x.min(), 3)], ['Maximum', fmt(x.max(), 3)], ['Asymétrie', fmt(stats.skew(x), 3)],
+        ['Aplatissement (excès)', fmt(stats.kurtosis(x), 3)], ['Jarque-Bera (p-value)', fmt_p(jb[1])]])
+    try:
+        xs = _axis_index(series, meta)
+        fig, ax = plt.subplots(2 if nature in ('log_returns', 'difference') else 1, 1, figsize=(9, 5 if nature in ('log_returns', 'difference') else 3), squeeze=False)
+        k = 0
+        if nature in ('log_returns', 'difference'):
+            ax[0][0].plot(xs, series.values, color=NAVY, lw=1.2)
+            ax[0][0].set_title('Série en niveaux')
+            k = 1
+        xr = xs[-len(x):] if hasattr(xs, '__len__') and len(xs) >= len(x) else np.arange(len(x))
+        ax[k][0].plot(xr, x, color=STEEL, lw=.8)
+        ax[k][0].axhline(0, color=GREY, lw=.8)
+        ax[k][0].set_title(lab)
+        fig.tight_layout()
+        r.chart('Passage des niveaux aux rendements', fig)
+    except Exception:
+        pass
+
+
 def run_volatility(kind, df, target, features, time_col=None, forecast_steps=12, **kw):
     from arch import arch_model
     names = {'garch': 'GARCH(1,1)', 'arch': 'ARCH(q)', 'egarch': 'EGARCH(1,1)', 'gjr': 'GJR-GARCH(1,1,1)'}
@@ -1058,10 +1086,11 @@ def run_volatility(kind, df, target, features, time_col=None, forecast_steps=12,
     series, meta = prepare_series(df, target, time_col)
     if len(series) < 100:
         raise ValueError("Au moins 100 observations sont nécessaires.")
-    ret, desc = volatility_input(series)
+    ret, desc, nature = volatility_prepare(series, target)
     for t in meta['notes']:
         r.warn(t)
-    r.warn(desc)
+    r.say(desc)
+    _returns_block(r, series, ret, nature, meta)
     ret = ret.iloc[-3000:]
     ap = arch_effect(ret)
     if ap is not None:
@@ -1164,8 +1193,9 @@ def run_volatility(kind, df, target, features, time_col=None, forecast_steps=12,
 def run_risk(df, target, features, time_col=None, **kw):
     r = Res('risk', 'volatility', 'Mesures de risque (VaR, ES, Sharpe)')
     series, meta = prepare_series(df, target, time_col)
-    ret, desc = volatility_input(series)
-    r.warn(desc)
+    ret, desc, nature = volatility_prepare(series, target)
+    r.say(desc)
+    _returns_block(r, series, ret, nature, meta)
     x = ret.values / 100.0
     if len(x) < 60:
         raise ValueError("Au moins 60 observations sont nécessaires.")

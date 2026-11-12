@@ -308,18 +308,40 @@ def arch_effect(x, nlags=None):
         return None
 
 
-def volatility_input(series):
-    """Retourne (rendements en %, description) utilisables pour un modèle GARCH."""
+_PRICE_HINTS = ('prix', 'price', 'close', 'cours', 'clot', 'indice', 'index', 'nasdaq', 'cac', 'brvm', 'bitcoin', 'btc', 'eth', 'adj', 'valeur', 'taux_change', 'fx', 'usd', 'eur')
+
+
+def volatility_prepare(series, name=None):
+    """Retourne (rendements, description, nature). nature : log_returns | difference | as_is | scaled."""
     s = pd.Series(series).dropna().astype(float)
     positive = bool((s > 0).all())
     st = stationarity(s)
-    if positive and not st['stationary']:
+    hint = bool(name) and any(h in str(name).lower() for h in _PRICE_HINTS)
+    try:
+        ac1 = float(s.autocorr(1))
+    except Exception:
+        ac1 = 0.0
+    level_like = (not st['stationary']) or ac1 > 0.95 or (hint and ac1 > 0.7)
+    if positive and level_like:
         r = 100 * np.log(s).diff().dropna()
-        return r.reset_index(drop=True), "Rendements logarithmiques en % calculés à partir des niveaux (série de type prix)."
+        return (r.reset_index(drop=True),
+                "Série de niveaux (type prix ou indice) : rendements logarithmiques en % calculés automatiquement, r(t) = 100 × [ln P(t) - ln P(t-1)].",
+                'log_returns')
+    if level_like and not positive:
+        r = s.diff().dropna()
+        return (r.reset_index(drop=True),
+                "Série de niveaux avec valeurs nulles ou négatives (logarithme impossible) : variations absolues calculées, r(t) = X(t) - X(t-1).",
+                'difference')
     r = s - 0.0
     if r.std() < 0.1:
-        return (r * 100).reset_index(drop=True), "Série supposée déjà en rendements ; mise à l'échelle ×100."
-    return r.reset_index(drop=True), "Série utilisée telle quelle comme rendements."
+        return (r * 100).reset_index(drop=True), "Série déjà exprimée en rendements (faible amplitude) ; mise à l'échelle ×100.", 'scaled'
+    return r.reset_index(drop=True), "Série déjà stationnaire : utilisée telle quelle comme rendements.", 'as_is'
+
+
+def volatility_input(series, name=None):
+    """Retourne (rendements en %, description) utilisables pour un modèle GARCH."""
+    r, desc, _ = volatility_prepare(series, name)
+    return r, desc
 
 
 def _vif_max(X):
@@ -473,7 +495,7 @@ def analyze_problem(df, target, features, time_col=None, entity_col=None):
         else:
             diag('Saisonnalité', "Aucune saisonnalité marquée détectée")
         # volatilité
-        r, desc = volatility_input(series) if len(series) >= 60 else (None, '')
+        r, desc = volatility_input(series, target) if len(series) >= 60 else (None, '')
         ctx['arch_p'] = arch_effect(r) if r is not None else None
         if ctx['arch_p'] is not None:
             if ctx['arch_p'] < 0.05:

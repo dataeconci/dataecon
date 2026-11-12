@@ -469,7 +469,7 @@ def _rob_vol(mid, name, df, target, features, time_col):
     series, meta = prepare_series(df, target, time_col)
     if len(series) < 100:
         raise ValueError("Au moins 100 observations sont nécessaires.")
-    ret, _ = volatility_input(series)
+    ret, _ = volatility_input(series, target)
     ret = ret.iloc[-2500:]
     specs = []
     for lbl, kw in [('GARCH(1,1)', dict(vol='GARCH', p=1, q=1)), ('GJR-GARCH(1,1,1)', dict(vol='GARCH', p=1, o=1, q=1)), ('EGARCH(1,1)', dict(vol='EGARCH', p=1, o=1, q=1))]:

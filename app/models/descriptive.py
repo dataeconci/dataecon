@@ -535,3 +535,14 @@ def build_conclusion(results, ctx, target):
     if ctx.get('structure') == 'time_series':
         sec['text'].append("Les prévisions s'accompagnent d'une incertitude qui croît avec l'horizon ; elles supposent que la dynamique passée se prolonge.")
     return sec
+
+
+def preprocess_section(rep):
+    sec = _section('preparation', 'Préparation des données')
+    sec['text'].append("Avant toute estimation, les données sont préparées automatiquement : conversion des nombres écrits en texte, traitement des valeurs "
+                       "manquantes par la méthode adaptée à la structure des données, encodage des variables qualitatives et décision de standardisation.")
+    sec['text'] += rep.get('summary', [])
+    if rep.get('steps'):
+        _tbl(sec, 'Traitements appliqués', ['Variable', 'Constat', 'Traitement', 'Justification'],
+             [[s['variable'], s['probleme'], s['traitement'], s['detail']] for s in rep['steps']])
+    return sec
