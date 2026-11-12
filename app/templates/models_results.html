@@ -41,6 +41,12 @@
         {% if has_report %}
         <a href="{{ url_for('download_report') }}" class="mdl-btn primary" style="text-decoration:none"><i class="fas fa-file-word"></i> Rapport Word</a>
         <a href="{{ url_for('download_latex') }}" class="mdl-btn ghost" style="text-decoration:none"><i class="fas fa-file-code"></i> Source LaTeX</a>
+        <span class="mdl-sep" style="display:inline-block;width:1px;height:26px;background:var(--border,#d5dbe3);margin:0 .35rem;vertical-align:middle"></span>
+        <a href="{{ url_for('download_script', kind='python') }}" class="mdl-btn ghost" style="text-decoration:none" title="Script Python (.py)"><i class="fab fa-python"></i> Script Python</a>
+        <a href="{{ url_for('download_script', kind='notebook') }}" class="mdl-btn ghost" style="text-decoration:none" title="Notebook Jupyter (.ipynb)"><i class="fas fa-book"></i> Notebook Jupyter</a>
+        <a href="{{ url_for('download_script', kind='r') }}" class="mdl-btn ghost" style="text-decoration:none" title="Script R (.R)"><i class="fab fa-r-project"></i> Script R</a>
+        <a href="{{ url_for('download_script', kind='stata') }}" class="mdl-btn ghost" style="text-decoration:none" title="Do-file Stata (.do)"><i class="fas fa-chart-line"></i> Script Stata</a>
+        <a href="{{ url_for('download_script', kind='sql') }}" class="mdl-btn ghost" style="text-decoration:none" title="Script SQL PostgreSQL (.sql)"><i class="fas fa-database"></i> Script SQL</a>
         {% endif %}
     </div>
 

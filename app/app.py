@@ -1802,6 +1802,16 @@ def models_analyze():
             with open(os.path.join(report_dir, f"{report_id}.tex"), 'w', encoding='utf-8') as f:
                 f.write(create_generic_latex(dataset.name, target, ctx['features'], ctx, recs, results, ctx.get('time_col'), ctx.get('entity_col'), data_report=data_report))
             session['report_id'] = report_id
+            try:
+                cfg_scripts = {'file': dataset.file_name or 'donnees.csv', 'dataset_name': dataset.name, 'target': target,
+                               'features': list(ctx['features']), 'time_col': ctx.get('time_col'), 'entity_col': ctx.get('entity_col'),
+                               'structure': ctx.get('structure', 'cross_section'), 'kind': ctx.get('target_kind', 'continuous'),
+                               'models': [r_['id'] for r_ in results if r_.get('status') == 'ok'], 'forecast_steps': steps,
+                               'cat_features': [c_ for c_ in ctx['features'] if c_ in df.columns and not pd.api.types.is_numeric_dtype(df[c_])]}
+                with open(os.path.join(report_dir, f"{report_id}.cfg.json"), 'w', encoding='utf-8') as f_:
+                    json.dump(cfg_scripts, f_, ensure_ascii=False)
+            except Exception:
+                traceback.print_exc()
             session['report_name'] = f'rapport_modeles_{datetime.now().strftime("%Y%m%d_%H%M%S")}'
             has_report = True
         except Exception as e:
@@ -1871,6 +1881,37 @@ def download_latex():
         download_name=f'{report_name}.tex',
         mimetype='application/x-tex'
     )
+
+@app.route('/models/download_script/<kind>')
+@login_required
+def download_script(kind):
+    """Télécharger le script reproductible de l'analyse (Python, notebook, R, Stata, SQL)"""
+    from models.scripts import BUILDERS
+    if not current_user.can_access_models():
+        flash('Vous devez avoir un abonnement Premium.', 'warning')
+        return redirect(url_for('subscription'))
+    report_id = session.get('report_id')
+    if kind not in BUILDERS or not report_id:
+        flash("Aucune analyse disponible. Lancez une analyse d'abord.", 'warning')
+        return redirect(url_for('models_list'))
+    path = f'/tmp/reports/{report_id}.cfg.json'
+    if not os.path.exists(path):
+        flash("Script introuvable. Veuillez relancer l'analyse.", 'warning')
+        return redirect(url_for('models_list'))
+    with open(path, encoding='utf-8') as f:
+        cfg = json.load(f)
+    build, mime, ext = BUILDERS[kind]
+    try:
+        content = build(cfg)
+    except Exception as e:
+        traceback.print_exc()
+        flash(f"Impossible de générer le script : {e}", 'danger')
+        return redirect(url_for('models_list'))
+    from flask import Response
+    name = session.get('report_name', 'analyse').replace('rapport_modeles', 'analyse')
+    return Response(content.encode('utf-8-sig' if ext == 'do' else 'utf-8'), mimetype=mime,
+                    headers={'Content-Disposition': f'attachment; filename="{name}.{ext}"'})
+
 
 @app.route('/generate_chart/<int:dataset_id>/<chart_type>')
 @login_required
@@ -1946,12 +1987,13 @@ def generate_chart(dataset_id, chart_type):
 # ==================== INITIALISATION ====================
 # ==================== EXAMENS ET CERTIFICATS ====================
 from certification import init_certification
-ExamAttempt, Certificate = init_certification(app, db, User)
+ExamAttempt, Certificate = init_certification(app, db, User, notify=brevo_send_email)
 
 
 def init_db():
     with app.app_context():
         db.create_all()
+        app.config['migrer_paiement_certificat']()
         # Migration automatique : ajouter les nouvelles colonnes si elles n'existent pas
         from sqlalchemy import text
         try:

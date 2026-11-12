@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% block title %}Paiements des certificats - Admin{% endblock %}
+{% block content %}
+<div class="container" style="margin-top:40px;margin-bottom:50px">
+  <h2 style="color:#0b2a4a;font-weight:700;margin-bottom:6px">Paiements des certificats</h2>
+  <p style="color:#556">Montant attendu : {{ '{:,}'.format(prix_xof).replace(',', ' ') }} FCFA ({{ '%g'|format(prix_usd) }} $). Vérifiez la transaction sur votre compte Wave avant de valider.</p>
+  {% with messages = get_flashed_messages(with_categories=true) %}{% for c, m in messages %}
+    <div class="alert alert-{{ 'success' if c == 'success' else 'warning' }}">{{ m }}</div>
+  {% endfor %}{% endwith %}
+  <div style="background:#fff;border-radius:12px;box-shadow:0 5px 20px rgba(0,0,0,.05);overflow-x:auto;margin-bottom:30px">
+    <table style="width:100%;border-collapse:collapse;min-width:820px">
+      <thead style="background:#1f5f99;color:#fff"><tr>
+        <th style="padding:14px;text-align:left">Date examen</th><th style="padding:14px;text-align:left">Utilisateur</th><th style="padding:14px;text-align:left">Certificat</th>
+        <th style="padding:14px;text-align:left">Référence Wave</th><th style="padding:14px;text-align:left">Téléphone</th><th style="padding:14px;text-align:left">Statut</th><th style="padding:14px;text-align:left">Action</th></tr></thead>
+      <tbody>
+      {% for c in certs %}
+        <tr style="border-bottom:1px solid #eee">
+          <td style="padding:14px;font-size:.9rem;color:#555">{{ c.issued_at.strftime('%d/%m/%Y') }}</td>
+          <td style="padding:14px;font-weight:600;color:#0b2a4a">{{ noms.get(c.user_id, c.holder_name) }}</td>
+          <td style="padding:14px">{{ outils[c.outil] }} - {{ niveaux[c.niveau] }}<br><small>{{ c.code }}</small></td>
+          <td style="padding:14px">{{ c.wave_ref or '-' }}</td><td style="padding:14px">{{ c.wave_tel or '-' }}</td>
+          <td style="padding:14px"><span style="padding:5px 10px;border-radius:20px;font-size:.8rem;font-weight:700;background:{{ '#fff3cd' if c.paiement == 'en_verification' else '#eee' }};color:#856404">{{ 'À vérifier' if c.paiement == 'en_verification' else 'Non payé' }}</span></td>
+          <td style="padding:14px">
+            <form method="post" action="{{ url_for('admin_certificat_valider', cert_id=c.id) }}" data-msg="Confirmez-vous avoir reçu {{ prix_xof }} FCFA pour ce certificat ?" onsubmit="return confirm(this.dataset.msg);">
+              <button type="submit" style="background:#27ae60;color:#fff;padding:8px 15px;border-radius:6px;border:none;cursor:pointer;font-size:.85rem;font-weight:600">Valider le paiement</button></form></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="7" style="padding:40px;text-align:center;color:#666">Aucun paiement en attente.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if deja %}<h3 class="h5" style="color:#0b2a4a">Derniers paiements validés</h3>
+  <ul>{% for c in deja %}<li>{{ noms.get(c.user_id, c.holder_name) }} : {{ outils[c.outil] }} - {{ niveaux[c.niveau] }}, validé le {{ c.paye_at.strftime('%d/%m/%Y') if c.paye_at else 'avant la mise en place du paiement' }}</li>{% endfor %}</ul>{% endif %}
+</div>
+{% endblock %}

@@ -353,21 +353,10 @@ def run_sk_regressor(mid, df, target, features, **kw):
         r.warn(t)
     if len(X) < 30:
         raise ValueError("Moins de 30 observations : estimation peu fiable.")
-    Xtr, Xte, ytr, yte = _split(X, y)
-    est = factory().fit(Xtr, ytr)
-    pred = est.predict(Xte)
+    from models.ml_pipeline import tune_and_evaluate
+    est, Xte, yte, pred, _ = tune_and_evaluate(r, mid, factory, X, y, 'reg', target=target)
     r2 = r2_score(yte, pred)
-    rmse = float(np.sqrt(mean_squared_error(yte, pred)))
-    r.metric('R2', 'R² (test)', r2)
-    r.metric('RMSE', 'RMSE (test)', rmse)
-    r.metric('MAE', 'MAE (test)', mean_absolute_error(yte, pred))
-    try:
-        cv = cross_val_score(factory(), X, y, cv=5, scoring='r2')
-        r.metric('R2cv', 'R² (validation croisée 5 blocs)', float(cv.mean()), 4, f"± {cv.std():.3f}")
-    except Exception:
-        pass
     r.metric('n', 'Observations', int(len(X)))
-    r.say(f"Sur 20 % d'observations mises de côté, le modèle explique {fmt(r2 * 100, 1)} % de la variance de {target} (RMSE = {fmt(rmse, 3)}).")
     if r2 < 0.2:
         r.warn("Pouvoir prédictif faible : les variables retenues expliquent peu la cible.")
     if mid == 'mlp_reg' and len(X) < 300:
@@ -376,15 +365,7 @@ def run_sk_regressor(mid, df, target, features, **kw):
     top = imp.sort_values(ascending=False).head(3)
     r.say("Variables les plus influentes : " + ", ".join(top.index) + '.')
     r.table('Importance des variables', ['Variable', 'Importance'], [[k, fmt(v)] for k, v in imp.sort_values(ascending=False).head(15).items()])
-    fig, ax = plt.subplots(1, 2, figsize=(9.5, 3.5))
-    ax[0].scatter(yte, pred, s=14, color=STEEL, alpha=.6)
-    lo, hi = float(min(yte.min(), pred.min())), float(max(yte.max(), pred.max()))
-    ax[0].plot([lo, hi], [lo, hi], color=GOLD, lw=1.6)
-    ax[0].set_xlabel('Observé'); ax[0].set_ylabel('Prédit'); ax[0].set_title('Prédiction sur l\'échantillon test')
-    s = imp.sort_values().tail(10)
-    ax[1].barh(s.index, s.values, color=STEEL); ax[1].set_title(lab)
-    fig.tight_layout()
-    r.chart('Prédiction et importance', fig)
+    _importance_chart(r, imp, lab)
     return r.d
 
 
@@ -484,7 +465,9 @@ def run_logit(df, target, features, **kw):
     if len(classes) != 2:
         raise ValueError("Le Logit binaire nécessite exactement deux modalités.")
     r.warn(f"Modalité positive (1) : « {classes[1]} » ; référence (0) : « {classes[0]} ».")
-    Xtr, Xte, ytr, yte = _split(X, y, stratify=y)
+    from models.ml_pipeline import three_way_split, partition_table
+    Xtr, ytr, Xva, yva, Xte, yte = three_way_split(X, y, stratify=True)
+    partition_table(r, len(Xtr), len(Xva), len(Xte), extra='strat')
     Xc = sm.add_constant(Xtr, has_constant='add')
     try:
         res = sm.Logit(ytr, Xc).fit(disp=0, maxiter=200)
@@ -501,7 +484,19 @@ def run_logit(df, target, features, **kw):
         r.warn(f"Estimation statsmodels impossible ({e}) : régression logistique pénalisée utilisée.")
         lr = LogisticRegression(max_iter=1000).fit(Xtr, ytr)
         proba1 = lr.predict_proba(Xte)[:, 1]
-    pred = (proba1 >= 0.5).astype(int)
+    # seuil de décision optimisé sur l'échantillon de validation (maximisation du F1)
+    from sklearn.metrics import f1_score as _f1
+    try:
+        if 'res' in dir() and hasattr(res, 'predict'):
+            pv = res.predict(sm.add_constant(Xva, has_constant='add')).values
+        else:
+            pv = lr.predict_proba(Xva)[:, 1]
+        ths = np.linspace(.05, .95, 19)
+        th = float(ths[int(np.argmax([_f1(yva, (pv >= t).astype(int), zero_division=0) for t in ths]))])
+    except Exception:
+        th = 0.5
+    r.metric('Seuil', 'Seuil de décision (optimisé sur la validation)', th, 2)
+    pred = (proba1 >= th).astype(int)
     proba = np.column_stack([1 - proba1, proba1])
     r.metric('n', 'Observations', int(len(X)))
     _classification_report(r, yte, pred, proba, classes, True)
@@ -524,18 +519,9 @@ def run_sk_classifier(mid, df, target, features, **kw):
         raise ValueError("Moins de 30 observations : estimation peu fiable.")
     binary = len(classes) == 2
     r.warn(f"Classes : {', '.join(str(c) for c in classes)}.")
-    strat = y if y.value_counts().min() >= 2 else None
-    Xtr, Xte, ytr, yte = _split(X, y, stratify=strat)
-    est = factory().fit(Xtr, ytr)
-    pred = est.predict(Xte)
-    proba = est.predict_proba(Xte) if hasattr(est, 'predict_proba') else None
+    from models.ml_pipeline import tune_and_evaluate
+    est, Xte, yte, pred, proba = tune_and_evaluate(r, mid, factory, X, y, 'clf', classes=classes, target=target)
     r.metric('n', 'Observations', int(len(X)))
-    _classification_report(r, yte, pred, proba, classes, binary)
-    try:
-        cv = cross_val_score(factory(), X, y, cv=min(5, int(y.value_counts().min())) if y.value_counts().min() >= 2 else 3, scoring='accuracy')
-        r.metric('Acccv', 'Exactitude (validation croisée)', float(cv.mean()), 4, f"± {cv.std():.3f}")
-    except Exception:
-        pass
     if mid == 'mlp_clf' and len(X) < 300:
         r.warn("Échantillon petit pour un réseau de neurones : risque de surapprentissage.")
     try:
@@ -884,6 +870,11 @@ def run_arima_family(kind, df, target, features, time_col=None, forecast_steps=1
             key = f'x{i + 1}'
             if key in pv.index and pv[key] < 0.05:
                 r.say(f"La variable « {c} » est significative (p = {fmt_p(pv[key])}, coefficient = {fmt(res.params[key], 3)}).")
+    try:
+        from models.ml_pipeline import evaluate_ts_split
+        evaluate_ts_split(r, series, meta, kind)
+    except Exception as e:
+        r.warn(f"Partition train / validation / test non réalisée : {e}")
     return r.d
 
 
@@ -936,6 +927,11 @@ def run_holtwinters(df, target, features, time_col=None, forecast_steps=12, **kw
     r.say(f"Tendance amortie {'et saisonnalité ' + ('multiplicative' if positive else 'additive') + f' de période {per}' if use_seas else 'sans saisonnalité'}.")
     r.say(f"Hors échantillon, RMSE = {fmt(rmse, 3)} contre {fmt(naive, 3)} pour la prévision naïve : " + ("meilleur que la référence." if rmse < naive else "pas meilleur que la référence naïve."))
     r.say(f"Prévision à l'horizon {steps} : {fmt(mean[-1], 3)}.")
+    try:
+        from models.ml_pipeline import evaluate_hw_split
+        evaluate_hw_split(r, series, meta)
+    except Exception as e:
+        r.warn(f"Partition train / validation / test non réalisée : {e}")
     return r.d
 
 
@@ -1187,6 +1183,11 @@ def run_volatility(kind, df, target, features, time_col=None, forecast_steps=12,
             else:
                 r.say("Pas d'asymétrie significative entre chocs positifs et négatifs.")
     r.say(f"Pour la prochaine période, la perte maximale attendue est de {fmt(var95, 2)} % avec 95 % de confiance et {fmt(var99, 2)} % à 99 %.")
+    try:
+        from models.ml_pipeline import evaluate_vol_split
+        evaluate_vol_split(r, ret)
+    except Exception as e:
+        r.warn(f"Partition train / validation / test non réalisée : {e}")
     return r.d
 
 

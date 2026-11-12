@@ -12,8 +12,16 @@
     <div class="cert-card"><header>Certificat obtenu</header><div class="body">
       <p>Félicitations, vous avez validé cet examen le {{ cert.issued_at.strftime('%d/%m/%Y') }} avec {{ '%.0f'|format(cert.score) }} %.</p>
       <p>Code de vérification : <strong>{{ cert.code }}</strong></p>
+      {% if cert.est_paye %}
       <a class="cert-btn gold" href="{{ url_for('certificat_download', code=cert.code) }}">Télécharger le certificat (PDF)</a>
       <a class="cert-btn light" href="{{ url_for('certificat_verify', code=cert.code) }}">Page de vérification</a>
+      {% elif cert.paiement == 'en_verification' %}
+      <p>Paiement en cours de vérification par l'administrateur.</p>
+      <a class="cert-btn light" href="{{ url_for('certificat_paiement', code=cert.code) }}">Suivre mon paiement</a>
+      {% else %}
+      <p>Frais de délivrance du certificat : <strong>{{ '%g'|format(CERT_PRIX_USD) }} $ (soit {{ '{:,}'.format(CERT_PRIX_XOF).replace(',', ' ') }} FCFA)</strong>, par Wave.</p>
+      <a class="cert-btn gold" href="{{ url_for('certificat_paiement', code=cert.code) }}">Payer et obtenir mon certificat</a>
+      {% endif %}
     </div></div>
     {% else %}
     <div class="cert-card"><header>Règles de l'examen</header><div class="body">

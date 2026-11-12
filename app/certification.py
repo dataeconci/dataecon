@@ -30,6 +30,13 @@ NOTE_PASSAGE = 70          # pourcentage
 MAX_TENTATIVES = 2
 BLOCAGE_JOURS = 30
 
+# Paiement du certificat : 5 dollars US, converti en FCFA (taux modifiable par variable d'environnement)
+import os as _os
+PRIX_USD = float(_os.environ.get('CERT_PRIX_USD', '5'))
+TAUX_USD_XOF = float(_os.environ.get('CERT_TAUX_USD_XOF', '600'))
+PRIX_XOF = int(-(-PRIX_USD * TAUX_USD_XOF // 100) * 100)          # arrondi aux 100 FCFA supérieurs (3 000 FCFA par défaut)
+WAVE_LIEN = _os.environ.get('CERT_WAVE_LIEN', 'https://pay.wave.com/m/M_ci_BBSbYjlQgoxi/c/ci/')
+
 EXAM_DIR = os.path.join(os.path.dirname(__file__), 'data', 'exams')
 
 
@@ -232,7 +239,7 @@ def generer_pdf(nom_complet, outil_nom, niveau_nom, score, date_emission, code, 
 
 
 # ---------------------------------------------------------------- enregistrement
-def init_certification(app, db, User):
+def init_certification(app, db, User, notify=None):
 
     class ExamAttempt(db.Model):
         __tablename__ = 'exam_attempt'
@@ -258,8 +265,34 @@ def init_certification(app, db, User):
         score = db.Column(db.Float, nullable=False)
         holder_name = db.Column(db.String(200), nullable=False)
         issued_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+        paiement = db.Column(db.String(20), default='a_payer')    # a_payer | en_verification | paye
+        wave_ref = db.Column(db.String(80))
+        wave_tel = db.Column(db.String(30))
+        paiement_declare_at = db.Column(db.DateTime)
+        paye_at = db.Column(db.DateTime)
         __table_args__ = (db.UniqueConstraint('user_id', 'outil', 'niveau', name='uq_cert_user_course'),)
 
+        @property
+        def est_paye(self):
+            return self.paiement == 'paye'
+
+    def migrer_paiement():
+        """Ajoute les colonnes de paiement (PostgreSQL). Les certificats déjà délivrés restent valides (statut 'paye')."""
+        from sqlalchemy import text
+        try:
+            db.session.execute(text("ALTER TABLE certificate ADD COLUMN IF NOT EXISTS paiement VARCHAR(20) DEFAULT 'paye'"))
+            db.session.execute(text("ALTER TABLE certificate ALTER COLUMN paiement SET DEFAULT 'a_payer'"))
+            db.session.execute(text("ALTER TABLE certificate ADD COLUMN IF NOT EXISTS wave_ref VARCHAR(80)"))
+            db.session.execute(text("ALTER TABLE certificate ADD COLUMN IF NOT EXISTS wave_tel VARCHAR(30)"))
+            db.session.execute(text("ALTER TABLE certificate ADD COLUMN IF NOT EXISTS paiement_declare_at TIMESTAMP"))
+            db.session.execute(text("ALTER TABLE certificate ADD COLUMN IF NOT EXISTS paye_at TIMESTAMP"))
+            db.session.commit()
+        except Exception as e:
+            print(f"Migration paiement certificat : {e}", flush=True)
+            db.session.rollback()
+
+    app.jinja_env.globals.update(CERT_PRIX_USD=PRIX_USD, CERT_PRIX_XOF=PRIX_XOF)
+    app.config['migrer_paiement_certificat'] = migrer_paiement
     app.config['ExamAttempt'] = ExamAttempt
     app.config['Certificate'] = Certificate
 
@@ -290,7 +323,7 @@ def init_certification(app, db, User):
                 db.session.add(Certificate(
                     user_id=att.user_id, outil=att.outil, niveau=att.niveau,
                     code='DEC-' + secrets.token_hex(5).upper(),
-                    score=score, holder_name=_nom(user)))
+                    score=score, holder_name=_nom(user), paiement='a_payer'))
         db.session.commit()
 
     def _expirer_ouvertes(user_id, outil=None, niveau=None):
@@ -445,11 +478,77 @@ def init_certification(app, db, User):
         cert = Certificate.query.filter_by(code=code).first_or_404()
         if cert.user_id != current_user.id and not current_user.is_admin:
             abort(404)
+        if not cert.est_paye and not current_user.is_admin:
+            flash('Le certificat sera disponible après confirmation du paiement.', 'warning')
+            return redirect(url_for('certificat_paiement', code=cert.code))
         url_verif = url_for('certificat_verify', code=cert.code, _external=True)
         pdf = generer_pdf(cert.holder_name, OUTILS[cert.outil], NIVEAUX[cert.niveau], cert.score,
                           cert.issued_at, cert.code, url_verif)
         return send_file(pdf, mimetype='application/pdf', as_attachment=True,
                          download_name=f'certificat_dataecon_{cert.outil}_{cert.niveau}.pdf')
+
+    def _params_paiement(cert):
+        return dict(cert=cert, outil_nom=OUTILS[cert.outil], niveau_nom=NIVEAUX[cert.niveau],
+                    prix_usd=PRIX_USD, prix_xof=PRIX_XOF,
+                    wave_lien=f"{WAVE_LIEN.rstrip('/')}/?amount={PRIX_XOF}")
+
+    @app.route('/certificat/<code>/paiement', methods=['GET', 'POST'])
+    @login_required
+    def certificat_paiement(code):
+        cert = Certificate.query.filter_by(code=code).first_or_404()
+        if cert.user_id != current_user.id:
+            abort(404)
+        if cert.est_paye:
+            return redirect(url_for('certificat_download', code=cert.code))
+        if request.method == 'POST':
+            ref = (request.form.get('wave_ref') or '').strip()[:80]
+            tel = (request.form.get('wave_tel') or '').strip()[:30]
+            if len(ref) < 4 or len(tel) < 8:
+                flash("Indiquez l'identifiant de la transaction Wave et le numéro utilisé pour le paiement.", 'danger')
+            else:
+                cert.wave_ref, cert.wave_tel = ref, tel
+                cert.paiement = 'en_verification'
+                cert.paiement_declare_at = datetime.utcnow()
+                db.session.commit()
+                if notify:
+                    try:
+                        from markupsafe import escape
+                        notify(to_email='dataeconci@gmail.com', to_name='Admin DataEcon',
+                               subject=f'Paiement de certificat à vérifier : {OUTILS[cert.outil]} {NIVEAUX[cert.niveau]} - {current_user.username}',
+                               html_content=f"""<h3>Paiement de certificat déclaré</h3>
+                               <p><strong>Utilisateur :</strong> {escape(current_user.username)} ({escape(current_user.email)})</p>
+                               <p><strong>Certificat :</strong> {OUTILS[cert.outil]} - {NIVEAUX[cert.niveau]} (code {cert.code})</p>
+                               <p><strong>Montant attendu :</strong> {PRIX_XOF} FCFA (soit {PRIX_USD:g} USD)</p>
+                               <p><strong>Référence Wave :</strong> {escape(ref)} | <strong>Téléphone :</strong> {escape(tel)}</p>
+                               <p>Vérifiez la réception sur votre compte Wave, puis validez depuis Administration, Paiements des certificats.</p>""")
+                    except Exception as e:
+                        print(f'Notification paiement certificat : {e}', flush=True)
+                flash("Paiement déclaré. Le certificat sera débloqué après vérification par l'administrateur.", 'success')
+                return redirect(url_for('certificat_paiement', code=cert.code))
+        return render_template('certification_paiement.html', **_params_paiement(cert))
+
+    @app.route('/admin/certificats-paiements')
+    @login_required
+    def admin_certificats_paiements():
+        if not current_user.is_admin:
+            abort(403)
+        certs = Certificate.query.filter(Certificate.paiement != 'paye').order_by(Certificate.issued_at.desc()).all()
+        deja = Certificate.query.filter_by(paiement='paye').order_by(Certificate.paye_at.desc()).limit(30).all()
+        noms = {u.id: u.username for u in User.query.filter(User.id.in_({c.user_id for c in certs + deja})).all()} if (certs or deja) else {}
+        return render_template('admin_certificats_paiements.html', certs=certs, deja=deja, noms=noms,
+                               outils=OUTILS, niveaux=NIVEAUX, prix_xof=PRIX_XOF, prix_usd=PRIX_USD)
+
+    @app.route('/admin/certificat/<int:cert_id>/valider-paiement', methods=['POST'])
+    @login_required
+    def admin_certificat_valider(cert_id):
+        if not current_user.is_admin:
+            abort(403)
+        cert = db.session.get(Certificate, cert_id) or abort(404)
+        cert.paiement = 'paye'
+        cert.paye_at = datetime.utcnow()
+        db.session.commit()
+        flash(f'Paiement validé : certificat {cert.code} débloqué.', 'success')
+        return redirect(url_for('admin_certificats_paiements'))
 
     @app.route('/certificat/verifier', methods=['GET', 'POST'])
     @app.route('/certificat/verifier/<code>')
@@ -460,6 +559,8 @@ def init_certification(app, db, User):
         cert = None
         if code:
             cert = Certificate.query.filter_by(code=code.strip().upper()).first()
+            if cert is not None and not cert.est_paye:
+                cert = None
         return render_template('certification_verify.html', code=code, cert=cert,
                                outils=OUTILS, niveaux=NIVEAUX)
 

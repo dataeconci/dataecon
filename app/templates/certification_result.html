@@ -9,8 +9,16 @@
       <div class="big">{{ '%.0f'|format(att.score) }} %</div>
       {% if att.passed %}
         <h3 class="mt-2">Examen réussi</h3>
+        {% if cert and cert.est_paye %}
         <p>Votre certificat est disponible.</p>
-        {% if cert %}<a class="cert-btn gold" href="{{ url_for('certificat_download', code=cert.code) }}">Télécharger le certificat (PDF)</a>{% endif %}
+        <a class="cert-btn gold" href="{{ url_for('certificat_download', code=cert.code) }}">Télécharger le certificat (PDF)</a>
+        {% elif cert and cert.paiement == 'en_verification' %}
+        <p>Votre paiement est en cours de vérification. Le certificat sera débloqué dès sa confirmation.</p>
+        <a class="cert-btn light" href="{{ url_for('certificat_paiement', code=cert.code) }}">Suivre mon paiement</a>
+        {% elif cert %}
+        <p>Pour obtenir votre certificat, réglez les frais de délivrance : <strong>{{ '%g'|format(CERT_PRIX_USD) }} $ (soit {{ '{:,}'.format(CERT_PRIX_XOF).replace(',', ' ') }} FCFA)</strong>, par Wave.</p>
+        <a class="cert-btn gold" href="{{ url_for('certificat_paiement', code=cert.code) }}">Payer et obtenir mon certificat</a>
+        {% endif %}
       {% else %}
         <h3 class="mt-2">Examen non validé (seuil : {{ regles.seuil }} %)</h3>
         {% if etat.bloque %}

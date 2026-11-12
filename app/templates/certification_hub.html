@@ -22,12 +22,14 @@
         <div class="cert-row">
           <div><div class="nm">{{ o.nom }} - {{ n.nom }}</div>
             <div class="st">
-              {% if n.cert %}Certificat obtenu le {{ n.cert.issued_at.strftime('%d/%m/%Y') }}, note {{ '%.0f'|format(n.cert.score) }} %
+              {% if n.cert and n.cert.est_paye %}Certificat obtenu le {{ n.cert.issued_at.strftime('%d/%m/%Y') }}, note {{ '%.0f'|format(n.cert.score) }} %
+              {% elif n.cert %}Examen réussi, note {{ '%.0f'|format(n.cert.score) }} % : certificat à régler
               {% elif n.etat.bloque %}Nouvelle tentative possible le {{ n.etat.bloque_jusqu_au.strftime('%d/%m/%Y') }}
               {% else %}{{ n.etat.restantes }} tentative(s) restante(s){% endif %}
             </div></div>
           <div>
-            {% if n.cert %}<span class="cert-badge ok">Certifié</span> <a class="cert-btn gold" href="{{ url_for('certificat_download', code=n.cert.code) }}">Télécharger</a>
+            {% if n.cert and n.cert.est_paye %}<span class="cert-badge ok">Certifié</span> <a class="cert-btn gold" href="{{ url_for('certificat_download', code=n.cert.code) }}">Télécharger</a>
+            {% elif n.cert %}<span class="cert-badge neutral">{{ 'Paiement en vérification' if n.cert.paiement == 'en_verification' else 'Paiement requis' }}</span> <a class="cert-btn gold" href="{{ url_for('certificat_paiement', code=n.cert.code) }}">{{ 'Suivre' if n.cert.paiement == 'en_verification' else 'Payer ' ~ ('%g'|format(CERT_PRIX_USD)) ~ ' $' }}</a>
             {% elif n.etat.bloque %}<span class="cert-badge bad">Attente</span>
             {% elif not n.acces %}<span class="cert-badge neutral">Abonnement requis</span> <a class="cert-btn light" href="{{ url_for('subscription') }}">Voir les offres</a>
             {% else %}<a class="cert-btn" href="{{ url_for('certification_course', outil=o.code, niveau=n.code) }}">Passer l'examen</a>{% endif %}
