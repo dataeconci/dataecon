@@ -1,10 +1,12 @@
-from flask import Flask, render_template, redirect, url_for, flash, request, session, send_file, jsonify, send_from_directory
+from flask import abort, Flask, render_template, redirect, url_for, flash, request, session, send_file, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_mail import Mail, Message
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
+from sqlalchemy import or_
+from werkzeug.exceptions import HTTPException
 import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
 from sib_api_v3_sdk import TransactionalEmailsApi, SendSmtpEmail, ApiClient, Configuration
@@ -449,6 +451,90 @@ class Dataset(db.Model):
     file_name = db.Column(db.String(100))
     uploaded_by = db.Column(db.Integer, db.ForeignKey('user.id'))
     uploaded_at = db.Column(db.DateTime, default=datetime.utcnow)
+    is_private = db.Column(db.Boolean, default=False)   # True : données personnelles d'un utilisateur, visibles de lui seul et supprimées après le rapport
+
+# ==================== CONFIDENTIALITÉ DES DONNÉES UTILISATEUR ====================
+PRIVATE_TTL_HOURS = int(os.environ.get('PRIVATE_DATA_TTL_HOURS', '24'))      # durée maximale de conservation d'un fichier privé
+PRIVATE_MAX_MB = int(os.environ.get('PRIVATE_DATA_MAX_MB', '100'))
+
+
+def public_datasets_query():
+    """Jeux de données de la plateforme (publics) : jamais les données privées des utilisateurs."""
+    return Dataset.query.filter(or_(Dataset.is_private.is_(False), Dataset.is_private.is_(None)))
+
+
+def user_private_datasets():
+    return Dataset.query.filter(Dataset.is_private.is_(True), Dataset.uploaded_by == current_user.id).order_by(Dataset.uploaded_at.desc()).all()
+
+
+def get_dataset_for_user(dataset_id):
+    """Retourne le jeu de données ou 404. Un jeu privé n'est accessible qu'à son propriétaire (administrateur compris : 404)."""
+    ds = db.session.get(Dataset, int(dataset_id))
+    if ds is None:
+        abort(404)
+    if ds.is_private and ds.uploaded_by != current_user.id:
+        abort(404)
+    return ds
+
+
+def _delete_dataset_file(ds):
+    if ds.file_path and ds.file_path.startswith('datasets/'):
+        try:
+            client = get_r2_client()
+            if client:
+                client.delete_object(Bucket=R2_BUCKET_NAME, Key=ds.file_path)
+        except Exception as e:
+            print(f"Suppression R2 impossible ({ds.file_path}): {e}", flush=True)
+    elif ds.file_path and os.path.exists(ds.file_path):
+        try:
+            os.remove(ds.file_path)
+        except Exception:
+            pass
+
+
+def purge_private_dataset(ds):
+    """Supprime définitivement un jeu privé : fichier de stockage + ligne en base."""
+    if ds is None or not ds.is_private:
+        return False
+    _delete_dataset_file(ds)
+    db.session.delete(ds)
+    db.session.commit()
+    return True
+
+
+def purge_report_files(report_id):
+    """Supprime les fichiers temporaires d'un rapport (Word, LaTeX, configuration des scripts)."""
+    if not report_id:
+        return
+    for ext in ('docx', 'tex', 'cfg.json'):
+        path = f'/tmp/reports/{report_id}.{ext}'
+        try:
+            if os.path.exists(path):
+                os.remove(path)
+        except Exception:
+            pass
+
+
+def cleanup_expired_private():
+    """Filet de sécurité : supprime les fichiers privés non utilisés au-delà de PRIVATE_TTL_HOURS et les rapports temporaires anciens."""
+    try:
+        limite = datetime.utcnow() - timedelta(hours=PRIVATE_TTL_HOURS)
+        for ds in Dataset.query.filter(Dataset.is_private.is_(True), Dataset.uploaded_at < limite).all():
+            purge_private_dataset(ds)
+        import time as _t
+        for d in ('/tmp/reports', '/tmp/uploads'):
+            if os.path.isdir(d):
+                for fn in os.listdir(d):
+                    fp = os.path.join(d, fn)
+                    try:
+                        if os.path.isfile(fp) and _t.time() - os.path.getmtime(fp) > PRIVATE_TTL_HOURS * 3600:
+                            os.remove(fp)
+                    except Exception:
+                        pass
+    except Exception as e:
+        print(f"Nettoyage des données privées: {e}", flush=True)
+        db.session.rollback()
+
 
 class Progress(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -682,7 +768,7 @@ def index():
     try:
         total_courses = Course.query.count()
         total_users = User.query.count()
-        total_datasets = Dataset.query.count()
+        total_datasets = public_datasets_query().count()
     except Exception as e:
         print(f"Erreur stats: {e}", flush=True)
         total_courses = 0
@@ -1011,7 +1097,7 @@ def logout():
 @login_required
 def dashboard():
     courses = Course.query.all()
-    datasets = Dataset.query.all()
+    datasets = public_datasets_query().all()
     progress = Progress.query.filter_by(user_id=current_user.id).all()
 
     completed_count = sum(1 for p in progress if p.completed)
@@ -1063,7 +1149,7 @@ def datasets():
         flash('Vous devez avoir un abonnement Premium pour accéder aux données.', 'warning')
         return redirect(url_for('subscription'))
     
-    datasets = Dataset.query.all()
+    datasets = public_datasets_query().all()
     return render_template('datasets.html', datasets=datasets)
 
 @app.route('/upload_dataset', methods=['POST'])
@@ -1143,7 +1229,7 @@ def view_dataset(dataset_id):
         flash('Vous devez avoir un abonnement Premium pour accéder aux données.', 'warning')
         return redirect(url_for('subscription'))
     
-    dataset = Dataset.query.get_or_404(dataset_id)
+    dataset = get_dataset_for_user(dataset_id)
 
     try:
         # Lire le dataset (depuis R2 ou local selon le stockage)
@@ -1193,7 +1279,7 @@ def analytics():
         flash('Vous devez avoir un abonnement Premium pour accéder aux analyses.', 'warning')
         return redirect(url_for('subscription'))
     
-    datasets = Dataset.query.all()
+    datasets = public_datasets_query().all()
     dataset_stats = []
 
     for ds in datasets:
@@ -1228,7 +1314,7 @@ def econometric_model():
         dependent = request.form.get('dependent')
         independent = request.form.get('independent')
 
-        dataset = Dataset.query.get(int(dataset_id))
+        dataset = get_dataset_for_user(dataset_id)
         if dataset:
             try:
                 df = read_dataset_file(dataset)
@@ -1256,7 +1342,7 @@ def econometric_model():
             except Exception as e:
                 flash(f'Erreur: {str(e)}', 'danger')
 
-    datasets = Dataset.query.all()
+    datasets = public_datasets_query().all()
     return render_template('econometric_model.html',
                          datasets=datasets,
                          result_html=result_html,
@@ -1265,9 +1351,9 @@ def econometric_model():
 @app.route('/download_dataset/<int:dataset_id>')
 @login_required
 def download_dataset(dataset_id):
-    dataset = Dataset.query.get_or_404(dataset_id)
+    dataset = get_dataset_for_user(dataset_id)
 
-    if not current_user.can_download_data():
+    if not dataset.is_private and not current_user.can_download_data():
         flash('Vous devez avoir un abonnement Premium pour télécharger les données.', 'warning')
         return redirect(url_for('subscription'))
 
@@ -1301,7 +1387,9 @@ def delete_dataset(dataset_id):
         flash('Seul l\'administrateur peut supprimer des données.', 'danger')
         return redirect(url_for('datasets'))
     
-    dataset = Dataset.query.get_or_404(dataset_id)
+    dataset = get_dataset_for_user(dataset_id)
+    if dataset.is_private:
+        abort(404)          # les données privées ne se gèrent que par leur propriétaire (route dédiée)
     dataset_name = dataset.name
     
     # Supprimer le fichier sur R2
@@ -1614,6 +1702,12 @@ def delete_user(user_id):
         return redirect(url_for('admin_users'))
     
     username = user.username
+    try:
+        for ds_ in Dataset.query.filter(Dataset.is_private.is_(True), Dataset.uploaded_by == user.id).all():
+            purge_private_dataset(ds_)
+    except Exception as e:
+        print(f'Purge des données privées: {e}', flush=True)
+        db.session.rollback()
     db.session.delete(user)
     db.session.commit()
     
@@ -1649,8 +1743,68 @@ def models_list():
         flash('Vous devez avoir un abonnement Premium pour accéder aux modèles.', 'warning')
         return redirect(url_for('subscription'))
     
-    datasets = Dataset.query.all()
-    return render_template('models_list.html', datasets=datasets, preselect=request.args.get('dataset', type=int))
+    cleanup_expired_private()
+    return render_template('models_list.html', datasets=public_datasets_query().all(), my_datasets=user_private_datasets(),
+                           preselect=request.args.get('dataset', type=int), ttl_hours=PRIVATE_TTL_HOURS, max_mb=PRIVATE_MAX_MB)
+
+
+@app.route('/models/upload_private', methods=['POST'])
+@login_required
+def models_upload_private():
+    """Import d'un jeu de données personnel : visible de son seul propriétaire, supprimé après le téléchargement du rapport."""
+    if not current_user.can_access_models():
+        flash('Vous devez avoir un abonnement Premium pour importer vos données.', 'warning')
+        return redirect(url_for('subscription'))
+    f = request.files.get('file')
+    if not f or f.filename == '':
+        flash('Aucun fichier sélectionné.', 'danger')
+        return redirect(url_for('models_list'))
+    if not allowed_file(f.filename):
+        flash('Format non supporté. Utilisez CSV, Excel (xlsx, xls) ou Stata (dta).', 'danger')
+        return redirect(url_for('models_list'))
+    filename = secure_filename(f.filename)
+    stamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    local_dir = '/tmp/uploads'
+    os.makedirs(local_dir, exist_ok=True)
+    local_path = os.path.join(local_dir, f"{current_user.id}_{stamp}_{filename}")
+    f.save(local_path)
+    try:
+        if os.path.getsize(local_path) > PRIVATE_MAX_MB * 1024 * 1024:
+            flash(f'Fichier trop volumineux (maximum {PRIVATE_MAX_MB} Mo).', 'danger')
+            return redirect(url_for('models_list'))
+        try:
+            df = read_data_file(local_path)
+            if df is None or len(df) == 0 or df.shape[1] < 1:
+                raise ValueError('le fichier ne contient aucune donnée.')
+        except Exception as e:
+            flash(f'Fichier illisible : {e}', 'danger')
+            return redirect(url_for('models_list'))
+        key = f"datasets/private/{current_user.id}/{stamp}_{filename}"
+        if not upload_file_to_r2(local_path, key):
+            flash("Erreur d'envoi vers le stockage sécurisé. Réessayez dans un instant.", 'danger')
+            return redirect(url_for('models_list'))
+        ds = Dataset(name=request.form.get('name') or filename, description='Données personnelles (privées)', file_path=key,
+                     file_name=filename, uploaded_by=current_user.id, is_private=True)
+        db.session.add(ds)
+        db.session.commit()
+        flash(f'« {filename} » importé : {len(df)} lignes, {df.shape[1]} colonnes. Ces données ne sont visibles que par vous.', 'success')
+        return redirect(url_for('models_list', dataset=ds.id))
+    finally:
+        try:
+            os.remove(local_path)
+        except Exception:
+            pass
+
+
+@app.route('/models/delete_private/<int:dataset_id>', methods=['POST'])
+@login_required
+def models_delete_private(dataset_id):
+    ds = get_dataset_for_user(dataset_id)
+    if not ds.is_private:
+        abort(404)
+    purge_private_dataset(ds)
+    flash('Vos données ont été supprimées définitivement.', 'success')
+    return redirect(url_for('models_list'))
 
 
 def _structure_guess(time_col, entity_col):
@@ -1662,7 +1816,7 @@ def _structure_guess(time_col, entity_col):
 
 
 def _models_load_df(dataset_id):
-    dataset = Dataset.query.get_or_404(dataset_id)
+    dataset = get_dataset_for_user(dataset_id)
     df = read_dataset_file(dataset)
     if df is None or len(df) == 0:
         raise ValueError("Le jeu de données est vide ou illisible.")
@@ -1685,6 +1839,8 @@ def models_api_columns(dataset_id):
             'name': dataset.name, 'n_rows': int(len(df)), 'n_cols': int(df.shape[1]),
             'columns': prof, 'suggest': det, 'preview_columns': list(df.columns), 'preview': preview,
         })
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"Erreur profil colonnes: {e}", flush=True)
         return jsonify({'error': str(e)}), 400
@@ -1715,6 +1871,8 @@ def models_api_recommend():
             'recommendations': recs, 'family_order': FAMILY_ORDER, 'family_labels': FAMILY_LABELS,
             'time_col': ctx.get('time_col'), 'entity_col': ctx.get('entity_col'),
         })
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"Erreur recommandation: {e}", flush=True)
         traceback.print_exc()
@@ -1802,6 +1960,7 @@ def models_analyze():
             with open(os.path.join(report_dir, f"{report_id}.tex"), 'w', encoding='utf-8') as f:
                 f.write(create_generic_latex(dataset.name, target, ctx['features'], ctx, recs, results, ctx.get('time_col'), ctx.get('entity_col'), data_report=data_report))
             session['report_id'] = report_id
+            session['report_dataset_id'] = dataset.id if getattr(dataset, 'is_private', False) else None
             try:
                 cfg_scripts = {'file': dataset.file_name or 'donnees.csv', 'dataset_name': dataset.name, 'target': target,
                                'features': list(ctx['features']), 'time_col': ctx.get('time_col'), 'entity_col': ctx.get('entity_col'),
@@ -1823,6 +1982,8 @@ def models_analyze():
                                target=target, features=ctx['features'], has_report=has_report,
                                family_order=FAMILY_ORDER, data_report=data_report, conclusion=conclusion)
     
+    except HTTPException:
+        raise
     except Exception as e:
         traceback.print_exc()
         flash(f"Erreur lors de l'analyse : {str(e)}", 'danger')
@@ -1848,8 +2009,24 @@ def download_report():
         return redirect(url_for('models_list'))
     
     report_name = session.get('report_name', 'rapport')
+    with open(report_path, 'rb') as fh:
+        payload = BytesIO(fh.read())
+    # Confidentialité : le rapport Word est le téléchargement final. Les données privées et tous les fichiers
+    # temporaires de l'analyse sont supprimés du système dès que le rapport est remis à l'utilisateur.
+    try:
+        ds_id = session.pop('report_dataset_id', None)
+        if ds_id:
+            ds = db.session.get(Dataset, int(ds_id))
+            if ds is not None and ds.is_private and ds.uploaded_by == current_user.id:
+                purge_private_dataset(ds)
+                flash('Vos données ont été supprimées définitivement de la plateforme après le téléchargement du rapport.', 'info')
+        purge_report_files(report_id)
+        session.pop('report_id', None)
+    except Exception as e:
+        print(f"Purge après rapport: {e}", flush=True)
+        db.session.rollback()
     return send_file(
-        report_path,
+        payload,
         as_attachment=True,
         download_name=f'{report_name}.docx',
         mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
@@ -1921,7 +2098,7 @@ def generate_chart(dataset_id, chart_type):
         flash('Vous devez avoir un abonnement Premium pour accéder aux données.', 'warning')
         return redirect(url_for('subscription'))
     
-    dataset = Dataset.query.get_or_404(dataset_id)
+    dataset = get_dataset_for_user(dataset_id)
     
     try:
         df = read_dataset_file(dataset)
@@ -2000,6 +2177,7 @@ def init_db():
             db.session.execute(text('ALTER TABLE "user" ADD COLUMN IF NOT EXISTS reset_code VARCHAR(5)'))
             db.session.execute(text('ALTER TABLE "user" ADD COLUMN IF NOT EXISTS reset_code_expires TIMESTAMP'))
             db.session.execute(text('ALTER TABLE "user" ADD COLUMN IF NOT EXISTS profile_picture VARCHAR(200)'))
+            db.session.execute(text('ALTER TABLE dataset ADD COLUMN IF NOT EXISTS is_private BOOLEAN DEFAULT FALSE'))
             db.session.commit()
             print("Migration des colonnes reset_code réussie", flush=True)
         except Exception as e:

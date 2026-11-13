@@ -83,7 +83,8 @@ def _robustness_block(doc, rb):
 
 def create_report(dataset_name, target, features, ctx, recs, results, time_col=None, entity_col=None, data_report=None):
     if data_report:
-        return _create_detailed_report(dataset_name, target, features, ctx, recs, results, time_col, entity_col, data_report)
+        from models.report_word import build_word
+        return build_word(dataset_name, target, features, ctx, recs, results, time_col, entity_col, data_report)
     doc = Document()
     for s in doc.sections:
         s.left_margin = s.right_margin = Cm(2)

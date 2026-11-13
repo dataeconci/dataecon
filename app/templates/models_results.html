@@ -39,7 +39,7 @@
     <div class="d-flex flex-wrap gap-2 mb-3">
         <a href="{{ url_for('models_list') }}" class="mdl-btn ghost" style="text-decoration:none"><i class="fas fa-arrow-left"></i> Nouvelle analyse</a>
         {% if has_report %}
-        <a href="{{ url_for('download_report') }}" class="mdl-btn primary" style="text-decoration:none"><i class="fas fa-file-word"></i> Rapport Word</a>
+        <a href="{{ url_for('download_report') }}" class="mdl-btn primary" style="text-decoration:none"{% if dataset.is_private %} data-msg="Après le téléchargement du rapport Word, vos données et cette analyse seront supprimées définitivement de la plateforme (les scripts et le fichier LaTeX ne seront plus téléchargeables). Avez-vous déjà téléchargé ce dont vous avez besoin ?" onclick="return confirm(this.dataset.msg);"{% endif %}><i class="fas fa-file-word"></i> Rapport Word</a>
         <a href="{{ url_for('download_latex') }}" class="mdl-btn ghost" style="text-decoration:none"><i class="fas fa-file-code"></i> Source LaTeX</a>
         <span class="mdl-sep" style="display:inline-block;width:1px;height:26px;background:var(--border,#d5dbe3);margin:0 .35rem;vertical-align:middle"></span>
         <a href="{{ url_for('download_script', kind='python') }}" class="mdl-btn ghost" style="text-decoration:none" title="Script Python (.py)"><i class="fab fa-python"></i> Script Python</a>
@@ -49,6 +49,10 @@
         <a href="{{ url_for('download_script', kind='sql') }}" class="mdl-btn ghost" style="text-decoration:none" title="Script SQL PostgreSQL (.sql)"><i class="fas fa-database"></i> Script SQL</a>
         {% endif %}
     </div>
+
+    {% if has_report and dataset.is_private %}
+    <div class="mdl-private-banner"><i class="fas fa-lock"></i> <strong>Données confidentielles.</strong> Elles ne sont visibles que par vous. Téléchargez d'abord les scripts et le fichier LaTeX si vous en avez besoin : le téléchargement du rapport Word est l'étape finale, après laquelle vos données et cette analyse sont supprimées définitivement.</div>
+    {% endif %}
 
     <div class="mdl-rtabs" id="rtabs">
         {% for sec in data_report.sections %}<button type="button" class="mdl-rtab {% if loop.first %}active{% endif %}" data-r="{{ sec.id }}">{{ sec.title }}</button>{% endfor %}

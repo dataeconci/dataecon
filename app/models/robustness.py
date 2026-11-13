@@ -6,6 +6,8 @@ run_robustness(mid, df, target, features, time_col, entity_col) -> dict
   {'id', 'name', 'status', 'verdict', 'checks': [{label, ok, detail}], 'tables', 'charts', 'text'}
 Ne lève jamais d'exception.
 """
+import matplotlib as _mpl
+_BXLAB = 'tick_labels' if tuple(int(x) for x in _mpl.__version__.split('.')[:2]) >= (3, 9) else 'labels'
 import itertools
 import traceback
 import warnings
@@ -256,7 +258,7 @@ def _rob_ml_reg(mid, name, df, target, features):
     except Exception:
         pass
     fig, ax = plt.subplots(figsize=(6.4, 3.4))
-    bp = ax.boxplot([sc, sc_lin, sc_dum], labels=['Modèle', 'Linéaire', 'Naïf'], patch_artist=True)
+    bp = ax.boxplot([sc, sc_lin, sc_dum], **{_BXLAB: ['Modèle', 'Linéaire', 'Naïf']}, patch_artist=True)
     for p_, c in zip(bp['boxes'], [NAVY, STEEL, GOLD]):
         p_.set_facecolor(c); p_.set_alpha(.8)
     ax.set_title('R² en validation croisée'); ax.set_ylabel('R²')

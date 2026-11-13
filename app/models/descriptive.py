@@ -7,6 +7,8 @@ build_data_report(...) renvoie
   {'sections': [{'id', 'title', 'text': [str], 'tables': [{title, columns, rows}], 'charts': [{title, img}]}],
    'context': str, 'problem': str}
 """
+import matplotlib as _mpl
+_BXLAB = 'tick_labels' if tuple(int(x) for x in _mpl.__version__.split('.')[:2]) >= (3, 9) else 'labels'
 import warnings
 
 import matplotlib
@@ -239,7 +241,7 @@ def build_data_report(df, target, features, ctx, time_col=None, entity_col=None,
         fig, ax = plt.subplots(figsize=(max(5, 1.4 * len(bx) + 2), 3.6))
         data = [(pd.to_numeric(df[c], errors='coerce').dropna() - pd.to_numeric(df[c], errors='coerce').mean()) /
                 (pd.to_numeric(df[c], errors='coerce').std() or 1) for c in bx]
-        bp = ax.boxplot(data, labels=bx, patch_artist=True, showfliers=True, flierprops=dict(marker='o', markersize=3, markerfacecolor=RED, markeredgecolor=RED))
+        bp = ax.boxplot(data, **{_BXLAB: bx}, patch_artist=True, showfliers=True, flierprops=dict(marker='o', markersize=3, markerfacecolor=RED, markeredgecolor=RED))
         for i, p in enumerate(bp['boxes']):
             p.set_facecolor(PALETTE[i % len(PALETTE)]); p.set_alpha(.75)
         for m in bp['medians']:
@@ -303,7 +305,7 @@ def build_data_report(df, target, features, ctx, time_col=None, entity_col=None,
             groups = [(k, v) for k, v in groups if len(v) > 1][:10]
             if len(groups) >= 2:
                 fig, ax = plt.subplots(figsize=(max(5, .9 * len(groups) + 2.5), 3.5))
-                bp = ax.boxplot([v for _, v in groups], labels=[k for k, _ in groups], patch_artist=True,
+                bp = ax.boxplot([v for _, v in groups], **{_BXLAB: [k for k, _ in groups]}, patch_artist=True,
                                 flierprops=dict(marker='o', markersize=3, markerfacecolor=RED, markeredgecolor=RED))
                 for i, p in enumerate(bp['boxes']):
                     p.set_facecolor(PALETTE[i % len(PALETTE)]); p.set_alpha(.75)
@@ -328,7 +330,7 @@ def build_data_report(df, target, features, ctx, time_col=None, entity_col=None,
             groups = [(k, v) for k, v in groups if len(v) > 1][:8]
             if len(groups) >= 2:
                 fig, ax = plt.subplots(figsize=(5.5, 3.4))
-                bp = ax.boxplot([v for _, v in groups], labels=[k for k, _ in groups], patch_artist=True)
+                bp = ax.boxplot([v for _, v in groups], **{_BXLAB: [k for k, _ in groups]}, patch_artist=True)
                 for i, p in enumerate(bp['boxes']):
                     p.set_facecolor(PALETTE[i % len(PALETTE)]); p.set_alpha(.75)
                 ax.set_title(f'{c} selon {target}'); ax.set_ylabel(c); ax.set_xlabel(target)

@@ -28,15 +28,42 @@
     <section class="mdl-card" id="card1">
         <header><h2><i class="fas fa-database"></i> 1. Choisir le jeu de données</h2></header>
         <div class="body">
-            <label class="mdl-label" for="dsSelect">Jeu de données</label>
-            <select id="dsSelect" class="form-select" {% if not datasets %}disabled{% endif %}>
+            <div class="mdl-private">
+                <div class="mdl-private-head"><i class="fas fa-lock"></i> Importer mes données (privées)</div>
+                <form method="post" action="{{ url_for('models_upload_private') }}" enctype="multipart/form-data" class="mdl-private-form" id="privForm">
+                    <input type="file" name="file" id="privFile" class="form-control" accept=".csv,.xlsx,.xls,.dta" required>
+                    <button type="submit" class="mdl-btn primary" id="privBtn"><i class="fas fa-upload"></i> Importer</button>
+                </form>
+                <ul class="mdl-private-notes">
+                    <li>Formats acceptés : CSV, Excel (xlsx, xls) et Stata (dta), {{ max_mb }} Mo maximum.</li>
+                    <li>Vos données ne sont visibles que par vous (même l'administration n'y a pas accès).</li>
+                    <li>Elles sont supprimées définitivement de la plateforme dès que vous téléchargez le rapport Word, ou automatiquement après {{ ttl_hours }} h.</li>
+                </ul>
+            </div>
+
+            <label class="mdl-label" for="dsSelect">Jeu de données à analyser</label>
+            <select id="dsSelect" class="form-select" {% if not datasets and not my_datasets %}disabled{% endif %}>
                 <option value="">-- Sélectionnez un jeu de données --</option>
-                {% for dataset in datasets %}
-                <option value="{{ dataset.id }}">{{ dataset.name }}</option>
-                {% endfor %}
+                {% if my_datasets %}
+                <optgroup label="Mes données (privées)">
+                    {% for dataset in my_datasets %}
+                    <option value="{{ dataset.id }}" data-private="1">{{ dataset.name }}</option>
+                    {% endfor %}
+                </optgroup>
+                {% endif %}
+                {% if datasets %}
+                <optgroup label="Jeux de données de la plateforme">
+                    {% for dataset in datasets %}
+                    <option value="{{ dataset.id }}">{{ dataset.name }}</option>
+                    {% endfor %}
+                </optgroup>
+                {% endif %}
             </select>
-            {% if not datasets %}
-            <div class="mdl-hint" style="color:#a23b3b"><i class="fas fa-triangle-exclamation"></i> Aucun jeu de données disponible. <a href="{{ url_for('datasets') }}">Importez-en un</a>.</div>
+            <form method="post" id="privDel" style="display:none;margin-top:.5rem" onsubmit="return confirm('Supprimer définitivement ces données de la plateforme ?');">
+                <button type="submit" class="mdl-btn ghost"><i class="fas fa-trash"></i> Supprimer mes données maintenant</button>
+            </form>
+            {% if not datasets and not my_datasets %}
+            <div class="mdl-hint" style="color:#a23b3b"><i class="fas fa-triangle-exclamation"></i> Aucun jeu de données disponible. Importez vos données ci-dessus.</div>
             {% endif %}
             <div id="dsErr" class="mdl-err" style="display:none"></div>
             <div id="dsInfo" style="display:none">
@@ -157,11 +184,16 @@
     }
     function showErr(el, msg) { el.textContent = msg; el.style.display = msg ? 'block' : 'none'; }
 
+    // ---- Import privé : retour visuel pendant l'envoi
+    var pf = $('privForm');
+    if (pf) pf.addEventListener('submit', function () { var b = $('privBtn'); b.disabled = true; b.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...'; });
     // ---- Étape 1
     $('dsSelect').addEventListener('change', function () {
         var id = this.value;
         $('card2').style.display = 'none'; $('card3').style.display = 'none';
         $('dsInfo').style.display = 'none'; showErr($('dsErr'), '');
+        var opt = this.options[this.selectedIndex], pd = $('privDel');
+        if (opt && opt.getAttribute('data-private') === '1') { pd.action = '/models/delete_private/' + id; pd.style.display = 'block'; } else { pd.style.display = 'none'; }
         if (!id) { setStep(1); return; }
         DATASET = id;
         fetch('/models/api/columns/' + id).then(function (r) { return r.json(); }).then(function (d) {
