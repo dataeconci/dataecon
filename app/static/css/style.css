@@ -37,6 +37,19 @@ body {
     color: var(--accent);
 }
 
+/* Logo DataEcon.ci */
+.navbar-brand { display: inline-flex; align-items: center; gap: 12px; }
+.navbar-brand .brand-chip { background: #fff; border-radius: 12px; padding: 4px 8px; display: inline-flex; align-items: center; line-height: 1; }
+.navbar-brand .brand-chip img { height: 38px; width: auto; display: block; }
+.navbar-brand .brand-text { color: #fff; font-weight: 700; letter-spacing: .3px; }
+.navbar-brand .brand-text b { font-weight: 700; }
+.navbar-brand .brand-text .b1 { color: #f89800; }
+.navbar-brand .brand-text .b2 { color: #ffffff; }
+.navbar-brand .brand-text .b3 { color: #7cc41a; }
+.footer-logo { display: inline-block; background: #fff; border-radius: 14px; padding: 8px 16px; }
+.footer-logo img { height: 74px; width: auto; display: block; }
+@media (max-width: 480px) { .navbar-brand .brand-text { display: none; } }
+
 .nav-link {
     color: rgba(255, 255, 255, 0.8) !important;
     font-weight: 500;
