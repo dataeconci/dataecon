@@ -34,7 +34,7 @@ from models.analysis import (profile_columns, detect_structure_columns, analyze_
 from models.runners import run_model
 from models.report_generic import create_report as create_generic_report, create_latex as create_generic_latex
 from models.descriptive import build_data_report, build_conclusion, preprocess_section
-from models.preprocess import preprocess_dataframe
+from models.preprocess import preprocess_dataframe, clean_imported_dataframe
 from models.robustness import run_robustness
 import time as _time
 import tempfile
@@ -1821,6 +1821,7 @@ def _models_load_df(dataset_id):
     if df is None or len(df) == 0:
         raise ValueError("Le jeu de données est vide ou illisible.")
     df.columns = [str(c).strip() for c in df.columns]
+    df = clean_imported_dataframe(df)
     return dataset, df
 
 

@@ -17,26 +17,84 @@ MAX_GAP_SHARE_TARGET = 0.25    # série : au-delà, on ne comble pas la cible, o
 
 
 def _numeric_like(s):
-    """Convertit une colonne texte en numérique si au moins 90 % des valeurs s'y prêtent."""
+    return parse_number_series(s)
+
+
+_SUFFIX = {'K': 1e3, 'M': 1e6, 'B': 1e9, 'G': 1e9, 'T': 1e12}
+
+
+def parse_number_series(s):
+    """Convertit une colonne texte en nombres (format français ou anglais).
+    Gère : virgule décimale, espaces/espaces insécables, %, devise, suffixes K/M/B, parenthèses négatives.
+    Retourne une Series numérique ou None si moins de 90 % des valeurs s'y prêtent."""
     if pd.api.types.is_numeric_dtype(s) or s.dtype == bool:
         return None
+    t = s.astype(str).str.strip()
+    t = t.where(s.notna(), None)
+    c = (t.str.replace('\u00a0', '', regex=False).str.replace('\u202f', '', regex=False)
+          .str.replace(' ', '', regex=False).str.replace('%', '', regex=False)
+          .str.replace('$', '', regex=False).str.replace('€', '', regex=False)
+          .str.replace('\u2212', '-', regex=False))
+    mult = c.str.extract(r'([KkMmBbGgTt])$', expand=False).str.upper().map(_SUFFIX)
+    c = c.str.replace(r'[KkMmBbGgTt]$', '', regex=True)
+    neg = c.str.match(r'^\(.*\)$', na=False)
+    c = c.str.strip('()')
+
+    def fix(v):
+        if v is None or v != v:
+            return v
+        if ',' in v and '.' in v:
+            return v.replace('.', '').replace(',', '.') if v.rfind(',') > v.rfind('.') else v.replace(',', '')
+        if ',' in v:
+            return v.replace(',', '.')
+        return v
+    c = c.map(fix)
+    num = pd.to_numeric(c, errors='coerce')
+    num = num * mult.fillna(1)
+    num = num.where(~neg, -num)
+    valid = s.notna() & (t != '') & (t.str.lower() != 'nan')
+    if valid.sum() == 0 or num[valid].notna().mean() < 0.9:
+        return None
+    num[~valid] = np.nan
+    return num
+
+
+def parse_date_series(s):
+    """Détecte les dates (jj/mm/aaaa, aaaa-mm-jj...) ; retourne une Series datetime ou None."""
+    if pd.api.types.is_numeric_dtype(s) or pd.api.types.is_datetime64_any_dtype(s):
+        return None
     t = s.dropna().astype(str).str.strip()
+    t = t[t != '']
     if len(t) == 0:
         return None
-    cleaned = (t.str.replace(' ', '', regex=False).str.replace(' ', '', regex=False)
-                 .str.replace('%', '', regex=False))
-    # « 1.234,5 » ou « 1,5 » -> « 1234.5 » / « 1.5 »
-    has_comma = cleaned.str.contains(',', regex=False)
-    cleaned = cleaned.where(~has_comma, cleaned.str.replace('.', '', regex=False).str.replace(',', '.', regex=False))
-    num = pd.to_numeric(cleaned, errors='coerce')
-    if num.notna().mean() >= 0.9:
-        full = pd.to_numeric(
-            s.astype(str).str.strip().str.replace(' ', '', regex=False).str.replace(' ', '', regex=False)
-             .str.replace('%', '', regex=False).map(lambda v: v.replace('.', '').replace(',', '.') if ',' in v else v),
-            errors='coerce')
-        full[s.isna()] = np.nan
-        return full
-    return None
+    smp = t.head(300)
+    if not smp.str.contains(r'[/\-\.]|\d{4}', regex=True).mean() > 0.9:
+        return None
+    if smp.str.fullmatch(r'-?[\d.,\s]+').mean() > 0.5:
+        return None
+    iso = smp.str.match(r'^\d{4}-\d{1,2}-\d{1,2}').mean() > 0.9
+    parsed = pd.to_datetime(smp, errors='coerce', dayfirst=not iso)
+    if parsed.notna().mean() < 0.9:
+        return None
+    out = pd.to_datetime(s.astype(str).str.strip(), errors='coerce', dayfirst=not iso)
+    return out
+
+
+def clean_imported_dataframe(df):
+    """Normalise un jeu importé : colonnes de nombres en texte -> numériques, dates -> datetime."""
+    d = df.copy()
+    for c in d.columns:
+        col = d[c]
+        if pd.api.types.is_numeric_dtype(col) or pd.api.types.is_datetime64_any_dtype(col):
+            continue
+        dt = parse_date_series(col)
+        if dt is not None:
+            d[c] = dt
+            continue
+        num = parse_number_series(col)
+        if num is not None:
+            d[c] = num
+    return d
 
 
 def _is_cat(s):
