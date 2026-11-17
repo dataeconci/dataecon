@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block title %}Analyse en cours - DataEcon.ci{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/models.css') }}">
+{% endblock %}
+{% block content %}
+<div class="container py-5 mdl" style="max-width:720px">
+    <div class="card p-4 text-center">
+        <div class="mdl-spin" id="spin"></div>
+        <h4 style="color:#0b2a4a" id="ttl">Analyse en cours</h4>
+        <p class="mdl-hint" id="msg">Démarrage...</p>
+        <div class="progress" style="height:10px"><div class="progress-bar" id="bar" style="width:3%;background:#1f5f99"></div></div>
+        <p class="mdl-hint mt-3 mb-1" id="meta"></p>
+        <p class="mdl-hint mb-0">Vous pouvez laisser cette page ouverte : le calcul continue sur le serveur et le résultat s'affichera automatiquement.</p>
+        <div id="err" class="alert alert-danger mt-3" style="display:none"></div>
+        <a href="{{ url_for('models_list') }}" class="mdl-btn ghost mt-3" id="back" style="display:none;text-decoration:none">Retour aux modèles</a>
+    </div>
+</div>
+<script>
+(function () {
+    var url = "{{ url_for('models_job_status', job_id=job_id) }}", fails = 0;
+    function $(i) { return document.getElementById(i); }
+    function tick() {
+        fetch(url, {credentials: 'same-origin'}).then(function (r) { return r.json(); }).then(function (j) {
+            fails = 0;
+            $('msg').textContent = j.message || '';
+            var pct = j.total ? Math.max(3, Math.round(100 * j.done / j.total)) : 3;
+            $('bar').style.width = pct + '%';
+            $('meta').textContent = (j.status === 'queued' ? "En file d'attente" : 'Temps écoulé : ' + j.elapsed + ' s') + (j.total ? ' · ' + j.done + ' / ' + j.total + ' modèle(s)' : '');
+            if (j.status === 'done') { window.location.href = j.result_url; return; }
+            if (j.status === 'error') {
+                $('spin').style.display = 'none'; $('ttl').textContent = "L'analyse a échoué";
+                $('err').style.display = 'block'; $('err').textContent = j.error || 'Erreur inconnue.'; $('back').style.display = 'inline-block'; return;
+            }
+            setTimeout(tick, 2000);
+        }).catch(function () {
+            if (++fails > 8) { $('msg').textContent = 'Connexion perdue. Rechargez la page.'; return; }
+            setTimeout(tick, 3000);
+        });
+    }
+    tick();
+})();
+</script>
+{% endblock %}

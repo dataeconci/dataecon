@@ -21,7 +21,7 @@ from flask import (render_template, redirect, url_for, flash, request, send_file
                    abort)
 from flask_login import login_required, current_user
 
-OUTILS = {'python': 'Python', 'r': 'R', 'sql': 'SQL', 'tableau': 'Tableau'}
+OUTILS = {'python': 'Python', 'r': 'R', 'sql': 'SQL', 'tableau': 'Tableau', 'smartpls': 'SmartPLS'}
 NIVEAUX = {'debutant': 'Débutant', 'intermediaire': 'Intermédiaire', 'avance': 'Avancé'}
 
 NB_QUESTIONS = 10

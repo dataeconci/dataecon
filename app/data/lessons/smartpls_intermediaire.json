@@ -1,0 +1,92 @@
+{
+ "outil": "smartpls",
+ "niveau": "intermediaire",
+ "titre": "SmartPLS : évaluer un modèle",
+ "description": "Évaluez rigoureusement un modèle PLS-SEM : fiabilité, validité convergente (AVE) et discriminante (HTMT), bootstrapping, VIF, R², f² et Q².",
+ "concepts": [
+  {
+   "id": "pls_int_1",
+   "titre": "Fiabilité de cohérence interne",
+   "objectif": "Évaluer la fiabilité d'un construit avec l'alpha de Cronbach, rho_a et rho_c",
+   "explication": "La **fiabilité de cohérence interne** vérifie que les indicateurs d'un même construit mesurent bien la même chose. SmartPLS fournit trois mesures dans *Construct reliability and validity* : l'**alpha de Cronbach**, **rho_a** et la **fiabilité composite rho_c**.\n\nL'**alpha** suppose que tous les indicateurs ont le même poids : c'est une borne **basse** de la fiabilité. **rho_c** accepte des poids différents : c'est une borne **haute**. **rho_a** se situe entre les deux et constitue souvent la meilleure estimation. On attend des valeurs **supérieures ou égales à 0,70**.\n\nAttention aux valeurs **trop élevées** : au-dessus de **0,95**, les indicateurs sont probablement redondants (ils posent la même question sous des formulations quasi identiques), ce qui nuit à la validité du contenu. L'intervalle recommandé est donc **0,70 à 0,90** (jusqu'à 0,95 en recherche confirmatoire avancée).",
+   "image_svg": "<svg viewBox='0 0 600 240' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><defs><marker id='ar' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='7' markerHeight='7' orient='auto-start-reverse'><path d='M0 0L10 5L0 10z' fill='#0b2a4a'/></marker></defs><text x='300.0' y='22' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Mesures de fiabilité d'un construit réflexif</text><text x='222' y='71' text-anchor='end' font-size='11.5' fill='#1f2933' font-weight=\"700\">Alpha de Cronbach</text><rect x='230' y='60' width='245.99999999999997' height='15' rx='3' fill='#1f5f99' stroke='none'/><text x='484.0' y='71' text-anchor='start' font-size='11.5' fill='#0b2a4a' font-weight=\"700\">0,82</text><text x='222' y='99' text-anchor='end' font-size='11.5' fill='#1f2933' font-weight=\"700\">rho_a</text><rect x='230' y='88' width='255.0' height='15' rx='3' fill='#1f5f99' stroke='none'/><text x='493.0' y='99' text-anchor='start' font-size='11.5' fill='#0b2a4a' font-weight=\"700\">0,85</text><text x='222' y='127' text-anchor='end' font-size='11.5' fill='#1f2933' font-weight=\"700\">rho_c (fiabilité composite)</text><rect x='230' y='116' width='264.0' height='15' rx='3' fill='#1f5f99' stroke='none'/><text x='502.0' y='127' text-anchor='start' font-size='11.5' fill='#0b2a4a' font-weight=\"700\">0,88</text><line x1='440.0' y1='50' x2='440.0' y2='136' stroke='#0b2a4a' stroke-dasharray='4 3'/><text x='440.0' y='150' text-anchor='middle' font-size='10.5' fill='#0b2a4a' font-weight=\"700\">seuil 0,70</text><text x='300' y='205' text-anchor='middle' font-size='12' fill='#1f5f99' font-weight=\"700\">Zone idéale : entre 0,70 et 0,90 · au-delà de 0,95 : indicateurs redondants</text></svg>",
+   "code_exemple": "Calculate > PLS-SEM algorithm > Quality criteria > Construct reliability and validity\n  Cronbach's alpha  >= 0,70\n  rho_a             >= 0,70\n  rho_c (composite) >= 0,70 et <= 0,95",
+   "question_reflexion": "Pourquoi une fiabilité de 0,98 n'est-elle pas forcément une bonne nouvelle ?",
+   "resultats": "<table class=\"pls-table\"><thead><tr><th>Construit</th><th>Alpha</th><th>rho_a</th><th>rho_c</th><th>AVE</th></tr></thead><tbody><tr><td>Qualité</td><td>0,842</td><td>0,851</td><td>0,894</td><td>0,679</td></tr><tr><td>Satisfaction</td><td>0,634</td><td>0,661</td><td>0,801</td><td>0,573</td></tr><tr><td>Fidélité</td><td>0,961</td><td>0,968</td><td>0,972</td><td>0,896</td></tr></tbody></table><p class=\"pls-note\">Tableau « Construct reliability and validity ».</p>",
+   "exercice": {
+    "enonce": "Examinez le tableau de fiabilité. Quel construit pose un problème de fiabilité insuffisante et lequel un problème de redondance ? Justifiez avec les valeurs.",
+    "indice": "Comparez chaque alpha, rho_a, rho_c à 0,70 puis à 0,95.",
+    "solution_attendue": "Satisfaction a un alpha de 0,634 (inférieur à 0,70) : fiabilité insuffisante. Fidélité a un rho_c de 0,972 (supérieur à 0,95) : indicateurs redondants. Qualité est satisfaisante.",
+    "mots_cles": [
+     "satisfaction",
+     "0,634|0.634|0,63",
+     "fid[eé]lit",
+     "redondan|trop [eé]lev|0,95"
+    ]
+   }
+  },
+  {
+   "id": "pls_int_2",
+   "titre": "Validité convergente et AVE",
+   "objectif": "Calculer et interpréter l'AVE (variance moyenne extraite)",
+   "explication": "La **validité convergente** mesure dans quelle mesure les indicateurs d'un construit convergent, c'est-à-dire partagent une forte proportion de variance commune. Le critère est l'**AVE** (*average variance extracted*).\n\nL'AVE est la **moyenne des loadings élevés au carré** de tous les indicateurs du construit. Une AVE **supérieure ou égale à 0,50** signifie que le construit explique au moins **50 % de la variance** de ses indicateurs en moyenne. En dessous, ce sont davantage les erreurs de mesure qui dominent que le construit.\n\nQuand l'AVE est insuffisante, on examine les indicateurs aux **loadings les plus faibles** (inférieurs à 0,708). Leur suppression, une à la fois, augmente en général l'AVE. Mais ne retirez jamais un indicateur si cela dégrade la **validité de contenu** : le construit doit continuer à couvrir tous ses aspects.",
+   "image_svg": "<svg viewBox='0 0 600 215' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><defs><marker id='ar' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='7' markerHeight='7' orient='auto-start-reverse'><path d='M0 0L10 5L0 10z' fill='#0b2a4a'/></marker></defs><text x='300.0' y='22' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Validité convergente</text><ellipse cx='150' cy='120' rx='64' ry='44' fill='#fff' stroke='#1f5f99' stroke-width='2'/><text x='150' y='124' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>Construit</text><path d='M150 76 A64 44 0 0 1 150 164 A64 44 0 0 1 150 76' fill='#1f5f99' opacity='.25'/><text x='150' y='124' text-anchor='middle' font-size='14' fill='#0b2a4a' font-weight=\"700\">AVE</text><text x='380' y='85' text-anchor='middle' font-size='13' fill='#0b2a4a' font-weight=\"700\">AVE = moyenne des loadings au carré</text><text x='380' y='115' text-anchor='middle' font-size='12' fill='#1f2933'>Part de la variance des indicateurs</text><text x='380' y='133' text-anchor='middle' font-size='12' fill='#1f2933'>expliquée par le construit</text><text x='380' y='170' text-anchor='middle' font-size='14' fill='#c2a15a' font-weight=\"700\">Seuil : AVE ≥ 0,50</text><text x='380' y='190' text-anchor='middle' font-size='11' fill='#1f2933'>le construit explique au moins la moitié de la variance</text></svg>",
+   "code_exemple": "AVE = (somme des loadings²) / nombre d'indicateurs\n\nExemple : (0,64 + 0,49 + 0,36 + 0,56) / 4 = 2,05 / 4 = 0,5125",
+   "question_reflexion": "Que se passe-t-il pour l'AVE si on supprime l'indicateur au loading le plus faible ?",
+   "resultats": "<table class=\"pls-table\"><thead><tr><th>Indicateur</th><th>Loading</th><th>Loading²</th></tr></thead><tbody><tr><td>QP1</td><td>0,80</td><td>0,64</td></tr><tr><td>QP2</td><td>0,70</td><td>0,49</td></tr><tr><td>QP3</td><td>0,60</td><td>0,36</td></tr><tr><td>QP4</td><td>0,75</td><td>0,56</td></tr></tbody></table><p class=\"pls-note\">Loadings du construit Qualité perçue (4 indicateurs).</p>",
+   "exercice": {
+    "enonce": "À partir du tableau de loadings, calculez l'AVE du construit Qualité perçue. Le critère de validité convergente est-il respecté ?",
+    "indice": "AVE = (0,64 + 0,49 + 0,36 + 0,56) / 4.",
+    "solution_attendue": "AVE = 2,05 / 4 = 0,5125. Elle est supérieure à 0,50 : la validité convergente est respectée, mais de justesse.",
+    "mots_cles": [
+     "0,51|0.51|0,5125|0.5125",
+     "0,50|0.50|0,5|0.5|seuil",
+     "respect|satisfai|valid|ok|supérieur|superieur"
+    ]
+   }
+  },
+  {
+   "id": "pls_int_3",
+   "titre": "Validité discriminante : HTMT",
+   "objectif": "Vérifier que deux construits sont bien distincts avec le critère HTMT",
+   "explication": "La **validité discriminante** garantit qu'un construit est réellement **distinct** des autres construits du modèle. Si deux construits sont trop corrélés, on ne peut pas affirmer qu'ils mesurent des concepts différents.\n\nLe critère recommandé aujourd'hui est le **HTMT** (*heterotrait-monotrait ratio*). Il compare les corrélations **entre** indicateurs de construits différents aux corrélations **à l'intérieur** d'un même construit. Le seuil usuel est **0,85** pour des concepts nettement distincts et **0,90** pour des concepts conceptuellement proches.\n\nLes critères plus anciens, le **critère de Fornell-Larcker** (la racine carrée de l'AVE doit dépasser les corrélations avec les autres construits) et les **cross-loadings**, détectent mal les problèmes de discrimination. On réalise le **bootstrapping** pour obtenir les intervalles de confiance du HTMT : un intervalle qui **contient 1** indique un défaut de validité discriminante.",
+   "image_svg": "<svg viewBox='0 0 600 245' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><defs><marker id='ar' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='7' markerHeight='7' orient='auto-start-reverse'><path d='M0 0L10 5L0 10z' fill='#0b2a4a'/></marker></defs><text x='300.0' y='22' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Matrice HTMT</text><rect x='150' y='55' width='96' height='46' rx='4' fill='#fff' stroke='#cfd9e6'/><text x='198' y='83' text-anchor='middle' font-size='14' fill='#0b2a4a' font-weight=\"700\">-</text><rect x='250' y='55' width='96' height='46' rx='4' fill='#eaf1f8' stroke='#cfd9e6'/><text x='298' y='83' text-anchor='middle' font-size='14' fill='#0b2a4a' font-weight=\"700\">0,71</text><rect x='350' y='55' width='96' height='46' rx='4' fill='#eaf1f8' stroke='#cfd9e6'/><text x='398' y='83' text-anchor='middle' font-size='14' fill='#0b2a4a' font-weight=\"700\">0,58</text><rect x='150' y='105' width='96' height='46' rx='4' fill='#eaf1f8' stroke='#cfd9e6'/><text x='198' y='133' text-anchor='middle' font-size='14' fill='#0b2a4a' font-weight=\"700\">0,71</text><rect x='250' y='105' width='96' height='46' rx='4' fill='#fff' stroke='#cfd9e6'/><text x='298' y='133' text-anchor='middle' font-size='14' fill='#0b2a4a' font-weight=\"700\">-</text><rect x='350' y='105' width='96' height='46' rx='4' fill='#f4e8c8' stroke='#cfd9e6'/><text x='398' y='133' text-anchor='middle' font-size='14' fill='#8a6a1f' font-weight=\"700\">0,88</text><rect x='150' y='155' width='96' height='46' rx='4' fill='#eaf1f8' stroke='#cfd9e6'/><text x='198' y='183' text-anchor='middle' font-size='14' fill='#0b2a4a' font-weight=\"700\">0,58</text><rect x='250' y='155' width='96' height='46' rx='4' fill='#f4e8c8' stroke='#cfd9e6'/><text x='298' y='183' text-anchor='middle' font-size='14' fill='#8a6a1f' font-weight=\"700\">0,88</text><rect x='350' y='155' width='96' height='46' rx='4' fill='#fff' stroke='#cfd9e6'/><text x='398' y='183' text-anchor='middle' font-size='14' fill='#0b2a4a' font-weight=\"700\">-</text><text x='198' y='48' text-anchor='middle' font-size='11.5' fill='#0b2a4a' font-weight=\"700\">Qualité</text><text x='140' y='83' text-anchor='end' font-size='11.5' fill='#0b2a4a' font-weight=\"700\">Qualité</text><text x='298' y='48' text-anchor='middle' font-size='11.5' fill='#0b2a4a' font-weight=\"700\">Satisf.</text><text x='140' y='133' text-anchor='end' font-size='11.5' fill='#0b2a4a' font-weight=\"700\">Satisf.</text><text x='398' y='48' text-anchor='middle' font-size='11.5' fill='#0b2a4a' font-weight=\"700\">Fidélité</text><text x='140' y='183' text-anchor='end' font-size='11.5' fill='#0b2a4a' font-weight=\"700\">Fidélité</text><text x='300' y='225' text-anchor='middle' font-size='12' fill='#1f5f99' font-weight=\"700\">HTMT < 0,85 (strict) ou < 0,90 (construits proches) ; sinon, validité discriminante douteuse</text></svg>",
+   "code_exemple": "Calculate > PLS-SEM algorithm > Quality criteria > Discriminant validity > HTMT - Matrix\n  HTMT < 0,85  : discriminante validée (critère strict)\n  HTMT < 0,90  : acceptable (construits proches)\nBootstrapping : IC 95 % du HTMT ne doit pas contenir 1",
+   "question_reflexion": "Que faire si deux construits ont un HTMT de 0,95 ?",
+   "resultats": "<table class=\"pls-table\"><thead><tr><th></th><th>Qualité</th><th>Satisfaction</th><th>Fidélité</th></tr></thead><tbody><tr><td>Qualité</td><td></td><td></td><td></td></tr><tr><td>Satisfaction</td><td>0,71</td><td></td><td></td></tr><tr><td>Fidélité</td><td>0,58</td><td>0,88</td><td></td></tr></tbody></table><p class=\"pls-note\">Heterotrait-monotrait ratio (HTMT), matrice.</p>",
+   "exercice": {
+    "enonce": "Dans la matrice HTMT, quelle paire de construits pose problème avec le seuil de 0,85 ? Que proposez-vous ?",
+    "indice": "Cherchez la valeur supérieure à 0,85, puis envisagez de regrouper ou reformuler.",
+    "solution_attendue": "La paire Satisfaction - Fidélité (HTMT = 0,88) dépasse 0,85. Il faut vérifier l'intervalle de confiance au bootstrapping, examiner le contenu des indicateurs, et au besoin reformuler, retirer des indicateurs ou fusionner les deux construits.",
+    "mots_cles": [
+     "satisfaction",
+     "fid[eé]lit",
+     "0,88|0.88",
+     "bootstrap|intervalle|retir|fusion|reformul|regroup"
+    ]
+   }
+  },
+  {
+   "id": "pls_int_4",
+   "titre": "Évaluer le modèle structurel",
+   "objectif": "Interpréter VIF, bootstrapping, R², f² et Q²",
+   "explication": "Une fois le modèle de mesure validé, on évalue le **modèle structurel** dans cet ordre.\n\n1) **Colinéarité** : le **VIF** de chaque prédicteur doit être inférieur à **3** (acceptable jusqu'à 5). 2) **Significativité des chemins** : lancez le **bootstrapping** (**5 000** sous-échantillons, test bilatéral, intervalles BCa, seuil de 5 %). Un coefficient est significatif si **p < 0,05**, si **t > 1,96** ou si l'**intervalle de confiance ne contient pas 0**.\n\n3) **Pouvoir explicatif** : le **R²** vaut environ 0,75 (substantiel), 0,50 (modéré), 0,25 (faible), selon le domaine. 4) **Taille d'effet** **f²** : 0,02 (petit), 0,15 (moyen), 0,35 (grand). 5) **Pouvoir prédictif** : **Q² predict** de PLSpredict, qui doit être supérieur à 0 pour confirmer que le modèle prédit mieux qu'une simple moyenne.",
+   "image_svg": "<svg viewBox='0 0 600 250' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><defs><marker id='ar' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='7' markerHeight='7' orient='auto-start-reverse'><path d='M0 0L10 5L0 10z' fill='#0b2a4a'/></marker></defs><text x='300.0' y='22' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Évaluation du modèle structurel</text><ellipse cx='110' cy='100' rx='62' ry='28' fill='#eaf1f8' stroke='#1f5f99' stroke-width='2'/><text x='110' y='104' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>Qualité</text><ellipse cx='110' cy='180' rx='62' ry='28' fill='#eaf1f8' stroke='#1f5f99' stroke-width='2'/><text x='110' y='184' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>Prix perçu</text><ellipse cx='400' cy='140' rx='70' ry='28' fill='#eaf1f8' stroke='#1f5f99' stroke-width='2'/><text x='400' y='144' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>Satisfaction</text><line x1='172' y1='108' x2='330' y2='132' stroke='#1f5f99' stroke-width='1.8' marker-end='url(#ar)'/><text x='250' y='104' text-anchor='middle' font-size='11' font-weight='700' fill='#1f5f99'>0,46</text><line x1='172' y1='176' x2='330' y2='150' stroke='#c2a15a' stroke-width='1.8' marker-end='url(#ar)'/><text x='250' y='184' text-anchor='middle' font-size='11' font-weight='700' fill='#c2a15a'>0,18</text><text x='400' y='142' text-anchor='middle' font-size='11' fill='#1f2933'></text><text x='400' y='198' text-anchor='middle' font-size='13' fill='#0b2a4a' font-weight=\"700\">R² = 0,41</text><text x='500' y='105' text-anchor='middle' font-size='11' fill='#1f5f99' font-weight=\"700\">p < 0,001</text><text x='500' y='118' text-anchor='middle' font-size='11' fill='#c2a15a' font-weight=\"700\">p = 0,09</text><text x='300' y='232' text-anchor='middle' font-size='12' fill='#1f5f99' font-weight=\"700\">Vérifier : VIF · coefficients de chemin (bootstrapping) · R² · f² · Q²</text></svg>",
+   "code_exemple": "Calculate > Bootstrapping\n  Subsamples : 5000 · Test : two-tailed · Significance : 0,05 · Method : BCa\n\nRésultats : Path coefficients > Mean, STDEV, T values, P values, Confidence intervals\nQuality criteria > R-square, f-square, Collinearity statistics (VIF)",
+   "question_reflexion": "Un coefficient de chemin de 0,18 peut-il être non significatif alors qu'un coefficient de 0,12 l'est dans un autre modèle ?",
+   "resultats": "<table class=\"pls-table\"><thead><tr><th>Relation</th><th>Coefficient β</th><th>t</th><th>p</th><th>IC 95 %</th><th>VIF</th><th>f²</th></tr></thead><tbody><tr><td>Qualité -> Satisfaction</td><td>0,46</td><td>6,81</td><td>0,000</td><td>[0,33 ; 0,59]</td><td>1,42</td><td>0,28</td></tr><tr><td>Prix perçu -> Satisfaction</td><td>0,18</td><td>1,70</td><td>0,090</td><td>[-0,03 ; 0,38]</td><td>1,42</td><td>0,03</td></tr></tbody></table><p class=\"pls-note\">Bootstrapping : 5 000 sous-échantillons, test bilatéral, BCa, seuil 5 %. R² (Satisfaction) = 0,41.</p>",
+   "exercice": {
+    "enonce": "Dans le tableau de bootstrapping, quelle relation est significative au seuil de 5 % ? Que dire de la relation Prix perçu -> Satisfaction ? La colinéarité pose-t-elle problème ?",
+    "indice": "Lisez la colonne p et l'intervalle de confiance. Comparez les VIF à 3.",
+    "solution_attendue": "Qualité -> Satisfaction est significative (p = 0,000, IC sans 0, f² = 0,28, effet moyen à grand). Prix perçu -> Satisfaction n'est pas significative (p = 0,090, IC contenant 0, f² = 0,03). Les VIF (1,42) sont inférieurs à 3 : pas de problème de colinéarité.",
+    "mots_cles": [
+     "qualit",
+     "significati",
+     "prix",
+     "non significati|pas significati|n.est pas significati|0,090|0.090",
+     "vif|colin"
+    ]
+   }
+  }
+ ]
+}

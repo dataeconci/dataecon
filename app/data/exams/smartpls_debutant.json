@@ -1,0 +1,258 @@
+{
+ "outil": "smartpls",
+ "niveau": "debutant",
+ "questions": [
+  {
+   "id": "q1",
+   "theme": "Concepts",
+   "question": "Que représente une variable latente en PLS-SEM ?",
+   "code": "",
+   "options": [
+    "Une variable mesurée directement par une seule question",
+    "Un concept non observable, mesuré par plusieurs indicateurs",
+    "Une variable de contrôle",
+    "Une variable manquante"
+   ],
+   "correct": 1,
+   "explication": "Une variable latente (construit) est un concept non observable directement, estimé à partir de plusieurs indicateurs."
+  },
+  {
+   "id": "q2",
+   "theme": "Concepts",
+   "question": "Quelle partie du modèle relie les indicateurs à leur construit ?",
+   "code": "",
+   "options": [
+    "Le modèle structurel",
+    "Le modèle de mesure",
+    "Le modèle de régression",
+    "Le modèle de médiation"
+   ],
+   "correct": 1,
+   "explication": "Le modèle de mesure (outer model) relie les indicateurs aux construits ; le modèle structurel relie les construits entre eux."
+  },
+  {
+   "id": "q3",
+   "theme": "Concepts",
+   "question": "Le PLS-SEM est avant tout une méthode orientée vers :",
+   "code": "",
+   "options": [
+    "La prédiction et la variance expliquée",
+    "Le test d'hypothèses sur une distribution normale uniquement",
+    "L'analyse de séries temporelles",
+    "L'analyse textuelle"
+   ],
+   "correct": 0,
+   "explication": "Le PLS-SEM maximise la variance expliquée des variables dépendantes : il est orienté prédiction."
+  },
+  {
+   "id": "q4",
+   "theme": "Concepts",
+   "question": "Dans SmartPLS, les ellipses représentent :",
+   "code": "",
+   "options": [
+    "Les indicateurs",
+    "Les construits (variables latentes)",
+    "Les répondants",
+    "Les erreurs de saisie"
+   ],
+   "correct": 1,
+   "explication": "Les ellipses (ou cercles) représentent les construits ; les rectangles représentent les indicateurs."
+  },
+  {
+   "id": "q5",
+   "theme": "Données",
+   "question": "Quel format de fichier SmartPLS peut-il importer ?",
+   "code": "",
+   "options": [
+    "CSV et Excel",
+    "Uniquement des images",
+    "Uniquement du PDF",
+    "Uniquement du JSON"
+   ],
+   "correct": 0,
+   "explication": "SmartPLS importe des fichiers de données CSV, Excel (xlsx), et d'autres formats tabulaires."
+  },
+  {
+   "id": "q6",
+   "theme": "Données",
+   "question": "Comment doit être organisé le fichier de données ?",
+   "code": "",
+   "options": [
+    "Une colonne par répondant",
+    "Une ligne par répondant et une colonne par indicateur",
+    "Une seule colonne pour tout",
+    "Une ligne par construit"
+   ],
+   "correct": 1,
+   "explication": "Convention : une ligne par observation (répondant) et une colonne par indicateur."
+  },
+  {
+   "id": "q7",
+   "theme": "Données",
+   "question": "Pourquoi attribuer un code unique (par exemple -99) aux valeurs manquantes ?",
+   "code": "",
+   "options": [
+    "Pour que SmartPLS les reconnaisse et applique le traitement choisi",
+    "Pour supprimer toutes les colonnes",
+    "Pour doubler la taille de l'échantillon",
+    "Pour normaliser les variables"
+   ],
+   "correct": 0,
+   "explication": "Le code de valeur manquante est déclaré dans SmartPLS, qui applique ensuite la méthode choisie (remplacement par la moyenne ou suppression)."
+  },
+  {
+   "id": "q8",
+   "theme": "Échantillon",
+   "question": "La règle des 10 fois demande au minimum :",
+   "code": "",
+   "options": [
+    "10 observations par indicateur",
+    "10 fois le nombre maximal de flèches pointant vers un construit",
+    "100 observations quel que soit le modèle",
+    "10 construits"
+   ],
+   "correct": 1,
+   "explication": "Règle des 10 fois : 10 x le nombre maximal de flèches (structurelles ou formatives) pointant vers un construit."
+  },
+  {
+   "id": "q9",
+   "theme": "Échantillon",
+   "question": "Quel outil est recommandé pour déterminer précisément la taille d'échantillon ?",
+   "code": "",
+   "options": [
+    "Une analyse de puissance (G*Power)",
+    "Un tirage au sort",
+    "La moyenne des âges",
+    "Le nombre de colonnes"
+   ],
+   "correct": 0,
+   "explication": "L'analyse de puissance (par exemple avec G*Power) est plus fiable que la règle des 10 fois."
+  },
+  {
+   "id": "q10",
+   "theme": "Mesure",
+   "question": "Un construit réflexif est un construit dont :",
+   "code": "",
+   "options": [
+    "Les indicateurs forment le construit",
+    "Les indicateurs sont causés par le construit et sont corrélés",
+    "Les indicateurs sont indépendants",
+    "Il n'y a pas d'indicateurs"
+   ],
+   "correct": 1,
+   "explication": "Dans un modèle réflexif, le construit cause ses indicateurs, qui sont donc corrélés et interchangeables."
+  },
+  {
+   "id": "q11",
+   "theme": "Mesure",
+   "question": "Un indicateur d'un construit formatif :",
+   "code": "",
+   "options": [
+    "Est interchangeable avec les autres",
+    "Contribue à définir le construit : le retirer peut changer son sens",
+    "Doit toujours avoir un loading supérieur à 0,9",
+    "N'existe pas"
+   ],
+   "correct": 1,
+   "explication": "Les indicateurs formatifs définissent le construit ; ils ne sont pas interchangeables."
+  },
+  {
+   "id": "q12",
+   "theme": "Mesure",
+   "question": "« Le niveau de vie défini par le revenu, le logement et l'équipement » est un construit :",
+   "code": "",
+   "options": [
+    "Réflexif",
+    "Formatif",
+    "Impossible à mesurer",
+    "Dichotomique"
+   ],
+   "correct": 1,
+   "explication": "Les trois éléments composent le niveau de vie : c'est un construit formatif."
+  },
+  {
+   "id": "q13",
+   "theme": "Mesure",
+   "question": "Quelle mesure évalue les indicateurs d'un construit formatif ?",
+   "code": "",
+   "options": [
+    "Les poids externes (outer weights) et le VIF",
+    "L'alpha de Cronbach uniquement",
+    "Le test de Student sur l'âge",
+    "Le HTMT uniquement"
+   ],
+   "correct": 0,
+   "explication": "Pour un construit formatif : significativité des poids, colinéarité (VIF) et validité de contenu."
+  },
+  {
+   "id": "q14",
+   "theme": "Algorithme",
+   "question": "Quel est le nombre maximal d'itérations par défaut du PLS-SEM algorithm ?",
+   "code": "",
+   "options": [
+    "10",
+    "300",
+    "5 000",
+    "1"
+   ],
+   "correct": 1,
+   "explication": "Le réglage par défaut est de 300 itérations maximum avec un critère d'arrêt de 10^-7."
+  },
+  {
+   "id": "q15",
+   "theme": "Algorithme",
+   "question": "Quel seuil est recommandé pour un outer loading ?",
+   "code": "",
+   "options": [
+    "0,100",
+    "0,300",
+    "0,708",
+    "1,500"
+   ],
+   "correct": 2,
+   "explication": "Un loading de 0,708 correspond à environ 50 % de variance expliquée de l'indicateur (0,708² ≈ 0,50)."
+  },
+  {
+   "id": "q16",
+   "theme": "Algorithme",
+   "question": "Un loading de 0,35 sur un indicateur est généralement :",
+   "code": "",
+   "options": [
+    "Excellent",
+    "À retirer, en général",
+    "Obligatoire à conserver",
+    "Impossible"
+   ],
+   "correct": 1,
+   "explication": "Sous 0,40, on retire en principe l'indicateur (une suppression à la fois, puis recalcul)."
+  },
+  {
+   "id": "q17",
+   "theme": "Algorithme",
+   "question": "Que signifie un R² de 0,52 sur un construit endogène ?",
+   "code": "",
+   "options": [
+    "Le modèle explique 52 % de sa variance",
+    "Le construit a 52 indicateurs",
+    "Le modèle est faux à 52 %",
+    "Il y a 52 répondants"
+   ],
+   "correct": 0,
+   "explication": "Le R² est la part de variance du construit expliquée par ses prédicteurs."
+  },
+  {
+   "id": "q18",
+   "theme": "Algorithme",
+   "question": "Si plusieurs indicateurs ont de faibles loadings, que faut-il faire ?",
+   "code": "",
+   "options": [
+    "Tous les supprimer d'un coup",
+    "En retirer un à la fois, recalculer, puis réévaluer",
+    "Ignorer le problème",
+    "Doubler l'échantillon"
+   ],
+   "correct": 1,
+   "explication": "On retire un indicateur à la fois en recalculant le modèle, pour ne pas dégrader la validité de contenu."
+  }
+ ]
+}

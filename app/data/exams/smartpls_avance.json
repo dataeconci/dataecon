@@ -1,0 +1,258 @@
+{
+ "outil": "smartpls",
+ "niveau": "avance",
+ "questions": [
+  {
+   "id": "q1",
+   "theme": "Médiation",
+   "question": "L'effet indirect dans une médiation simple est :",
+   "code": "",
+   "options": [
+    "Le produit des coefficients a et b",
+    "La somme de a et b",
+    "La différence entre a et b",
+    "Toujours égal à l'effet direct"
+   ],
+   "correct": 0,
+   "explication": "Effet indirect = a x b ; effet total = effet direct + effet indirect."
+  },
+  {
+   "id": "q2",
+   "theme": "Médiation",
+   "question": "Effet indirect significatif et effet direct non significatif : on parle de :",
+   "code": "",
+   "options": [
+    "Médiation complémentaire",
+    "Médiation indirecte seule (totale)",
+    "Absence d'effet",
+    "Modération"
+   ],
+   "correct": 1,
+   "explication": "C'est le cas indirect-only selon Zhao, Lynch et Chen (2010)."
+  },
+  {
+   "id": "q3",
+   "theme": "Médiation",
+   "question": "Effets direct et indirect significatifs de signes opposés : médiation :",
+   "code": "",
+   "options": [
+    "Complémentaire",
+    "Compétitive",
+    "Totale",
+    "Nulle"
+   ],
+   "correct": 1,
+   "explication": "Signes opposés : médiation compétitive."
+  },
+  {
+   "id": "q4",
+   "theme": "Médiation",
+   "question": "Comment teste-t-on la significativité d'un effet indirect en PLS-SEM ?",
+   "code": "",
+   "options": [
+    "Test de Sobel obligatoire",
+    "Bootstrapping des effets indirects spécifiques",
+    "Comparaison à l'alpha de Cronbach",
+    "Test de normalité"
+   ],
+   "correct": 1,
+   "explication": "Le bootstrapping fournit les effets indirects spécifiques et leurs IC, sans hypothèse de normalité."
+  },
+  {
+   "id": "q5",
+   "theme": "Modération",
+   "question": "Il y a modération quand :",
+   "code": "",
+   "options": [
+    "Deux variables sont corrélées",
+    "L'effet d'une variable sur une autre dépend d'une troisième",
+    "Une variable est supprimée",
+    "Le VIF est inférieur à 3"
+   ],
+   "correct": 1,
+   "explication": "La modération signifie que la relation change selon les valeurs du modérateur."
+  },
+  {
+   "id": "q6",
+   "theme": "Modération",
+   "question": "Quel résultat confirme la présence d'une modération ?",
+   "code": "",
+   "options": [
+    "Un terme d'interaction significatif",
+    "Un VIF supérieur à 5",
+    "Un alpha inférieur à 0,5",
+    "Un HTMT supérieur à 1"
+   ],
+   "correct": 0,
+   "explication": "On regarde la significativité du terme d'interaction."
+  },
+  {
+   "id": "q7",
+   "theme": "Modération",
+   "question": "Que fait une analyse de pentes simples ?",
+   "code": "",
+   "options": [
+    "Elle supprime des indicateurs",
+    "Elle illustre la relation à différents niveaux du modérateur (-1 ET, moyenne, +1 ET)",
+    "Elle calcule l'AVE",
+    "Elle vérifie le HTMT"
+   ],
+   "correct": 1,
+   "explication": "Elle trace la pente à -1, 0 et +1 écart-type du modérateur."
+  },
+  {
+   "id": "q8",
+   "theme": "Modération",
+   "question": "Quel repère de f² (Kenny, 2018) correspond à un effet de modération moyen ?",
+   "code": "",
+   "options": [
+    "0,001",
+    "0,01",
+    "0,35",
+    "1,00"
+   ],
+   "correct": 1,
+   "explication": "Pour les effets de modération : 0,005 petit, 0,01 moyen, 0,025 grand."
+  },
+  {
+   "id": "q9",
+   "theme": "Multi-groupes",
+   "question": "Pourquoi réaliser MICOM avant une analyse multi-groupes ?",
+   "code": "",
+   "options": [
+    "Pour augmenter l'échantillon",
+    "Pour s'assurer que les construits ont le même sens dans les groupes",
+    "Pour calculer le VIF",
+    "Pour supprimer les valeurs manquantes"
+   ],
+   "correct": 1,
+   "explication": "MICOM vérifie l'invariance de mesure avant toute comparaison."
+  },
+  {
+   "id": "q10",
+   "theme": "Multi-groupes",
+   "question": "Combien d'étapes comporte MICOM ?",
+   "code": "",
+   "options": [
+    "1",
+    "2",
+    "3",
+    "7"
+   ],
+   "correct": 2,
+   "explication": "Configurale, compositionnelle, égalité des moyennes et variances."
+  },
+  {
+   "id": "q11",
+   "theme": "Multi-groupes",
+   "question": "Quelle invariance suffit pour comparer les coefficients de chemin ?",
+   "code": "",
+   "options": [
+    "L'invariance partielle (étapes 1 et 2)",
+    "Aucune",
+    "Seulement l'égalité des variances",
+    "Seulement l'étape 3"
+   ],
+   "correct": 0,
+   "explication": "L'invariance partielle (configurale et compositionnelle) suffit pour comparer les chemins."
+  },
+  {
+   "id": "q12",
+   "theme": "Prédiction",
+   "question": "PLSpredict compare le modèle à :",
+   "code": "",
+   "options": [
+    "Un benchmark de régression linéaire (LM)",
+    "Un modèle aléatoire normal",
+    "L'AVE",
+    "Le HTMT"
+   ],
+   "correct": 0,
+   "explication": "Le benchmark est un modèle linéaire naïf."
+  },
+  {
+   "id": "q13",
+   "theme": "Prédiction",
+   "question": "Si tous les indicateurs ont un RMSE PLS inférieur au RMSE LM, le pouvoir prédictif est :",
+   "code": "",
+   "options": [
+    "Nul",
+    "Faible",
+    "Moyen",
+    "Élevé"
+   ],
+   "correct": 3,
+   "explication": "Tous meilleurs : pouvoir prédictif élevé ; la majorité : moyen ; la minorité : faible ; aucun : nul."
+  },
+  {
+   "id": "q14",
+   "theme": "Prédiction",
+   "question": "L'IPMA croise :",
+   "code": "",
+   "options": [
+    "Importance et performance",
+    "Alpha et AVE",
+    "VIF et R²",
+    "Âge et sexe"
+   ],
+   "correct": 0,
+   "explication": "IPMA : importance (effet total) et performance (score moyen 0 à 100)."
+  },
+  {
+   "id": "q15",
+   "theme": "Prédiction",
+   "question": "Dans une IPMA, quels construits sont prioritaires ?",
+   "code": "",
+   "options": [
+    "Peu importants et très performants",
+    "Très importants et peu performants",
+    "Peu importants et peu performants",
+    "Aucun"
+   ],
+   "correct": 1,
+   "explication": "Importants mais peu performants : ce sont les leviers d'amélioration."
+  },
+  {
+   "id": "q16",
+   "theme": "Ordre supérieur",
+   "question": "Une composante d'ordre supérieur (HOC) sert à :",
+   "code": "",
+   "options": [
+    "Modéliser un concept multidimensionnel",
+    "Supprimer le bootstrapping",
+    "Remplacer le R²",
+    "Importer des données"
+   ],
+   "correct": 0,
+   "explication": "Elle représente un construit général défini par plusieurs dimensions (LOC)."
+  },
+  {
+   "id": "q17",
+   "theme": "Biais",
+   "question": "Le test de colinéarité complète signale un biais de méthode commune si un VIF dépasse :",
+   "code": "",
+   "options": [
+    "1,0",
+    "3,3",
+    "0,5",
+    "100"
+   ],
+   "correct": 1,
+   "explication": "Le seuil de Kock est 3,3."
+  },
+  {
+   "id": "q18",
+   "theme": "Biais",
+   "question": "Pourquoi ajouter des variables de contrôle ?",
+   "code": "",
+   "options": [
+    "Pour que leur effet ne soit pas attribué aux prédicteurs",
+    "Pour augmenter l'alpha",
+    "Pour remplacer le modèle de mesure",
+    "Pour supprimer les indicateurs"
+   ],
+   "correct": 0,
+   "explication": "Elles isolent l'effet de facteurs externes comme l'âge ou le sexe."
+  }
+ ]
+}

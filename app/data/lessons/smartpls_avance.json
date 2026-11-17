@@ -1,0 +1,114 @@
+{
+ "outil": "smartpls",
+ "niveau": "avance",
+ "titre": "SmartPLS : analyses avancées",
+ "description": "Médiation, modération, multi-groupes et MICOM, PLSpredict, IPMA, composantes d'ordre supérieur et biais de méthode commune.",
+ "concepts": [
+  {
+   "id": "pls_adv_1",
+   "titre": "Analyse de médiation",
+   "objectif": "Décomposer effet direct, indirect et total et conclure sur le type de médiation",
+   "explication": "Il y a **médiation** quand une variable (le **médiateur**) transmet l'effet d'une variable indépendante vers une variable dépendante : la qualité agit sur la fidélité *par l'intermédiaire* de la satisfaction.\n\nOn distingue l'**effet direct** (c'), l'**effet indirect** (a x b : produit des deux chemins passant par le médiateur) et l'**effet total** (c' + a x b). SmartPLS fournit l'effet indirect spécifique dans *Specific indirect effects* après le bootstrapping.\n\nSelon **Zhao, Lynch et Chen (2010)** : si l'effet indirect est significatif et l'effet direct non significatif, c'est une **médiation indirecte seule** (*indirect-only*, médiation totale). Si les deux sont significatifs et de même signe, **médiation complémentaire** ; de signes opposés, **médiation compétitive**. Si seul l'effet direct est significatif, il n'y a **pas de médiation** (*direct-only*). Le critère décisif est donc la significativité de l'effet indirect, pas le rapport VAF.",
+   "image_svg": "<svg viewBox='0 0 600 232' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><defs><marker id='ar' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='7' markerHeight='7' orient='auto-start-reverse'><path d='M0 0L10 5L0 10z' fill='#0b2a4a'/></marker></defs><text x='300.0' y='22' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Médiation : la satisfaction relaie l'effet de la qualité</text><ellipse cx='100' cy='130' rx='62' ry='28' fill='#eaf1f8' stroke='#1f5f99' stroke-width='2'/><text x='100' y='134' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>Qualité</text><ellipse cx='300' cy='60' rx='70' ry='28' fill='#eaf1f8' stroke='#1f5f99' stroke-width='2'/><text x='300' y='64' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>Satisfaction</text><ellipse cx='500' cy='130' rx='62' ry='28' fill='#eaf1f8' stroke='#1f5f99' stroke-width='2'/><text x='500' y='134' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>Fidélité</text><line x1='150' y1='108' x2='240' y2='74' stroke='#1f5f99' stroke-width='1.8' marker-end='url(#ar)'/><text x='185' y='80' text-anchor='middle' font-size='11' font-weight='700' fill='#1f5f99'>a</text><line x1='360' y1='74' x2='450' y2='108' stroke='#1f5f99' stroke-width='1.8' marker-end='url(#ar)'/><text x='415' y='80' text-anchor='middle' font-size='11' font-weight='700' fill='#1f5f99'>b</text><line x1='162' y1='130' x2='438' y2='130' stroke='#c2a15a' stroke-width='1.8' marker-end='url(#ar)'/><text x='300' y='124' text-anchor='middle' font-size='11' font-weight='700' fill='#c2a15a'>c'</text><text x='300' y='190' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Effet indirect = a x b · effet direct = c' · effet total = c' + a x b</text><text x='300' y='212' text-anchor='middle' font-size='12' fill='#1f5f99' font-weight=\"700\">On teste l'effet indirect par bootstrapping (IC 95 % sans 0)</text></svg>",
+   "code_exemple": "Calculate > Bootstrapping (5000, BCa)\nResultats > Specific indirect effects\n  Qualité -> Satisfaction -> Fidélité : 0,25 (p = 0,000)\nPuis comparer l'effet direct Qualité -> Fidélité",
+   "question_reflexion": "Pourquoi tester l'effet indirect par bootstrapping plutôt que par un test de Sobel ?",
+   "resultats": "<table class=\"pls-table\"><thead><tr><th>Effet</th><th>Coefficient</th><th>p</th><th>IC 95 %</th></tr></thead><tbody><tr><td>Qualité -> Satisfaction (a)</td><td>0,52</td><td>0,000</td><td>[0,40 ; 0,63]</td></tr><tr><td>Satisfaction -> Fidélité (b)</td><td>0,48</td><td>0,000</td><td>[0,35 ; 0,60]</td></tr><tr><td>Qualité -> Fidélité, direct (c')</td><td>0,05</td><td>0,520</td><td>[-0,10 ; 0,20]</td></tr><tr><td>Effet indirect spécifique (a x b)</td><td>0,25</td><td>0,000</td><td>[0,17 ; 0,34]</td></tr></tbody></table><p class=\"pls-note\">Bootstrapping : 5 000 sous-échantillons, BCa.</p>",
+   "exercice": {
+    "enonce": "À partir du tableau, quel est le type de médiation et la conclusion ? Précisez le rôle de la satisfaction.",
+    "indice": "Regardez la significativité de l'effet indirect puis celle de l'effet direct.",
+    "solution_attendue": "L'effet indirect (0,25, p = 0,000, IC sans 0) est significatif alors que l'effet direct (0,05, p = 0,520) ne l'est pas : c'est une médiation indirecte seule, c'est-à-dire totale. La satisfaction transmet entièrement l'effet de la qualité sur la fidélité.",
+    "mots_cles": [
+     "indirect",
+     "total|compl[eè]te|seule|indirect-only",
+     "direct",
+     "non significati|pas significati|n.est pas",
+     "satisfaction"
+    ]
+   }
+  },
+  {
+   "id": "pls_adv_2",
+   "titre": "Analyse de modération",
+   "objectif": "Tester et interpréter un effet d'interaction",
+   "explication": "Il y a **modération** quand l'effet d'une variable sur une autre **dépend** d'une troisième variable, le **modérateur** : l'effet de la qualité sur la fidélité est plus fort chez les jeunes clients que chez les plus âgés.\n\nDans SmartPLS, on ajoute un **effet de modération** (clic droit sur le construit endogène). Choisissez l'approche **en deux étapes** (*two-stage*) pour un modérateur réflexif, ou la **produit d'indicateurs** pour de la simplicité. Les variables sont **standardisées** avant la création du terme d'interaction.\n\nUn terme d'interaction **significatif** (p < 0,05) confirme la modération. On l'illustre avec une **analyse de pentes simples** (*simple slope analysis*) : pente de la relation à -1 écart-type, à la moyenne et à +1 écart-type du modérateur. La taille d'effet f² de la modération est petite à partir de **0,005**, moyenne à **0,01**, grande à **0,025** (Kenny, 2018).",
+   "image_svg": "<svg viewBox='0 0 600 210' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><defs><marker id='ar' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='7' markerHeight='7' orient='auto-start-reverse'><path d='M0 0L10 5L0 10z' fill='#0b2a4a'/></marker></defs><text x='300.0' y='22' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Modération : la pente change selon le modérateur</text><rect x='60' y='55' width='430' height='130' rx='6' fill='#fff' stroke='#cfd9e6'/><line x1='90' y1='170' x2='460' y2='170' stroke='#0b2a4a'/><line x1='90' y1='170' x2='90' y2='70' stroke='#0b2a4a'/><line x1='110' y1='150' x2='440' y2='120' stroke='#c2a15a' stroke-width='3'/><line x1='110' y1='155' x2='440' y2='85' stroke='#1f5f99' stroke-width='3'/><text x='470' y='118' text-anchor='start' font-size='11' fill='#c2a15a' font-weight=\"700\">Modérateur faible</text><text x='470' y='88' text-anchor='start' font-size='11' fill='#1f5f99' font-weight=\"700\">Modérateur fort</text><text x='275' y='190' text-anchor='middle' font-size='11' fill='#1f2933'>Variable indépendante</text><text x='66' y='120' text-anchor='middle' font-size='12' fill='#1f2933' font-weight=\"700\">Y</text></svg>",
+   "code_exemple": "Modèle : Qualité -> Fidélité, modérateur Âge\nClic droit sur Fidélité > Add moderating effect\n  Moderator : Âge · Independent : Qualité · Method : two-stage\nCalculate > Bootstrapping > lire 'Qualité x Âge -> Fidélité'",
+   "question_reflexion": "Pourquoi un effet de modération significatif est-il souvent faible en valeur absolue (f² inférieur à 0,05) ?",
+   "resultats": "<table class=\"pls-table\"><thead><tr><th>Relation</th><th>β</th><th>p</th></tr></thead><tbody><tr><td>Qualité -> Fidélité</td><td>0,41</td><td>0,000</td></tr><tr><td>Âge -> Fidélité</td><td>0,06</td><td>0,310</td></tr><tr><td>Qualité x Âge -> Fidélité</td><td>0,14</td><td>0,011</td></tr></tbody></table><p class=\"pls-note\">Terme d'interaction créé par l'approche en deux étapes (two-stage).</p>",
+   "exercice": {
+    "enonce": "Dans le tableau, la modération par l'âge est-elle confirmée ? Interprétez le signe du terme d'interaction.",
+    "indice": "Lisez la ligne d'interaction : p et signe de β.",
+    "solution_attendue": "Oui : le terme d'interaction Qualité x Âge est significatif (β = 0,14 ; p = 0,011). Le signe positif signifie que l'effet de la qualité sur la fidélité se renforce quand l'âge augmente.",
+    "mots_cles": [
+     "interaction|mod[eé]ration",
+     "significati|confirm|oui",
+     "0,011|0.011|p",
+     "renforc|augment|positi"
+    ]
+   }
+  },
+  {
+   "id": "pls_adv_3",
+   "titre": "Analyse multi-groupes et MICOM",
+   "objectif": "Comparer des groupes (urbain/rural, hommes/femmes) en s'assurant de l'invariance de mesure",
+   "explication": "L'**analyse multi-groupes (MGA)** teste si les coefficients de chemin diffèrent entre deux sous-populations (clients urbains et ruraux). Mais avant de comparer, il faut prouver que le construit **a le même sens** dans les deux groupes : c'est l'**invariance de mesure**, vérifiée par la procédure **MICOM** (*measurement invariance of composite models*), en trois étapes.\n\n**Étape 1, invariance configurale** : même modèle, mêmes indicateurs, mêmes réglages. **Étape 2, invariance compositionnelle** : par permutation, la corrélation originale doit être supérieure au quantile à 5 % (p > 0,05). **Étape 3, égalité des moyennes et des variances** : elle est facultative pour comparer les chemins, mais nécessaire pour comparer les moyennes.\n\nSi l'invariance **partielle** (étapes 1 et 2) est établie, on peut comparer les **coefficients de chemin** avec **PLS-MGA** (non paramétrique) ou la **permutation**. Chaque groupe doit compter au moins le minimum d'observations exigé par le modèle.",
+   "image_svg": "<svg viewBox='0 0 600 250' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><defs><marker id='ar' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='7' markerHeight='7' orient='auto-start-reverse'><path d='M0 0L10 5L0 10z' fill='#0b2a4a'/></marker></defs><text x='300.0' y='22' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Procédure MICOM avant la comparaison de groupes</text><rect x='40' y='50' width='520' height='44' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='60' y='69' text-anchor='start' font-size='13' fill='#0b2a4a' font-weight=\"700\">1. Invariance configurale</text><text x='60' y='86' text-anchor='start' font-size='11' fill='#1f2933'>même modèle, mêmes données, mêmes réglages</text><rect x='40' y='105' width='520' height='44' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='60' y='124' text-anchor='start' font-size='13' fill='#0b2a4a' font-weight=\"700\">2. Invariance compositionnelle</text><text x='60' y='141' text-anchor='start' font-size='11' fill='#1f2933'>permutation : corrélation originale vs 5 %</text><rect x='40' y='160' width='520' height='44' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='60' y='179' text-anchor='start' font-size='13' fill='#0b2a4a' font-weight=\"700\">3. Égalité moyennes et variances</text><text x='60' y='196' text-anchor='start' font-size='11' fill='#1f2933'>permutation : différences dans l'IC 95 %</text><text x='300' y='230' text-anchor='middle' font-size='12' fill='#1f5f99' font-weight=\"700\">Après MICOM : comparer les groupes avec PLS-MGA ou la permutation</text></svg>",
+   "code_exemple": "Calculate > Permutation (MICOM) : 1000 permutations\nPuis Calculate > MGA (bootstrapping par groupe) ou Permutation\nLire : p-value de différence entre groupes (significatif si < 0,05 ou > 0,95 pour PLS-MGA)",
+   "question_reflexion": "Pourquoi comparer des chemins sans invariance de mesure peut-il être trompeur ?",
+   "resultats": "<table class=\"pls-table\"><thead><tr><th>Étape MICOM</th><th>Résultat</th></tr></thead><tbody><tr><td>1. Configurale</td><td>Établie</td></tr><tr><td>2. Compositionnelle</td><td>Établie pour tous les construits (p > 0,05)</td></tr><tr><td>3. Égalité des moyennes</td><td>Non établie pour Satisfaction</td></tr><tr><td>3. Égalité des variances</td><td>Établie</td></tr></tbody></table><p class=\"pls-note\">Groupes : clients urbains et clients ruraux.</p>",
+   "exercice": {
+    "enonce": "Selon le tableau MICOM, la comparaison des coefficients de chemin entre urbains et ruraux est-elle possible ? Et la comparaison des moyennes de Satisfaction ?",
+    "indice": "Invariance partielle = étapes 1 et 2. Moyennes = étape 3.",
+    "solution_attendue": "Oui, la comparaison des chemins est possible car l'invariance partielle (configurale et compositionnelle) est établie. En revanche, la moyenne de Satisfaction ne peut pas être comparée, car l'égalité des moyennes n'est pas établie.",
+    "mots_cles": [
+     "oui|possible|autoris",
+     "partielle|configurale|compositionnelle",
+     "moyenne",
+     "non|pas|impossible|ne peut"
+    ]
+   }
+  },
+  {
+   "id": "pls_adv_4",
+   "titre": "Prédiction (PLSpredict) et IPMA",
+   "objectif": "Évaluer le pouvoir prédictif hors échantillon et identifier les priorités d'action",
+   "explication": "Le PLS-SEM vise la **prédiction**. La procédure **PLSpredict** estime le modèle sur une partie des données (échantillon d'apprentissage) et prédit l'autre partie, en validation croisée (10 plis). On compare à un **benchmark** de régression linéaire (LM).\n\nRègle de lecture pour les indicateurs du construit cible : tous les **Q² predict** doivent être **positifs** (sinon le modèle prédit moins bien que la moyenne). Puis on compare les **RMSE** (ou MAE) : si **tous** les indicateurs ont un RMSE PLS **inférieur** à celui du LM, le pouvoir prédictif est **élevé** ; si **la majorité**, **moyen** ; si **la minorité**, **faible** ; si **aucun**, **nul**.\n\nL'**IPMA** (*importance-performance map analysis*) croise l'**importance** (effet total d'un construit sur la cible) et la **performance** (score moyen, de 0 à 100). Les construits **très importants mais peu performants** sont les priorités d'amélioration pour un gestionnaire.",
+   "image_svg": "<svg viewBox='0 0 600 240' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><defs><marker id='ar' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='7' markerHeight='7' orient='auto-start-reverse'><path d='M0 0L10 5L0 10z' fill='#0b2a4a'/></marker></defs><text x='300.0' y='22' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Prédiction (PLSpredict) et cartographie importance-performance (IPMA)</text><rect x='60' y='45' width='330' height='160' rx='6' fill='#fff' stroke='#cfd9e6'/><line x1='225' y1='45' x2='225' y2='205' stroke='#cfd9e6' stroke-dasharray='4 3'/><line x1='60' y1='125' x2='390' y2='125' stroke='#cfd9e6' stroke-dasharray='4 3'/><circle cx='299.25' cy='89.80000000000001' r='9' fill='#1f5f99'/><text x='299.25' y='75.80000000000001' text-anchor='middle' font-size='11.5' fill='#0b2a4a' font-weight=\"700\">Qualité</text><circle cx='183.75' cy='117.0' r='9' fill='#1f5f99'/><text x='183.75' y='103.0' text-anchor='middle' font-size='11.5' fill='#0b2a4a' font-weight=\"700\">Prix</text><circle cx='245.625' cy='144.2' r='9' fill='#1f5f99'/><text x='245.625' y='130.2' text-anchor='middle' font-size='11.5' fill='#0b2a4a' font-weight=\"700\">Image</text><text x='225' y='222' text-anchor='middle' font-size='11' fill='#1f2933'>Importance (effet total)</text><text x='30' y='125' text-anchor='middle' font-size='11' fill='#1f2933'>Perf.</text><text x='480' y='85' text-anchor='middle' font-size='12' fill='#0b2a4a' font-weight=\"700\">IPMA : priorité aux construits</text><text x='480' y='105' text-anchor='middle' font-size='11.5' fill='#1f2933'>très importants mais peu performants</text><text x='480' y='150' text-anchor='middle' font-size='12' fill='#0b2a4a' font-weight=\"700\">PLSpredict : le modèle doit</text><text x='480' y='170' text-anchor='middle' font-size='11.5' fill='#1f2933'>prédire mieux que la régression</text><text x='480' y='188' text-anchor='middle' font-size='11.5' fill='#1f2933'>linéaire naïve</text></svg>",
+   "code_exemple": "Calculate > PLSpredict (folds 10, repetitions 10)\n  Lire Q²predict, RMSE (PLS-SEM) et RMSE (LM)\nCalculate > IPMA : choisir le construit cible (Fidélité)\n  Graphique importance (x) / performance (y)",
+   "question_reflexion": "Pourquoi une bonne explication (R² élevé) ne garantit-elle pas une bonne prédiction ?",
+   "resultats": "<table class=\"pls-table\"><thead><tr><th>Indicateur</th><th>Q² predict</th><th>RMSE PLS</th><th>RMSE LM</th></tr></thead><tbody><tr><td>FI1</td><td>0,21</td><td>0,89</td><td>0,93</td></tr><tr><td>FI2</td><td>0,17</td><td>0,91</td><td>0,95</td></tr><tr><td>FI3</td><td>0,09</td><td>0,97</td><td>0,95</td></tr></tbody></table><p class=\"pls-note\">PLSpredict (10 plis, 10 répétitions). LM = benchmark de régression linéaire.</p>",
+   "exercice": {
+    "enonce": "Selon le tableau PLSpredict, quel est le niveau de pouvoir prédictif du modèle ? Justifiez à partir des Q² predict et des RMSE.",
+    "indice": "Comptez les indicateurs dont le RMSE PLS est inférieur au RMSE LM.",
+    "solution_attendue": "Les trois Q² predict sont positifs. Deux indicateurs sur trois (FI1 et FI2) ont un RMSE PLS inférieur au RMSE LM, FI3 non : la majorité est meilleure, le pouvoir prédictif est donc moyen.",
+    "mots_cles": [
+     "moyen",
+     "q²|q2|positi",
+     "rmse",
+     "majorit|deux|2"
+    ]
+   }
+  },
+  {
+   "id": "pls_adv_5",
+   "titre": "Ordre supérieur et biais de méthode commune",
+   "objectif": "Modéliser un concept multidimensionnel et contrôler le biais de méthode commune",
+   "explication": "Certains concepts sont **multidimensionnels** : la qualité de service regroupe la fiabilité, la réactivité et l'empathie. On les modélise avec une **composante d'ordre supérieur (HOC)** reliée à des **composantes d'ordre inférieur (LOC)**. L'approche recommandée est la **méthode en deux étapes** (*disjoint two-stage*) : on estime d'abord les LOC, puis leurs scores deviennent les indicateurs de la HOC.\n\nQuand toutes les variables proviennent du **même questionnaire**, un **biais de méthode commune** (*common method bias*) peut gonfler les relations. On le contrôle en amont (anonymat, ordre des questions) et on le teste avec le **VIF de colinéarité complète** : si **un VIF dépasse 3,3**, le modèle est possiblement contaminé.\n\nOn peut aussi inclure des **variables de contrôle** (âge, sexe, ancienneté) reliées au construit endogène : elles ne sont pas l'objet de l'étude mais évitent que leur effet soit attribué aux prédicteurs.",
+   "image_svg": "<svg viewBox='0 0 600 242' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><defs><marker id='ar' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='7' markerHeight='7' orient='auto-start-reverse'><path d='M0 0L10 5L0 10z' fill='#0b2a4a'/></marker></defs><text x='300.0' y='22' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Composantes d'ordre supérieur et biais de méthode commune</text><ellipse cx='300' cy='55' rx='105' ry='28' fill='#f4e8c8' stroke='#c2a15a' stroke-width='2'/><text x='300' y='59' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>Qualité de service (HOC)</text><ellipse cx='130' cy='150' rx='56' ry='24' fill='#eaf1f8' stroke='#1f5f99' stroke-width='2'/><text x='130' y='154' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>Fiabilité</text><line x1='260' y1='83' x2='130' y2='126' stroke='#c2a15a' stroke-width='1.6' marker-end='url(#ar)'/><ellipse cx='300' cy='150' rx='56' ry='24' fill='#eaf1f8' stroke='#1f5f99' stroke-width='2'/><text x='300' y='154' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>Réactivité</text><line x1='300' y1='83' x2='300' y2='126' stroke='#c2a15a' stroke-width='1.6' marker-end='url(#ar)'/><ellipse cx='470' cy='150' rx='56' ry='24' fill='#eaf1f8' stroke='#1f5f99' stroke-width='2'/><text x='470' y='154' text-anchor='middle' font-size='12' font-weight='700' fill='#0b2a4a'>Empathie</text><line x1='340' y1='83' x2='470' y2='126' stroke='#c2a15a' stroke-width='1.6' marker-end='url(#ar)'/><text x='300' y='205' text-anchor='middle' font-size='11.5' fill='#1f5f99' font-weight=\"700\">Composante d'ordre supérieur : le construit général est défini par ses dimensions (LOC)</text><text x='300' y='224' text-anchor='middle' font-size='12' fill='#0b2a4a' font-weight=\"700\">Biais de méthode commune : VIF « full collinearity » < 3,3</text></svg>",
+   "code_exemple": "HOC : Qualité de service <- Fiabilité, Réactivité, Empathie\nStratégie : disjoint two-stage (étape 1 : scores des LOC ; étape 2 : HOC mesurée par ces scores)\nCMB : VIF complet < 3,3 pour tous les construits",
+   "question_reflexion": "Pourquoi ne pas simplement fusionner toutes les questions de fiabilité, réactivité et empathie dans un seul construit ?",
+   "resultats": "<table class=\"pls-table\"><thead><tr><th>Construit</th><th>VIF global (full collinearity)</th></tr></thead><tbody><tr><td>Qualité</td><td>2,1</td></tr><tr><td>Prix</td><td>1,6</td></tr><tr><td>Satisfaction</td><td>3,9</td></tr><tr><td>Fidélité</td><td>2,4</td></tr></tbody></table><p class=\"pls-note\">Test de colinéarité complète (Kock) : chaque construit régressé sur une variable aléatoire.</p>",
+   "exercice": {
+    "enonce": "Au vu du VIF de colinéarité complète, le biais de méthode commune est-il préoccupant ? Pour quel construit ? Que proposez-vous ?",
+    "indice": "Comparez chaque VIF au seuil 3,3.",
+    "solution_attendue": "Oui, Satisfaction a un VIF de 3,9, supérieur au seuil de 3,3 : il y a un risque de biais de méthode commune. Il faut examiner les procédures de collecte (anonymat, séparation des questions) et ajouter des variables de contrôle ou un marqueur de méthode.",
+    "mots_cles": [
+     "satisfaction",
+     "3,9|3.9",
+     "3,3|3.3|seuil",
+     "biais"
+    ]
+   }
+  }
+ ]
+}

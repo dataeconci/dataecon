@@ -6,9 +6,9 @@
   const OUTIL = root.dataset.outil;
   const NIVEAU = root.dataset.niveau;
   const KEY = 'dataecon_player_' + OUTIL + '_' + NIVEAU;
-  const NOMS = { python: 'Python', r: 'R', sql: 'SQL', tableau: 'Tableau' };
-  const MODES = { python: 'python', r: 'r', sql: 'text/x-sql', tableau: 'text/plain' };
-  const FICHIERS = { python: 'exercice.py', r: 'exercice.R', sql: 'requete.sql', tableau: 'analyse.txt' };
+  const NOMS = { python: 'Python', r: 'R', sql: 'SQL', tableau: 'Tableau', smartpls: 'SmartPLS' };
+  const MODES = { python: 'python', r: 'r', sql: 'text/x-sql', tableau: 'text/plain', smartpls: 'text/plain' };
+  const FICHIERS = { python: 'exercice.py', r: 'exercice.R', sql: 'requete.sql', tableau: 'analyse.txt', smartpls: 'interpretation.txt' };
 
   let lecon = null;
   let idx = -1;            // -1 = page d'introduction ; lecon.concepts.length = fin
@@ -53,6 +53,7 @@
       return head + cyl(80, '#c2a15a') + cyl(130, '#5b9bd5') + cyl(180, '#e6edf5') + t +
         "<text x='420' y='280' text-anchor='middle' fill='#fff' font-size='20' font-weight='700'>SQL</text><text x='420' y='302' text-anchor='middle' fill='#c9d8e8' font-size='12'>SELECT · WHERE · GROUP BY</text>" + foot;
     }
+    if (outil === 'smartpls') return '<svg viewBox=\'0 0 600 340\' xmlns=\'http://www.w3.org/2000/svg\' font-family=\'Inter,Segoe UI,sans-serif\'><defs><linearGradient id=\'bg\' x1=\'0\' y1=\'0\' x2=\'1\' y2=\'1\'><stop offset=\'0\' stop-color=\'#0b2a4a\'/><stop offset=\'1\' stop-color=\'#1f5f99\'/></linearGradient></defs><rect width=\'600\' height=\'340\' fill=\'url(#bg)\'/><g stroke=\'#fff\' stroke-opacity=\'.07\'><path d=\'M0 85H600M0 170H600M0 255H600M100 0V340M200 0V340M300 0V340M400 0V340M500 0V340\'/></g><defs><marker id=\'ar2\' viewBox=\'0 0 10 10\' refX=\'9\' refY=\'5\' markerWidth=\'7\' markerHeight=\'7\' orient=\'auto\'><path d=\'M0 0L10 5L0 10z\' fill=\'#fff\'/></marker></defs><ellipse cx=\'110\' cy=\'130\' rx=\'62\' ry=\'30\' fill=\'#fff\' fill-opacity=\'.95\' stroke=\'#c2a15a\' stroke-width=\'3\'/><text x=\'110\' y=\'134\' text-anchor=\'middle\' font-size=\'13\' font-weight=\'700\' fill=\'#0b2a4a\'>Qualité</text><ellipse cx=\'300\' cy=\'70\' rx=\'70\' ry=\'30\' fill=\'#fff\' fill-opacity=\'.95\' stroke=\'#c2a15a\' stroke-width=\'3\'/><text x=\'300\' y=\'74\' text-anchor=\'middle\' font-size=\'13\' font-weight=\'700\' fill=\'#0b2a4a\'>Satisfaction</text><ellipse cx=\'490\' cy=\'130\' rx=\'62\' ry=\'30\' fill=\'#fff\' fill-opacity=\'.95\' stroke=\'#c2a15a\' stroke-width=\'3\'/><text x=\'490\' y=\'134\' text-anchor=\'middle\' font-size=\'13\' font-weight=\'700\' fill=\'#0b2a4a\'>Fidélité</text><line x1=\'160\' y1=\'112\' x2=\'238\' y2=\'84\' stroke=\'#fff\' stroke-width=\'2.5\' marker-end=\'url(#ar2)\'/><line x1=\'362\' y1=\'84\' x2=\'442\' y2=\'112\' stroke=\'#fff\' stroke-width=\'2.5\' marker-end=\'url(#ar2)\'/><line x1=\'174\' y1=\'134\' x2=\'426\' y2=\'134\' stroke=\'#fff\' stroke-width=\'2.5\' marker-end=\'url(#ar2)\'/><rect x=\'38\' y=\'222\' width=\'44\' height=\'24\' rx=\'3\' fill=\'#c2a15a\'/><line x1=\'60\' y1=\'222\' x2=\'90\' y2=\'160\' stroke=\'#fff\' stroke-width=\'2.5\' marker-end=\'url(#ar2)\'/><rect x=\'88\' y=\'222\' width=\'44\' height=\'24\' rx=\'3\' fill=\'#c2a15a\'/><line x1=\'110\' y1=\'222\' x2=\'110\' y2=\'160\' stroke=\'#fff\' stroke-width=\'2.5\' marker-end=\'url(#ar2)\'/><rect x=\'138\' y=\'222\' width=\'44\' height=\'24\' rx=\'3\' fill=\'#c2a15a\'/><line x1=\'160\' y1=\'222\' x2=\'130\' y2=\'160\' stroke=\'#fff\' stroke-width=\'2.5\' marker-end=\'url(#ar2)\'/><rect x=\'418\' y=\'222\' width=\'44\' height=\'24\' rx=\'3\' fill=\'#c2a15a\'/><line x1=\'440\' y1=\'222\' x2=\'470\' y2=\'160\' stroke=\'#fff\' stroke-width=\'2.5\' marker-end=\'url(#ar2)\'/><rect x=\'468\' y=\'222\' width=\'44\' height=\'24\' rx=\'3\' fill=\'#c2a15a\'/><line x1=\'490\' y1=\'222\' x2=\'490\' y2=\'160\' stroke=\'#fff\' stroke-width=\'2.5\' marker-end=\'url(#ar2)\'/><rect x=\'518\' y=\'222\' width=\'44\' height=\'24\' rx=\'3\' fill=\'#c2a15a\'/><line x1=\'540\' y1=\'222\' x2=\'510\' y2=\'160\' stroke=\'#fff\' stroke-width=\'2.5\' marker-end=\'url(#ar2)\'/><text x=\'300\' y=\'296\' text-anchor=\'middle\' font-size=\'24\' font-weight=\'700\' fill=\'#fff\' font-family=\'Inter,Segoe UI,sans-serif\'>SmartPLS</text><text x=\'300\' y=\'318\' text-anchor=\'middle\' font-size=\'12\' fill=\'#c9d8e8\' font-family=\'Inter,Segoe UI,sans-serif\'>PLS-SEM · mesure · bootstrapping · médiation</text></svg>';
     return head + "<rect x='60' y='60' width='480' height='220' rx='14' fill='#fff' fill-opacity='.95'/>" +
       "<g><rect x='90' y='170' width='36' height='80' fill='#c2a15a'/><rect x='136' y='140' width='36' height='110' fill='#1f5f99'/><rect x='182' y='110' width='36' height='140' fill='#0b2a4a'/><rect x='228' y='150' width='36' height='100' fill='#5b9bd5'/></g>" +
       "<circle cx='400' cy='150' r='60' fill='#1f5f99'/><path d='M400 150 L400 90 A60 60 0 0 1 452 180 Z' fill='#c2a15a'/><path d='M400 150 L452 180 A60 60 0 0 1 360 196 Z' fill='#0b2a4a'/>" +
@@ -279,6 +280,8 @@
     const speakIntro = 'Concept ' + (idx + 1) + ' : ' + c.titre + '. ' + c.objectif + '.';
     const dejaOk = !!etat.valides[c.id];
     const studio = OUTIL === 'tableau';
+    const pls = OUTIL === 'smartpls';
+    const texte = studio || pls;
 
     body.innerHTML =
       '<div class="pl-split">' +
@@ -287,7 +290,7 @@
         '<span class="pl-chip">Concept ' + (idx + 1) + ' / ' + lecon.concepts.length + '</span>' +
         '<h2 class="narr" data-speak="' + esc(plain(speakIntro)) + '">' + esc(c.titre) + '</h2>' +
         '<p class="pl-obj">' + esc(c.objectif) + '</p>' + paras +
-        (c.code_exemple ? '<div class="pl-example"><header><span>Exemple</span><span><button id="cp-ex">Copier dans l\'éditeur</button>' + (studio ? '' : '<button id="run-ex">Exécuter</button>') + '</span></header><pre>' + esc(c.code_exemple) + '</pre></div>' : '') +
+        (c.code_exemple ? '<div class="pl-example"><header><span>Exemple</span><span><button id="cp-ex">Copier dans l\'éditeur</button>' + (texte ? '' : '<button id="run-ex">Exécuter</button>') + '</span></header><pre>' + esc(c.code_exemple) + '</pre></div>' : '') +
         (c.question_reflexion ? '<div class="pl-think narr" data-speak="' + esc('Question de réflexion. ' + plain(c.question_reflexion)) + '"><strong>À réfléchir :</strong> ' + md(c.question_reflexion) + '</div>' : '') +
         '<div class="pl-ex"><h3>Exercice</h3><div class="pl-ex-text" data-speak="' + esc('Exercice. ' + plain(ex.enonce)) + '">' + md(ex.enonce) + '</div>' +
           '<div class="pl-ex-actions"><button class="pl-link" id="b-hint"><i class="fas fa-lightbulb"></i> Indice</button><button class="pl-link" id="b-sol" disabled><i class="fas fa-eye"></i> Voir la solution</button></div>' +
@@ -296,24 +299,30 @@
       '<section class="pl-work">' +
         '<div class="pl-work-head"><span class="file"><i class="fas fa-file-code"></i> ' + FICHIERS[OUTIL] + '</span><span class="pl-actions">' +
           '<button class="pl-btn ghost" id="b-reset"><i class="fas fa-rotate-left"></i> Réinitialiser</button>' +
-          (studio ? '' : '<button class="pl-btn run" id="b-run"><i class="fas fa-play"></i> Exécuter</button>') +
+          (texte ? '' : '<button class="pl-btn run" id="b-run"><i class="fas fa-play"></i> Exécuter</button>') +
           '<button class="pl-btn submit" id="b-submit"><i class="fas fa-check"></i> Valider ma réponse</button></span></div>' +
-        (studio ? studioHTML() : '<div class="pl-editor" id="editor"></div><div class="pl-console"><div class="pl-console-head"><span>Console</span><span id="status"></span></div><div class="pl-console-out" id="out"><span class="muted">Exécutez votre code pour voir le résultat. Raccourci : Ctrl + Entrée.</span></div></div>') +
+        (studio ? studioHTML() : pls ? plsHTML(c) : '<div class="pl-editor" id="editor"></div><div class="pl-console"><div class="pl-console-head"><span>Console</span><span id="status"></span></div><div class="pl-console-out" id="out"><span class="muted">Exécutez votre code pour voir le résultat. Raccourci : Ctrl + Entrée.</span></div></div>') +
         '<div class="pl-feedback" id="fb"></div>' +
       '</section></div>' +
       '<div class="pl-nav"><button id="b-prev"><i class="fas fa-arrow-left"></i> Précédent</button><button id="b-next" ' + (dejaOk ? '' : 'disabled') + '>Suivant <i class="fas fa-arrow-right"></i></button></div>';
 
-    if (studio) initStudio(); else initEditor(dejaOk ? ex.solution_attendue : '', c);
+    if (studio) initStudio(); else if (!pls) initEditor(dejaOk ? ex.solution_attendue : '', c);
     $('#b-prev').onclick = () => aller(idx - 1);
     $('#b-next').onclick = () => aller(idx + 1);
     $('#b-hint').onclick = () => { indiceVu = true; $('#hint-box').innerHTML = '<div class="pl-hint"><i class="fas fa-lightbulb"></i> ' + md(ex.indice || 'Relisez l\'explication.') + '</div>'; };
     $('#b-sol').onclick = () => { solutionVue = true; $('#sol-box').innerHTML = '<pre>' + esc(ex.solution_attendue) + '</pre>'; };
-    $('#b-reset').onclick = () => { if (studio) $('#answer').value = ''; else editor.set(starter()); };
+    $('#b-reset').onclick = () => { if (texte) $('#answer').value = ''; else editor.set(starter()); };
     $('#b-submit').onclick = () => soumettre(c);
-    const cp = $('#cp-ex'); if (cp) cp.onclick = () => { if (studio) { $('#answer').value = c.code_exemple; } else editor.set(c.code_exemple); };
+    const cp = $('#cp-ex'); if (cp) cp.onclick = () => { if (texte) { $('#answer').value = c.code_exemple; } else editor.set(c.code_exemple); };
     const rx = $('#run-ex'); if (rx) rx.onclick = () => { editor.set(c.code_exemple); lancer(); };
-    if (!studio) { $('#b-run').onclick = lancer; }
+    if (!texte) { $('#b-run').onclick = lancer; }
     majBoutons();
+  }
+
+  function plsHTML(c) {
+    return '<div class="pl-pls"><div class="pl-pls-head"><i class="fas fa-table"></i> Résultats SmartPLS à interpréter</div>' +
+      '<div class="pl-pls-res">' + (c.resultats || '<p class="pls-note">Appuyez-vous sur le schéma et l\'exemple de la leçon pour répondre.</p>') + '</div></div>' +
+      '<textarea class="pl-answer" id="answer" placeholder="Rédigez votre interprétation (quelques phrases, avec les valeurs chiffrées)..."></textarea>';
   }
 
   function starter() { return OUTIL === 'sql' ? '-- Écrivez votre requête ici\n' : (OUTIL === 'python' ? '# Écrivez votre code ici\n' : '# Écrivez votre code ici\n'); }
@@ -412,12 +421,20 @@
 
   async function soumettre(c) {
     const ex = c.exercice, fb = $('#fb'), btn = $('#b-submit');
-    const code = OUTIL === 'tableau' ? $('#answer').value.trim() : editor.get().trim();
+    const code = (OUTIL === 'tableau' || OUTIL === 'smartpls') ? $('#answer').value.trim() : editor.get().trim();
     if (!code || /^(#|--)[^\n]*$/.test(code)) { feedback(false, 'Écrivez d\'abord votre réponse.'); return; }
     btn.disabled = true;
     let ok = false, msg = '';
     try {
-      if (OUTIL === 'tableau') {
+      if (OUTIL === 'smartpls') {
+        const t = code.toLowerCase().replace(/\s+/g, ' ');
+        const mots = ex.mots_cles || [];
+        const test = (m) => m.split('|').some(a => { try { return new RegExp(a.toLowerCase()).test(t); } catch (e) { return t.includes(a.toLowerCase()); } });
+        const trouves = mots.filter(test).length;
+        if (code.length < 25) msg = 'Votre interprétation est trop courte. Rédigez une ou deux phrases en citant les valeurs.';
+        else if (mots.length && trouves < Math.max(1, Math.ceil(mots.length * 0.6))) msg = 'Votre réponse est incomplète : citez les valeurs du tableau, comparez-les aux seuils et concluez (un indice est disponible).';
+        else ok = true;
+      } else if (OUTIL === 'tableau') {
         const mots = [...new Set((ex.mots_cles || []).map(m => m.toLowerCase()))];
         const t = code.toLowerCase();
         const trouves = mots.filter(m => m.split('|').some(a => t.includes(a))).length;

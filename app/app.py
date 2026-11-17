@@ -1152,6 +1152,97 @@ def datasets():
     datasets = public_datasets_query().all()
     return render_template('datasets.html', datasets=datasets)
 
+# ----------------------------------------------------------------------------
+# Catalogue WDI (Banque mondiale)
+# ----------------------------------------------------------------------------
+import wdi as _wdi
+
+
+@app.route('/donnees/wdi')
+@login_required
+def wdi_catalog():
+    if not current_user.can_access_data():
+        flash('Vous devez avoir un abonnement Premium pour accéder aux données.', 'warning')
+        return redirect(url_for('subscription'))
+    return render_template('wdi_catalog.html', catalog=_wdi.CATALOG, countries=_wdi.COUNTRIES, groups=_wdi.GROUPS,
+                           year_max=datetime.now().year - 1)
+
+
+@app.route('/donnees/wdi/search')
+@login_required
+def wdi_search():
+    if not current_user.can_access_data():
+        return jsonify([]), 403
+    return jsonify(_wdi.search_indicators(request.args.get('q', '')))
+
+
+@app.route('/donnees/wdi/import', methods=['POST'])
+@login_required
+def wdi_import():
+    if not current_user.can_access_data():
+        flash('Vous devez avoir un abonnement Premium pour accéder aux données.', 'warning')
+        return redirect(url_for('subscription'))
+    codes = [c.strip() for c in request.form.getlist('indicators') if c.strip()]
+    for extra in re.split(r'[\s,;]+', request.form.get('extra_codes', '')):
+        if re.fullmatch(r'[A-Za-z0-9_.]{3,40}', extra or ''):
+            codes.append(extra)
+    codes = list(dict.fromkeys(codes))[:15]
+    countries = set(c for c in request.form.getlist('countries') if re.fullmatch(r'[A-Z]{3}', c))
+    for g in request.form.getlist('groups'):
+        if g in _wdi.GROUPS:
+            countries.update(_wdi.GROUPS[g][1])
+    countries = sorted(countries)[:60]
+    try:
+        y0 = int(request.form.get('year_from', 2000))
+        y1 = int(request.form.get('year_to', datetime.now().year - 1))
+    except ValueError:
+        y0, y1 = 2000, datetime.now().year - 1
+    y0, y1 = max(1960, min(y0, y1)), min(datetime.now().year, max(y0, y1))
+    if not codes or not countries:
+        flash('Choisissez au moins un indicateur et un pays (ou un groupe de pays).', 'danger')
+        return redirect(url_for('wdi_catalog'))
+    mode = request.form.get('mode', 'csv')
+    if mode == 'analyse' and not current_user.can_access_models():
+        flash('Vous devez avoir un abonnement Premium pour analyser des données.', 'warning')
+        return redirect(url_for('subscription'))
+    try:
+        df, errors = _wdi.build_panel(codes, countries, y0, y1)
+    except Exception as e:
+        flash(f"Impossible de récupérer les données WDI : {e}", 'danger')
+        return redirect(url_for('wdi_catalog'))
+    if len(df) == 0:
+        flash("Aucune observation disponible pour cette sélection (essayez une autre période ou d'autres indicateurs).", 'warning')
+        return redirect(url_for('wdi_catalog'))
+    if errors:
+        flash('Indicateurs non récupérés : ' + ' ; '.join(errors)[:300], 'warning')
+    stamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    filename = f'wdi_{stamp}.csv'
+    if mode != 'analyse':
+        buf = BytesIO(df.to_csv(index=False, encoding='utf-8-sig').encode('utf-8-sig'))
+        return send_file(buf, as_attachment=True, download_name=filename, mimetype='text/csv')
+    local_dir = '/tmp/uploads'
+    os.makedirs(local_dir, exist_ok=True)
+    local_path = os.path.join(local_dir, f"{current_user.id}_{stamp}_{filename}")
+    df.to_csv(local_path, index=False)
+    try:
+        key = f"datasets/private/{current_user.id}/{stamp}_{filename}"
+        if not upload_file_to_r2(local_path, key):
+            flash("Erreur d'envoi vers le stockage sécurisé. Réessayez dans un instant.", 'danger')
+            return redirect(url_for('wdi_catalog'))
+        ds = Dataset(name=f'WDI {y0}-{y1} ({len(countries)} pays, {len(codes)} indicateurs)',
+                     description='Données WDI importées (privées)', file_path=key, file_name=filename,
+                     uploaded_by=current_user.id, is_private=True)
+        db.session.add(ds)
+        db.session.commit()
+    finally:
+        try:
+            os.remove(local_path)
+        except Exception:
+            pass
+    flash(f'{len(df)} observations WDI importées (pays = « pays », temps = « annee »). Choisissez maintenant la variable cible.', 'success')
+    return redirect(url_for('models_list', dataset=ds.id))
+
+
 @app.route('/upload_dataset', methods=['POST'])
 @login_required
 def upload_dataset():
@@ -1880,14 +1971,158 @@ def models_api_recommend():
         return jsonify({'error': str(e)}), 400
 
 
+# ----------------------------------------------------------------------------
+# Analyse en arrière-plan (évite les requêtes qui tournent sans fin / coupées par le proxy)
+# ----------------------------------------------------------------------------
+import threading as _threading
+from types import SimpleNamespace as _NS
+from concurrent.futures import ThreadPoolExecutor as _TPE, TimeoutError as _FTimeout
+
+_JOBS = {}
+_JOBS_LOCK = _threading.Lock()
+_RUN_LOCK = _threading.Lock()          # une seule analyse lourde à la fois (CPU et matplotlib)
+JOB_TOTAL_BUDGET = 900                 # secondes : durée maximale d'une analyse complète
+JOB_MODEL_TIMEOUT = 240                # secondes : durée maximale pour un modèle
+JOB_ROBUST_TIMEOUT = 120               # secondes : durée maximale pour les tests de robustesse d'un modèle
+
+
+def _call_with_timeout(fn, seconds):
+    """Exécute fn() ; abandonne l'attente après `seconds` (lève TimeoutError)."""
+    ex = _TPE(max_workers=1)
+    fut = ex.submit(fn)
+    try:
+        return fut.result(timeout=seconds)
+    except _FTimeout:
+        raise TimeoutError()
+    finally:
+        ex.shutdown(wait=False)
+
+
+def _jobs_cleanup():
+    now = _time.time()
+    with _JOBS_LOCK:
+        for k in [k for k, j in _JOBS.items() if now - j['created'] > 3600]:
+            _JOBS.pop(k, None)
+
+
+def _job_update(job, **kw):
+    with _JOBS_LOCK:
+        job.update(kw)
+
+
+def _analysis_worker(job, P):
+    """Exécute toute l'analyse (hors requête HTTP) et stocke le résultat dans le job."""
+    with _RUN_LOCK:
+        try:
+            t_start = _time.time()
+            _job_update(job, status='running', message="Préparation des données...", started=t_start)
+            df_raw, target, features = P['df_raw'], P['target'], P['features']
+            time_col, entity_col, steps = P['time_col'], P['entity_col'], P['steps']
+            df, prep = preprocess_dataframe(df_raw, target, features, time_col, entity_col, _structure_guess(time_col, entity_col))
+            ctx = analyze_problem(df, target, features, time_col, entity_col)
+            recs = recommend(ctx)
+            by_id = {r['id']: r for r in recs}
+            ds = P['dataset']
+            _job_update(job, message="Statistiques descriptives et diagnostics...")
+            try:
+                data_report = _call_with_timeout(lambda: build_data_report(
+                    df_raw, target, ctx['features'], ctx, ctx.get('time_col'), ctx.get('entity_col'),
+                    ds.name, P['report_context'], P['report_problem'], P['report_title']), 300)
+            except Exception:
+                traceback.print_exc()
+                data_report = {'sections': [], 'context': P['report_context'], 'problem': P['report_problem']}
+
+            todo = [m for m in P['model_ids'] if by_id.get(m) and by_id[m]['available']]
+            _job_update(job, total=len(todo), done=0)
+            results = []
+            for k, mid in enumerate(todo):
+                r = by_id[mid]
+                _job_update(job, done=k, message=f"Estimation : {r.get('name', mid)} ({k + 1}/{len(todo)})")
+                elapsed = _time.time() - t_start
+                if elapsed > JOB_TOTAL_BUDGET:
+                    results.append({'status': 'error', 'id': mid, 'name': r.get('name', mid),
+                                    'error': "Modèle non exécuté : le temps total alloué à l'analyse est épuisé. Relancez-le seul.",
+                                    'score': r['score'], 'level': r['level'], 'reasons': r['reasons'], 'family_label': r['family_label']})
+                    continue
+                try:
+                    out = _call_with_timeout(lambda: run_model(mid, df, target, ctx['features'], ctx.get('time_col'), ctx.get('entity_col'), steps),
+                                             min(JOB_MODEL_TIMEOUT, max(5, JOB_TOTAL_BUDGET - elapsed)))
+                except TimeoutError:
+                    out = {'status': 'error', 'id': mid, 'name': r.get('name', mid),
+                           'error': f"Temps de calcul dépassé ({JOB_MODEL_TIMEOUT} s) : ce modèle est trop lourd pour ces données. "
+                                    "Essayez-le seul, avec moins de variables ou moins de lignes."}
+                if out.get('status') == 'ok':
+                    if _time.time() - t_start < JOB_TOTAL_BUDGET * 0.7:
+                        try:
+                            out['robustness'] = _call_with_timeout(
+                                lambda: run_robustness(mid, df, target, ctx['features'], ctx.get('time_col'), ctx.get('entity_col'), name=out.get('name')),
+                                JOB_ROBUST_TIMEOUT)
+                        except TimeoutError:
+                            out['robustness'] = {'status': 'error', 'verdict': '', 'checks': [], 'tables': [], 'charts': [], 'text': [],
+                                                 'error': "Tests de robustesse interrompus : temps de calcul dépassé pour ce modèle."}
+                    else:
+                        out['robustness'] = {'status': 'error', 'verdict': '', 'checks': [], 'tables': [], 'charts': [], 'text': [],
+                                             'error': "Tests de robustesse omis : le temps de calcul alloué à l'analyse est épuisé. Relancez ce modèle seul."}
+                out['score'] = r['score']
+                out['level'] = r['level']
+                out['reasons'] = r['reasons']
+                out['family_label'] = r['family_label']
+                results.append(out)
+            if not results or not any(x.get('status') == 'ok' for x in results):
+                if not results:
+                    raise ValueError("Aucun des modèles choisis n'est applicable à ces données.")
+            _job_update(job, done=len(todo), message="Rédaction du rapport...")
+            try:
+                secs = data_report['sections']
+                pos = next((i for i, x in enumerate(secs) if x['id'] == 'descriptives'), 0) + 1
+                secs.insert(pos, preprocess_section(prep))
+            except Exception:
+                traceback.print_exc()
+            conclusion = build_conclusion(results, ctx, target)
+            data_report['title'] = P['report_title'] or f"Analyse de {target}"
+            data_report['conclusion'] = conclusion
+
+            report_id = str(uuid.uuid4())
+            report_dir = '/tmp/reports'
+            os.makedirs(report_dir, exist_ok=True)
+            has_report = False
+            report_name = f'rapport_modeles_{datetime.now().strftime("%Y%m%d_%H%M%S")}'
+            try:
+                doc = create_generic_report(ds.name, target, ctx['features'], ctx, recs, results, ctx.get('time_col'), ctx.get('entity_col'), data_report=data_report)
+                doc.save(os.path.join(report_dir, f"{report_id}.docx"))
+                with open(os.path.join(report_dir, f"{report_id}.tex"), 'w', encoding='utf-8') as f:
+                    f.write(create_generic_latex(ds.name, target, ctx['features'], ctx, recs, results, ctx.get('time_col'), ctx.get('entity_col'), data_report=data_report))
+                try:
+                    cfg_scripts = {'file': ds.file_name or 'donnees.csv', 'dataset_name': ds.name, 'target': target,
+                                   'features': list(ctx['features']), 'time_col': ctx.get('time_col'), 'entity_col': ctx.get('entity_col'),
+                                   'structure': ctx.get('structure', 'cross_section'), 'kind': ctx.get('target_kind', 'continuous'),
+                                   'models': [r_['id'] for r_ in results if r_.get('status') == 'ok'], 'forecast_steps': steps,
+                                   'cat_features': [c_ for c_ in ctx['features'] if c_ in df.columns and not pd.api.types.is_numeric_dtype(df[c_])]}
+                    with open(os.path.join(report_dir, f"{report_id}.cfg.json"), 'w', encoding='utf-8') as f_:
+                        json.dump(cfg_scripts, f_, ensure_ascii=False)
+                except Exception:
+                    traceback.print_exc()
+                has_report = True
+            except Exception as e:
+                print(f"Erreur génération rapport: {e}", flush=True)
+                traceback.print_exc()
+            _job_update(job, status='done', message="Terminé", result={
+                'results': results, 'ctx': ctx, 'dataset': ds, 'target': target, 'features': ctx['features'],
+                'has_report': has_report, 'data_report': data_report, 'conclusion': conclusion,
+                'report_id': report_id if has_report else None, 'report_name': report_name,
+                'report_dataset_id': ds.id if getattr(ds, 'is_private', False) else None})
+        except Exception as e:
+            traceback.print_exc()
+            _job_update(job, status='error', error=str(e) or e.__class__.__name__)
+
+
 @app.route('/models/analyze', methods=['POST'])
 @login_required
 def models_analyze():
-    """Exécuter les modèles choisis et afficher les résultats comparés"""
+    """Lance l'analyse en arrière-plan puis affiche une page de suivi."""
     if not current_user.can_access_models():
         flash('Vous devez avoir un abonnement Premium pour accéder aux modèles.', 'warning')
         return redirect(url_for('subscription'))
-    
     try:
         dataset_id = int(request.form.get('dataset_id'))
         target = request.form.get('target_col', '').strip()
@@ -1902,93 +2137,70 @@ def models_analyze():
         if not target or not model_ids:
             flash('Choisissez la variable cible et au moins un modèle.', 'danger')
             return redirect(url_for('models_list'))
-        
         dataset, df_raw = _models_load_df(dataset_id)
-        df, prep = preprocess_dataframe(df_raw, target, features, time_col, entity_col, _structure_guess(time_col, entity_col))
-        ctx = analyze_problem(df, target, features, time_col, entity_col)
-        recs = recommend(ctx)
-        by_id = {r['id']: r for r in recs}
-        
-        report_title = (request.form.get('report_title') or '').strip()[:160]
-        report_context = (request.form.get('report_context') or '').strip()[:2500]
-        report_problem = (request.form.get('report_problem') or '').strip()[:1500]
-        t_start = _time.time()
-        try:
-            data_report = build_data_report(df_raw, target, ctx['features'], ctx, ctx.get('time_col'), ctx.get('entity_col'),
-                                            dataset.name, report_context, report_problem, report_title)
-        except Exception as e:
-            traceback.print_exc()
-            data_report = {'sections': [], 'context': report_context, 'problem': report_problem}
-
-        results = []
-        for mid in model_ids:
-            r = by_id.get(mid)
-            if r is None or not r['available']:
-                continue
-            out = run_model(mid, df, target, ctx['features'], ctx.get('time_col'), ctx.get('entity_col'), steps)
-            if out.get('status') == 'ok':
-                if _time.time() - t_start < 200:
-                    out['robustness'] = run_robustness(mid, df, target, ctx['features'], ctx.get('time_col'), ctx.get('entity_col'), name=out.get('name'))
-                else:
-                    out['robustness'] = {'status': 'error', 'verdict': '', 'checks': [], 'tables': [], 'charts': [], 'text': [],
-                                         'error': "Tests de robustesse omis : le temps de calcul alloué à l'analyse est épuisé. Relancez ce modèle seul."}
-            out['score'] = r['score']
-            out['level'] = r['level']
-            out['reasons'] = r['reasons']
-            out['family_label'] = r['family_label']
-            results.append(out)
-        if not results:
-            flash("Aucun des modèles choisis n'est applicable à ces données.", 'danger')
-            return redirect(url_for('models_list'))
-        
-        try:
-            secs = data_report['sections']
-            pos = next((i for i, x in enumerate(secs) if x['id'] == 'descriptives'), 0) + 1
-            secs.insert(pos, preprocess_section(prep))
-        except Exception:
-            traceback.print_exc()
-        conclusion = build_conclusion(results, ctx, target)
-        data_report['title'] = report_title or f"Analyse de {target}"
-        data_report['conclusion'] = conclusion
-
-        # Rapports Word et LaTeX
-        report_id = str(uuid.uuid4())
-        report_dir = '/tmp/reports'
-        os.makedirs(report_dir, exist_ok=True)
-        try:
-            doc = create_generic_report(dataset.name, target, ctx['features'], ctx, recs, results, ctx.get('time_col'), ctx.get('entity_col'), data_report=data_report)
-            doc.save(os.path.join(report_dir, f"{report_id}.docx"))
-            with open(os.path.join(report_dir, f"{report_id}.tex"), 'w', encoding='utf-8') as f:
-                f.write(create_generic_latex(dataset.name, target, ctx['features'], ctx, recs, results, ctx.get('time_col'), ctx.get('entity_col'), data_report=data_report))
-            session['report_id'] = report_id
-            session['report_dataset_id'] = dataset.id if getattr(dataset, 'is_private', False) else None
-            try:
-                cfg_scripts = {'file': dataset.file_name or 'donnees.csv', 'dataset_name': dataset.name, 'target': target,
-                               'features': list(ctx['features']), 'time_col': ctx.get('time_col'), 'entity_col': ctx.get('entity_col'),
-                               'structure': ctx.get('structure', 'cross_section'), 'kind': ctx.get('target_kind', 'continuous'),
-                               'models': [r_['id'] for r_ in results if r_.get('status') == 'ok'], 'forecast_steps': steps,
-                               'cat_features': [c_ for c_ in ctx['features'] if c_ in df.columns and not pd.api.types.is_numeric_dtype(df[c_])]}
-                with open(os.path.join(report_dir, f"{report_id}.cfg.json"), 'w', encoding='utf-8') as f_:
-                    json.dump(cfg_scripts, f_, ensure_ascii=False)
-            except Exception:
-                traceback.print_exc()
-            session['report_name'] = f'rapport_modeles_{datetime.now().strftime("%Y%m%d_%H%M%S")}'
-            has_report = True
-        except Exception as e:
-            print(f"Erreur génération rapport: {e}", flush=True)
-            traceback.print_exc()
-            has_report = False
-        
-        return render_template('models_results.html', results=results, ctx=ctx, dataset=dataset,
-                               target=target, features=ctx['features'], has_report=has_report,
-                               family_order=FAMILY_ORDER, data_report=data_report, conclusion=conclusion)
-    
+        _jobs_cleanup()
+        job_id = uuid.uuid4().hex
+        job = {'id': job_id, 'user_id': current_user.id, 'status': 'queued', 'message': "En file d'attente...",
+               'total': len(model_ids), 'done': 0, 'created': _time.time(), 'started': None, 'result': None, 'error': None}
+        with _JOBS_LOCK:
+            _JOBS[job_id] = job
+        P = {'df_raw': df_raw, 'target': target, 'features': features, 'time_col': time_col, 'entity_col': entity_col,
+             'steps': steps, 'model_ids': model_ids,
+             'dataset': _NS(id=dataset.id, name=dataset.name, file_name=getattr(dataset, 'file_name', None),
+                            is_private=bool(getattr(dataset, 'is_private', False))),
+             'report_title': (request.form.get('report_title') or '').strip()[:160],
+             'report_context': (request.form.get('report_context') or '').strip()[:2500],
+             'report_problem': (request.form.get('report_problem') or '').strip()[:1500]}
+        _threading.Thread(target=_analysis_worker, args=(job, P), daemon=True).start()
+        return redirect(url_for('models_job_page', job_id=job_id))
     except HTTPException:
         raise
     except Exception as e:
         traceback.print_exc()
         flash(f"Erreur lors de l'analyse : {str(e)}", 'danger')
         return redirect(url_for('models_list'))
+
+
+def _get_job_or_404(job_id):
+    job = _JOBS.get(job_id)
+    if job is None or job['user_id'] != current_user.id:
+        abort(404)
+    return job
+
+
+@app.route('/models/job/<job_id>')
+@login_required
+def models_job_page(job_id):
+    job = _get_job_or_404(job_id)
+    if job['status'] == 'done':
+        return redirect(url_for('models_job_result', job_id=job_id))
+    return render_template('models_progress.html', job_id=job_id)
+
+
+@app.route('/models/job/<job_id>/status')
+@login_required
+def models_job_status(job_id):
+    job = _get_job_or_404(job_id)
+    el = int(_time.time() - (job['started'] or job['created']))
+    return jsonify({'status': job['status'], 'message': job['message'], 'done': job['done'], 'total': job['total'],
+                    'elapsed': el, 'error': job['error'],
+                    'result_url': url_for('models_job_result', job_id=job_id) if job['status'] == 'done' else None})
+
+
+@app.route('/models/job/<job_id>/result')
+@login_required
+def models_job_result(job_id):
+    job = _get_job_or_404(job_id)
+    if job['status'] != 'done' or not job['result']:
+        return redirect(url_for('models_job_page', job_id=job_id))
+    R = job['result']
+    if R.get('report_id'):
+        session['report_id'] = R['report_id']
+        session['report_dataset_id'] = R['report_dataset_id']
+        session['report_name'] = R['report_name']
+    return render_template('models_results.html', results=R['results'], ctx=R['ctx'], dataset=R['dataset'],
+                           target=R['target'], features=R['features'], has_report=R['has_report'],
+                           family_order=FAMILY_ORDER, data_report=R['data_report'], conclusion=R['conclusion'])
 
 
 @app.route('/models/download_report')
@@ -2287,6 +2499,7 @@ def formations():
         ('r', 'R', 'base R, statistiques, régression', 'Le langage des statisticiens : manipulez, résumez et modélisez des données.'),
         ('sql', 'SQL', 'SELECT, jointures, fenêtres', 'Interrogez des bases de ventes avec de vraies requêtes exécutées dans votre navigateur.'),
         ('tableau', 'Tableau', 'visualisation, tableaux de bord', 'Apprenez à choisir le bon graphique et à raconter une histoire avec les données.'),
+        ('smartpls', 'SmartPLS', 'PLS-SEM, mesure, bootstrapping, médiation', 'Modélisez des équations structurelles : validez vos échelles de mesure, testez vos hypothèses et interprétez vos résultats.'),
     ]
     niveaux = [('debutant', 'Débutant'), ('intermediaire', 'Intermédiaire'), ('avance', 'Avancé')]
     catalogue = []
@@ -2314,7 +2527,7 @@ def formations():
 @app.route('/formations/cours/<outil>/<niveau>')
 def formations_player(outil, niveau):
     """Lecteur de cours interactif (type DataCamp) avec voix et illustrations"""
-    if outil not in ['python', 'r', 'sql', 'tableau']:
+    if outil not in ['python', 'r', 'sql', 'tableau', 'smartpls']:
         return redirect(url_for('formations'))
     if niveau not in ['debutant', 'intermediaire', 'avance']:
         return redirect(url_for('formations'))
@@ -2337,7 +2550,7 @@ except Exception as e:
 SYSTEM_PROMPT_TUTOR = """Tu es EconBot, un instructeur IA pour DataEcon.Ci, une plateforme ivoirienne de formation en économétrie et data science.
 
 Ton rôle :
-- Enseigner R, Python, SQL et Tableau aux apprenants
+- Enseigner R, Python, SQL, Tableau et SmartPLS (PLS-SEM : modèle de mesure et structurel, fiabilité, AVE, HTMT, bootstrapping, médiation, modération) aux apprenants
 - Expliquer les concepts de manière claire, pédagogique et progressive
 - Donner des exemples concrets avec des données fictives (souvent des données économiques de la Côte d'Ivoire)
 - Proposer des exercices pratiques
@@ -2433,7 +2646,7 @@ def api_lesson(outil, niveau):
     import os as os_module
     
     # Sécuriser les paramètres
-    if outil not in ['python', 'r', 'sql', 'tableau']:
+    if outil not in ['python', 'r', 'sql', 'tableau', 'smartpls']:
         return jsonify({"error": "Outil non supporté"}), 400
     if niveau not in ['debutant', 'intermediaire', 'avance']:
         return jsonify({"error": "Niveau non supporté"}), 400

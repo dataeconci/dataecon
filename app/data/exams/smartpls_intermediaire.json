@@ -1,0 +1,258 @@
+{
+ "outil": "smartpls",
+ "niveau": "intermediaire",
+ "questions": [
+  {
+   "id": "q1",
+   "theme": "Fiabilité",
+   "question": "Quel seuil minimal est attendu pour l'alpha de Cronbach et la fiabilité composite ?",
+   "code": "",
+   "options": [
+    "0,10",
+    "0,50",
+    "0,70",
+    "0,99"
+   ],
+   "correct": 2,
+   "explication": "On attend des valeurs d'au moins 0,70."
+  },
+  {
+   "id": "q2",
+   "theme": "Fiabilité",
+   "question": "Une fiabilité composite de 0,97 indique plutôt :",
+   "code": "",
+   "options": [
+    "Une excellente validité de contenu",
+    "Probablement une redondance des indicateurs",
+    "Un échantillon trop petit",
+    "Un modèle formatif"
+   ],
+   "correct": 1,
+   "explication": "Au-delà de 0,95, les indicateurs sont probablement redondants."
+  },
+  {
+   "id": "q3",
+   "theme": "Fiabilité",
+   "question": "Parmi alpha, rho_a et rho_c, laquelle est une borne haute de la fiabilité ?",
+   "code": "",
+   "options": [
+    "Alpha",
+    "rho_a",
+    "rho_c",
+    "Aucune"
+   ],
+   "correct": 2,
+   "explication": "L'alpha est une borne basse, rho_c une borne haute, rho_a se situe entre les deux."
+  },
+  {
+   "id": "q4",
+   "theme": "Validité convergente",
+   "question": "Que mesure l'AVE ?",
+   "code": "",
+   "options": [
+    "La variance moyenne des indicateurs expliquée par le construit",
+    "Le nombre moyen de répondants",
+    "La corrélation entre deux construits",
+    "Le VIF moyen"
+   ],
+   "correct": 0,
+   "explication": "L'AVE est la moyenne des loadings au carré."
+  },
+  {
+   "id": "q5",
+   "theme": "Validité convergente",
+   "question": "Quel est le seuil de l'AVE ?",
+   "code": "",
+   "options": [
+    "0,10",
+    "0,30",
+    "0,50",
+    "0,95"
+   ],
+   "correct": 2,
+   "explication": "L'AVE doit être supérieure ou égale à 0,50."
+  },
+  {
+   "id": "q6",
+   "theme": "Validité convergente",
+   "question": "Des loadings de 0,80, 0,70 et 0,60 donnent une AVE d'environ :",
+   "code": "",
+   "options": [
+    "0,31",
+    "0,50",
+    "0,70",
+    "0,90"
+   ],
+   "correct": 1,
+   "explication": "(0,64 + 0,49 + 0,36) / 3 = 0,497, soit environ 0,50."
+  },
+  {
+   "id": "q7",
+   "theme": "Validité discriminante",
+   "question": "Quel critère est aujourd'hui recommandé pour la validité discriminante ?",
+   "code": "",
+   "options": [
+    "Le HTMT",
+    "Le nombre d'itérations",
+    "Le tri alphabétique des indicateurs",
+    "Le VIF uniquement"
+   ],
+   "correct": 0,
+   "explication": "Le HTMT est préféré à Fornell-Larcker et aux cross-loadings."
+  },
+  {
+   "id": "q8",
+   "theme": "Validité discriminante",
+   "question": "Un HTMT de 0,93 entre deux construits proches indique :",
+   "code": "",
+   "options": [
+    "Une validité discriminante établie",
+    "Un problème possible de validité discriminante",
+    "Un excellent modèle",
+    "Une erreur de saisie"
+   ],
+   "correct": 1,
+   "explication": "Il dépasse 0,90 : la discrimination est douteuse."
+  },
+  {
+   "id": "q9",
+   "theme": "Validité discriminante",
+   "question": "Un intervalle de confiance bootstrap du HTMT qui contient 1 signale :",
+   "code": "",
+   "options": [
+    "Une bonne discrimination",
+    "Un défaut de validité discriminante",
+    "Un R² élevé",
+    "Un VIF trop faible"
+   ],
+   "correct": 1,
+   "explication": "Un IC contenant 1 signifie qu'on ne peut pas affirmer que les construits sont distincts."
+  },
+  {
+   "id": "q10",
+   "theme": "Colinéarité",
+   "question": "Quel seuil de VIF est considéré comme idéal pour les prédicteurs ?",
+   "code": "",
+   "options": [
+    "Inférieur à 3",
+    "Supérieur à 10",
+    "Égal à 0",
+    "Supérieur à 100"
+   ],
+   "correct": 0,
+   "explication": "Un VIF inférieur à 3 est idéal (jusqu'à 5 acceptable)."
+  },
+  {
+   "id": "q11",
+   "theme": "Bootstrapping",
+   "question": "Quel nombre de sous-échantillons est recommandé pour le bootstrapping final ?",
+   "code": "",
+   "options": [
+    "50",
+    "500",
+    "5 000",
+    "1"
+   ],
+   "correct": 2,
+   "explication": "On recommande 5 000 sous-échantillons pour des résultats stables."
+  },
+  {
+   "id": "q12",
+   "theme": "Bootstrapping",
+   "question": "Un coefficient de chemin est significatif à 5 % si :",
+   "code": "",
+   "options": [
+    "p est supérieur à 0,05",
+    "p est inférieur à 0,05 ou l'IC ne contient pas 0",
+    "Le VIF est supérieur à 5",
+    "Le R² vaut 1"
+   ],
+   "correct": 1,
+   "explication": "p < 0,05, t > 1,96 ou IC à 95 % ne contenant pas 0."
+  },
+  {
+   "id": "q13",
+   "theme": "Bootstrapping",
+   "question": "Quelle est la valeur de t critique approximative pour un test bilatéral à 5 % ?",
+   "code": "",
+   "options": [
+    "0,50",
+    "1,96",
+    "5,00",
+    "10,0"
+   ],
+   "correct": 1,
+   "explication": "Environ 1,96 pour un test bilatéral à 5 %."
+  },
+  {
+   "id": "q14",
+   "theme": "Qualité du modèle",
+   "question": "Quel R² est généralement qualifié de modéré ?",
+   "code": "",
+   "options": [
+    "0,10",
+    "0,25",
+    "0,50",
+    "0,95"
+   ],
+   "correct": 2,
+   "explication": "Repères : 0,75 substantiel, 0,50 modéré, 0,25 faible."
+  },
+  {
+   "id": "q15",
+   "theme": "Qualité du modèle",
+   "question": "Une taille d'effet f² de 0,15 est :",
+   "code": "",
+   "options": [
+    "Négligeable",
+    "Petite",
+    "Moyenne",
+    "Parfaite"
+   ],
+   "correct": 2,
+   "explication": "f² : 0,02 petit, 0,15 moyen, 0,35 grand."
+  },
+  {
+   "id": "q16",
+   "theme": "Qualité du modèle",
+   "question": "Que doit-on constater avec PLSpredict pour valider le pouvoir prédictif ?",
+   "code": "",
+   "options": [
+    "Des Q² predict positifs",
+    "Des Q² predict négatifs",
+    "Un R² de 1",
+    "Un VIF de 10"
+   ],
+   "correct": 0,
+   "explication": "Des Q² predict positifs montrent que le modèle prédit mieux que la moyenne."
+  },
+  {
+   "id": "q17",
+   "theme": "Qualité du modèle",
+   "question": "Un coefficient β de 0,18 avec p = 0,09 est :",
+   "code": "",
+   "options": [
+    "Significatif à 5 %",
+    "Non significatif à 5 %",
+    "Négatif",
+    "Redondant"
+   ],
+   "correct": 1,
+   "explication": "p = 0,09 est supérieur à 0,05 : non significatif à 5 %."
+  },
+  {
+   "id": "q18",
+   "theme": "Qualité du modèle",
+   "question": "Dans quel ordre évalue-t-on un modèle PLS-SEM ?",
+   "code": "",
+   "options": [
+    "Modèle structurel puis modèle de mesure",
+    "Modèle de mesure puis modèle structurel",
+    "Seulement le structurel",
+    "Peu importe"
+   ],
+   "correct": 1,
+   "explication": "On valide d'abord la mesure (fiabilité, validités), puis le modèle structurel."
+  }
+ ]
+}
