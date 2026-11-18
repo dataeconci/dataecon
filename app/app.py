@@ -2161,6 +2161,77 @@ def models_analyze():
         return redirect(url_for('models_list'))
 
 
+def _pls_worker(job, P):
+    """Estimation PLS-SEM en arrière-plan + rapport Word."""
+    from models.plssem import run_pls
+    from models.report_word import build_pls_word
+    with _RUN_LOCK:
+        try:
+            _job_update(job, status='running', message="Estimation du modèle PLS-SEM...", started=_time.time(), total=P['n_boot'], done=0)
+            def prog(i, n):
+                _job_update(job, done=i, message=f"Bootstrapping : {i} / {n} échantillons")
+            res = _call_with_timeout(lambda: run_pls(P['df_raw'], P['spec'], n_boot=P['n_boot'], scheme=P['scheme'], progress=prog), 900)
+            _job_update(job, message="Rédaction du rapport...", done=P['n_boot'])
+            ds = P['dataset']
+            report_id = str(uuid.uuid4())
+            report_dir = '/tmp/reports'
+            os.makedirs(report_dir, exist_ok=True)
+            has_report = False
+            report_name = f'rapport_plssem_{datetime.now().strftime("%Y%m%d_%H%M%S")}'
+            try:
+                doc = build_pls_word(ds.name, P['spec'], res, {'title': P['report_title'], 'context': P['report_context'], 'problem': P['report_problem'], 'scheme': P['scheme']})
+                doc.save(os.path.join(report_dir, f"{report_id}.docx"))
+                with open(os.path.join(report_dir, f"{report_id}.cfg.json"), 'w', encoding='utf-8') as f_:
+                    json.dump({'file': ds.file_name or 'donnees.csv', 'dataset_name': ds.name, 'pls': P['spec'], 'n_boot': P['n_boot'], 'scheme': P['scheme']}, f_, ensure_ascii=False)
+                has_report = True
+            except Exception:
+                traceback.print_exc()
+            _job_update(job, status='done', message='Terminé', result={
+                'kind': 'pls', 'res': res, 'spec': P['spec'], 'dataset': ds, 'has_report': has_report,
+                'report_id': report_id if has_report else None, 'report_name': report_name,
+                'report_dataset_id': ds.id if getattr(ds, 'is_private', False) else None})
+        except Exception as e:
+            traceback.print_exc()
+            _job_update(job, status='error', error=str(e) or e.__class__.__name__)
+
+
+@app.route('/models/analyze_pls', methods=['POST'])
+@login_required
+def models_analyze_pls():
+    if not current_user.can_access_models():
+        flash('Vous devez avoir un abonnement Premium pour accéder aux modèles.', 'warning')
+        return redirect(url_for('subscription'))
+    try:
+        dataset_id = int(request.form.get('dataset_id'))
+        spec = json.loads(request.form.get('pls_spec') or '{}')
+        n_boot = int(request.form.get('n_boot', 1000))
+        n_boot = n_boot if n_boot in (0, 200, 500, 1000, 5000) else 1000
+        scheme = request.form.get('scheme', 'path')
+        scheme = scheme if scheme in ('path', 'factorial', 'centroid') else 'path'
+        dataset, df_raw = _models_load_df(dataset_id)
+        from models.plssem import validate_spec
+        clean = {'constructs': [{'name': str(c.get('name', '')).strip()[:60], 'mode': 'B' if c.get('mode') == 'B' else 'A',
+                                 'indicators': [str(i) for i in c.get('indicators', [])][:40]} for c in spec.get('constructs', [])][:20],
+                 'paths': [[str(a), str(b)] for a, b in spec.get('paths', [])][:60]}
+        validate_spec(df_raw, clean)
+        _jobs_cleanup()
+        job_id = uuid.uuid4().hex
+        job = {'id': job_id, 'user_id': current_user.id, 'status': 'queued', 'message': "En file d'attente...", 'total': n_boot, 'done': 0,
+               'created': _time.time(), 'started': None, 'result': None, 'error': None}
+        with _JOBS_LOCK:
+            _JOBS[job_id] = job
+        P = {'df_raw': df_raw, 'spec': clean, 'n_boot': n_boot, 'scheme': scheme,
+             'dataset': _NS(id=dataset.id, name=dataset.name, file_name=getattr(dataset, 'file_name', None), is_private=bool(getattr(dataset, 'is_private', False))),
+             'report_title': '', 'report_context': '', 'report_problem': ''}
+        _threading.Thread(target=_pls_worker, args=(job, P), daemon=True).start()
+        return redirect(url_for('models_job_page', job_id=job_id))
+    except HTTPException:
+        raise
+    except Exception as e:
+        flash(f"Modèle PLS-SEM invalide : {e}", 'danger')
+        return redirect(url_for('models_list'))
+
+
 def _get_job_or_404(job_id):
     job = _JOBS.get(job_id)
     if job is None or job['user_id'] != current_user.id:
@@ -2194,6 +2265,12 @@ def models_job_result(job_id):
     if job['status'] != 'done' or not job['result']:
         return redirect(url_for('models_job_page', job_id=job_id))
     R = job['result']
+    if R.get('kind') == 'pls':
+        if R.get('report_id'):
+            session['report_id'] = R['report_id']
+            session['report_dataset_id'] = R['report_dataset_id']
+            session['report_name'] = R['report_name']
+        return render_template('models_pls_results.html', res=R['res'], spec=R['spec'], dataset=R['dataset'], has_report=R['has_report'])
     if R.get('report_id'):
         session['report_id'] = R['report_id']
         session['report_dataset_id'] = R['report_dataset_id']
@@ -2291,6 +2368,12 @@ def download_script(kind):
     with open(path, encoding='utf-8') as f:
         cfg = json.load(f)
     build, mime, ext = BUILDERS[kind]
+    if cfg.get('pls'):
+        from models.scripts_pls import PLS_BUILDERS
+        if kind not in PLS_BUILDERS:
+            flash("Pour un modèle PLS-SEM, les scripts disponibles sont R (seminr) et Python (plspm).", 'warning')
+            return redirect(url_for('models_list'))
+        build, mime, ext = PLS_BUILDERS[kind]
     try:
         content = build(cfg)
     except Exception as e:
@@ -2522,6 +2605,127 @@ def formations():
             lignes.append({'code': ncode, 'nom': nnom, 'nb': nb, 'titre': titre})
         catalogue.append({'code': code, 'nom': nom, 'libs': libs, 'desc': desc, 'niveaux': lignes, 'total': total})
     return render_template('formations.html', catalogue=catalogue)
+
+
+# ----------------------------------------------------------------------------
+# Laboratoire SmartPLS (pratique PLS-SEM)
+# ----------------------------------------------------------------------------
+import pls as _pls
+import pls_demo as _pls_demo
+import math as _math
+
+_PLS_DATA = {}      # jeton -> (user_id, DataFrame, horodatage) : données importées, en mémoire seulement, effacées après 1 h
+
+
+def _json_clean(o):
+    if isinstance(o, dict):
+        return {k: _json_clean(v) for k, v in o.items()}
+    if isinstance(o, (list, tuple)):
+        return [_json_clean(v) for v in o]
+    if isinstance(o, float) and (_math.isnan(o) or _math.isinf(o)):
+        return None
+    try:
+        import numpy as _np
+        if isinstance(o, _np.generic):
+            return _json_clean(o.item())
+    except Exception:
+        pass
+    return o
+
+
+def _pls_purge():
+    now = _time.time()
+    for k in [k for k, v in _PLS_DATA.items() if now - v[2] > 3600]:
+        _PLS_DATA.pop(k, None)
+
+
+@app.route('/formations/smartpls')
+@login_required
+def smartpls_lab():
+    df = _pls_demo.demo_dataframe()
+    return render_template('smartpls_lab.html', demo_cols=list(df.columns), demo_model=_pls_demo.MODEL, demo_n=len(df))
+
+
+@app.route('/api/smartpls/demo.csv')
+@login_required
+def smartpls_demo_csv():
+    buf = BytesIO(_pls_demo.demo_dataframe().to_csv(index=False).encode('utf-8-sig'))
+    return send_file(buf, as_attachment=True, download_name='enquete_satisfaction_demo.csv', mimetype='text/csv')
+
+
+@app.route('/api/smartpls/upload', methods=['POST'])
+@login_required
+def smartpls_upload():
+    f = request.files.get('file')
+    if not f or not f.filename or not allowed_file(f.filename):
+        return jsonify({'error': 'Choisissez un fichier CSV, Excel (xlsx, xls) ou Stata (dta).'}), 400
+    local_dir = '/tmp/uploads'
+    os.makedirs(local_dir, exist_ok=True)
+    path = os.path.join(local_dir, f"pls_{current_user.id}_{uuid.uuid4().hex}_{secure_filename(f.filename)}")
+    f.save(path)
+    try:
+        if os.path.getsize(path) > 5 * 1024 * 1024:
+            return jsonify({'error': 'Fichier trop volumineux pour le laboratoire (5 Mo maximum).'}), 400
+        df = read_data_file(path)
+        df.columns = [str(c).strip() for c in df.columns]
+        df = clean_imported_dataframe(df)
+        num = df.select_dtypes(include='number')
+        if num.shape[1] < 3:
+            return jsonify({'error': 'Le fichier doit contenir au moins 3 colonnes numériques (indicateurs).'}), 400
+        num = num.iloc[:5000, :80]
+        _pls_purge()
+        mine = [k for k, v in _PLS_DATA.items() if v[0] == current_user.id]
+        for k in mine[:-2]:
+            _PLS_DATA.pop(k, None)
+        token = uuid.uuid4().hex
+        _PLS_DATA[token] = (current_user.id, num, _time.time())
+        return jsonify({'token': token, 'columns': list(num.columns), 'n': int(len(num)), 'name': f.filename})
+    except Exception as e:
+        return jsonify({'error': f'Fichier illisible : {e}'}), 400
+    finally:
+        try:
+            os.remove(path)
+        except Exception:
+            pass
+
+
+@app.route('/api/smartpls/run', methods=['POST'])
+@login_required
+def smartpls_run():
+    d = request.get_json(silent=True) or {}
+    try:
+        if d.get('token') and d['token'] != 'demo':
+            item = _PLS_DATA.get(d['token'])
+            if not item or item[0] != current_user.id:
+                return jsonify({'error': "Vos données ont expiré (1 heure). Importez-les à nouveau."}), 400
+            df = item[1]
+        else:
+            df = _pls_demo.demo_dataframe()
+        constructs = [{'name': str(c.get('name', '')).strip()[:40], 'mode': c.get('mode', 'A'),
+                       'indicators': [str(i) for i in c.get('indicators', [])][:20]} for c in d.get('constructs', [])][:12]
+        for c in constructs:
+            if not c['name']:
+                return jsonify({'error': 'Chaque construit doit avoir un nom.'}), 400
+        paths = [tuple(p) for p in d.get('paths', [])][:40]
+        try:
+            B = max(0, min(1000, int(d.get('bootstrap', 0))))
+        except (TypeError, ValueError):
+            B = 0
+
+        def job():
+            r = _pls.run_pls(df, constructs, paths)
+            if B:
+                _pls.bootstrap(r, B)
+            return _pls.public(r)
+        res = _call_with_timeout(job, 150)
+        return jsonify(_json_clean(res))
+    except _pls.PLSError as e:
+        return jsonify({'error': str(e)}), 400
+    except TimeoutError:
+        return jsonify({'error': 'Le calcul est trop long : réduisez le nombre de rééchantillonnages (bootstrapping) ou le nombre de lignes.'}), 400
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({'error': f'Erreur de calcul : {e}'}), 500
 
 
 @app.route('/formations/cours/<outil>/<niveau>')

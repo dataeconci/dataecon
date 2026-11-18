@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block title %}Résultats PLS-SEM - DataEcon.Ci{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/models.css') }}">
+{% endblock %}
+{% block content %}
+{% macro tbl(t) %}
+    <div class="mdl-tbl-title">{{ t.title }}</div>
+    <div class="mdl-tbl-wrap"><table class="mdl-tbl">
+        <thead><tr>{% for c in t.columns %}<th>{{ c }}</th>{% endfor %}</tr></thead>
+        <tbody>{% for row in t.rows %}<tr>{% for v in row %}<td>{{ v }}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div>
+{% endmacro %}
+<div class="container py-4 mdl">
+    <section class="mdl-hero">
+        <h1><i class="fas fa-project-diagram"></i> Résultats PLS-SEM</h1>
+        <p>Jeu de données « {{ dataset.name }} » : {{ spec.constructs | length }} construits, {{ spec.paths | length }} relations structurelles.</p>
+    </section>
+
+    <div class="d-flex flex-wrap gap-2 mb-3">
+        <a href="{{ url_for('models_list') }}" class="mdl-btn ghost" style="text-decoration:none"><i class="fas fa-arrow-left"></i> Nouvelle analyse</a>
+        {% if has_report %}
+        <a href="{{ url_for('download_report') }}" class="mdl-btn primary" style="text-decoration:none"{% if dataset.is_private %} data-msg="Après le téléchargement du rapport Word, vos données et cette analyse seront supprimées définitivement de la plateforme (les scripts ne seront plus téléchargeables). Avez-vous déjà téléchargé ce dont vous avez besoin ?" onclick="return confirm(this.dataset.msg);"{% endif %}><i class="fas fa-file-word"></i> Rapport Word</a>
+        <a href="{{ url_for('download_script', kind='r') }}" class="mdl-btn ghost" style="text-decoration:none" title="Script R (seminr)"><i class="fab fa-r-project"></i> Script R (seminr)</a>
+        <a href="{{ url_for('download_script', kind='python') }}" class="mdl-btn ghost" style="text-decoration:none" title="Script Python (plspm)"><i class="fab fa-python"></i> Script Python (plspm)</a>
+        {% endif %}
+    </div>
+    {% if has_report and dataset.is_private %}
+    <div class="mdl-private-banner"><i class="fas fa-lock"></i> <strong>Données confidentielles.</strong> Elles ne sont visibles que par vous et seront supprimées après le téléchargement du rapport Word.</div>
+    {% endif %}
+
+    <section class="mdl-card"><header><h2>Vue d'ensemble</h2></header><div class="body">
+        <div class="mdl-metrics">{% for m in res.metrics %}<div class="mdl-metric"><small>{{ m.label }}</small><strong>{{ m.value }}</strong></div>{% endfor %}</div>
+        {% if res.warnings %}<div class="mdl-warnbox"><ul>{% for w in res.warnings %}<li>{{ w }}</li>{% endfor %}</ul></div>{% endif %}
+        {% for c in res.charts[:1] %}<figure class="mdl-chart"><img src="data:image/png;base64,{{ c.img }}" alt="{{ c.title }}"><figcaption>{{ c.title }}</figcaption></figure>{% endfor %}
+    </div></section>
+
+    <section class="mdl-card"><header><h2><i class="fas fa-lightbulb"></i> Interprétation</h2></header><div class="body">
+        <ul>{% for t in res.interpretation %}<li>{{ t }}</li>{% endfor %}</ul>
+    </div></section>
+
+    <section class="mdl-card"><header><h2>Modèle de mesure : qualité des échelles</h2></header><div class="body">
+        {% for t in res.tables %}{% if t.title.startswith(('Loadings', 'Fiabilité', 'Validité', 'HTMT', 'Critère', 'Colinéarité')) %}{{ tbl(t) }}{% endif %}{% endfor %}
+        {% for c in res.charts[1:2] %}<figure class="mdl-chart"><img src="data:image/png;base64,{{ c.img }}" alt="{{ c.title }}"><figcaption>{{ c.title }}</figcaption></figure>{% endfor %}
+    </div></section>
+
+    <section class="mdl-card"><header><h2>Modèle structurel : relations entre construits</h2></header><div class="body">
+        {% for t in res.tables %}{% if t.title.startswith(('Coefficients', 'Pouvoir', 'Effets')) %}{{ tbl(t) }}{% endif %}{% endfor %}
+        {% for c in res.charts[2:] %}<figure class="mdl-chart"><img src="data:image/png;base64,{{ c.img }}" alt="{{ c.title }}"><figcaption>{{ c.title }}</figcaption></figure>{% endfor %}
+    </div></section>
+</div>
+{% endblock %}

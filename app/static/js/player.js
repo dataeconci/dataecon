@@ -320,7 +320,7 @@
   }
 
   function plsHTML(c) {
-    return '<div class="pl-pls"><div class="pl-pls-head"><i class="fas fa-table"></i> Résultats SmartPLS à interpréter</div>' +
+    return '<div class="pl-pls"><div class="pl-pls-head"><i class="fas fa-table"></i> Résultats SmartPLS à interpréter <a href="/formations/smartpls" target="_blank" style="float:right;color:#c2a15a;font-weight:600;text-decoration:none">Pratiquer dans le laboratoire</a></div>' +
       '<div class="pl-pls-res">' + (c.resultats || '<p class="pls-note">Appuyez-vous sur le schéma et l\'exemple de la leçon pour répondre.</p>') + '</div></div>' +
       '<textarea class="pl-answer" id="answer" placeholder="Rédigez votre interprétation (quelques phrases, avec les valeurs chiffrées)..."></textarea>';
   }

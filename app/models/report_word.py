@@ -464,3 +464,66 @@ def build_word(dataset_name, target, features, ctx, recs, results, time_col, ent
            "propres à chaque modèle ; ils doivent être interprétés par l'utilisateur avant toute décision.", italic=True)
     R.remplir_sommaire()
     return R.doc
+
+
+def build_pls_word(dataset_name, spec, res, params):
+    """Rapport Word d'un modèle PLS-SEM (Times New Roman 12, sans couleur de police)."""
+    names = [c['name'] for c in spec['constructs']]
+    R = Rapport(params.get('title') or 'Analyse par équations structurelles (PLS-SEM)')
+    infos = [('Jeu de données', dataset_name), ('Méthode', 'PLS-SEM (moindres carrés partiels)'),
+             ('Construits', ', '.join(names) if len(names) <= 6 else f'{len(names)} construits'),
+             ('Observations', next((m['value'] for m in res['metrics'] if m['key'] == 'n'), ''))]
+    R.page_garde(None, infos)
+    R.reserver_sommaire()
+
+    R.titre_n('1. Contexte et objectif', 1)
+    if params.get('context'):
+        R.para(params['context'])
+    R.para("Cette analyse estime un modèle d'équations structurelles par la méthode des moindres carrés partiels (PLS-SEM). Elle vérifie d'abord la qualité "
+           "des échelles de mesure (modèle de mesure), puis teste les relations entre les construits (modèle structurel).")
+    if params.get('problem'):
+        R.titre_n('1.1 Problématique', 2)
+        R.para(params['problem'])
+
+    R.titre_n('2. Spécification du modèle', 1)
+    R.tableau(['Construit', 'Mesure', 'Nombre d\'indicateurs', 'Indicateurs'],
+              [[c['name'], 'Formatif' if (str(c.get('mode', 'A')).upper() == 'B' and len(c['indicators']) > 1) else 'Réflexif', len(c['indicators']), ', '.join(c['indicators'])] for c in spec['constructs']],
+              'Construits et indicateurs')
+    R.tableau(['Origine', 'Destination'], [[a, b] for a, b in spec['paths']], 'Relations structurelles testées')
+
+    R.titre_n('3. Méthodologie', 1)
+    R.puces([f"Estimation PLS-SEM avec le schéma de pondération « {params.get('scheme', 'path')} », 300 itérations maximum et critère d'arrêt de 10^-7.",
+             "Modèle de mesure : loadings (seuil 0,708), alpha de Cronbach, rho_a et rho_c (seuil 0,70), variance moyenne extraite AVE (seuil 0,50).",
+             "Validité discriminante : ratio HTMT (seuil 0,85) et critère de Fornell-Larcker.",
+             "Modèle structurel : colinéarité (VIF), coefficients de chemin, R², taille d'effet f², effets indirects et totaux.",
+             f"Significativité : bootstrapping de {res.get('pls', {}).get('boot', 0)} échantillons, intervalles percentile à 95 %, test bilatéral."])
+
+    R.titre_n('4. Résultats', 1)
+    R.tableau(['Indicateur', 'Valeur'], [[m['label'], m['value']] for m in res['metrics']], 'Caractéristiques de l\'estimation')
+    for i, t in enumerate(res['tables'], 1):
+        R.titre_n(f"4.{i} {t['title']}", 2)
+        R.tableau(t['columns'], t['rows'], t['title'])
+        if i == 1:
+            for c in res['charts']:
+                if c['title'].startswith('Modèle structurel'):
+                    R.figure(c['img'], c['title'])
+    for c in res['charts']:
+        if not c['title'].startswith('Modèle structurel'):
+            R.figure(c['img'], c['title'])
+
+    R.titre_n('5. Interprétation', 1)
+    R.puces(res['interpretation'])
+    if res['warnings']:
+        R.titre_n('5.1 Points d\'attention', 2)
+        R.puces(res['warnings'])
+
+    R.titre_n('6. Conclusion et limites', 1)
+    R.para("Les résultats ci-dessus permettent d'apprécier la qualité des mesures et la validité des relations testées. Les relations dont l'intervalle de confiance "
+           "ne contient pas zéro peuvent être considérées comme statistiquement significatives au seuil de 5 %.")
+    R.para("Limites : le PLS-SEM fournit des estimations de composites ; les coefficients sont généralement légèrement sous-estimés par rapport à un modèle à facteurs communs. "
+           "Un échantillon plus grand et un bootstrapping de 5 000 échantillons sont recommandés pour un rapport final.")
+    R.titre_n('Avertissement', 1)
+    R.para("Ce rapport est produit automatiquement à titre d'aide à l'analyse. Les résultats dépendent de la qualité des données et de la spécification du modèle ; "
+           "ils doivent être interprétés par l'utilisateur avant toute décision.", italic=True)
+    R.remplir_sommaire()
+    return R.doc

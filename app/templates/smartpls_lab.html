@@ -1,0 +1,349 @@
+{% extends "layout.html" %}
+{% block title %}Laboratoire SmartPLS - DataEcon.ci{% endblock %}
+{% block content %}
+<style>
+.pl-lab{--navy:#0b2a4a;--steel:#1f5f99;--gold:#c2a15a;--line:#d9e2ec;max-width:1280px;margin:0 auto;padding:1.4rem 1rem 3rem;color:#1f2933}
+.pl-lab h1{font-size:1.5rem;color:var(--navy);font-weight:800;margin:0}
+.pl-lab .lead{color:#5b6b7b;margin:.2rem 0 1.2rem}
+.lab-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:1rem 1.1rem;margin-bottom:1rem}
+.lab-card h2{font-size:1rem;color:var(--navy);font-weight:700;margin:0 0 .7rem;display:flex;align-items:center;gap:.5rem}
+.lab-card h2 .n{background:var(--navy);color:#fff;border-radius:50%;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;font-size:.8rem}
+.lab-row{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
+.lab-btn{border:1px solid var(--steel);background:#fff;color:var(--steel);border-radius:8px;padding:.45rem .9rem;font-weight:600;font-size:.88rem;cursor:pointer}
+.lab-btn:hover{background:#eaf1f8}
+.lab-btn.primary{background:var(--navy);border-color:var(--navy);color:#fff}
+.lab-btn.primary:hover{background:var(--steel)}
+.lab-btn.gold{background:var(--gold);border-color:var(--gold);color:#0b2a4a}
+.lab-btn:disabled{opacity:.55;cursor:wait}
+.lab-small{font-size:.82rem;color:#5b6b7b}
+.con{border:1px solid var(--line);border-radius:10px;padding:.7rem;margin-bottom:.6rem;background:#fbfcfe}
+.con-head{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:.5rem}
+.con-head input,.con-head select,.path-row select,.lab-card select,.lab-card input[type=text]{border:1px solid #c5d1de;border-radius:7px;padding:.35rem .5rem;font-size:.88rem;background:#fff}
+.con-head input{font-weight:700;color:var(--navy);width:170px}
+.chips{display:flex;flex-wrap:wrap;gap:.3rem}
+.chip{border:1px solid #c5d1de;border-radius:999px;padding:.15rem .6rem;font-size:.8rem;cursor:pointer;background:#fff;user-select:none}
+.chip.on{background:var(--steel);color:#fff;border-color:var(--steel)}
+.chip.used{opacity:.35;cursor:not-allowed}
+.path-row{display:flex;gap:.5rem;align-items:center;margin-bottom:.4rem;flex-wrap:wrap}
+.x-btn{border:0;background:none;color:#a33;cursor:pointer;font-size:.85rem}
+.tabs{display:flex;gap:.3rem;flex-wrap:wrap;border-bottom:2px solid var(--line);margin-bottom:.9rem}
+.tab{padding:.5rem .9rem;border:0;background:none;font-weight:600;color:#5b6b7b;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab.on{color:var(--navy);border-bottom-color:var(--gold)}
+.res-wrap{overflow:auto}
+.pls-table{width:100%;border-collapse:collapse;font-size:.86rem}
+.pls-table th{background:#eaf1f8;color:var(--navy);text-align:left;padding:.45rem .6rem;border-bottom:2px solid var(--steel);white-space:nowrap}
+.pls-table td{padding:.42rem .6rem;border-bottom:1px solid #e3e8ef;white-space:nowrap}
+.pls-table tbody tr:nth-child(even) td{background:#f7fafd}
+.ok{color:#1a7f4b;font-weight:700}.bad{color:#b3261e;font-weight:700}.warn{color:#9a6b00;font-weight:700}
+.diag{border:1px solid var(--line);border-radius:10px;background:#fff;overflow:auto}
+.findings{margin:0 0 1rem;padding-left:1.1rem;font-size:.9rem}
+.findings li{margin-bottom:.3rem}
+.err{background:#fdecea;border:1px solid #f5c2bd;color:#8a1c14;padding:.7rem .9rem;border-radius:8px;margin-top:.6rem}
+.crit{font-size:.8rem;color:#5b6b7b;margin-top:.5rem}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:sp .8s linear infinite;vertical-align:-2px;margin-right:6px}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+
+<div class="pl-lab">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div>
+            <h1>Laboratoire SmartPLS</h1>
+            <p class="lead">Construisez un modèle PLS-SEM, lancez l'algorithme et le bootstrapping, puis interprétez les résultats comme dans SmartPLS.</p>
+        </div>
+        <a href="{{ url_for('formations') }}" class="lab-btn" style="text-decoration:none">Retour aux formations</a>
+    </div>
+
+    <div class="lab-card">
+        <h2><span class="n">1</span> Données</h2>
+        <div class="lab-row">
+            <label><input type="radio" name="src" value="demo" checked> Enquête de satisfaction d'exemple ({{ demo_n }} répondants, simulée)</label>
+            <label><input type="radio" name="src" value="file"> Mes propres données</label>
+            <input type="file" id="file" accept=".csv,.xlsx,.xls,.dta" style="display:none">
+            <button class="lab-btn" id="pick" style="display:none">Choisir un fichier</button>
+            <a class="lab-btn" href="{{ url_for('smartpls_demo_csv') }}" style="text-decoration:none">Télécharger l'exemple (CSV)</a>
+        </div>
+        <p class="lab-small mb-0 mt-2" id="dinfo">Variables disponibles : {{ demo_cols|join(', ') }}. SA4 est volontairement un indicateur faible pour vous entraîner à repérer et traiter les mauvais loadings. Vos fichiers restent en mémoire une heure au maximum et ne sont jamais enregistrés.</p>
+    </div>
+
+    <div class="lab-card">
+        <h2><span class="n">2</span> Modèle de mesure : construits et indicateurs</h2>
+        <div id="cons"></div>
+        <div class="lab-row"><button class="lab-btn" id="addc">Ajouter un construit</button><button class="lab-btn" id="preset">Charger le modèle d'exemple</button><button class="lab-btn" id="clear">Tout effacer</button></div>
+        <p class="crit">Réflexif : les indicateurs sont des manifestations du construit (flèche du construit vers les indicateurs). Formatif : les indicateurs définissent le construit (flèche inverse). Un indicateur ne peut appartenir qu'à un seul construit.</p>
+    </div>
+
+    <div class="lab-card">
+        <h2><span class="n">3</span> Modèle structurel : relations entre construits</h2>
+        <div id="paths"></div>
+        <button class="lab-btn" id="addp">Ajouter une relation</button>
+    </div>
+
+    <div class="lab-card">
+        <h2><span class="n">4</span> Calcul</h2>
+        <div class="lab-row">
+            <label class="lab-small">Bootstrapping
+                <select id="boot"><option value="0">Aucun (algorithme seul)</option><option value="200">200 rééchantillonnages (rapide)</option><option value="500" selected>500 rééchantillonnages</option><option value="1000">1 000 rééchantillonnages</option></select>
+            </label>
+            <button class="lab-btn primary" id="run">Calculer le modèle</button>
+            <span class="lab-small" id="rstat"></span>
+        </div>
+        <p class="crit">Schéma de pondération « path », 300 itérations maximum, critère d'arrêt 10<sup>-7</sup>, test bilatéral à 5 %, intervalles de confiance percentiles. Pour une publication, utilisez 5 000 rééchantillonnages avec le logiciel SmartPLS.</p>
+        <div id="err"></div>
+    </div>
+
+    <div id="results" style="display:none" class="lab-card">
+        <h2>Résultats</h2>
+        <div id="findings"></div>
+        <div class="tabs" id="tabs"></div>
+        <div id="tabbody" class="res-wrap"></div>
+    </div>
+</div>
+
+<script>
+(function () {
+    var DEMO_COLS = {{ demo_cols|tojson }}, DEMO_MODEL = {{ demo_model|tojson }};
+    var state = {token: 'demo', cols: DEMO_COLS.slice(), constructs: [], paths: []};
+    var R = null, tab = 'diag';
+    function $(i) { return document.getElementById(i); }
+    function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]; }); }
+    function f(v, d) { return v === null || v === undefined ? '-' : Number(v).toFixed(d === undefined ? 3 : d).replace('.', ','); }
+    function pf(p) { return p === null || p === undefined ? '-' : (p < 0.001 ? '< 0,001' : f(p, 3)); }
+
+    function loadPreset() {
+        state.constructs = DEMO_MODEL.constructs.map(function (c) { return {name: c.name, mode: c.mode, inds: c.indicators.slice()}; });
+        state.paths = DEMO_MODEL.paths.map(function (p) { return {from: p[0], to: p[1]}; });
+        render();
+    }
+    function usedBy(ind) { for (var i = 0; i < state.constructs.length; i++) if (state.constructs[i].inds.indexOf(ind) >= 0) return i; return -1; }
+
+    function render() {
+        var h = '';
+        state.constructs.forEach(function (c, i) {
+            h += '<div class="con"><div class="con-head"><input type="text" data-i="' + i + '" class="cname" value="' + esc(c.name) + '" maxlength="40">' +
+                '<select data-i="' + i + '" class="cmode"><option value="A"' + (c.mode === 'A' ? ' selected' : '') + '>Réflexif</option><option value="B"' + (c.mode === 'B' ? ' selected' : '') + '>Formatif</option></select>' +
+                '<span class="lab-small">' + c.inds.length + ' indicateur(s)</span><button class="x-btn cdel" data-i="' + i + '">Supprimer</button></div><div class="chips">';
+            state.cols.forEach(function (col) {
+                var u = usedBy(col), on = u === i, other = u >= 0 && u !== i;
+                h += '<span class="chip' + (on ? ' on' : '') + (other ? ' used' : '') + '" data-i="' + i + '" data-c="' + esc(col) + '">' + esc(col) + '</span>';
+            });
+            h += '</div></div>';
+        });
+        $('cons').innerHTML = h || '<p class="lab-small">Aucun construit. Cliquez sur « Ajouter un construit » ou chargez le modèle d\'exemple.</p>';
+        var names = state.constructs.map(function (c) { return c.name; }), p = '';
+        state.paths.forEach(function (r, i) {
+            function sel(cls, val) { return '<select class="' + cls + '" data-i="' + i + '"><option value="">Choisir...</option>' + names.map(function (n) { return '<option' + (n === val ? ' selected' : '') + '>' + esc(n) + '</option>'; }).join('') + '</select>'; }
+            p += '<div class="path-row">' + sel('pfrom', r.from) + '<span>vers</span>' + sel('pto', r.to) + '<button class="x-btn pdel" data-i="' + i + '">Supprimer</button></div>';
+        });
+        $('paths').innerHTML = p || '<p class="lab-small">Aucune relation pour le moment.</p>';
+    }
+    document.addEventListener('input', function (e) {
+        if (e.target.classList.contains('cname')) {
+            var i = +e.target.dataset.i, old = state.constructs[i].name, nw = e.target.value;
+            state.paths.forEach(function (r) { if (r.from === old) r.from = nw; if (r.to === old) r.to = nw; });
+            state.constructs[i].name = nw;
+        }
+    });
+    document.addEventListener('change', function (e) {
+        var t = e.target, i = +t.dataset.i;
+        if (t.classList.contains('cname')) { render(); }
+        else if (t.classList.contains('cmode')) state.constructs[i].mode = t.value;
+        else if (t.classList.contains('pfrom')) state.paths[i].from = t.value;
+        else if (t.classList.contains('pto')) state.paths[i].to = t.value;
+        else if (t.name === 'src') { setSource(t.value); }
+    });
+    document.addEventListener('click', function (e) {
+        var t = e.target;
+        if (t.classList.contains('chip')) {
+            if (t.classList.contains('used')) return;
+            var c = state.constructs[+t.dataset.i], col = t.dataset.c, k = c.inds.indexOf(col);
+            if (k >= 0) c.inds.splice(k, 1); else c.inds.push(col);
+            render();
+        } else if (t.classList.contains('cdel')) { var nm = state.constructs[+t.dataset.i].name; state.constructs.splice(+t.dataset.i, 1); state.paths = state.paths.filter(function (r) { return r.from !== nm && r.to !== nm; }); render(); }
+        else if (t.classList.contains('pdel')) { state.paths.splice(+t.dataset.i, 1); render(); }
+    });
+    $('addc').onclick = function () { state.constructs.push({name: 'Construit ' + (state.constructs.length + 1), mode: 'A', inds: []}); render(); };
+    $('addp').onclick = function () { state.paths.push({from: '', to: ''}); render(); };
+    $('preset').onclick = function () { if (state.token !== 'demo') { $('err').innerHTML = '<div class="err">Le modèle d\'exemple utilise les données d\'exemple : sélectionnez-les d\'abord.</div>'; return; } $('err').innerHTML = ''; loadPreset(); };
+    $('clear').onclick = function () { state.constructs = []; state.paths = []; render(); };
+
+    function setSource(v) {
+        $('pick').style.display = $('file').style.display = 'none';
+        if (v === 'demo') {
+            state.token = 'demo'; state.cols = DEMO_COLS.slice(); state.constructs = []; state.paths = []; loadPreset();
+        } else { $('pick').style.display = 'inline-block'; }
+    }
+    $('pick').onclick = function () { $('file').click(); };
+    $('file').onchange = function () {
+        var fl = $('file').files[0]; if (!fl) return;
+        var fd = new FormData(); fd.append('file', fl); $('dinfo').textContent = 'Import en cours...';
+        fetch('{{ url_for("smartpls_upload") }}', {method: 'POST', body: fd, credentials: 'same-origin'}).then(function (r) { return r.json(); }).then(function (j) {
+            if (j.error) { $('dinfo').innerHTML = '<span class="bad">' + esc(j.error) + '</span>'; return; }
+            state.token = j.token; state.cols = j.columns; state.constructs = []; state.paths = [];
+            $('dinfo').textContent = j.name + ' : ' + j.n + ' lignes, ' + j.columns.length + ' colonnes numériques (' + j.columns.slice(0, 12).join(', ') + (j.columns.length > 12 ? ', ...' : '') + '). Données conservées une heure au plus, jamais enregistrées.';
+            render();
+        }).catch(function () { $('dinfo').innerHTML = '<span class="bad">Import impossible.</span>'; });
+    };
+
+    /* ---------------- calcul ---------------- */
+    $('run').onclick = function () {
+        $('err').innerHTML = ''; var b = $('run'); b.disabled = true; b.innerHTML = '<span class="spin"></span>Calcul en cours...';
+        var body = {token: state.token, bootstrap: +$('boot').value,
+            constructs: state.constructs.map(function (c) { return {name: c.name.trim(), mode: c.mode, indicators: c.inds}; }),
+            paths: state.paths.filter(function (r) { return r.from && r.to; }).map(function (r) { return [r.from, r.to]; })};
+        var t0 = Date.now();
+        fetch('{{ url_for("smartpls_run") }}', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body), credentials: 'same-origin'})
+            .then(function (r) { return r.json().then(function (j) { return {ok: r.ok, j: j}; }); })
+            .then(function (x) {
+                b.disabled = false; b.textContent = 'Calculer le modèle';
+                if (!x.ok) { $('err').innerHTML = '<div class="err">' + esc(x.j.error || 'Erreur de calcul.') + '</div>'; return; }
+                R = x.j; $('rstat').textContent = 'Calculé en ' + ((Date.now() - t0) / 1000).toFixed(1) + ' s, ' + R.n + ' observations, ' + R.iterations + ' itérations.';
+                $('results').style.display = 'block'; tab = 'diag'; showResults(); $('results').scrollIntoView({behavior: 'smooth'});
+            }).catch(function () { b.disabled = false; b.textContent = 'Calculer le modèle'; $('err').innerHTML = '<div class="err">Connexion impossible. Réessayez.</div>'; });
+    };
+
+    /* ---------------- affichage ---------------- */
+    function flag(ok, txt) { return '<span class="' + (ok ? 'ok' : 'bad') + '">' + txt + '</span>'; }
+    var TABS = [['diag', 'Diagramme'], ['load', 'Loadings'], ['rel', 'Fiabilité et validité'], ['disc', 'Validité discriminante'], ['path', 'Chemins'], ['r2', 'R², f² et VIF'], ['ind', 'Effets indirects et totaux']];
+    function showResults() {
+        var h = ''; TABS.forEach(function (t) { h += '<button class="tab' + (t[0] === tab ? ' on' : '') + '" data-t="' + t[0] + '">' + t[1] + '</button>'; });
+        $('tabs').innerHTML = h;
+        Array.prototype.forEach.call($('tabs').querySelectorAll('.tab'), function (el) { el.onclick = function () { tab = el.dataset.t; showResults(); }; });
+        $('findings').innerHTML = findings();
+        $('tabbody').innerHTML = ({diag: tDiag, load: tLoad, rel: tRel, disc: tDisc, path: tPath, r2: tR2, ind: tInd})[tab]();
+    }
+    function findings() {
+        var L = [], B = !!R.bootstrap;
+        var weak = R.loadings.filter(function (l) { return l.loading < 0.708 && modeOf(l.construct) === 'A'; });
+        if (weak.length) L.push('Loadings inférieurs à 0,708 : ' + weak.map(function (l) { return '<strong>' + esc(l.indicator) + '</strong> (' + f(l.loading) + ')'; }).join(', ') + '. Envisagez de retirer, un à un, ceux qui sont proches de ou sous 0,40, puis recalculez.');
+        R.reliability.forEach(function (r) {
+            if (r.mode === 'A') {
+                if (r.alpha < 0.7 || r.rho_c < 0.7) L.push('Fiabilité insuffisante pour <strong>' + esc(r.construct) + '</strong> (alpha ' + f(r.alpha) + ', rho_c ' + f(r.rho_c) + ').');
+                if (r.rho_c > 0.95) L.push('<strong>' + esc(r.construct) + '</strong> : rho_c supérieur à 0,95, indicateurs probablement redondants.');
+                if (r.ave < 0.5) L.push('AVE inférieure à 0,50 pour <strong>' + esc(r.construct) + '</strong> (' + f(r.ave) + ') : validité convergente non établie.');
+            }
+        });
+        R.htmt.matrix.forEach(function (row, i) { row.forEach(function (v, j) { if (v !== null && v > 0.85) L.push('HTMT = ' + f(v) + ' entre <strong>' + esc(R.htmt.names[i]) + '</strong> et <strong>' + esc(R.htmt.names[j]) + '</strong> : ' + (v > 0.9 ? 'validité discriminante non établie.' : 'limite pour des construits distincts (seuil strict 0,85).')); }); });
+        R.paths.forEach(function (p) { if (p.vif !== undefined && p.vif !== null && p.vif >= 3) L.push('VIF de ' + f(p.vif, 2) + ' pour ' + esc(p.from) + ' vers ' + esc(p.to) + ' : colinéarité à surveiller.'); });
+        if (B) {
+            R.paths_boot.forEach(function (p) { L.push(esc(p.from) + ' vers ' + esc(p.to) + ' : β = ' + f(p.orig, 2) + ', ' + (p.p < 0.05 ? '<span class="ok">significatif</span>' : '<span class="warn">non significatif</span>') + ' (t = ' + f(p.t, 2) + ', p ' + (p.p < 0.001 ? '< 0,001' : '= ' + f(p.p)) + ').'); });
+        } else L.push('Lancez le bootstrapping pour tester la significativité des chemins.');
+        R.r2.forEach(function (r) { L.push('R² de <strong>' + esc(r.construct) + '</strong> = ' + f(r.r2, 2) + ' (' + (r.r2 >= 0.75 ? 'substantiel' : r.r2 >= 0.5 ? 'modéré' : r.r2 >= 0.25 ? 'faible' : 'très faible') + ').'); });
+        return '<strong>Lecture automatique</strong><ul class="findings">' + L.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>';
+    }
+    function modeOf(name) { for (var i = 0; i < state.constructs.length; i++) if (state.constructs[i].name === name) return state.constructs[i].mode; var r = R.reliability.filter(function (x) { return x.construct === name; })[0]; return r ? r.mode : 'A'; }
+    function pathBoot(a, b) { return (R.paths_boot || []).filter(function (p) { return p.from === a && p.to === b; })[0]; }
+    function loadBoot(ind) { return (R.loadings_boot || []).filter(function (p) { return p.indicator === ind; })[0]; }
+
+    function tDiag() {
+        var names = R.reliability.map(function (r) { return r.construct; }), lv = {}, i, k;
+        names.forEach(function (n) { lv[n] = 0; });
+        for (k = 0; k < names.length; k++) R.paths.forEach(function (p) { lv[p.to] = Math.max(lv[p.to], lv[p.from] + 1); });
+        var cols = {}, maxL = 0; names.forEach(function (n) { (cols[lv[n]] = cols[lv[n]] || []).push(n); maxL = Math.max(maxL, lv[n]); });
+        var maxIn = 1; R.reliability.forEach(function (r) { maxIn = Math.max(maxIn, r.n_ind); });
+        var bw = 46, gap = 6, nodeW = Math.max(150, maxIn * (bw + gap) + 20), colW = nodeW + 90, rowH = 230;
+        var W = (maxL + 1) * colW + 40, rows = 0; Object.keys(cols).forEach(function (c) { rows = Math.max(rows, cols[c].length); });
+        var H = rows * rowH + 40, pos = {};
+        Object.keys(cols).forEach(function (c) { cols[c].forEach(function (n, j) { pos[n] = {x: 20 + c * colW + nodeW / 2, y: 20 + j * rowH + 50 + ((rows - cols[c].length) * rowH) / 2}; }); });
+        var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" xmlns="http://www.w3.org/2000/svg" font-family="Inter,Segoe UI,sans-serif"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#0b2a4a"/></marker><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#1f5f99"/></marker></defs>';
+        // chemins structurels
+        R.paths.forEach(function (p) {
+            var a = pos[p.from], b = pos[p.to], dx = b.x - a.x, dy = b.y - a.y, d = Math.sqrt(dx * dx + dy * dy) || 1, ux = dx / d, uy = dy / d;
+            var x1 = a.x + ux * 72, y1 = a.y + uy * 34, x2 = b.x - ux * 76, y2 = b.y - uy * 38;
+            var pb = pathBoot(p.from, p.to), star = pb ? (pb.p < 0.001 ? '***' : pb.p < 0.01 ? '**' : pb.p < 0.05 ? '*' : ' ns') : '';
+            s += '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="#0b2a4a" stroke-width="2" marker-end="url(#ah)"/>' +
+                '<rect x="' + ((x1 + x2) / 2 - 36) + '" y="' + ((y1 + y2) / 2 - 11) + '" width="72" height="20" rx="4" fill="#fff" stroke="#cfd9e6"/><text x="' + ((x1 + x2) / 2) + '" y="' + ((y1 + y2) / 2 + 4) + '" text-anchor="middle" font-size="12" font-weight="700" fill="#0b2a4a">' + f(p.beta, 3) + star + '</text>';
+        });
+        R.reliability.forEach(function (r) {
+            var q = pos[r.construct], r2 = R.r2.filter(function (x) { return x.construct === r.construct; })[0];
+            s += '<ellipse cx="' + q.x + '" cy="' + q.y + '" rx="70" ry="32" fill="' + (r2 ? '#eaf1f8' : '#fff') + '" stroke="#1f5f99" stroke-width="2.5"/>' +
+                '<text x="' + q.x + '" y="' + (q.y - (r2 ? 2 : -4)) + '" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0b2a4a">' + esc(r.construct.length > 18 ? r.construct.slice(0, 17) + '.' : r.construct) + '</text>' +
+                (r2 ? '<text x="' + q.x + '" y="' + (q.y + 15) + '" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8a6a1f">R² = ' + f(r2.r2, 3) + '</text>' : '');
+            var inds = R.loadings.filter(function (l) { return l.construct === r.construct; }), tot = inds.length * (bw + gap) - gap, x0 = q.x - tot / 2, yb = q.y + 105;
+            inds.forEach(function (l, j) {
+                var cx = x0 + j * (bw + gap) + bw / 2, val = r.mode === 'A' ? l.loading : l.weight;
+                if (r.mode === 'A') s += '<line x1="' + (q.x + (cx - q.x) * 0.35) + '" y1="' + (q.y + 32) + '" x2="' + cx + '" y2="' + yb + '" stroke="#1f5f99" stroke-width="1.3" marker-end="url(#ah2)"/>';
+                else s += '<line x1="' + cx + '" y1="' + (yb + 24) + '" x2="' + (q.x + (cx - q.x) * 0.35) + '" y2="' + (q.y + 34) + '" stroke="#c2a15a" stroke-width="1.3" marker-end="url(#ah2)"/>';
+                var low = r.mode === 'A' && l.loading < 0.708;
+                s += '<rect x="' + (cx - bw / 2) + '" y="' + yb + '" width="' + bw + '" height="24" rx="3" fill="#fff" stroke="' + (low ? '#b3261e' : '#0b2a4a') + '"/><text x="' + cx + '" y="' + (yb + 16) + '" text-anchor="middle" font-size="10.5" fill="#1f2933">' + esc(l.indicator) + '</text>' +
+                    '<text x="' + cx + '" y="' + (yb + 38) + '" text-anchor="middle" font-size="10" font-weight="700" fill="' + (low ? '#b3261e' : '#1f5f99') + '">' + f(val, 2) + '</text>';
+            });
+        });
+        s += '</svg><p class="crit" style="padding:0 .8rem">Les valeurs sur les flèches de mesure sont les loadings (réflexif) ou les poids (formatif) ; en rouge, loading sous 0,708. Sur les chemins : coefficient β' + (R.bootstrap ? ' avec significativité (* p &lt; 0,05 ; ** p &lt; 0,01 ; *** p &lt; 0,001 ; ns : non significatif).' : '. Lancez le bootstrapping pour afficher la significativité.') + '</p>';
+        return '<div class="diag">' + s + '</div>';
+    }
+    function tLoad() {
+        var h = '<table class="pls-table"><thead><tr><th>Construit</th><th>Indicateur</th><th>Loading</th><th>Poids externe</th>' + (R.bootstrap ? '<th>t</th><th>p</th>' : '') + '<th>Évaluation (loading ≥ 0,708)</th></tr></thead><tbody>';
+        R.loadings.forEach(function (l) {
+            var b = loadBoot(l.indicator), m = modeOf(l.construct);
+            h += '<tr><td>' + esc(l.construct) + '</td><td>' + esc(l.indicator) + '</td><td>' + f(l.loading) + '</td><td>' + f(l.weight) + '</td>' + (R.bootstrap ? '<td>' + f(b && b.t, 2) + '</td><td>' + pf(b && b.p) + '</td>' : '') +
+                '<td>' + (m === 'A' ? (l.loading >= 0.708 ? flag(1, 'Satisfaisant') : l.loading >= 0.4 ? '<span class="warn">À examiner</span>' : flag(0, 'À retirer')) : '<span class="lab-small">Formatif : voir les poids</span>') + '</td></tr>';
+        });
+        h += '</tbody></table>';
+        if (R.outer_vif.length) {
+            h += '<h6 class="mt-3" style="color:#0b2a4a">VIF externes (construits formatifs)</h6><table class="pls-table"><thead><tr><th>Construit</th><th>Indicateur</th><th>VIF</th><th>Évaluation (VIF &lt; 3)</th></tr></thead><tbody>' +
+                R.outer_vif.map(function (v) { return '<tr><td>' + esc(v.construct) + '</td><td>' + esc(v.indicator) + '</td><td>' + f(v.vif, 2) + '</td><td>' + (v.vif < 3 ? flag(1, 'OK') : v.vif < 5 ? '<span class="warn">Acceptable</span>' : flag(0, 'Colinéarité')) + '</td></tr>'; }).join('') + '</tbody></table>';
+        }
+        return h;
+    }
+    function tRel() {
+        var h = '<table class="pls-table"><thead><tr><th>Construit</th><th>Type</th><th>Alpha de Cronbach</th><th>rho_a</th><th>rho_c</th><th>AVE</th><th>Évaluation</th></tr></thead><tbody>';
+        R.reliability.forEach(function (r) {
+            var A = r.mode === 'A', bad = A && (r.alpha < 0.7 || r.rho_c < 0.7 || r.ave < 0.5), red = A && r.rho_c > 0.95;
+            h += '<tr><td>' + esc(r.construct) + '</td><td>' + (A ? 'Réflexif' : 'Formatif') + '</td><td>' + (A ? f(r.alpha) : '-') + '</td><td>' + (A ? f(r.rho_a) : '-') + '</td><td>' + (A ? f(r.rho_c) : '-') + '</td><td>' + (A ? f(r.ave) : '-') + '</td><td>' +
+                (!A ? '<span class="lab-small">Évaluer les poids et le VIF</span>' : bad ? flag(0, 'À revoir') : red ? '<span class="warn">Redondance possible</span>' : flag(1, 'Satisfaisant')) + '</td></tr>';
+        });
+        return h + '</tbody></table><p class="crit">Seuils : alpha, rho_a et rho_c entre 0,70 et 0,95 ; AVE ≥ 0,50 (validité convergente). Les critères de fiabilité ne s\'appliquent qu\'aux construits réflexifs.</p>';
+    }
+    function matrix(names, M, fmt) {
+        var h = '<table class="pls-table"><thead><tr><th></th>' + names.map(function (n) { return '<th>' + esc(n) + '</th>'; }).join('') + '</tr></thead><tbody>';
+        M.forEach(function (row, i) { h += '<tr><td><strong>' + esc(names[i]) + '</strong></td>' + row.map(function (v, j) { return '<td>' + (v === null ? '' : fmt(v, i, j)) + '</td>'; }).join('') + '</tr>'; });
+        return h + '</tbody></table>';
+    }
+    function tDisc() {
+        var h = '<h6 style="color:#0b2a4a">Rapport HTMT</h6>' + matrix(R.htmt.names, R.htmt.matrix, function (v) { return '<span class="' + (v < 0.85 ? 'ok' : v < 0.9 ? 'warn' : 'bad') + '">' + f(v) + '</span>'; });
+        if (R.htmt_boot && R.htmt_boot.length) {
+            h += '<h6 class="mt-3" style="color:#0b2a4a">Intervalles de confiance du HTMT (bootstrapping)</h6><table class="pls-table"><thead><tr><th>Paire</th><th>HTMT</th><th>Borne basse 2,5 %</th><th>Borne haute 97,5 %</th><th>Évaluation (IC sans 1)</th></tr></thead><tbody>' +
+                R.htmt_boot.map(function (x) { return '<tr><td>' + esc(x.a) + ' - ' + esc(x.b) + '</td><td>' + f(x.htmt) + '</td><td>' + f(x.lo) + '</td><td>' + f(x.hi) + '</td><td>' + (x.hi < 1 ? flag(1, 'Discriminante établie') : flag(0, 'IC contient 1')) + '</td></tr>'; }).join('') + '</tbody></table>';
+        }
+        h += '<h6 class="mt-3" style="color:#0b2a4a">Critère de Fornell-Larcker</h6>' + matrix(R.fornell.names, R.fornell.matrix, function (v, i, j) { return i === j ? '<strong>' + f(v) + '</strong>' : f(v); });
+        h += '<p class="crit">HTMT &lt; 0,85 (strict) ou &lt; 0,90. Fornell-Larcker : la diagonale (racine carrée de l\'AVE) doit dépasser les corrélations de sa ligne et de sa colonne.</p>';
+        return h;
+    }
+    function tPath() {
+        if (!R.bootstrap) {
+            return '<table class="pls-table"><thead><tr><th>Relation</th><th>Coefficient β</th></tr></thead><tbody>' + R.paths.map(function (p) { return '<tr><td>' + esc(p.from) + ' → ' + esc(p.to) + '</td><td>' + f(p.beta) + '</td></tr>'; }).join('') + '</tbody></table><p class="crit">Activez le bootstrapping (étape 4) pour obtenir t, p et les intervalles de confiance.</p>';
+        }
+        var h = '<table class="pls-table"><thead><tr><th>Relation</th><th>β (échantillon)</th><th>Moyenne bootstrap</th><th>Erreur-type</th><th>t</th><th>p</th><th>IC 95 %</th><th>Décision</th></tr></thead><tbody>';
+        R.paths_boot.forEach(function (p) {
+            var sig = p.p < 0.05 && (p.lo > 0 || p.hi < 0);
+            h += '<tr><td>' + esc(p.from) + ' → ' + esc(p.to) + '</td><td>' + f(p.orig) + '</td><td>' + f(p.mean) + '</td><td>' + f(p.se) + '</td><td>' + f(p.t, 2) + '</td><td>' + pf(p.p) + '</td><td>[' + f(p.lo, 2) + ' ; ' + f(p.hi, 2) + ']</td><td>' + (sig ? flag(1, 'Significatif') : '<span class="warn">Non significatif</span>') + '</td></tr>';
+        });
+        return h + '</tbody></table><p class="crit">' + R.bootstrap.B + ' rééchantillonnages valides, test bilatéral à 5 %, intervalles percentiles.</p>';
+    }
+    function tR2() {
+        var h = '<table class="pls-table"><thead><tr><th>Construit endogène</th><th>R²</th><th>R² ajusté</th>' + (R.bootstrap ? '<th>t</th><th>p</th>' : '') + '<th>Niveau</th></tr></thead><tbody>';
+        R.r2.forEach(function (r) {
+            var b = (R.r2_boot || []).filter(function (x) { return x.construct === r.construct; })[0];
+            h += '<tr><td>' + esc(r.construct) + '</td><td>' + f(r.r2) + '</td><td>' + f(r.r2_adj) + '</td>' + (R.bootstrap ? '<td>' + f(b && b.t, 2) + '</td><td>' + pf(b && b.p) + '</td>' : '') + '<td>' + (r.r2 >= 0.75 ? 'Substantiel' : r.r2 >= 0.5 ? 'Modéré' : r.r2 >= 0.25 ? 'Faible' : 'Très faible') + '</td></tr>';
+        });
+        h += '</tbody></table><h6 class="mt-3" style="color:#0b2a4a">Taille d\'effet f² et colinéarité (VIF interne)</h6><table class="pls-table"><thead><tr><th>Relation</th><th>f²</th><th>Effet</th><th>VIF</th><th>Colinéarité (VIF &lt; 3)</th></tr></thead><tbody>';
+        R.paths.forEach(function (p) {
+            h += '<tr><td>' + esc(p.from) + ' → ' + esc(p.to) + '</td><td>' + f(p.f2) + '</td><td>' + (p.f2 >= 0.35 ? 'Grand' : p.f2 >= 0.15 ? 'Moyen' : p.f2 >= 0.02 ? 'Petit' : 'Négligeable') + '</td><td>' + f(p.vif, 2) + '</td><td>' + (p.vif < 3 ? flag(1, 'OK') : p.vif < 5 ? '<span class="warn">Acceptable</span>' : flag(0, 'Problème')) + '</td></tr>';
+        });
+        return h + '</tbody></table><p class="crit">Repères : R² 0,25 / 0,50 / 0,75 ; f² 0,02 / 0,15 / 0,35.</p>';
+    }
+    function tInd() {
+        var h = '';
+        if (R.indirect_boot && R.indirect_boot.length) {
+            h += '<h6 style="color:#0b2a4a">Effets indirects spécifiques</h6><table class="pls-table"><thead><tr><th>Chemin</th><th>Effet</th><th>t</th><th>p</th><th>IC 95 %</th><th>Décision</th></tr></thead><tbody>' + R.indirect_boot.map(function (x) {
+                var sig = x.p < 0.05 && (x.lo > 0 || x.hi < 0); return '<tr><td>' + x.chain.map(esc).join(' → ') + '</td><td>' + f(x.orig) + '</td><td>' + f(x.t, 2) + '</td><td>' + pf(x.p) + '</td><td>[' + f(x.lo, 2) + ' ; ' + f(x.hi, 2) + ']</td><td>' + (sig ? flag(1, 'Significatif') : '<span class="warn">Non significatif</span>') + '</td></tr>'; }).join('') + '</tbody></table>';
+        } else if (R.indirect && R.indirect.length) {
+            h += '<h6 style="color:#0b2a4a">Effets indirects spécifiques</h6><table class="pls-table"><thead><tr><th>Chemin</th><th>Effet</th></tr></thead><tbody>' + R.indirect.map(function (x) { return '<tr><td>' + x.chain.map(esc).join(' → ') + '</td><td>' + f(x.effect) + '</td></tr>'; }).join('') + '</tbody></table>';
+        } else h += '<p class="lab-small">Aucun effet indirect : le modèle ne contient pas de chaîne de deux relations ou plus (par exemple Qualité → Satisfaction → Fidélité).</p>';
+        h += '<h6 class="mt-3" style="color:#0b2a4a">Effets totaux</h6><table class="pls-table"><thead><tr><th>Relation</th><th>Direct</th><th>Indirect</th><th>Total</th></tr></thead><tbody>' + R.total_effects.map(function (x) { return '<tr><td>' + esc(x.from) + ' → ' + esc(x.to) + '</td><td>' + f(x.direct) + '</td><td>' + f(x.indirect) + '</td><td><strong>' + f(x.total) + '</strong></td></tr>'; }).join('') + '</tbody></table>';
+        return h + '<p class="crit">Médiation selon Zhao, Lynch et Chen (2010) : effet indirect significatif et effet direct non significatif = médiation indirecte seule (totale).</p>';
+    }
+    loadPreset();
+})();
+</script>
+{% endblock %}

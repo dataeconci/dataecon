@@ -52,6 +52,9 @@
                             </li>
                             {% endfor %}
                         </ul>
+                        {% if o.code == 'smartpls' %}
+                        <a class="cat-go" style="display:block;text-align:center;margin-top:.7rem;text-decoration:none" href="{{ url_for('smartpls_lab') }}">Ouvrir le laboratoire de pratique</a>
+                        {% endif %}
                     </div>
                 </article>
                 {% endfor %}
@@ -87,6 +90,11 @@
                     <h3>Tableau</h3>
                     <p>Visualisation de données</p>
                 </button>
+                <a class="outil-card" href="{{ url_for('smartpls_lab') }}" style="text-decoration:none">
+                    <i class="fas fa-project-diagram"></i>
+                    <h3>SmartPLS</h3>
+                    <p>Laboratoire PLS-SEM : modèle, bootstrapping, résultats</p>
+                </a>
             </div>
         </section>
 

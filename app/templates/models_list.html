@@ -14,7 +14,7 @@
         <p>Importez vos données, indiquez la variable à expliquer et les variables explicatives : la plateforme analyse la nature des données et vous propose automatiquement les modèles les plus adaptés, avec les raisons du choix.</p>
         <div class="mdl-families">
             <span>Régression</span><span>Panel</span><span>Séries temporelles (AR, MA, ARIMA, SARIMA)</span>
-            <span>Volatilité (ARCH, GARCH)</span><span>Classification</span><span>Machine learning</span><span>Deep learning</span>
+            <span>Volatilité (ARCH, GARCH)</span><span>PLS-SEM (SmartPLS)</span><span>Classification</span><span>Machine learning</span><span>Deep learning</span>
         </div>
     </section>
 
@@ -74,6 +74,10 @@
                     <div><strong id="nCat">0</strong>catégorielles</div>
                 </div>
                 <div class="mdl-preview"><table id="prevTable"></table></div>
+                <div class="mdl-modes" id="modeSw">
+                    <button type="button" class="active" data-m="classic"><i class="fas fa-chart-line"></i> Analyse classique<small>variable cible et variables explicatives</small></button>
+                    <button type="button" data-m="pls"><i class="fas fa-project-diagram"></i> Équations structurelles PLS-SEM<small>construits latents, modèle de mesure et structurel (SmartPLS)</small></button>
+                </div>
             </div>
         </div>
     </section>
@@ -162,6 +166,34 @@
             </div>
         </form>
     </section>
+
+    <!-- PLS-SEM -->
+    <section class="mdl-card" id="cardPls" style="display:none">
+        <header><h2><i class="fas fa-project-diagram"></i> Modèle d'équations structurelles (PLS-SEM)</h2></header>
+        <div class="body">
+            <p class="mdl-hint">Regroupez les indicateurs (questions) en construits, choisissez le type de mesure, puis tracez les relations. Les résultats comprennent loadings, fiabilité, AVE, HTMT, VIF, coefficients de chemin avec bootstrapping, R², f², effets indirects et totaux.</p>
+            <form method="POST" action="{{ url_for('models_analyze_pls') }}" id="plsForm">
+                <input type="hidden" name="dataset_id" id="plsDs">
+                <input type="hidden" name="pls_spec" id="plsSpec">
+                <div class="d-flex flex-wrap gap-2 mb-2">
+                    <button type="button" class="mdl-btn ghost" id="plsAuto"><i class="fas fa-wand-magic-sparkles"></i> Détecter les construits (QP1, QP2...)</button>
+                    <button type="button" class="mdl-btn ghost" id="plsAddC"><i class="fas fa-plus"></i> Ajouter un construit</button>
+                </div>
+                <div id="plsCons"></div>
+                <label class="mdl-label" style="margin-top:14px">Relations structurelles (flèches)</label>
+                <div id="plsPaths"></div>
+                <button type="button" class="mdl-btn ghost" id="plsAddP"><i class="fas fa-plus"></i> Ajouter une relation</button>
+                <div class="mdl-grid2" style="margin-top:14px">
+                    <div><label class="mdl-label" for="plsBoot">Échantillons bootstrap</label>
+                        <select name="n_boot" id="plsBoot" class="form-select"><option value="500">500 (rapide)</option><option value="1000" selected>1 000</option><option value="5000">5 000 (rapport final)</option></select></div>
+                    <div><label class="mdl-label" for="plsScheme">Schéma de pondération</label>
+                        <select name="scheme" id="plsScheme" class="form-select"><option value="path" selected>Path (par défaut)</option><option value="factorial">Factoriel</option><option value="centroid">Centroïde</option></select></div>
+                </div>
+                <div id="plsErr" class="mdl-err" style="display:none;margin-top:10px"></div>
+                <div class="d-flex" style="margin-top:14px"><button type="submit" class="mdl-btn gold" style="margin-left:auto"><i class="fas fa-play"></i> Estimer le modèle PLS-SEM</button></div>
+            </form>
+        </div>
+    </section>
 </div>
 
 <div class="mdl-loading" id="loading"><div class="box"><div class="mdl-spin"></div><strong style="color:#0b2a4a">Estimation en cours</strong><p class="mdl-hint" style="margin-top:6px">Les modèles sont estimés et comparés. Cela peut prendre jusqu'à une minute selon la taille des données.</p></div></div>
@@ -190,7 +222,8 @@
     // ---- Étape 1
     $('dsSelect').addEventListener('change', function () {
         var id = this.value;
-        $('card2').style.display = 'none'; $('card3').style.display = 'none';
+        $('card2').style.display = 'none'; $('card3').style.display = 'none'; $('cardPls').style.display = 'none'; PLS_C = []; PLS_P = [];
+        document.querySelectorAll('#modeSw button').forEach(function (x) { x.classList.toggle('active', x.dataset.m === 'classic'); });
         $('dsInfo').style.display = 'none'; showErr($('dsErr'), '');
         var opt = this.options[this.selectedIndex], pd = $('privDel');
         if (opt && opt.getAttribute('data-private') === '1') { pd.action = '/models/delete_private/' + id; pd.style.display = 'block'; } else { pd.style.display = 'none'; }
@@ -212,6 +245,82 @@
             $('card2').style.display = 'block';
             setStep(2);
         }).catch(function () { showErr($('dsErr'), 'Impossible de lire ce jeu de données.'); });
+    });
+
+
+    // ---- PLS-SEM
+    var PLS_C = [];
+    function numCols() { return COLS.filter(function (c) { return c.kind === 'numeric' || c.kind === 'binary'; }).map(function (c) { return c.name; }); }
+    function consNames() { return PLS_C.map(function (c) { return c.name.trim(); }).filter(Boolean); }
+    function renderCons() {
+        var nc = numCols();
+        $('plsCons').innerHTML = PLS_C.map(function (c, i) {
+            return '<div class="mdl-cons" data-i="' + i + '"><div class="mdl-cons-h"><input class="form-control pls-name" value="' + esc(c.name) + '" placeholder="Nom du construit">' +
+                '<select class="form-select pls-mode"><option value="A"' + (c.mode === 'A' ? ' selected' : '') + '>Réflexif</option><option value="B"' + (c.mode === 'B' ? ' selected' : '') + '>Formatif</option></select>' +
+                '<button type="button" class="mdl-btn ghost pls-del" title="Supprimer"><i class="fas fa-trash"></i></button></div>' +
+                '<select multiple size="' + Math.min(8, Math.max(4, nc.length)) + '" class="form-select pls-ind">' + nc.map(function (n) { return '<option value="' + esc(n) + '"' + (c.ind.indexOf(n) >= 0 ? ' selected' : '') + '>' + esc(n) + '</option>'; }).join('') + '</select>' +
+                '<div class="mdl-hint">Maintenez Ctrl (ou Cmd) pour choisir plusieurs indicateurs.</div></div>';
+        }).join('');
+        document.querySelectorAll('#plsCons .mdl-cons').forEach(function (el) {
+            var i = +el.dataset.i;
+            el.querySelector('.pls-name').addEventListener('input', function () { PLS_C[i].name = this.value; renderPaths(true); });
+            el.querySelector('.pls-mode').addEventListener('change', function () { PLS_C[i].mode = this.value; });
+            el.querySelector('.pls-ind').addEventListener('change', function () { PLS_C[i].ind = Array.prototype.filter.call(this.options, function (o) { return o.selected; }).map(function (o) { return o.value; }); });
+            el.querySelector('.pls-del').addEventListener('click', function () { PLS_C.splice(i, 1); renderCons(); renderPaths(); });
+        });
+    }
+    var PLS_P = [];
+    function renderPaths(keep) {
+        var names = consNames();
+        var o = names.map(function (n) { return '<option value="' + esc(n) + '">' + esc(n) + '</option>'; }).join('');
+        if (keep && document.querySelector('#plsPaths .pls-from')) {
+            document.querySelectorAll('#plsPaths .mdl-path').forEach(function (el, i) { PLS_P[i] = [el.querySelector('.pls-from').value, el.querySelector('.pls-to').value]; });
+        }
+        $('plsPaths').innerHTML = PLS_P.map(function (p, i) {
+            return '<div class="mdl-path" data-i="' + i + '"><select class="form-select pls-from">' + o + '</select><i class="fas fa-arrow-right"></i><select class="form-select pls-to">' + o + '</select>' +
+                '<button type="button" class="mdl-btn ghost pls-pdel"><i class="fas fa-trash"></i></button></div>';
+        }).join('');
+        document.querySelectorAll('#plsPaths .mdl-path').forEach(function (el, i) {
+            var f = el.querySelector('.pls-from'), t = el.querySelector('.pls-to');
+            f.value = PLS_P[i][0] || ''; t.value = PLS_P[i][1] || '';
+            f.addEventListener('change', function () { PLS_P[i][0] = f.value; }); t.addEventListener('change', function () { PLS_P[i][1] = t.value; });
+            el.querySelector('.pls-pdel').addEventListener('click', function () { PLS_P.splice(i, 1); renderPaths(); });
+        });
+    }
+    $('plsAddC').addEventListener('click', function () { PLS_C.push({ name: 'Construit ' + (PLS_C.length + 1), mode: 'A', ind: [] }); renderCons(); renderPaths(true); });
+    $('plsAddP').addEventListener('click', function () {
+        var n = consNames(); if (n.length < 2) { showErr($('plsErr'), 'Créez d\'abord au moins deux construits.'); return; }
+        showErr($('plsErr'), ''); PLS_P.push([n[0], n[1]]); renderPaths();
+    });
+    $('plsAuto').addEventListener('click', function () {
+        var groups = {};
+        numCols().forEach(function (n) { var m = /^(.*?)[_\s-]?(\d+)$/.exec(n); if (m && m[1]) (groups[m[1]] = groups[m[1]] || []).push(n); });
+        var keys = Object.keys(groups).filter(function (k) { return groups[k].length >= 2; });
+        if (keys.length < 2) { showErr($('plsErr'), 'Aucun groupe d\'indicateurs détecté (noms du type QP1, QP2, QP3). Créez les construits manuellement.'); return; }
+        showErr($('plsErr'), '');
+        PLS_C = keys.map(function (k) { return { name: k, mode: 'A', ind: groups[k] }; });
+        PLS_P = []; renderCons(); renderPaths();
+    });
+    $('modeSw').addEventListener('click', function (e) {
+        var b = e.target.closest('button'); if (!b) return;
+        var pls = b.dataset.m === 'pls';
+        document.querySelectorAll('#modeSw button').forEach(function (x) { x.classList.toggle('active', x === b); });
+        $('card2').style.display = pls ? 'none' : 'block';
+        $('card3').style.display = 'none';
+        $('cardPls').style.display = pls ? 'block' : 'none';
+        if (pls) { $('plsDs').value = DATASET; if (!PLS_C.length) { PLS_C = [{ name: 'Construit 1', mode: 'A', ind: [] }, { name: 'Construit 2', mode: 'A', ind: [] }]; } renderCons(); renderPaths(true); setStep(2); }
+        else { setStep(2); }
+    });
+    $('plsForm').addEventListener('submit', function (e) {
+        var cons = PLS_C.map(function (c) { return { name: c.name.trim(), mode: c.mode, indicators: c.ind }; });
+        var err = '';
+        if (cons.length < 2) err = 'Définissez au moins deux construits.';
+        else if (cons.some(function (c) { return !c.name || !c.indicators.length; })) err = 'Chaque construit doit avoir un nom et au moins un indicateur.';
+        else if (!PLS_P.length) err = 'Tracez au moins une relation entre deux construits.';
+        else if (PLS_P.some(function (p) { return !p[0] || !p[1] || p[0] === p[1]; })) err = 'Une relation est incomplète (origine et destination différentes).';
+        if (err) { e.preventDefault(); showErr($('plsErr'), err); return; }
+        $('plsSpec').value = JSON.stringify({ constructs: cons, paths: PLS_P });
+        $('loading').style.display = 'flex';
     });
 
     // ---- Étape 2
