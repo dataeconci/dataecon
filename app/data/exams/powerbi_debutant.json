@@ -1,0 +1,258 @@
+{
+ "outil": "powerbi",
+ "niveau": "debutant",
+ "questions": [
+  {
+   "id": "q1",
+   "theme": "Concepts",
+   "question": "Quelle application Power BI sert à construire les rapports ?",
+   "code": "",
+   "options": [
+    "Power BI Service uniquement",
+    "Power BI Desktop",
+    "Excel Online",
+    "Power BI Mobile"
+   ],
+   "correct": 1,
+   "explication": "Power BI Desktop est l'application de création ; le Service sert à publier et partager."
+  },
+  {
+   "id": "q2",
+   "theme": "Concepts",
+   "question": "Quelle extension porte un fichier Power BI Desktop ?",
+   "code": "",
+   "options": [
+    ".pbix",
+    ".xlsx",
+    ".docx",
+    ".csv"
+   ],
+   "correct": 0,
+   "explication": "Les rapports Desktop sont enregistrés en .pbix."
+  },
+  {
+   "id": "q3",
+   "theme": "Concepts",
+   "question": "Quel est l'ordre logique d'un projet Power BI ?",
+   "code": "",
+   "options": [
+    "Publier, visualiser, obtenir, modéliser",
+    "Visualiser, obtenir, publier",
+    "Modéliser, publier, obtenir",
+    "Obtenir, transformer, modéliser, visualiser, publier"
+   ],
+   "correct": 3,
+   "explication": "Obtenir, transformer, modéliser, visualiser puis publier."
+  },
+  {
+   "id": "q4",
+   "theme": "Concepts",
+   "question": "Quelle vue de Desktop affiche les relations entre tables ?",
+   "code": "",
+   "options": [
+    "Vue Rapport",
+    "Vue Données",
+    "Vue Modèle",
+    "Vue Mobile"
+   ],
+   "correct": 2,
+   "explication": "La vue Modèle montre les tables et leurs relations."
+  },
+  {
+   "id": "q5",
+   "theme": "Power Query",
+   "question": "Dans Power Query, les modifications faites :",
+   "code": "",
+   "options": [
+    "Altèrent le fichier source",
+    "Sont enregistrées comme étapes appliquées sans modifier la source",
+    "Sont perdues à la fermeture",
+    "Suppriment le modèle"
+   ],
+   "correct": 1,
+   "explication": "Chaque action devient une étape appliquée, rejouée à l'actualisation."
+  },
+  {
+   "id": "q6",
+   "theme": "Power Query",
+   "question": "Un montant importé en texte ne peut pas être additionné. Que faut-il faire ?",
+   "code": "",
+   "options": [
+    "Changer le type de données en nombre",
+    "Supprimer la colonne",
+    "Créer un segment",
+    "Publier le rapport"
+   ],
+   "correct": 0,
+   "explication": "Le type de données doit être converti en nombre."
+  },
+  {
+   "id": "q7",
+   "theme": "Power Query",
+   "question": "Quelle commande charge les requêtes dans le modèle ?",
+   "code": "",
+   "options": [
+    "Actualiser l'aperçu",
+    "Éditer les paramètres",
+    "Insérer une zone de texte",
+    "Fermer et appliquer"
+   ],
+   "correct": 3,
+   "explication": "Fermer et appliquer envoie le résultat des requêtes au modèle."
+  },
+  {
+   "id": "q8",
+   "theme": "Power Query",
+   "question": "Que fait « Supprimer les doublons » ?",
+   "code": "",
+   "options": [
+    "Supprime la colonne",
+    "Trie la table",
+    "Supprime les lignes identiques sur les colonnes sélectionnées",
+    "Fusionne deux tables"
+   ],
+   "correct": 2,
+   "explication": "Il ne garde qu'une occurrence de chaque ligne identique."
+  },
+  {
+   "id": "q9",
+   "theme": "Visuels",
+   "question": "Quel visuel convient pour suivre une évolution dans le temps ?",
+   "code": "",
+   "options": [
+    "Carte",
+    "Graphique en courbes",
+    "Anneau",
+    "Segment"
+   ],
+   "correct": 1,
+   "explication": "Les courbes montrent une tendance temporelle."
+  },
+  {
+   "id": "q10",
+   "theme": "Visuels",
+   "question": "Quel visuel affiche un seul chiffre clé ?",
+   "code": "",
+   "options": [
+    "Carte",
+    "Matrice",
+    "Nuage de points",
+    "Entonnoir"
+   ],
+   "correct": 0,
+   "explication": "Le visuel Carte affiche un indicateur unique."
+  },
+  {
+   "id": "q11",
+   "theme": "Visuels",
+   "question": "Dans le volet Visualisations, où place-t-on la catégorie d'un histogramme ?",
+   "code": "",
+   "options": [
+    "Dans Valeurs",
+    "Dans Info-bulles",
+    "Dans Filtres de page",
+    "Dans Axe X"
+   ],
+   "correct": 3,
+   "explication": "Les catégories vont dans l'axe, la mesure dans Valeurs."
+  },
+  {
+   "id": "q12",
+   "theme": "Visuels",
+   "question": "Qu'est-ce qu'un segment (slicer) ?",
+   "code": "",
+   "options": [
+    "Un type de relation",
+    "Une colonne calculée",
+    "Un visuel que l'utilisateur emploie pour filtrer",
+    "Un fichier source"
+   ],
+   "correct": 2,
+   "explication": "Le segment est un filtre visible et interactif."
+  },
+  {
+   "id": "q13",
+   "theme": "Visuels",
+   "question": "Cliquer sur une barre filtre les autres visuels de la page. C'est :",
+   "code": "",
+   "options": [
+    "Une actualisation",
+    "Le filtrage croisé",
+    "Un signet",
+    "Une jointure"
+   ],
+   "correct": 1,
+   "explication": "C'est le comportement de filtrage croisé entre visuels."
+  },
+  {
+   "id": "q14",
+   "theme": "Modèle",
+   "question": "Une table de faits contient :",
+   "code": "",
+   "options": [
+    "Les événements mesurables comme les ventes",
+    "Les descriptions des produits",
+    "Uniquement des dates",
+    "Les rôles de sécurité"
+   ],
+   "correct": 0,
+   "explication": "Les faits sont les transactions avec leurs montants et clés."
+  },
+  {
+   "id": "q15",
+   "theme": "Modèle",
+   "question": "Dans un schéma en étoile, les dimensions sont :",
+   "code": "",
+   "options": [
+    "Au centre",
+    "Supprimées",
+    "Toujours bidirectionnelles",
+    "Autour de la table de faits"
+   ],
+   "correct": 3,
+   "explication": "La table de faits est au centre, les dimensions autour."
+  },
+  {
+   "id": "q16",
+   "theme": "Modèle",
+   "question": "La cardinalité habituelle entre une dimension et une table de faits est :",
+   "code": "",
+   "options": [
+    "Plusieurs-à-plusieurs",
+    "Un-à-un",
+    "Un-à-plusieurs",
+    "Aucune"
+   ],
+   "correct": 2,
+   "explication": "Un côté unique (dimension) vers plusieurs lignes de faits."
+  },
+  {
+   "id": "q17",
+   "theme": "Modèle",
+   "question": "La clé côté « un » d'une relation doit :",
+   "code": "",
+   "options": [
+    "Être en texte",
+    "Contenir des valeurs uniques",
+    "Être vide",
+    "Contenir des doublons"
+   ],
+   "correct": 1,
+   "explication": "Le côté un exige des valeurs uniques."
+  },
+  {
+   "id": "q18",
+   "theme": "Modèle",
+   "question": "Quelle direction de filtre est conseillée par défaut ?",
+   "code": "",
+   "options": [
+    "Unique",
+    "Bidirectionnelle partout",
+    "Aucune",
+    "Circulaire"
+   ],
+   "correct": 0,
+   "explication": "Unique, de la dimension vers les faits ; le bidirectionnel est réservé à des cas précis."
+  }
+ ]
+}

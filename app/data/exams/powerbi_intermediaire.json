@@ -1,0 +1,258 @@
+{
+ "outil": "powerbi",
+ "niveau": "intermediaire",
+ "questions": [
+  {
+   "id": "q1",
+   "theme": "Power Query",
+   "question": "« Fusionner les requêtes » correspond à :",
+   "code": "",
+   "options": [
+    "Un empilement de lignes",
+    "Une jointure",
+    "Un dépivotage",
+    "Un filtre"
+   ],
+   "correct": 1,
+   "explication": "Fusionner = jointure entre deux tables sur une colonne commune."
+  },
+  {
+   "id": "q2",
+   "theme": "Power Query",
+   "question": "« Ajouter les requêtes » sert à :",
+   "code": "",
+   "options": [
+    "Empiler les lignes de tables de même structure",
+    "Joindre sur une clé",
+    "Créer une mesure",
+    "Masquer une colonne"
+   ],
+   "correct": 0,
+   "explication": "Ajouter = union des lignes."
+  },
+  {
+   "id": "q3",
+   "theme": "Power Query",
+   "question": "Dépivoter transforme :",
+   "code": "",
+   "options": [
+    "Des lignes en colonnes",
+    "Du texte en date",
+    "Des tables en dossiers",
+    "Des colonnes en lignes (table large vers longue)"
+   ],
+   "correct": 3,
+   "explication": "On passe d'un format large à un format long."
+  },
+  {
+   "id": "q4",
+   "theme": "Power Query",
+   "question": "Quel réflexe améliore les performances d'actualisation ?",
+   "code": "",
+   "options": [
+    "Ajouter des colonnes personnalisées partout",
+    "Désactiver le schéma en étoile",
+    "Supprimer tôt les colonnes inutiles",
+    "Doubler les requêtes"
+   ],
+   "correct": 2,
+   "explication": "Réduire tôt les données diminue le volume traité."
+  },
+  {
+   "id": "q5",
+   "theme": "Dates",
+   "question": "Pourquoi créer une table Calendrier ?",
+   "code": "",
+   "options": [
+    "Pour stocker les clients",
+    "Pour analyser dans le temps avec une table de dates contiguë",
+    "Pour remplacer les faits",
+    "Pour sécuriser le rapport"
+   ],
+   "correct": 1,
+   "explication": "Elle permet l'intelligence temporelle et le regroupement par période."
+  },
+  {
+   "id": "q6",
+   "theme": "Dates",
+   "question": "Quelle expression DAX crée une table de dates ?",
+   "code": "",
+   "options": [
+    "CALENDAR(DATE(2023,1,1), DATE(2026,12,31))",
+    "SUM(Date)",
+    "RELATED(Date)",
+    "FORMAT(Date)"
+   ],
+   "correct": 0,
+   "explication": "CALENDAR ou CALENDARAUTO génèrent la table."
+  },
+  {
+   "id": "q7",
+   "theme": "Dates",
+   "question": "Une table de dates doit être :",
+   "code": "",
+   "options": [
+    "Limitée aux jours ouvrés",
+    "En texte",
+    "Sans relation",
+    "Contiguë, sans date manquante"
+   ],
+   "correct": 3,
+   "explication": "Les fonctions temporelles exigent des dates continues."
+  },
+  {
+   "id": "q8",
+   "theme": "Dates",
+   "question": "Combien de relations actives peut-il y avoir entre deux mêmes tables ?",
+   "code": "",
+   "options": [
+    "Deux",
+    "Illimité",
+    "Une seule",
+    "Zéro"
+   ],
+   "correct": 2,
+   "explication": "Une seule est active ; les autres sont inactives."
+  },
+  {
+   "id": "q9",
+   "theme": "Dates",
+   "question": "Quelle fonction active une relation inactive dans une mesure ?",
+   "code": "",
+   "options": [
+    "RELATED",
+    "USERELATIONSHIP",
+    "LOOKUPVALUE",
+    "ALL"
+   ],
+   "correct": 1,
+   "explication": "USERELATIONSHIP, utilisée dans CALCULATE."
+  },
+  {
+   "id": "q10",
+   "theme": "DAX",
+   "question": "Une mesure, contrairement à une colonne calculée :",
+   "code": "",
+   "options": [
+    "Est évaluée à la demande selon le contexte de filtre",
+    "Est stockée ligne par ligne",
+    "Ne peut pas utiliser SUM",
+    "Existe uniquement dans Power Query"
+   ],
+   "correct": 0,
+   "explication": "Les mesures se calculent dynamiquement ; les colonnes calculées sont stockées."
+  },
+  {
+   "id": "q11",
+   "theme": "DAX",
+   "question": "Quelle formule donne le chiffre d'affaires total ?",
+   "code": "",
+   "options": [
+    "CA = Ventes[Montant]",
+    "CA = COUNT(Ventes)",
+    "CA = ALL(Ventes)",
+    "CA = SUM(Ventes[Montant])"
+   ],
+   "correct": 3,
+   "explication": "SUM agrège la colonne Montant."
+  },
+  {
+   "id": "q12",
+   "theme": "DAX",
+   "question": "Pourquoi préférer DIVIDE à l'opérateur / ?",
+   "code": "",
+   "options": [
+    "Il est plus ancien",
+    "Il arrondit toujours",
+    "Il gère la division par zéro",
+    "Il filtre les lignes"
+   ],
+   "correct": 2,
+   "explication": "DIVIDE renvoie vide (ou une valeur alternative) au lieu d'une erreur."
+  },
+  {
+   "id": "q13",
+   "theme": "DAX",
+   "question": "CALCULATE sert à :",
+   "code": "",
+   "options": [
+    "Créer une relation",
+    "Évaluer une expression en modifiant le contexte de filtre",
+    "Importer un fichier",
+    "Trier un visuel"
+   ],
+   "correct": 1,
+   "explication": "CALCULATE modifie les filtres appliqués."
+  },
+  {
+   "id": "q14",
+   "theme": "DAX",
+   "question": "CALCULATE([CA], Ventes[Région]=\"Sud\") dans une ligne Nord renvoie :",
+   "code": "",
+   "options": [
+    "Le CA du Sud",
+    "Le CA du Nord",
+    "Zéro",
+    "Une erreur"
+   ],
+   "correct": 0,
+   "explication": "Le filtre explicite remplace celui de la ligne."
+  },
+  {
+   "id": "q15",
+   "theme": "DAX",
+   "question": "Que fait SUMX(Ventes, Ventes[Qté]*Ventes[Prix]) ?",
+   "code": "",
+   "options": [
+    "Additionne Qté puis Prix",
+    "Compte les lignes",
+    "Filtre les ventes",
+    "Calcule Qté x Prix ligne par ligne puis additionne"
+   ],
+   "correct": 3,
+   "explication": "SUMX est un itérateur."
+  },
+  {
+   "id": "q16",
+   "theme": "Visuels",
+   "question": "Les signets permettent :",
+   "code": "",
+   "options": [
+    "De créer des relations",
+    "D'importer des données",
+    "D'enregistrer un état du rapport",
+    "De chiffrer le fichier"
+   ],
+   "correct": 2,
+   "explication": "Ils mémorisent filtres, visibilité et mise en page."
+  },
+  {
+   "id": "q17",
+   "theme": "Visuels",
+   "question": "La mise en forme conditionnelle permet de :",
+   "code": "",
+   "options": [
+    "Fusionner des tables",
+    "Colorer selon une règle ou une valeur",
+    "Créer une passerelle",
+    "Sécuriser les lignes"
+   ],
+   "correct": 1,
+   "explication": "Couleurs ou icônes selon des seuils."
+  },
+  {
+   "id": "q18",
+   "theme": "Visuels",
+   "question": "Le menu « Modifier les interactions » règle :",
+   "code": "",
+   "options": [
+    "Comment un visuel filtre ou surligne les autres",
+    "La source de données",
+    "Les rôles",
+    "Le stockage"
+   ],
+   "correct": 0,
+   "explication": "On choisit filtre, surbrillance ou aucun effet."
+  }
+ ]
+}

@@ -665,3 +665,11 @@ a { color: #1f5f99; }
     .navbar-toggler { border-color: rgba(255,255,255,.5); }
     .navbar-toggler-icon { filter: invert(1); }
 }
+
+/* Nouveau logo DataEcon.CI (fond marine) */
+.navbar-brand .brand-emblem { display:inline-flex; align-items:center; border-radius:50%; overflow:hidden; }
+.navbar-brand .brand-emblem img { height: 44px; width: 44px; object-fit: cover; display:block; mix-blend-mode: normal; }
+.navbar-brand .brand-text .b1, .navbar-brand .brand-text .b2 { color:#fff; }
+.navbar-brand .brand-text .b3 { color:#6fb0f5; }
+.footer-logo.footer-logo-dark { background:#122a5c; border-radius:14px; padding:6px 10px; }
+.footer-logo.footer-logo-dark img { height: 110px; width:auto; border-radius:10px; }

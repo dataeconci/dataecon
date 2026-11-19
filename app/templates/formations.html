@@ -17,7 +17,7 @@
                     <i class="fas fa-laptop-code"></i> Formation pratique
                 </span>
                 <h1>Apprenez en <span>pratiquant</span></h1>
-                <p>R, Python, SQL, Tableau, SmartPLS — avec un instructeur IA à vos côtés</p>
+                <p>R, Python, SQL, Tableau, Power BI, SmartPLS — avec un instructeur IA à vos côtés</p>
             </div>
         </div>
     </section>
@@ -52,6 +52,9 @@
                             </li>
                             {% endfor %}
                         </ul>
+                        {% if o.code == 'powerbi' %}
+                        <a class="cat-go" style="display:block;text-align:center;margin-top:.7rem;text-decoration:none" href="{{ url_for('powerbi_lab') }}">Ouvrir le laboratoire de pratique</a>
+                        {% endif %}
                         {% if o.code == 'smartpls' %}
                         <a class="cat-go" style="display:block;text-align:center;margin-top:.7rem;text-decoration:none" href="{{ url_for('smartpls_lab') }}">Ouvrir le laboratoire de pratique</a>
                         {% endif %}
@@ -90,6 +93,11 @@
                     <h3>Tableau</h3>
                     <p>Visualisation de données</p>
                 </button>
+                <a class="outil-card" href="{{ url_for('powerbi_lab') }}" style="text-decoration:none">
+                    <i class="fas fa-chart-pie"></i>
+                    <h3>Power BI</h3>
+                    <p>Laboratoire : rapports, visuels et mesures DAX</p>
+                </a>
                 <a class="outil-card" href="{{ url_for('smartpls_lab') }}" style="text-decoration:none">
                     <i class="fas fa-project-diagram"></i>
                     <h3>SmartPLS</h3>

@@ -1,0 +1,93 @@
+{
+ "outil": "powerbi",
+ "niveau": "intermediaire",
+ "titre": "Power BI intermédiaire",
+ "description": "Transformations Power Query avancées, table de dates, DAX et CALCULATE, visuels interactifs.",
+ "concepts": [
+  {
+   "id": "pbi_int_1",
+   "titre": "Transformations Power Query avancées",
+   "objectif": "Fusionner, ajouter, dépivoter et créer des colonnes conditionnelles",
+   "explication": "**Fusionner les requêtes** équivaut à une jointure SQL : on relie deux tables sur une colonne commune (jointure externe gauche, interne, etc.). **Ajouter les requêtes** empile les lignes de plusieurs tables de même structure (par exemple douze fichiers mensuels, ou un **dossier** entier).\n\n**Dépivoter les colonnes** transforme une table « large » (un trimestre par colonne) en table « longue » (colonnes Trimestre et Valeur), format idéal pour Power BI. À l'inverse, **Pivoter** étale les valeurs en colonnes. La **colonne conditionnelle** crée une catégorie selon des règles (si Montant > 100 000 alors « Grand compte »).\n\nBon réflexe : **réduire tôt** (supprimer les colonnes et lignes inutiles en début de requête) et **désactiver le chargement** des requêtes intermédiaires pour alléger le modèle.",
+   "image_svg": "<svg viewBox='0 0 600 170' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><defs><marker id='ar' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='7' markerHeight='7' orient='auto-start-reverse'><path d='M0 0L10 5L0 10z' fill='#0b2a4a'/></marker></defs><text x='300.0' y='22' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Transformations Power Query</text><rect x='20' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='83.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Fusionner</text><text x='83.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>jointure de 2 requêtes</text><line x1='146' y1='95' x2='160' y2='95' stroke='#0b2a4a' stroke-width='1.8' marker-end='url(#ar)'/><rect x='160' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='223.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Ajouter</text><text x='223.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>empiler des tables</text><line x1='286' y1='95' x2='300' y2='95' stroke='#0b2a4a' stroke-width='1.8' marker-end='url(#ar)'/><rect x='300' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='363.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Pivoter</text><text x='363.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>lignes <-> colonnes</text><line x1='426' y1='95' x2='440' y2='95' stroke='#0b2a4a' stroke-width='1.8' marker-end='url(#ar)'/><rect x='440' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='503.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Colonne</text><text x='503.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>calculée / conditionnelle</text></svg>",
+   "code_exemple": "Fusionner : Clients + Ventes sur IdClient (externe gauche)\nAjouter  : Janvier + Février + ... -> Ventes_2025\nDépivoter : colonnes T1,T2,T3 -> Attribut = Trimestre, Valeur = CA",
+   "question_reflexion": "Pourquoi un format « long » est-il préférable pour construire des visuels ?",
+   "resultats": "<table class=\"pls-table\"><thead><tr><th>Région</th><th>T1</th><th>T2</th><th>T3</th></tr></thead><tbody><tr><td>Nord</td><td>120</td><td>135</td><td>150</td></tr><tr><td>Sud</td><td>90</td><td>95</td><td>110</td></tr></tbody></table><p class=\"pls-note\">Table « large » : un trimestre par colonne.</p>",
+   "exercice": {
+    "enonce": "Pour la table de gauche, quelle transformation Power Query faut-il appliquer pour obtenir les colonnes Région, Trimestre et Valeur ? Et comment réunir les 12 fichiers mensuels d'un dossier ?",
+    "indice": "Une opération transforme les colonnes en lignes ; une autre empile les tables.",
+    "solution_attendue": "Sélectionner la colonne Région puis « Dépivoter les autres colonnes » : on obtient Région, Attribut (renommé Trimestre) et Valeur. Pour les 12 fichiers, utiliser la source Dossier puis combiner/ajouter les fichiers en une seule table.",
+    "mots_cles": [
+     "d[eé]pivot",
+     "r[eé]gion",
+     "trimestre|attribut",
+     "dossier|ajout|append|combin|empil"
+    ]
+   }
+  },
+  {
+   "id": "pbi_int_2",
+   "titre": "Table de dates et relations avancées",
+   "objectif": "Créer une table Calendrier et maîtriser cardinalité et direction des filtres",
+   "explication": "Pour analyser dans le temps, on crée une **table Calendrier** contiguë (une ligne par jour, sans trou) avec l'année, le trimestre, le mois et le jour de la semaine. En DAX : `Calendrier = CALENDAR(DATE(2023,1,1), DATE(2026,12,31))`, ou `CALENDARAUTO()`. On la **marque comme table de dates** (Outils de table) et on la relie à la date de la table de faits.\n\nCôté relations, la cardinalité courante est **un-à-plusieurs**. Le **un-à-un** est rare (tables à fusionner). Le **plusieurs-à-plusieurs** est à éviter : il signale souvent une dimension manquante. La **direction du filtre** est unique par défaut ; le **bidirectionnel** est à réserver à des cas précis car il peut créer de l'ambiguïté et ralentir le modèle. Une seule relation entre deux tables est **active** ; les autres sont inactives et activées dans une mesure avec `USERELATIONSHIP`.",
+   "image_svg": "<svg viewBox='0 0 600 190' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><defs><marker id='ar' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='7' markerHeight='7' orient='auto-start-reverse'><path d='M0 0L10 5L0 10z' fill='#0b2a4a'/></marker></defs><text x='300.0' y='22' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>La table de dates relie le temps aux ventes</text><rect x='30' y='70' width='150' height='64' rx='6' fill='#eaf1f8' stroke='#1f5f99'/><text x='105' y='98' text-anchor='middle' font-size='14' fill='#0b2a4a' font-weight=\"700\">Calendrier</text><text x='105' y='118' text-anchor='middle' font-size='11' fill='#1f2933'>Date (unique)</text><rect x='225' y='70' width='150' height='64' rx='6' fill='#eaf1f8' stroke='#1f5f99'/><text x='300' y='98' text-anchor='middle' font-size='14' fill='#0b2a4a' font-weight=\"700\">Ventes</text><text x='300' y='118' text-anchor='middle' font-size='11' fill='#1f2933'>DateVente</text><rect x='420' y='70' width='150' height='64' rx='6' fill='#f4e8c8' stroke='#c2a15a'/><text x='495' y='98' text-anchor='middle' font-size='14' fill='#0b2a4a' font-weight=\"700\">Mesure</text><text x='495' y='118' text-anchor='middle' font-size='11' fill='#1f2933'>TOTALYTD...</text><line x1='182' y1='102' x2='225' y2='102' stroke='#0b2a4a' stroke-width='1.8' marker-end='url(#ar)'/><text x='203.5' y='96.0' text-anchor='middle' font-size='11' font-weight='700' fill='#0b2a4a'>1 : *</text><line x1='377' y1='102' x2='420' y2='102' stroke='#0b2a4a' stroke-width='1.8' marker-end='url(#ar)'/></svg>",
+   "code_exemple": "Calendrier = CALENDAR(DATE(2023,1,1), DATE(2026,12,31))\nAnnée = YEAR(Calendrier[Date])\nMois  = FORMAT(Calendrier[Date], \"MMMM\")\nNuméro mois = MONTH(Calendrier[Date])",
+   "question_reflexion": "Pourquoi ne pas utiliser la hiérarchie de dates automatique pour les calculs temporels avancés ?",
+   "resultats": "",
+   "exercice": {
+    "enonce": "Une table de ventes contient deux dates : DateCommande et DateLivraison. Comment les relier à une même table Calendrier, et comment analyser les ventes par date de livraison ?",
+    "indice": "Une relation active, l'autre inactive, activée dans une mesure.",
+    "solution_attendue": "Créer deux relations de Calendrier[Date] vers Ventes : l'une active (DateCommande) et l'autre inactive (DateLivraison). Pour analyser par livraison, écrire une mesure avec CALCULATE et USERELATIONSHIP qui active la relation inactive.",
+    "mots_cles": [
+     "deux relations|2 relations|relations",
+     "active",
+     "inactive",
+     "userelationship",
+     "calculate"
+    ]
+   }
+  },
+  {
+   "id": "pbi_int_3",
+   "titre": "Introduction à DAX : mesures et CALCULATE",
+   "objectif": "Écrire des mesures, comprendre le contexte de filtre et utiliser CALCULATE",
+   "explication": "**DAX** (*Data Analysis Expressions*) est le langage de formules du modèle. Une **colonne calculée** est évaluée ligne par ligne et **stockée** dans la table (elle consomme de la mémoire). Une **mesure** est un agrégat évalué **à la demande**, selon les filtres actifs du visuel : c'est le choix par défaut pour tout indicateur.\n\nExemples : `CA = SUM(Ventes[Montant])`, `Nb clients = DISTINCTCOUNT(Ventes[IdClient])`, `Marge % = DIVIDE([Marge], [CA])` (DIVIDE gère la division par zéro). Le **contexte de filtre** est l'ensemble des filtres appliqués à une cellule du visuel (région, année, segment). **CALCULATE** évalue une expression en **modifiant** ce contexte : `CA Nord = CALCULATE([CA], Ventes[Région] = \"Nord\")`.\n\nLes fonctions d'itération (`SUMX`, `AVERAGEX`) évaluent une expression ligne par ligne puis agrègent : `CA = SUMX(Ventes, Ventes[Quantité] * Ventes[Prix])`.",
+   "image_svg": "<svg viewBox='0 0 600 170' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><defs><marker id='ar' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='7' markerHeight='7' orient='auto-start-reverse'><path d='M0 0L10 5L0 10z' fill='#0b2a4a'/></marker></defs><text x='300.0' y='22' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Concepts DAX</text><rect x='20' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='83.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Colonne calculée</text><text x='83.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>ligne par ligne, stockée</text><line x1='146' y1='95' x2='160' y2='95' stroke='#0b2a4a' stroke-width='1.8' marker-end='url(#ar)'/><rect x='160' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='223.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Mesure</text><text x='223.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>agrégat, calculé à la demande</text><line x1='286' y1='95' x2='300' y2='95' stroke='#0b2a4a' stroke-width='1.8' marker-end='url(#ar)'/><rect x='300' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='363.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">CALCULATE</text><text x='363.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>modifie le contexte de filtre</text><line x1='426' y1='95' x2='440' y2='95' stroke='#0b2a4a' stroke-width='1.8' marker-end='url(#ar)'/><rect x='440' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='503.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Contexte</text><text x='503.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>filtres des visuels</text></svg>",
+   "code_exemple": "CA = SUM(Ventes[Montant])\nCA Nord = CALCULATE([CA], Ventes[Région] = \"Nord\")\nPart Nord = DIVIDE([CA Nord], CALCULATE([CA], ALL(Ventes)))",
+   "question_reflexion": "Quelle est la différence de stockage entre une mesure et une colonne calculée ?",
+   "resultats": "<table class=\"pls-table\"><thead><tr><th>Région</th><th>Montant</th></tr></thead><tbody><tr><td>Nord</td><td>1 200</td></tr><tr><td>Sud</td><td>800</td></tr><tr><td>Est</td><td>500</td></tr></tbody></table><p class=\"pls-note\">Ventes par région.</p>",
+   "exercice": {
+    "enonce": "Écrivez la mesure DAX du chiffre d'affaires puis une mesure qui calcule le CA de la seule région « Sud ». Que renverra cette seconde mesure dans le tableau de gauche, sur la ligne Nord ?",
+    "indice": "CALCULATE remplace le filtre sur Région.",
+    "solution_attendue": "CA = SUM(Ventes[Montant]) ; CA Sud = CALCULATE([CA], Ventes[Région] = \"Sud\"). Sur la ligne Nord, la mesure renvoie tout de même 800, car CALCULATE remplace le filtre de région du visuel par Sud.",
+    "mots_cles": [
+     "sum",
+     "calculate",
+     "sud",
+     "800",
+     "remplac|modifi|[eé]cras"
+    ]
+   }
+  },
+  {
+   "id": "pbi_int_4",
+   "titre": "Visuels avancés et interactions",
+   "objectif": "Hiérarchies, exploration, info-bulles, signets et mise en forme conditionnelle",
+   "explication": "Une **hiérarchie** (Année > Trimestre > Mois) permet l'**exploration** : on descend (*drill down*) ou on remonte (*drill up*) dans un même visuel. Les **info-bulles personnalisées** affichent une page-miniature au survol. Les **signets** enregistrent un état du rapport (filtres, visibilité) et, associés à des boutons, créent une navigation ou un basculement de visuels.\n\nLa **mise en forme conditionnelle** colore ou ajoute des icônes selon la valeur (rouge sous l'objectif, vert au-dessus). Le menu **Modifier les interactions** règle si un visuel filtre ou met en surbrillance les autres. Les **paramètres de champ** laissent l'utilisateur choisir la mesure ou l'axe affiché. Pensez à l'accessibilité : contraste, texte de remplacement, ordre de tabulation.",
+   "image_svg": "<svg viewBox='0 0 600 170' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><defs><marker id='ar' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='7' markerHeight='7' orient='auto-start-reverse'><path d='M0 0L10 5L0 10z' fill='#0b2a4a'/></marker></defs><text x='300.0' y='22' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Interactions</text><rect x='20' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='83.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Hiérarchie</text><text x='83.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>Année > Mois > Jour</text><line x1='146' y1='95' x2='160' y2='95' stroke='#0b2a4a' stroke-width='1.8' marker-end='url(#ar)'/><rect x='160' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='223.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Explorer</text><text x='223.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>drill down / up</text><line x1='286' y1='95' x2='300' y2='95' stroke='#0b2a4a' stroke-width='1.8' marker-end='url(#ar)'/><rect x='300' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='363.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Info-bulle</text><text x='363.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>page dédiée</text><line x1='426' y1='95' x2='440' y2='95' stroke='#0b2a4a' stroke-width='1.8' marker-end='url(#ar)'/><rect x='440' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='503.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Signet</text><text x='503.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>vue enregistrée</text></svg>",
+   "code_exemple": "Format > Mise en forme conditionnelle > Couleur d'arrière-plan\nRègle : si CA >= Objectif alors vert, sinon rouge\nAffichage > Signets > Ajouter",
+   "question_reflexion": "Dans quel cas préférer un signet à un segment ?",
+   "resultats": "",
+   "exercice": {
+    "enonce": "Vous voulez que l'utilisateur bascule entre un graphique en barres et un tableau au clic sur un bouton. Quels éléments Power BI utilisez-vous ?",
+    "indice": "Deux visuels superposés, visibles tour à tour.",
+    "solution_attendue": "Placer le graphique et le tableau l'un sur l'autre, créer deux signets (l'un masque le tableau, l'autre masque le graphique) via le volet Sélection, puis ajouter deux boutons associés chacun à une action de signet.",
+    "mots_cles": [
+     "signet",
+     "bouton",
+     "s[eé]lection|masqu|visib|afficher"
+    ]
+   }
+  }
+ ]
+}

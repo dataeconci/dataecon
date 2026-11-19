@@ -1,0 +1,258 @@
+{
+ "outil": "powerbi",
+ "niveau": "avance",
+ "questions": [
+  {
+   "id": "q1",
+   "theme": "Temps",
+   "question": "Quelle fonction DAX donne la même période de l'année précédente ?",
+   "code": "",
+   "options": [
+    "TOTALYTD",
+    "SAMEPERIODLASTYEAR",
+    "DATESBETWEEN",
+    "EOMONTH"
+   ],
+   "correct": 1,
+   "explication": "SAMEPERIODLASTYEAR décale le contexte d'un an."
+  },
+  {
+   "id": "q2",
+   "theme": "Temps",
+   "question": "TOTALYTD calcule :",
+   "code": "",
+   "options": [
+    "Le cumul depuis le début de l'année",
+    "Le total du mois précédent",
+    "La moyenne mobile",
+    "Le maximum"
+   ],
+   "correct": 0,
+   "explication": "YTD = year to date, cumul annuel."
+  },
+  {
+   "id": "q3",
+   "theme": "Temps",
+   "question": "Quel est le calcul de la variation en % ?",
+   "code": "",
+   "options": [
+    "[CA]*[CA N-1]",
+    "SUM([CA N-1])",
+    "[CA]+[CA N-1]",
+    "DIVIDE([CA]-[CA N-1],[CA N-1])"
+   ],
+   "correct": 3,
+   "explication": "(CA - CA N-1) / CA N-1."
+  },
+  {
+   "id": "q4",
+   "theme": "Temps",
+   "question": "Une moyenne mobile sur 3 mois utilise souvent :",
+   "code": "",
+   "options": [
+    "RELATED",
+    "USERNAME",
+    "DATESINPERIOD",
+    "CONCATENATE"
+   ],
+   "correct": 2,
+   "explication": "DATESINPERIOD fournit la fenêtre glissante."
+  },
+  {
+   "id": "q5",
+   "theme": "Contextes",
+   "question": "Le contexte de ligne existe notamment dans :",
+   "code": "",
+   "options": [
+    "Un segment",
+    "Une colonne calculée ou un itérateur",
+    "Un signet",
+    "Une passerelle"
+   ],
+   "correct": 1,
+   "explication": "La ligne courante est le contexte dans les colonnes calculées et SUMX."
+  },
+  {
+   "id": "q6",
+   "theme": "Contextes",
+   "question": "CALCULATE convertit un contexte de ligne en :",
+   "code": "",
+   "options": [
+    "Contexte de filtre",
+    "Relation",
+    "Rôle",
+    "Hiérarchie"
+   ],
+   "correct": 0,
+   "explication": "C'est la transition de contexte."
+  },
+  {
+   "id": "q7",
+   "theme": "Contextes",
+   "question": "Pour une part de marché, le dénominateur utilise souvent :",
+   "code": "",
+   "options": [
+    "FIRSTNONBLANK",
+    "HASONEVALUE",
+    "USERPRINCIPALNAME",
+    "ALL"
+   ],
+   "correct": 3,
+   "explication": "ALL retire les filtres pour obtenir le total."
+  },
+  {
+   "id": "q8",
+   "theme": "Contextes",
+   "question": "ALLSELECTED diffère de ALL car il :",
+   "code": "",
+   "options": [
+    "Ajoute des filtres",
+    "Supprime la table",
+    "Respecte les filtres choisis par l'utilisateur",
+    "Ignore les segments"
+   ],
+   "correct": 2,
+   "explication": "ALLSELECTED conserve les sélections externes (segments)."
+  },
+  {
+   "id": "q9",
+   "theme": "Contextes",
+   "question": "Quel est l'intérêt de VAR ?",
+   "code": "",
+   "options": [
+    "Créer une relation",
+    "Lisibilité et évaluation unique de l'expression",
+    "Chiffrer la mesure",
+    "Importer des lignes"
+   ],
+   "correct": 1,
+   "explication": "Une variable est calculée une fois et réutilisée."
+  },
+  {
+   "id": "q10",
+   "theme": "Sécurité",
+   "question": "La RLS sert à :",
+   "code": "",
+   "options": [
+    "Limiter les lignes visibles selon l'utilisateur",
+    "Accélérer l'actualisation",
+    "Réduire la taille du fichier",
+    "Créer des mesures"
+   ],
+   "correct": 0,
+   "explication": "Row-Level Security filtre les lignes par rôle."
+  },
+  {
+   "id": "q11",
+   "theme": "Sécurité",
+   "question": "Quelle fonction permet une RLS dynamique ?",
+   "code": "",
+   "options": [
+    "NOW",
+    "RANKX",
+    "SELECTEDVALUE",
+    "USERPRINCIPALNAME"
+   ],
+   "correct": 3,
+   "explication": "Elle renvoie l'identifiant de l'utilisateur connecté."
+  },
+  {
+   "id": "q12",
+   "theme": "Sécurité",
+   "question": "Où teste-t-on un rôle dans Desktop ?",
+   "code": "",
+   "options": [
+    "Obtenir les données",
+    "Format painter",
+    "Afficher en tant que",
+    "Signets"
+   ],
+   "correct": 2,
+   "explication": "« Afficher en tant que » simule un rôle."
+  },
+  {
+   "id": "q13",
+   "theme": "Performance",
+   "question": "Quel mode charge les données en mémoire VertiPaq ?",
+   "code": "",
+   "options": [
+    "DirectQuery",
+    "Import",
+    "Live Connection",
+    "Aucun"
+   ],
+   "correct": 1,
+   "explication": "Import compresse les données en mémoire."
+  },
+  {
+   "id": "q14",
+   "theme": "Performance",
+   "question": "DirectQuery présente comme inconvénient :",
+   "code": "",
+   "options": [
+    "Des performances dépendantes de la source",
+    "Des données figées",
+    "Aucune sécurité",
+    "L'impossibilité de créer des visuels"
+   ],
+   "correct": 0,
+   "explication": "Chaque interaction interroge la source."
+  },
+  {
+   "id": "q15",
+   "theme": "Performance",
+   "question": "Quel outil mesure le temps de chaque visuel ?",
+   "code": "",
+   "options": [
+    "Éditeur de requêtes",
+    "Volet Sélection",
+    "Navigateur de signets",
+    "Analyseur de performances"
+   ],
+   "correct": 3,
+   "explication": "L'analyseur de performances détaille le temps de requête et d'affichage."
+  },
+  {
+   "id": "q16",
+   "theme": "Performance",
+   "question": "Réduire la cardinalité consiste à :",
+   "code": "",
+   "options": [
+    "Ajouter des relations",
+    "Créer plus de visuels",
+    "Limiter les valeurs distinctes des colonnes",
+    "Utiliser DirectQuery"
+   ],
+   "correct": 2,
+   "explication": "Moins de valeurs distinctes = meilleure compression."
+  },
+  {
+   "id": "q17",
+   "theme": "Déploiement",
+   "question": "Une passerelle de données est nécessaire pour :",
+   "code": "",
+   "options": [
+    "Créer un segment",
+    "Actualiser des sources locales depuis le Service",
+    "Importer un fichier local dans Desktop",
+    "Changer un thème"
+   ],
+   "correct": 1,
+   "explication": "Elle relie le Service aux sources non cloud."
+  },
+  {
+   "id": "q18",
+   "theme": "Déploiement",
+   "question": "Quel rôle d'espace de travail permet seulement de consulter ?",
+   "code": "",
+   "options": [
+    "Lecteur",
+    "Administrateur",
+    "Membre",
+    "Contributeur"
+   ],
+   "correct": 0,
+   "explication": "Lecteur : consultation uniquement."
+  }
+ ]
+}

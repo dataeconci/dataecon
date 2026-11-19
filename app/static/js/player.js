@@ -6,9 +6,9 @@
   const OUTIL = root.dataset.outil;
   const NIVEAU = root.dataset.niveau;
   const KEY = 'dataecon_player_' + OUTIL + '_' + NIVEAU;
-  const NOMS = { python: 'Python', r: 'R', sql: 'SQL', tableau: 'Tableau', smartpls: 'SmartPLS' };
-  const MODES = { python: 'python', r: 'r', sql: 'text/x-sql', tableau: 'text/plain', smartpls: 'text/plain' };
-  const FICHIERS = { python: 'exercice.py', r: 'exercice.R', sql: 'requete.sql', tableau: 'analyse.txt', smartpls: 'interpretation.txt' };
+  const NOMS = { python: 'Python', r: 'R', sql: 'SQL', tableau: 'Tableau', smartpls: 'SmartPLS', powerbi: 'Power BI' };
+  const MODES = { python: 'python', r: 'r', sql: 'text/x-sql', tableau: 'text/plain', smartpls: 'text/plain', powerbi: 'text/plain' };
+  const FICHIERS = { python: 'exercice.py', r: 'exercice.R', sql: 'requete.sql', tableau: 'analyse.txt', smartpls: 'interpretation.txt', powerbi: 'reponse_powerbi.txt' };
 
   let lecon = null;
   let idx = -1;            // -1 = page d'introduction ; lecon.concepts.length = fin
@@ -53,6 +53,7 @@
       return head + cyl(80, '#c2a15a') + cyl(130, '#5b9bd5') + cyl(180, '#e6edf5') + t +
         "<text x='420' y='280' text-anchor='middle' fill='#fff' font-size='20' font-weight='700'>SQL</text><text x='420' y='302' text-anchor='middle' fill='#c9d8e8' font-size='12'>SELECT · WHERE · GROUP BY</text>" + foot;
     }
+    if (outil === 'powerbi') return '<svg viewBox=\'0 0 600 340\' xmlns=\'http://www.w3.org/2000/svg\' font-family=\'Inter,Segoe UI,sans-serif\'><defs><linearGradient id=\'bg\' x1=\'0\' y1=\'0\' x2=\'1\' y2=\'1\'><stop offset=\'0\' stop-color=\'#0b2a4a\'/><stop offset=\'1\' stop-color=\'#1f5f99\'/></linearGradient></defs><rect width=\'600\' height=\'340\' fill=\'url(#bg)\'/><g stroke=\'#fff\' stroke-opacity=\'.07\'><path d=\'M0 85H600M0 170H600M0 255H600M100 0V340M200 0V340M300 0V340M400 0V340M500 0V340\'/></g><rect x=\'96\' y=\'150\' width=\'56\' height=\'90\' rx=\'3\' fill=\'#fff\' fill-opacity=\'.92\'/><rect x=\'170\' y=\'110\' width=\'56\' height=\'130\' rx=\'3\' fill=\'#c2a15a\'/><rect x=\'244\' y=\'70\' width=\'56\' height=\'170\' rx=\'3\' fill=\'#fff\' fill-opacity=\'.92\'/><rect x=\'318\' y=\'125\' width=\'56\' height=\'115\' rx=\'3\' fill=\'#c2a15a\'/><circle cx=\'470\' cy=\'155\' r=\'62\' fill=\'none\' stroke=\'#fff\' stroke-opacity=\'.25\' stroke-width=\'22\'/><path d=\'M470 93A62 62 0 1 1 410 170\' fill=\'none\' stroke=\'#c2a15a\' stroke-width=\'22\'/><line x1=\'80\' y1=\'240\' x2=\'400\' y2=\'240\' stroke=\'#fff\' stroke-width=\'2\'/><text x=\'300\' y=\'296\' text-anchor=\'middle\' font-size=\'24\' font-weight=\'700\' fill=\'#fff\'>Power BI</text><text x=\'300\' y=\'318\' text-anchor=\'middle\' font-size=\'12\' fill=\'#c9d8e8\'>Power Query · modèle · DAX · rapports</text></svg>';
     if (outil === 'smartpls') return '<svg viewBox=\'0 0 600 340\' xmlns=\'http://www.w3.org/2000/svg\' font-family=\'Inter,Segoe UI,sans-serif\'><defs><linearGradient id=\'bg\' x1=\'0\' y1=\'0\' x2=\'1\' y2=\'1\'><stop offset=\'0\' stop-color=\'#0b2a4a\'/><stop offset=\'1\' stop-color=\'#1f5f99\'/></linearGradient></defs><rect width=\'600\' height=\'340\' fill=\'url(#bg)\'/><g stroke=\'#fff\' stroke-opacity=\'.07\'><path d=\'M0 85H600M0 170H600M0 255H600M100 0V340M200 0V340M300 0V340M400 0V340M500 0V340\'/></g><defs><marker id=\'ar2\' viewBox=\'0 0 10 10\' refX=\'9\' refY=\'5\' markerWidth=\'7\' markerHeight=\'7\' orient=\'auto\'><path d=\'M0 0L10 5L0 10z\' fill=\'#fff\'/></marker></defs><ellipse cx=\'110\' cy=\'130\' rx=\'62\' ry=\'30\' fill=\'#fff\' fill-opacity=\'.95\' stroke=\'#c2a15a\' stroke-width=\'3\'/><text x=\'110\' y=\'134\' text-anchor=\'middle\' font-size=\'13\' font-weight=\'700\' fill=\'#0b2a4a\'>Qualité</text><ellipse cx=\'300\' cy=\'70\' rx=\'70\' ry=\'30\' fill=\'#fff\' fill-opacity=\'.95\' stroke=\'#c2a15a\' stroke-width=\'3\'/><text x=\'300\' y=\'74\' text-anchor=\'middle\' font-size=\'13\' font-weight=\'700\' fill=\'#0b2a4a\'>Satisfaction</text><ellipse cx=\'490\' cy=\'130\' rx=\'62\' ry=\'30\' fill=\'#fff\' fill-opacity=\'.95\' stroke=\'#c2a15a\' stroke-width=\'3\'/><text x=\'490\' y=\'134\' text-anchor=\'middle\' font-size=\'13\' font-weight=\'700\' fill=\'#0b2a4a\'>Fidélité</text><line x1=\'160\' y1=\'112\' x2=\'238\' y2=\'84\' stroke=\'#fff\' stroke-width=\'2.5\' marker-end=\'url(#ar2)\'/><line x1=\'362\' y1=\'84\' x2=\'442\' y2=\'112\' stroke=\'#fff\' stroke-width=\'2.5\' marker-end=\'url(#ar2)\'/><line x1=\'174\' y1=\'134\' x2=\'426\' y2=\'134\' stroke=\'#fff\' stroke-width=\'2.5\' marker-end=\'url(#ar2)\'/><rect x=\'38\' y=\'222\' width=\'44\' height=\'24\' rx=\'3\' fill=\'#c2a15a\'/><line x1=\'60\' y1=\'222\' x2=\'90\' y2=\'160\' stroke=\'#fff\' stroke-width=\'2.5\' marker-end=\'url(#ar2)\'/><rect x=\'88\' y=\'222\' width=\'44\' height=\'24\' rx=\'3\' fill=\'#c2a15a\'/><line x1=\'110\' y1=\'222\' x2=\'110\' y2=\'160\' stroke=\'#fff\' stroke-width=\'2.5\' marker-end=\'url(#ar2)\'/><rect x=\'138\' y=\'222\' width=\'44\' height=\'24\' rx=\'3\' fill=\'#c2a15a\'/><line x1=\'160\' y1=\'222\' x2=\'130\' y2=\'160\' stroke=\'#fff\' stroke-width=\'2.5\' marker-end=\'url(#ar2)\'/><rect x=\'418\' y=\'222\' width=\'44\' height=\'24\' rx=\'3\' fill=\'#c2a15a\'/><line x1=\'440\' y1=\'222\' x2=\'470\' y2=\'160\' stroke=\'#fff\' stroke-width=\'2.5\' marker-end=\'url(#ar2)\'/><rect x=\'468\' y=\'222\' width=\'44\' height=\'24\' rx=\'3\' fill=\'#c2a15a\'/><line x1=\'490\' y1=\'222\' x2=\'490\' y2=\'160\' stroke=\'#fff\' stroke-width=\'2.5\' marker-end=\'url(#ar2)\'/><rect x=\'518\' y=\'222\' width=\'44\' height=\'24\' rx=\'3\' fill=\'#c2a15a\'/><line x1=\'540\' y1=\'222\' x2=\'510\' y2=\'160\' stroke=\'#fff\' stroke-width=\'2.5\' marker-end=\'url(#ar2)\'/><text x=\'300\' y=\'296\' text-anchor=\'middle\' font-size=\'24\' font-weight=\'700\' fill=\'#fff\' font-family=\'Inter,Segoe UI,sans-serif\'>SmartPLS</text><text x=\'300\' y=\'318\' text-anchor=\'middle\' font-size=\'12\' fill=\'#c9d8e8\' font-family=\'Inter,Segoe UI,sans-serif\'>PLS-SEM · mesure · bootstrapping · médiation</text></svg>';
     return head + "<rect x='60' y='60' width='480' height='220' rx='14' fill='#fff' fill-opacity='.95'/>" +
       "<g><rect x='90' y='170' width='36' height='80' fill='#c2a15a'/><rect x='136' y='140' width='36' height='110' fill='#1f5f99'/><rect x='182' y='110' width='36' height='140' fill='#0b2a4a'/><rect x='228' y='150' width='36' height='100' fill='#5b9bd5'/></g>" +
@@ -280,7 +281,7 @@
     const speakIntro = 'Concept ' + (idx + 1) + ' : ' + c.titre + '. ' + c.objectif + '.';
     const dejaOk = !!etat.valides[c.id];
     const studio = OUTIL === 'tableau';
-    const pls = OUTIL === 'smartpls';
+    const pls = OUTIL === 'smartpls' || OUTIL === 'powerbi';
     const texte = studio || pls;
 
     body.innerHTML =
@@ -320,9 +321,9 @@
   }
 
   function plsHTML(c) {
-    return '<div class="pl-pls"><div class="pl-pls-head"><i class="fas fa-table"></i> Résultats SmartPLS à interpréter <a href="/formations/smartpls" target="_blank" style="float:right;color:#c2a15a;font-weight:600;text-decoration:none">Pratiquer dans le laboratoire</a></div>' +
+    return '<div class="pl-pls"><div class="pl-pls-head"><i class="fas fa-table"></i> ' + (OUTIL === 'powerbi' ? 'Données et modèle à analyser' : 'Résultats SmartPLS à interpréter') + ' <a href="/formations/' + OUTIL + '" target="_blank" style="float:right;color:#c2a15a;font-weight:600;text-decoration:none">Pratiquer dans le laboratoire</a></div>' +
       '<div class="pl-pls-res">' + (c.resultats || '<p class="pls-note">Appuyez-vous sur le schéma et l\'exemple de la leçon pour répondre.</p>') + '</div></div>' +
-      '<textarea class="pl-answer" id="answer" placeholder="Rédigez votre interprétation (quelques phrases, avec les valeurs chiffrées)..."></textarea>';
+      '<textarea class="pl-answer" id="answer" placeholder="Rédigez votre réponse (quelques phrases ou la formule DAX demandée)..."></textarea>';
   }
 
   function starter() { return OUTIL === 'sql' ? '-- Écrivez votre requête ici\n' : (OUTIL === 'python' ? '# Écrivez votre code ici\n' : '# Écrivez votre code ici\n'); }
@@ -421,18 +422,18 @@
 
   async function soumettre(c) {
     const ex = c.exercice, fb = $('#fb'), btn = $('#b-submit');
-    const code = (OUTIL === 'tableau' || OUTIL === 'smartpls') ? $('#answer').value.trim() : editor.get().trim();
+    const code = (OUTIL === 'tableau' || OUTIL === 'smartpls' || OUTIL === 'powerbi') ? $('#answer').value.trim() : editor.get().trim();
     if (!code || /^(#|--)[^\n]*$/.test(code)) { feedback(false, 'Écrivez d\'abord votre réponse.'); return; }
     btn.disabled = true;
     let ok = false, msg = '';
     try {
-      if (OUTIL === 'smartpls') {
+      if (OUTIL === 'smartpls' || OUTIL === 'powerbi') {
         const t = code.toLowerCase().replace(/\s+/g, ' ');
         const mots = ex.mots_cles || [];
         const test = (m) => m.split('|').some(a => { try { return new RegExp(a.toLowerCase()).test(t); } catch (e) { return t.includes(a.toLowerCase()); } });
         const trouves = mots.filter(test).length;
-        if (code.length < 25) msg = 'Votre interprétation est trop courte. Rédigez une ou deux phrases en citant les valeurs.';
-        else if (mots.length && trouves < Math.max(1, Math.ceil(mots.length * 0.6))) msg = 'Votre réponse est incomplète : citez les valeurs du tableau, comparez-les aux seuils et concluez (un indice est disponible).';
+        if (code.length < 25) msg = 'Votre interprétation est trop courte. Rédigez une ou deux phrases en citant les éléments demandés.';
+        else if (mots.length && trouves < Math.max(1, Math.ceil(mots.length * 0.6))) msg = 'Votre réponse est incomplète : reprenez les éléments de l\'énoncé (valeurs, fonctions, étapes), justifiez et concluez (un indice est disponible).';
         else ok = true;
       } else if (OUTIL === 'tableau') {
         const mots = [...new Set((ex.mots_cles || []).map(m => m.toLowerCase()))];

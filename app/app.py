@@ -2582,6 +2582,7 @@ def formations():
         ('r', 'R', 'base R, statistiques, régression', 'Le langage des statisticiens : manipulez, résumez et modélisez des données.'),
         ('sql', 'SQL', 'SELECT, jointures, fenêtres', 'Interrogez des bases de ventes avec de vraies requêtes exécutées dans votre navigateur.'),
         ('tableau', 'Tableau', 'visualisation, tableaux de bord', 'Apprenez à choisir le bon graphique et à raconter une histoire avec les données.'),
+        ('powerbi', 'Power BI', 'Power Query, modèle en étoile, DAX, rapports, publication', 'Construisez des rapports interactifs : transformez vos données, modélisez, écrivez des mesures DAX et publiez vos tableaux de bord.'),
         ('smartpls', 'SmartPLS', 'PLS-SEM, mesure, bootstrapping, médiation', 'Modélisez des équations structurelles : validez vos échelles de mesure, testez vos hypothèses et interprétez vos résultats.'),
     ]
     niveaux = [('debutant', 'Débutant'), ('intermediaire', 'Intermédiaire'), ('avance', 'Avancé')]
@@ -2637,6 +2638,12 @@ def _pls_purge():
     now = _time.time()
     for k in [k for k, v in _PLS_DATA.items() if now - v[2] > 3600]:
         _PLS_DATA.pop(k, None)
+
+
+@app.route('/formations/powerbi')
+@login_required
+def powerbi_lab():
+    return render_template('powerbi_lab.html')
 
 
 @app.route('/formations/smartpls')
@@ -2731,7 +2738,7 @@ def smartpls_run():
 @app.route('/formations/cours/<outil>/<niveau>')
 def formations_player(outil, niveau):
     """Lecteur de cours interactif (type DataCamp) avec voix et illustrations"""
-    if outil not in ['python', 'r', 'sql', 'tableau', 'smartpls']:
+    if outil not in ['python', 'r', 'sql', 'tableau', 'smartpls', 'powerbi']:
         return redirect(url_for('formations'))
     if niveau not in ['debutant', 'intermediaire', 'avance']:
         return redirect(url_for('formations'))
@@ -2754,7 +2761,7 @@ except Exception as e:
 SYSTEM_PROMPT_TUTOR = """Tu es EconBot, un instructeur IA pour DataEcon.Ci, une plateforme ivoirienne de formation en économétrie et data science.
 
 Ton rôle :
-- Enseigner R, Python, SQL, Tableau et SmartPLS (PLS-SEM : modèle de mesure et structurel, fiabilité, AVE, HTMT, bootstrapping, médiation, modération) aux apprenants
+- Enseigner R, Python, SQL, Tableau, Power BI (Power Query, modèle en étoile, DAX, visuels, RLS, publication) et SmartPLS (PLS-SEM : modèle de mesure et structurel, fiabilité, AVE, HTMT, bootstrapping, médiation, modération) aux apprenants
 - Expliquer les concepts de manière claire, pédagogique et progressive
 - Donner des exemples concrets avec des données fictives (souvent des données économiques de la Côte d'Ivoire)
 - Proposer des exercices pratiques
@@ -2850,7 +2857,7 @@ def api_lesson(outil, niveau):
     import os as os_module
     
     # Sécuriser les paramètres
-    if outil not in ['python', 'r', 'sql', 'tableau', 'smartpls']:
+    if outil not in ['python', 'r', 'sql', 'tableau', 'smartpls', 'powerbi']:
         return jsonify({"error": "Outil non supporté"}), 400
     if niveau not in ['debutant', 'intermediaire', 'avance']:
         return jsonify({"error": "Niveau non supporté"}), 400

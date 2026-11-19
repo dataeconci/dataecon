@@ -1,0 +1,117 @@
+{
+ "outil": "powerbi",
+ "niveau": "avance",
+ "titre": "Power BI avancé",
+ "description": "Intelligence temporelle, contextes DAX, RLS, performance et déploiement dans le Service.",
+ "concepts": [
+  {
+   "id": "pbi_adv_1",
+   "titre": "Intelligence temporelle en DAX",
+   "objectif": "Comparer des périodes avec TOTALYTD, SAMEPERIODLASTYEAR et DATEADD",
+   "explication": "Les fonctions d'**intelligence temporelle** exigent une **table de dates** contiguë, marquée comme telle et reliée aux faits. Principales fonctions : `TOTALYTD([CA], Calendrier[Date])` (cumul depuis le début de l'année), `TOTALMTD`, `TOTALQTD`, `SAMEPERIODLASTYEAR(Calendrier[Date])` (même période l'année précédente), `DATEADD(Calendrier[Date], -1, MONTH)` (décalage flexible), `PARALLELPERIOD`.\n\nModèle classique : `CA N-1 = CALCULATE([CA], SAMEPERIODLASTYEAR(Calendrier[Date]))` puis `Variation % = DIVIDE([CA] - [CA N-1], [CA N-1])`. Pour une moyenne mobile sur 3 mois : `CALCULATE([CA], DATESINPERIOD(Calendrier[Date], MAX(Calendrier[Date]), -3, MONTH)) / 3`.",
+   "image_svg": "<svg viewBox='0 0 600 170' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><defs><marker id='ar' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='7' markerHeight='7' orient='auto-start-reverse'><path d='M0 0L10 5L0 10z' fill='#0b2a4a'/></marker></defs><text x='300.0' y='22' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Chaîne de calcul temporel</text><rect x='20' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='83.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Table de dates</text><text x='83.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>contiguë et marquée</text><line x1='146' y1='95' x2='160' y2='95' stroke='#0b2a4a' stroke-width='1.8' marker-end='url(#ar)'/><rect x='160' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='223.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">CALCULATE</text><text x='223.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>change la période</text><line x1='286' y1='95' x2='300' y2='95' stroke='#0b2a4a' stroke-width='1.8' marker-end='url(#ar)'/><rect x='300' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='363.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">SAMEPERIODLASTYEAR</text><text x='363.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>N-1</text><line x1='426' y1='95' x2='440' y2='95' stroke='#0b2a4a' stroke-width='1.8' marker-end='url(#ar)'/><rect x='440' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='503.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">DIVIDE</text><text x='503.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>variation %</text></svg>",
+   "code_exemple": "CA N-1 = CALCULATE([CA], SAMEPERIODLASTYEAR(Calendrier[Date]))\nVariation % = DIVIDE([CA] - [CA N-1], [CA N-1])\nCA cumulé = TOTALYTD([CA], Calendrier[Date])",
+   "question_reflexion": "Pourquoi une table de dates avec des trous fausse-t-elle ces fonctions ?",
+   "resultats": "<table class=\"pls-table\"><thead><tr><th>Mois</th><th>CA 2025</th><th>CA 2024</th></tr></thead><tbody><tr><td>Janvier</td><td>120</td><td>100</td></tr><tr><td>Février</td><td>130</td><td>110</td></tr><tr><td>Mars</td><td>150</td><td>125</td></tr></tbody></table><p class=\"pls-note\">CA mensuel de deux années.</p>",
+   "exercice": {
+    "enonce": "Écrivez les mesures « CA N-1 » et « Variation % ». Quelle valeur de Variation % obtient-on pour janvier avec le tableau de gauche ?",
+    "indice": "Variation = (120 - 100) / 100.",
+    "solution_attendue": "CA N-1 = CALCULATE([CA], SAMEPERIODLASTYEAR(Calendrier[Date])) ; Variation % = DIVIDE([CA] - [CA N-1], [CA N-1]). Pour janvier : (120 - 100) / 100 = 20 %.",
+    "mots_cles": [
+     "calculate",
+     "sameperiodlastyear",
+     "divide",
+     "20"
+    ]
+   }
+  },
+  {
+   "id": "pbi_adv_2",
+   "titre": "Contextes, ALL, VAR et itérateurs",
+   "objectif": "Maîtriser contexte de ligne, contexte de filtre, ALL/ALLEXCEPT, VAR et RETURN",
+   "explication": "Deux contextes coexistent : le **contexte de filtre** (filtres du visuel, des segments et de CALCULATE) et le **contexte de ligne** (la ligne courante dans une colonne calculée ou un itérateur comme `SUMX`). `CALCULATE` convertit un contexte de ligne en contexte de filtre (**transition de contexte**).\n\n`ALL(table[col])` retire les filtres : indispensable pour un **dénominateur de part de marché** : `Part % = DIVIDE([CA], CALCULATE([CA], ALL(Produits)))`. `ALLEXCEPT` retire tout sauf certaines colonnes ; `ALLSELECTED` respecte les segments choisis par l'utilisateur ; `REMOVEFILTERS` est l'équivalent moderne de ALL dans CALCULATE. `KEEPFILTERS` conserve les filtres existants.\n\nLes **variables** `VAR ... RETURN` rendent le code lisible et plus rapide, car l'expression n'est évaluée qu'une fois : `VAR CAtotal = CALCULATE([CA], ALL(Ventes)) RETURN DIVIDE([CA], CAtotal)`. `RANKX`, `TOPN` et `FILTER` servent aux classements et sélections dynamiques.",
+   "image_svg": "<svg viewBox='0 0 600 170' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><defs><marker id='ar' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='7' markerHeight='7' orient='auto-start-reverse'><path d='M0 0L10 5L0 10z' fill='#0b2a4a'/></marker></defs><text x='300.0' y='22' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Contextes DAX</text><rect x='20' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='83.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Contexte de ligne</text><text x='83.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>ligne courante</text><line x1='146' y1='95' x2='160' y2='95' stroke='#0b2a4a' stroke-width='1.8' marker-end='url(#ar)'/><rect x='160' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='223.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Transition</text><text x='223.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>CALCULATE</text><line x1='286' y1='95' x2='300' y2='95' stroke='#0b2a4a' stroke-width='1.8' marker-end='url(#ar)'/><rect x='300' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='363.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Contexte de filtre</text><text x='363.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>visuel + segments</text><line x1='426' y1='95' x2='440' y2='95' stroke='#0b2a4a' stroke-width='1.8' marker-end='url(#ar)'/><rect x='440' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='503.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">ALL</text><text x='503.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>retire les filtres</text></svg>",
+   "code_exemple": "Part % =\nVAR CAtotal = CALCULATE([CA], ALL(Produits))\nRETURN DIVIDE([CA], CAtotal)\n\nRang = RANKX(ALL(Produits[Nom]), [CA])",
+   "question_reflexion": "Quelle différence entre ALL et ALLSELECTED ?",
+   "resultats": "",
+   "exercice": {
+    "enonce": "Écrivez une mesure « Part % » avec VAR qui donne la part de chaque produit dans le CA total de tous les produits. Pourquoi faut-il ALL ?",
+    "indice": "Le dénominateur ne doit pas être filtré par le produit de la ligne.",
+    "solution_attendue": "Part % = VAR CAtotal = CALCULATE([CA], ALL(Produits)) RETURN DIVIDE([CA], CAtotal). ALL supprime le filtre produit du visuel ; sans cela, le dénominateur serait filtré sur la ligne et la part vaudrait toujours 100 %.",
+    "mots_cles": [
+     "var",
+     "calculate",
+     "all",
+     "return",
+     "divide",
+     "filtre|d[eé]nominateur|100"
+    ]
+   }
+  },
+  {
+   "id": "pbi_adv_3",
+   "titre": "Sécurité au niveau des lignes (RLS)",
+   "objectif": "Restreindre les données visibles selon l'utilisateur",
+   "explication": "La **sécurité au niveau des lignes** (*Row-Level Security*, RLS) limite les lignes visibles par chaque lecteur : un directeur régional ne voit que sa région. On la définit dans Desktop : **Modélisation > Gérer les rôles**, avec une expression de filtre DAX sur une table, par exemple `Régions[Région] = \"Nord\"`. On teste via **Afficher en tant que**.\n\nLa RLS **dynamique** utilise `USERPRINCIPALNAME()` : une table d'autorisations (email, région) est reliée aux données et le filtre `Autorisations[Email] = USERPRINCIPALNAME()` s'adapte à chaque utilisateur sans créer un rôle par personne. Après publication, on **affecte les membres** au rôle dans le Service. La RLS ne s'applique qu'aux lecteurs : les **membres avec droit d'édition** de l'espace de travail voient tout.",
+   "image_svg": "<svg viewBox='0 0 600 170' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><defs><marker id='ar' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='7' markerHeight='7' orient='auto-start-reverse'><path d='M0 0L10 5L0 10z' fill='#0b2a4a'/></marker></defs><text x='300.0' y='22' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Mise en place de la RLS</text><rect x='20' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='83.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Rôle</text><text x='83.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>filtre DAX</text><line x1='146' y1='95' x2='160' y2='95' stroke='#0b2a4a' stroke-width='1.8' marker-end='url(#ar)'/><rect x='160' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='223.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Test</text><text x='223.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>Afficher en tant que</text><line x1='286' y1='95' x2='300' y2='95' stroke='#0b2a4a' stroke-width='1.8' marker-end='url(#ar)'/><rect x='300' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='363.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Publier</text><text x='363.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>Service Power BI</text><line x1='426' y1='95' x2='440' y2='95' stroke='#0b2a4a' stroke-width='1.8' marker-end='url(#ar)'/><rect x='440' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='503.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Membres</text><text x='503.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>affectés au rôle</text></svg>",
+   "code_exemple": "Rôle statique  : Régions[Région] = \"Nord\"\nRôle dynamique : Autorisations[Email] = USERPRINCIPALNAME()",
+   "question_reflexion": "Pourquoi la RLS dynamique est-elle plus économe à maintenir ?",
+   "resultats": "",
+   "exercice": {
+    "enonce": "Vous avez 40 responsables régionaux. Comment mettre en place la RLS sans créer 40 rôles, et où l'activer après publication ?",
+    "indice": "Une table d'autorisations et la fonction USERPRINCIPALNAME.",
+    "solution_attendue": "Créer une table d'autorisations (email, région) reliée au modèle, définir un seul rôle avec le filtre Autorisations[Email] = USERPRINCIPALNAME(), le tester avec « Afficher en tant que », puis publier et affecter les utilisateurs au rôle dans le Service.",
+    "mots_cles": [
+     "autorisation|table",
+     "userprincipalname",
+     "un seul r[oô]le|1 r[oô]le|r[oô]le",
+     "service|publi",
+     "afficher en tant que|tester|test"
+    ]
+   }
+  },
+  {
+   "id": "pbi_adv_4",
+   "titre": "Performance et modes de stockage",
+   "objectif": "Optimiser un modèle : Import, DirectQuery, agrégations, Performance Analyzer",
+   "explication": "Le mode **Import** charge les données en mémoire (moteur VertiPaq, très rapide, compressé) ; **DirectQuery** interroge la source à chaque interaction (données fraîches, mais plus lent et limité en DAX) ; le mode **Composite** mélange les deux ; **Live Connection** se branche sur un modèle existant. Les **agrégations** stockent des totaux préparés en Import et ne sollicitent le détail DirectQuery qu'en cas de besoin.\n\nPour accélérer : réduire la **cardinalité** (supprimer les colonnes inutiles, éviter les colonnes à valeurs quasi uniques comme les horodatages précis), préférer un **schéma en étoile**, utiliser des **mesures plutôt que des colonnes calculées**, limiter les visuels par page, et faire les transformations à la source (**repli de requête**, *query folding*). L'outil **Analyseur de performances** mesure le temps de chaque visuel ; **DAX Studio** et le **VertiPaq Analyzer** détaillent la taille des colonnes.",
+   "image_svg": "<svg viewBox='0 0 600 170' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><defs><marker id='ar' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='7' markerHeight='7' orient='auto-start-reverse'><path d='M0 0L10 5L0 10z' fill='#0b2a4a'/></marker></defs><text x='300.0' y='22' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Modes de stockage</text><rect x='20' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='83.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Import</text><text x='83.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>rapide, en mémoire</text><line x1='146' y1='95' x2='160' y2='95' stroke='#0b2a4a' stroke-width='1.8' marker-end='url(#ar)'/><rect x='160' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='223.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">DirectQuery</text><text x='223.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>données en direct</text><line x1='286' y1='95' x2='300' y2='95' stroke='#0b2a4a' stroke-width='1.8' marker-end='url(#ar)'/><rect x='300' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='363.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Composite</text><text x='363.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>mixte</text><line x1='426' y1='95' x2='440' y2='95' stroke='#0b2a4a' stroke-width='1.8' marker-end='url(#ar)'/><rect x='440' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='503.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Agrégations</text><text x='503.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>totaux préparés</text></svg>",
+   "code_exemple": "Affichage > Analyseur de performances > Démarrer l'enregistrement > Actualiser les visuels\nRésultat : temps par visuel = Requête DAX + Affichage + Autre",
+   "question_reflexion": "Pourquoi supprimer une colonne horodatée à la seconde peut-il réduire fortement le modèle ?",
+   "resultats": "",
+   "exercice": {
+    "enonce": "Un rapport sur 80 millions de lignes est lent. Citez quatre actions concrètes pour l'accélérer.",
+    "indice": "Modèle, colonnes, stockage, outil de mesure.",
+    "solution_attendue": "Passer à un schéma en étoile, supprimer les colonnes inutiles et réduire la cardinalité, utiliser des agrégations (ou Import au lieu de DirectQuery), remplacer les colonnes calculées par des mesures, et diagnostiquer avec l'Analyseur de performances.",
+    "mots_cles": [
+     "[eé]toile",
+     "colonne",
+     "agr[eé]gation|import",
+     "mesure",
+     "analyseur|performance"
+    ]
+   }
+  },
+  {
+   "id": "pbi_adv_5",
+   "titre": "Déploiement et gouvernance dans le Service",
+   "objectif": "Publier, actualiser, partager et gouverner les rapports",
+   "explication": "Dans le **Service Power BI**, les contenus vivent dans des **espaces de travail** (*workspaces*) avec des rôles : **Administrateur, Membre, Contributeur, Lecteur**. On publie depuis Desktop, puis on planifie l'**actualisation** du **jeu de données**. Pour des sources locales (SQL Server interne, fichiers sur un serveur), il faut une **passerelle de données** (*gateway*) installée sur un poste ou serveur.\n\nOn distribue aux lecteurs via une **application** (*app*) : un ensemble de rapports et tableaux de bord packagé, ou par partage direct. Les **tableaux de bord** épinglent des vignettes issues de plusieurs rapports ; les **alertes de données** préviennent quand un seuil est franchi ; les **abonnements** envoient des instantanés par email. Les **flux de données** (*dataflows*) centralisent la préparation Power Query réutilisable, et les **pipelines de déploiement** passent le contenu de Développement à Test puis Production. L'étiquetage de **sensibilité** et la **certification** des jeux de données renforcent la gouvernance.",
+   "image_svg": "<svg viewBox='0 0 600 170' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'><defs><marker id='ar' viewBox='0 0 10 10' refX='9' refY='5' markerWidth='7' markerHeight='7' orient='auto-start-reverse'><path d='M0 0L10 5L0 10z' fill='#0b2a4a'/></marker></defs><text x='300.0' y='22' text-anchor='middle' font-size='14' font-weight='700' fill='#0b2a4a'>Cycle de déploiement</text><rect x='20' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='83.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Desktop</text><text x='83.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>création .pbix</text><line x1='146' y1='95' x2='160' y2='95' stroke='#0b2a4a' stroke-width='1.8' marker-end='url(#ar)'/><rect x='160' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='223.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Publier</text><text x='223.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>espace de travail</text><line x1='286' y1='95' x2='300' y2='95' stroke='#0b2a4a' stroke-width='1.8' marker-end='url(#ar)'/><rect x='300' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='363.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Passerelle</text><text x='363.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>sources locales</text><line x1='426' y1='95' x2='440' y2='95' stroke='#0b2a4a' stroke-width='1.8' marker-end='url(#ar)'/><rect x='440' y='60' width='126' height='70' rx='6' fill='#eaf1f8' stroke='#cfd9e6'/><text x='503.0' y='90' text-anchor='middle' font-size='12.5' fill='#0b2a4a' font-weight=\"700\">Application</text><text x='503.0' y='112' text-anchor='middle' font-size='10' fill='#1f2933'>diffusion aux lecteurs</text></svg>",
+   "code_exemple": "Service > Jeu de données > Paramètres > Actualisation planifiée (jusqu'à 8 fois/jour en Pro)\nEspace de travail > Créer une application > Audience",
+   "question_reflexion": "Quel est l'intérêt d'un pipeline de déploiement ?",
+   "resultats": "",
+   "exercice": {
+    "enonce": "Un rapport dépend d'une base SQL interne à l'entreprise et doit se mettre à jour chaque matin. Que faut-il configurer, et comment le diffuser à 200 lecteurs ?",
+    "indice": "Une passerelle, une actualisation planifiée, une application.",
+    "solution_attendue": "Installer une passerelle de données pour atteindre la base interne, configurer l'actualisation planifiée du jeu de données chaque matin, puis publier le rapport dans un espace de travail et le diffuser via une application aux 200 lecteurs (rôle Lecteur).",
+    "mots_cles": [
+     "passerelle|gateway",
+     "actualisation|planifi",
+     "application|app",
+     "espace de travail|workspace|lecteur"
+    ]
+   }
+  }
+ ]
+}

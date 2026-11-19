@@ -1,0 +1,431 @@
+{% extends "layout.html" %}
+{% block title %}Laboratoire Power BI - DataEcon.ci{% endblock %}
+{% block content %}
+<style>
+.pb-lab{--navy:#0b2a4a;--steel:#1f5f99;--gold:#c2a15a;--line:#d9e2ec;max-width:1280px;margin:0 auto;padding:1.4rem 1rem 3rem;color:#1f2933}
+.pb-lab h1{font-size:1.5rem;color:var(--navy);font-weight:800;margin:0}
+.pb-lab .lead{color:#5b6b7b;margin:.2rem 0 1.2rem}
+.pb-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:1rem 1.1rem;margin-bottom:1rem}
+.pb-card h2{font-size:1rem;color:var(--navy);font-weight:700;margin:0 0 .7rem}
+.pb-row{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
+.pb-btn{border:1px solid var(--steel);background:#fff;color:var(--steel);border-radius:8px;padding:.45rem .9rem;font-weight:600;font-size:.88rem;cursor:pointer}
+.pb-btn:hover{background:#eaf1f8}.pb-btn.primary{background:var(--navy);border-color:var(--navy);color:#fff}.pb-btn.primary:hover{background:var(--steel)}
+.pb-lab select,.pb-lab input[type=text]{border:1px solid #c5d1de;border-radius:7px;padding:.4rem .55rem;font-size:.88rem;background:#fff}
+.pb-lab label{font-size:.78rem;color:#5b6b7b;font-weight:600;display:block;margin-bottom:.15rem}
+.pb-tabs{display:flex;gap:.3rem;border-bottom:2px solid var(--line);margin-bottom:1rem;flex-wrap:wrap}
+.pb-tab{padding:.5rem .9rem;border:0;background:none;font-weight:600;color:#5b6b7b;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.pb-tab.on{color:var(--navy);border-bottom-color:var(--gold)}
+.pb-pane{display:none}.pb-pane.on{display:block}
+.chips{display:flex;flex-wrap:wrap;gap:.3rem}
+.chip{border:1px solid #c5d1de;border-radius:999px;padding:.15rem .65rem;font-size:.8rem;cursor:pointer;background:#fff;user-select:none}
+.chip.on{background:var(--steel);color:#fff;border-color:var(--steel)}
+.pb-slicers{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:.8rem}
+.pb-slicer{border:1px solid var(--line);border-radius:10px;padding:.6rem .7rem;background:#fbfcfe}
+.pb-slicer b{display:block;font-size:.8rem;color:var(--navy);margin-bottom:.35rem}
+.pb-canvas{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:.9rem;margin-top:.9rem}
+.pb-vis{border:1px solid var(--line);border-radius:12px;background:#fff;padding:.6rem .7rem;position:relative}
+.pb-vis h3{font-size:.9rem;color:var(--navy);font-weight:700;margin:0 0 .3rem;padding-right:1.6rem}
+.pb-vis .x{position:absolute;right:.5rem;top:.35rem;border:0;background:none;color:#a33;cursor:pointer}
+.pb-vis svg{width:100%;height:auto;display:block}
+.pb-vis table{width:100%;font-size:.85rem;border-collapse:collapse}
+.pb-vis td,.pb-vis th{padding:.25rem .4rem;border-bottom:1px solid #edf1f5}
+.pb-vis th{background:#f1f5f9;color:var(--navy);text-align:left}.pb-vis td.num{text-align:right}
+.pb-card-kpi{font-size:2.2rem;font-weight:800;color:var(--navy);text-align:center;padding:1.2rem 0 .6rem}
+.pb-kpi-sub{text-align:center;color:#5b6b7b;font-size:.85rem;padding-bottom:.8rem}
+.pb-lab textarea{width:100%;border:1px solid #c5d1de;border-radius:8px;padding:.6rem;font-family:Consolas,Menlo,monospace;font-size:.88rem;min-height:92px}
+.pb-msg{margin-top:.6rem;padding:.6rem .8rem;border-radius:8px;font-size:.88rem}
+.pb-msg.ok{background:#e8f4ec;color:#1d6a3a;border:1px solid #bfe0cb}.pb-msg.ko{background:#fbeaea;color:#a02828;border:1px solid #efc6c6}.pb-msg.info{background:#eef4fa;color:#0b2a4a;border:1px solid #cddcec}
+.pb-mlist{list-style:none;padding:0;margin:0;font-family:Consolas,Menlo,monospace;font-size:.84rem}
+.pb-mlist li{display:flex;justify-content:space-between;gap:.5rem;padding:.3rem .5rem;border-bottom:1px solid #edf1f5}
+.pb-mlist button{border:0;background:none;color:#a33;cursor:pointer}
+.pb-grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}@media(max-width:900px){.pb-grid2{grid-template-columns:1fr}}
+.pb-code{background:#0b2a4a;color:#e8eef5;border-radius:8px;padding:.6rem .8rem;font-family:Consolas,Menlo,monospace;font-size:.82rem;white-space:pre-wrap}
+.pb-res{width:100%;border-collapse:collapse;font-size:.88rem;margin-top:.6rem}.pb-res th{background:var(--navy);color:#fff;padding:.35rem .5rem;text-align:left}.pb-res td{padding:.3rem .5rem;border-bottom:1px solid #edf1f5}.pb-res td.num{text-align:right}
+</style>
+
+<div class="pb-lab">
+  <h1>Laboratoire Power BI</h1>
+  <p class="lead">Construisez un rapport interactif sur un jeu de ventes de démonstration, puis écrivez et testez vos mesures DAX. Toutes les mesures s'évaluent selon le contexte de filtre des segments, comme dans Power BI.</p>
+
+  <div class="pb-card">
+    <h2>Table <code>Ventes</code> (<span id="nrows"></span> lignes) : colonnes <code>Date, Annee, Mois, Ville, Produit, Canal, Client, Quantite, Prix, Montant</code></h2>
+    <div class="pb-slicers" id="slicers"></div>
+  </div>
+
+  <div class="pb-tabs">
+    <button class="pb-tab on" data-t="rapport">Rapport</button>
+    <button class="pb-tab" data-t="dax">Mesures DAX</button>
+    <button class="pb-tab" data-t="defis">Défis DAX</button>
+  </div>
+
+  <div class="pb-pane on" id="p-rapport">
+    <div class="pb-card">
+      <h2>Ajouter un visuel</h2>
+      <div class="pb-row">
+        <div><label>Visuel</label><select id="v-type"><option value="bar">Histogramme</option><option value="line">Courbes</option><option value="donut">Anneau</option><option value="card">Carte</option><option value="table">Tableau</option></select></div>
+        <div id="v-axis-w"><label>Axe / catégorie</label><select id="v-axis"></select></div>
+        <div><label>Valeur (mesure)</label><select id="v-meas"></select></div>
+        <div style="align-self:flex-end"><button class="pb-btn primary" id="v-add">Ajouter au rapport</button> <button class="pb-btn" id="v-clear">Vider la page</button></div>
+      </div>
+      <p class="pb-kpi-sub" style="text-align:left;margin:.6rem 0 0">Cliquez sur une barre, un point ou une part pour filtrer les autres visuels (filtrage croisé) ; cliquez à nouveau pour annuler.</p>
+    </div>
+    <div class="pb-canvas" id="canvas"></div>
+  </div>
+
+  <div class="pb-pane" id="p-dax">
+    <div class="pb-grid2">
+      <div class="pb-card">
+        <h2>Nouvelle mesure</h2>
+        <textarea id="dax-in" spellcheck="false" placeholder="Part % = DIVIDE([CA], CALCULATE([CA], ALL(Ventes[Produit])))"></textarea>
+        <div class="pb-row" style="margin-top:.6rem">
+          <button class="pb-btn primary" id="dax-add">Enregistrer la mesure</button>
+          <button class="pb-btn" id="dax-test">Évaluer sans enregistrer</button>
+        </div>
+        <div id="dax-msg"></div>
+        <p class="pb-kpi-sub" style="text-align:left">Fonctions : SUM, AVERAGE, MIN, MAX, COUNT, COUNTROWS, DISTINCTCOUNT, DIVIDE, CALCULATE, ALL, REMOVEFILTERS, SUMX, AVERAGEX, IF, ROUND, ABS, VAR/RETURN. Opérateurs : + - * / = &lt;&gt; &lt; &gt; &lt;= &gt;= &amp;&amp; ||. Les noms de colonnes n'ont pas d'accent : <code>Ventes[Quantite]</code>.</p>
+      </div>
+      <div class="pb-card">
+        <h2>Mesures du modèle</h2>
+        <ul class="pb-mlist" id="mlist"></ul>
+      </div>
+    </div>
+    <div class="pb-card">
+      <h2>Résultat par catégorie (selon les segments)</h2>
+      <div class="pb-row"><div><label>Mesure</label><select id="r-meas"></select></div><div><label>Grouper par</label><select id="r-dim"></select></div></div>
+      <div id="r-out"></div>
+    </div>
+  </div>
+
+  <div class="pb-pane" id="p-defis">
+    <div class="pb-card">
+      <h2>Défis : écrivez la mesure demandée</h2>
+      <div class="pb-row"><div><label>Défi</label><select id="d-sel"></select></div></div>
+      <p id="d-txt" style="margin:.7rem 0 .4rem;font-weight:600;color:var(--navy)"></p>
+      <textarea id="d-in" spellcheck="false" placeholder="Ma mesure = ..."></textarea>
+      <div class="pb-row" style="margin-top:.6rem"><button class="pb-btn primary" id="d-ok">Vérifier</button><button class="pb-btn" id="d-hint">Indice</button><button class="pb-btn" id="d-sol">Voir une solution</button></div>
+      <div id="d-msg"></div>
+    </div>
+  </div>
+</div>
+
+{% raw %}
+<script>
+(function(){
+'use strict';
+/* ---------- Jeu de données (déterministe) ---------- */
+let seed=20260;function rnd(){seed=(seed*16807)%2147483647;return (seed-1)/2147483646;}
+const VILLES=['Abidjan','Bouaké','Daloa','San-Pédro','Korhogo'];
+const PRODUITS=[['Riz',650],['Cacao',1450],['Café',1100],['Anacarde',900],['Huile',1250]];
+const CANAUX=['Boutique','En ligne','Grossiste'];
+const DATA=[];
+for(let i=0;i<480;i++){
+  const an=2024+(rnd()<.45?0:1), mo=1+Math.floor(rnd()*12), v=Math.floor(rnd()*5), p=Math.floor(rnd()*5), c=Math.floor(rnd()*3);
+  const q=1+Math.floor(rnd()*(c===2?40:12)), prix=Math.round(PRODUITS[p][1]*(0.92+rnd()*.16)*(an===2025?1.06:1));
+  DATA.push({Date:an+'-'+String(mo).padStart(2,'0')+'-'+String(1+Math.floor(rnd()*27)).padStart(2,'0'),Annee:an,Mois:mo,Ville:VILLES[v],Produit:PRODUITS[p][0],Canal:CANAUX[c],Client:'C'+String(1+Math.floor(rnd()*60)).padStart(2,'0'),Quantite:q,Prix:prix,Montant:q*prix});
+}
+const COLS=['Date','Annee','Mois','Ville','Produit','Canal','Client','Quantite','Prix','Montant'];
+const DIMS=['Ville','Produit','Canal','Annee','Mois'];
+const MOIS=['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'];
+const fmt=v=>v==null?'(vide)':typeof v==='number'?(Math.abs(v)<1&&v!==0?v.toLocaleString('fr-FR',{maximumFractionDigits:3}):v.toLocaleString('fr-FR',{maximumFractionDigits:2})):String(v);
+const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+$('#nrows').textContent=DATA.length;
+
+/* ---------- Moteur DAX (sous-ensemble) ---------- */
+function tokenize(src){
+  const t=[];let i=0;
+  while(i<src.length){
+    const ch=src[i];
+    if(/\s/.test(ch)){i++;continue;}
+    if(ch==='/'&&src[i+1]==='/'){while(i<src.length&&src[i]!=='\n')i++;continue;}
+    if(/\d/.test(ch)){let j=i;while(j<src.length&&/[\d.]/.test(src[j]))j++;t.push({k:'num',v:parseFloat(src.slice(i,j))});i=j;continue;}
+    if(ch==='"'){let j=i+1;while(j<src.length&&src[j]!=='"')j++;if(j>=src.length)throw new Error('Guillemet fermant manquant.');t.push({k:'str',v:src.slice(i+1,j)});i=j+1;continue;}
+    if(ch==='['){const j=src.indexOf(']',i);if(j<0)throw new Error('Crochet fermant manquant.');t.push({k:'ref',v:src.slice(i+1,j)});i=j+1;continue;}
+    if(/[A-Za-z_À-ſ]/.test(ch)){let j=i;while(j<src.length&&/[\wÀ-ſ]/.test(src[j]))j++;const id=src.slice(i,j);
+      if(src[j]==='['){const e=src.indexOf(']',j);if(e<0)throw new Error('Crochet fermant manquant.');t.push({k:'col',t:id,v:src.slice(j+1,e)});i=e+1;continue;}
+      t.push({k:'id',v:id});i=j;continue;}
+    const two=src.substr(i,2);
+    if(['<>','<=','>=','&&','||'].includes(two)){t.push({k:'op',v:two});i+=2;continue;}
+    if('+-*/(),=<>&'.includes(ch)){t.push({k:'op',v:ch});i++;continue;}
+    throw new Error('Caractère non reconnu : '+ch);
+  }
+  return t;
+}
+function parse(src){
+  const T=tokenize(src);let p=0;
+  const peek=()=>T[p], next=()=>T[p++];
+  const isOp=v=>T[p]&&T[p].k==='op'&&T[p].v===v;
+  const isId=v=>T[p]&&T[p].k==='id'&&T[p].v.toUpperCase()===v;
+  function expect(v){if(!isOp(v))throw new Error('« '+v+' » attendu.');p++;}
+  function top(){
+    if(isId('VAR')){const vars=[];while(isId('VAR')){p++;const n=next();if(!n||n.k!=='id')throw new Error('Nom de variable attendu après VAR.');expect('=');vars.push([n.v,or()]);}
+      if(!isId('RETURN'))throw new Error('RETURN attendu après les VAR.');p++;return {n:'let',vars,body:or()};}
+    return or();
+  }
+  function or(){let l=and();while(isOp('||')){p++;l={n:'bin',op:'||',l,r:and()};}return l;}
+  function and(){let l=cmp();while(isOp('&&')){p++;l={n:'bin',op:'&&',l,r:cmp()};}return l;}
+  function cmp(){let l=cat();while(T[p]&&T[p].k==='op'&&['=','<>','<','>','<=','>='].includes(T[p].v)){const op=next().v;l={n:'bin',op,l,r:cat()};}return l;}
+  function cat(){let l=add();while(isOp('&')){p++;l={n:'bin',op:'&',l,r:add()};}return l;}
+  function add(){let l=mul();while(isOp('+')||isOp('-')){const op=next().v;l={n:'bin',op,l,r:mul()};}return l;}
+  function mul(){let l=un();while(isOp('*')||isOp('/')){const op=next().v;l={n:'bin',op,l,r:un()};}return l;}
+  function un(){if(isOp('-')){p++;return {n:'neg',e:un()};}if(isOp('+')){p++;return un();}return prim();}
+  function prim(){
+    const t=next();if(!t)throw new Error('Expression incomplète.');
+    if(t.k==='num')return {n:'num',v:t.v};
+    if(t.k==='str')return {n:'str',v:t.v};
+    if(t.k==='ref')return {n:'ref',v:t.v};
+    if(t.k==='col')return {n:'col',t:t.t,v:t.v};
+    if(t.k==='op'&&t.v==='('){const e=or();expect(')');return e;}
+    if(t.k==='id'){
+      if(isOp('(')){p++;const args=[];if(!isOp(')')){args.push(or());while(isOp(',')){p++;args.push(or());}}expect(')');return {n:'call',f:t.v.toUpperCase(),args};}
+      const u=t.v.toUpperCase();if(u==='TRUE')return {n:'num',v:true};if(u==='FALSE')return {n:'num',v:false};
+      if(u==='VENTES')return {n:'table'};
+      return {n:'var',v:t.v};
+    }
+    throw new Error('Élément inattendu.');
+  }
+  const ast=top();
+  if(p<T.length)throw new Error('Élément inattendu après la fin de l\'expression.');
+  return ast;
+}
+let MEASURES=[
+  {name:'CA',expr:'SUM(Ventes[Montant])'},
+  {name:'Quantité vendue',expr:'SUM(Ventes[Quantite])'},
+  {name:'Nb ventes',expr:'COUNTROWS(Ventes)'},
+  {name:'Nb clients',expr:'DISTINCTCOUNT(Ventes[Client])'},
+  {name:'Prix moyen unitaire',expr:'DIVIDE(SUM(Ventes[Montant]), SUM(Ventes[Quantite]))'}
+];
+const rowsOf=env=>DATA.filter(r=>env.f.every(f=>f.test(r[f.col])));
+function colOf(n){if(COLS.indexOf(n.v)<0)throw new Error('Colonne inconnue : Ventes['+n.v+']. Colonnes : '+COLS.join(', ')+'.');return n.v;}
+function ev(n,env,depth){
+  depth=depth||0;if(depth>40)throw new Error('Référence circulaire entre mesures.');
+  const E=(x,e)=>ev(x,e||env,depth+1);
+  switch(n.n){
+    case 'num':case 'str':return n.v;
+    case 'neg':return -num(E(n.e));
+    case 'let':{const e2={f:env.f,row:env.row,vars:Object.assign({},env.vars)};for(const [k,x] of n.vars)e2.vars[k]=ev(x,e2,depth+1);return ev(n.body,e2,depth+1);}
+    case 'var':if(env.vars&&n.v in env.vars)return env.vars[n.v];throw new Error('Variable ou nom inconnu : '+n.v);
+    case 'ref':{const m=MEASURES.find(m=>m.name.toLowerCase()===n.v.toLowerCase());if(!m)throw new Error('Mesure inconnue : ['+n.v+'].');return ev(m.ast||(m.ast=parse(m.expr)),env,depth+1);}
+    case 'col':{const c=colOf(n);if(env.row)return env.row[c];throw new Error('Ventes['+c+'] doit être agrégée (SUM, AVERAGE, COUNT...) hors d\'un itérateur.');}
+    case 'table':throw new Error('Une table doit être passée à une fonction (COUNTROWS, SUMX...).');
+    case 'bin':{
+      if(n.op==='&&')return !!E(n.l)&&!!E(n.r);
+      if(n.op==='||')return !!E(n.l)||!!E(n.r);
+      const a=E(n.l),b=E(n.r);
+      switch(n.op){case '+':return num(a)+num(b);case '-':return num(a)-num(b);case '*':return num(a)*num(b);case '/':if(num(b)===0)throw new Error('Division par zéro : utilisez DIVIDE.');return num(a)/num(b);
+        case '=':return a==b;case '<>':return a!=b;case '<':return a<b;case '>':return a>b;case '<=':return a<=b;case '>=':return a>=b;case '&':return String(a)+String(b);}
+      break;}
+    case 'call':return call(n,env,depth);
+  }
+  throw new Error('Expression non prise en charge.');
+}
+function num(v){if(v===null||v===undefined)return 0;if(typeof v==='boolean')return v?1:0;if(typeof v!=='number'||isNaN(v))throw new Error('Une valeur numérique est attendue.');return v;}
+function colArg(a){if(a.n!=='col')throw new Error('Une colonne est attendue (ex. Ventes[Montant]).');return colOf(a);}
+function argc(n,min,max){if(n.args.length<min||n.args.length>max)throw new Error(n.f+' attend '+(min===max?min:min+' à '+max)+' argument(s).');}
+function call(n,env,depth){
+  const E=(x,e)=>ev(x,e||env,depth+1), A=n.args;
+  switch(n.f){
+    case 'SUM':{argc(n,1,1);const c=colArg(A[0]);return rowsOf(env).reduce((s,r)=>s+num(r[c]),0);}
+    case 'AVERAGE':{argc(n,1,1);const c=colArg(A[0]);const r=rowsOf(env);return r.length?r.reduce((s,x)=>s+num(x[c]),0)/r.length:null;}
+    case 'MIN':case 'MAX':{argc(n,1,1);const c=colArg(A[0]);const r=rowsOf(env).map(x=>x[c]);if(!r.length)return null;return n.f==='MIN'?r.reduce((a,b)=>b<a?b:a):r.reduce((a,b)=>b>a?b:a);}
+    case 'COUNT':{argc(n,1,1);const c=colArg(A[0]);return rowsOf(env).filter(r=>r[c]!=null).length;}
+    case 'COUNTROWS':argc(n,1,1);if(A[0].n!=='table')throw new Error('COUNTROWS attend la table Ventes.');return rowsOf(env).length;
+    case 'DISTINCTCOUNT':{argc(n,1,1);const c=colArg(A[0]);return new Set(rowsOf(env).map(r=>r[c])).size;}
+    case 'DIVIDE':{argc(n,2,3);const a=E(A[0]),b=E(A[1]);if(b===null||num(b)===0)return A[2]?E(A[2]):null;return num(a)/num(b);}
+    case 'IF':{argc(n,2,3);return E(A[0])?E(A[1]):(A[2]?E(A[2]):null);}
+    case 'ROUND':{argc(n,2,2);const d=Math.pow(10,num(E(A[1])));return Math.round(num(E(A[0]))*d)/d;}
+    case 'ABS':argc(n,1,1);return Math.abs(num(E(A[0])));
+    case 'SUMX':case 'AVERAGEX':{argc(n,2,2);if(A[0].n!=='table')throw new Error(n.f+' attend la table Ventes en premier argument.');
+      const r=rowsOf(env);const vals=r.map(row=>num(ev(A[1],{f:env.f,row,vars:env.vars},depth+1)));const s=vals.reduce((a,b)=>a+b,0);return n.f==='SUMX'?s:(vals.length?s/vals.length:null);}
+    case 'ALL':case 'REMOVEFILTERS':throw new Error(n.f+' s\'utilise comme filtre dans CALCULATE.');
+    case 'CALCULATE':{
+      if(A.length<1)throw new Error('CALCULATE attend une expression.');
+      let f=env.f.slice();
+      for(const a of A.slice(1)){
+        if(a.n==='call'&&(a.f==='ALL'||a.f==='REMOVEFILTERS')){
+          if(!a.args.length||a.args[0].n==='table')f=[];
+          else a.args.forEach(x=>{const c=colArg(x);f=f.filter(y=>y.col!==c);});
+        }else if(a.n==='bin'&&['=','<>','<','>','<=','>='].includes(a.op)&&a.l.n==='col'){
+          const c=colOf(a.l);const val=E(a.r);const op=a.op;
+          f=f.filter(y=>y.col!==c);
+          f.push({col:c,test:v=>op==='='?v==val:op==='<>'?v!=val:op==='<'?v<val:op==='>'?v>val:op==='<='?v<=val:v>=val});
+        }else throw new Error('Filtre non pris en charge dans CALCULATE : utilisez Ventes[Colonne] = valeur, ALL(...) ou REMOVEFILTERS(...).');
+      }
+      return ev(A[0],{f,row:null,vars:env.vars},depth+1);
+    }
+  }
+  throw new Error('Fonction non prise en charge : '+n.f+'.');
+}
+function evalExpr(src,filters){const ast=parse(src);return ev(ast,{f:filters||[],row:null,vars:{}});}
+function parseMeasure(text){
+  const m=text.match(/^\s*([^=\n]+?)\s*=\s*([\s\S]+)$/);
+  if(!m)throw new Error('Écrivez la mesure sous la forme : Nom = expression.');
+  if(/[\[\]()"]/.test(m[1]))throw new Error('Le nom de la mesure ne peut pas contenir de crochets, parenthèses ou guillemets.');
+  return {name:m[1].trim(),expr:m[2].trim()};
+}
+
+/* ---------- Segments ---------- */
+const SL={Ville:VILLES,Produit:PRODUITS.map(x=>x[0]),Annee:[2024,2025]};
+const selected={Ville:new Set(),Produit:new Set(),Annee:new Set()};
+let cross=null;
+function baseFilters(){
+  const f=[];
+  Object.keys(selected).forEach(c=>{if(selected[c].size)f.push({col:c,test:v=>selected[c].has(v)});});
+  return f;
+}
+function buildSlicers(){
+  const h=Object.keys(SL).map(c=>'<div class="pb-slicer"><b>'+(c==='Annee'?'Année':c)+'</b><div class="chips" data-c="'+c+'">'+SL[c].map(v=>'<span class="chip'+(selected[c].has(v)?' on':'')+'" data-v="'+esc(v)+'">'+esc(v)+'</span>').join('')+'</div></div>').join('');
+  $('#slicers').innerHTML=h;
+  document.querySelectorAll('#slicers .chip').forEach(ch=>ch.onclick=()=>{
+    const c=ch.parentNode.dataset.c;const v=SL[c].find(x=>String(x)===ch.dataset.v);
+    selected[c].has(v)?selected[c].delete(v):selected[c].add(v);buildSlicers();refresh();
+  });
+}
+
+/* ---------- Mesures : sélecteurs ---------- */
+function fillMeasureSelects(){
+  const opts=MEASURES.map(m=>'<option>'+esc(m.name)+'</option>').join('');
+  ['#v-meas','#r-meas'].forEach(s=>{const el=$(s),old=el.value;el.innerHTML=opts;if(MEASURES.some(m=>m.name===old))el.value=old;});
+}
+function measureValue(name,filters){const m=MEASURES.find(x=>x.name===name);return evalExpr(m.expr,filters);}
+function groupValues(dim,filters,mname){
+  const vals=[...new Set(DATA.map(r=>r[dim]))];
+  vals.sort((a,b)=>a<b?-1:a>b?1:0);
+  return vals.map(v=>{
+    const f=filters.filter(x=>x.col!==dim).concat([{col:dim,test:x=>x===v}]);
+    let val=null,err=null;try{val=measureValue(mname,f);}catch(e){err=e.message;}
+    return {key:v,label:dim==='Mois'?MOIS[v-1]:String(v),val,err};
+  });
+}
+
+/* ---------- Visuels ---------- */
+const PAL=['#0b2a4a','#1f5f99','#c2a15a','#6fa3cf','#8a6d2f','#9db7cf'];
+let visuals=[{type:'card',axis:'Ville',meas:'CA'},{type:'bar',axis:'Ville',meas:'CA'},{type:'line',axis:'Mois',meas:'CA'},{type:'donut',axis:'Produit',meas:'CA'}];
+function filtersFor(v){const f=baseFilters();if(cross&&!(v.type!=='card'&&v.type!=='table'&&v.axis===cross.col))f.push({col:cross.col,test:x=>x===cross.val});else if(cross&&v.type==='card')f.push({col:cross.col,test:x=>x===cross.val});return f;}
+function svgBar(d,v){
+  const W=420,H=240,L=46,B=34,T=14,mx=Math.max(1e-9,...d.map(x=>x.val||0)),bw=(W-L-10)/d.length;
+  let s='<svg viewBox="0 0 '+W+' '+H+'" font-family="Inter,Segoe UI,sans-serif">';
+  for(let i=0;i<=4;i++){const y=T+(H-T-B)*(1-i/4);s+='<line x1="'+L+'" x2="'+(W-6)+'" y1="'+y+'" y2="'+y+'" stroke="#e6ecf2"/><text x="'+(L-5)+'" y="'+(y+3)+'" font-size="9" text-anchor="end" fill="#5b6b7b">'+fmt(Math.round(mx*i/4*10)/10)+'</text>';}
+  d.forEach((x,i)=>{const h=(H-T-B)*(x.val||0)/mx,xx=L+i*bw+bw*.15,y=H-B-h;const sel=cross&&cross.col===v.axis&&cross.val===x.key;
+    s+='<rect data-k="'+esc(x.key)+'" x="'+xx+'" y="'+y+'" width="'+bw*.7+'" height="'+Math.max(h,0)+'" fill="'+(cross&&cross.col===v.axis&&!sel?'#b9c9da':'#1f5f99')+'" style="cursor:pointer"><title>'+esc(x.label)+' : '+fmt(x.val)+'</title></rect>';
+    s+='<text x="'+(xx+bw*.35)+'" y="'+(H-B+13)+'" font-size="9.5" text-anchor="middle" fill="#1f2933">'+esc(x.label.length>9?x.label.slice(0,8)+'.':x.label)+'</text>';});
+  return s+'</svg>';
+}
+function svgLine(d,v){
+  const W=420,H=240,L=46,B=34,T=14,mx=Math.max(1e-9,...d.map(x=>x.val||0)),st=(W-L-16)/Math.max(1,d.length-1);
+  let s='<svg viewBox="0 0 '+W+' '+H+'" font-family="Inter,Segoe UI,sans-serif">';
+  for(let i=0;i<=4;i++){const y=T+(H-T-B)*(1-i/4);s+='<line x1="'+L+'" x2="'+(W-6)+'" y1="'+y+'" y2="'+y+'" stroke="#e6ecf2"/><text x="'+(L-5)+'" y="'+(y+3)+'" font-size="9" text-anchor="end" fill="#5b6b7b">'+fmt(Math.round(mx*i/4*10)/10)+'</text>';}
+  const pts=d.map((x,i)=>[L+8+i*st,H-B-(H-T-B)*(x.val||0)/mx]);
+  s+='<polyline fill="none" stroke="#1f5f99" stroke-width="2.5" points="'+pts.map(p=>p.join(',')).join(' ')+'"/>';
+  d.forEach((x,i)=>{const sel=cross&&cross.col===v.axis&&cross.val===x.key;s+='<circle data-k="'+esc(x.key)+'" cx="'+pts[i][0]+'" cy="'+pts[i][1]+'" r="'+(sel?6:4)+'" fill="'+(sel?'#c2a15a':'#0b2a4a')+'" style="cursor:pointer"><title>'+esc(x.label)+' : '+fmt(x.val)+'</title></circle><text x="'+pts[i][0]+'" y="'+(H-B+13)+'" font-size="9.5" text-anchor="middle" fill="#1f2933">'+esc(x.label.slice(0,6))+'</text>';});
+  return s+'</svg>';
+}
+function svgDonut(d,v){
+  const tot=d.reduce((a,x)=>a+Math.max(0,x.val||0),0)||1,cx=110,cy=118,R=88,r=52;let a0=-Math.PI/2;
+  let s='<svg viewBox="0 0 420 240" font-family="Inter,Segoe UI,sans-serif">';
+  d.forEach((x,i)=>{const fr=Math.max(0,x.val||0)/tot,a1=a0+fr*2*Math.PI;if(fr>0){const big=fr>.5?1:0,p=(a,rr)=>[cx+rr*Math.cos(a),cy+rr*Math.sin(a)];
+    const A=p(a0,R),B=p(a1-1e-4,R),C=p(a1-1e-4,r),D=p(a0,r);const sel=cross&&cross.col===v.axis&&cross.val===x.key;
+    s+='<path data-k="'+esc(x.key)+'" d="M'+A+' A'+R+','+R+' 0 '+big+' 1 '+B+' L'+C+' A'+r+','+r+' 0 '+big+' 0 '+D+'Z" fill="'+PAL[i%PAL.length]+'" opacity="'+(cross&&cross.col===v.axis&&!sel?.35:1)+'" style="cursor:pointer"><title>'+esc(x.label)+' : '+fmt(x.val)+' ('+(fr*100).toFixed(1)+' %)</title></path>';}
+    a0=a1;});
+  d.forEach((x,i)=>{const y=34+i*22;s+='<rect x="235" y="'+(y-9)+'" width="11" height="11" fill="'+PAL[i%PAL.length]+'"/><text x="252" y="'+y+'" font-size="11" fill="#1f2933">'+esc(x.label)+' ('+((Math.max(0,x.val||0)/tot)*100).toFixed(1)+' %)</text>';});
+  return s+'</svg>';
+}
+function renderVisual(v,i){
+  const f=filtersFor(v);let body='',title=v.meas+(v.type==='card'?'':' par '+(v.axis==='Annee'?'année':v.axis.toLowerCase()));
+  try{
+    if(v.type==='card'){const val=measureValue(v.meas,f);body='<div class="pb-card-kpi">'+fmt(val)+'</div><div class="pb-kpi-sub">'+esc(v.meas)+(baseFilters().length||cross?' · filtres actifs':' · toutes les données')+'</div>';title=v.meas;}
+    else{
+      let d=groupValues(v.axis,f,v.meas);const err=d.find(x=>x.err);if(err)throw new Error(err.err);
+      if((v.type==='bar'||v.type==='donut')&&v.axis!=='Mois'&&v.axis!=='Annee')d.sort((a,b)=>(b.val||0)-(a.val||0));
+      if(v.type==='bar')body=svgBar(d,v);else if(v.type==='line')body=svgLine(d,v);else if(v.type==='donut')body=svgDonut(d,v);
+      else body='<table><tr><th>'+esc(v.axis==='Annee'?'Année':v.axis)+'</th><th style="text-align:right">'+esc(v.meas)+'</th></tr>'+d.map(x=>'<tr><td>'+esc(x.label)+'</td><td class="num">'+fmt(x.val)+'</td></tr>').join('')+'</table>';
+    }
+  }catch(e){body='<div class="pb-msg ko">'+esc(e.message)+'</div>';}
+  return '<div class="pb-vis" data-i="'+i+'"><button class="x" title="Supprimer" data-x="'+i+'">&#10005;</button><h3>'+esc(title)+'</h3>'+body+'</div>';
+}
+function renderCanvas(){
+  $('#canvas').innerHTML=visuals.length?visuals.map(renderVisual).join(''):'<p class="lab-small" style="color:#5b6b7b">Aucun visuel : ajoutez-en un ci-dessus.</p>';
+  document.querySelectorAll('#canvas .x').forEach(b=>b.onclick=()=>{visuals.splice(+b.dataset.x,1);renderCanvas();});
+  document.querySelectorAll('#canvas .pb-vis').forEach(el=>{const v=visuals[+el.dataset.i];
+    el.querySelectorAll('[data-k]').forEach(m=>m.onclick=()=>{const raw=m.getAttribute('data-k');const val=DATA.find(r=>String(r[v.axis])===raw)[v.axis];
+      cross=(cross&&cross.col===v.axis&&cross.val===val)?null:{col:v.axis,val};renderCanvas();});});
+}
+
+/* ---------- Résultats DAX ---------- */
+function renderMeasures(){
+  $('#mlist').innerHTML=MEASURES.map((m,i)=>'<li><span><b>'+esc(m.name)+'</b> = '+esc(m.expr)+'</span>'+(i>=5?'<button data-d="'+i+'" title="Supprimer">&#10005;</button>':'')+'</li>').join('');
+  document.querySelectorAll('#mlist button').forEach(b=>b.onclick=()=>{MEASURES.splice(+b.dataset.d,1);refresh(true);});
+}
+function renderResult(){
+  const m=$('#r-meas').value,dim=$('#r-dim').value,f=baseFilters();
+  let html='';
+  try{
+    if(dim==='(aucun)'){html='<div class="pb-msg info"><b>'+esc(m)+'</b> = '+fmt(measureValue(m,f))+'</div>';}
+    else{const d=groupValues(dim,f,m);const e=d.find(x=>x.err);if(e)throw new Error(e.err);
+      html='<table class="pb-res"><tr><th>'+esc(dim)+'</th><th>'+esc(m)+'</th></tr>'+d.map(x=>'<tr><td>'+esc(x.label)+'</td><td class="num">'+fmt(x.val)+'</td></tr>').join('')+'<tr><td><b>Total</b></td><td class="num"><b>'+fmt(measureValue(m,f))+'</b></td></tr></table>';}
+  }catch(e){html='<div class="pb-msg ko">'+esc(e.message)+'</div>';}
+  $('#r-out').innerHTML=html;
+}
+function refresh(sel){if(sel)fillMeasureSelects();renderMeasures();renderCanvas();renderResult();}
+
+/* ---------- Défis ---------- */
+const TOT=DATA.reduce((s,r)=>s+r.Montant,0), QTE=DATA.reduce((s,r)=>s+r.Quantite,0);
+const DEFIS=[
+ {t:'Écrivez une mesure « Total CA » qui additionne la colonne Montant.',exp:TOT,req:/SUM/i,hint:'SUM(Ventes[Montant])',sol:'Total CA = SUM(Ventes[Montant])'},
+ {t:'Écrivez « Clients distincts » : le nombre de clients différents.',exp:new Set(DATA.map(r=>r.Client)).size,req:/DISTINCTCOUNT/i,hint:'DISTINCTCOUNT compte les valeurs distinctes d\'une colonne.',sol:'Clients distincts = DISTINCTCOUNT(Ventes[Client])'},
+ {t:'Écrivez « CA Daloa » : le chiffre d\'affaires de la seule ville de Daloa, quel que soit le segment choisi sur la ville.',exp:DATA.filter(r=>r.Ville==='Daloa').reduce((s,r)=>s+r.Montant,0),req:/CALCULATE/i,hint:'CALCULATE(SUM(...), Ventes[Ville] = "Daloa")',sol:'CA Daloa = CALCULATE(SUM(Ventes[Montant]), Ventes[Ville] = "Daloa")'},
+ {t:'Écrivez « Prix moyen » : le montant total divisé par la quantité totale, en gérant la division par zéro.',exp:TOT/QTE,req:/DIVIDE/i,hint:'DIVIDE(numérateur, dénominateur)',sol:'Prix moyen = DIVIDE(SUM(Ventes[Montant]), SUM(Ventes[Quantite]))'},
+ {t:'Écrivez « CA hors ligne » : le chiffre d\'affaires de tous les canaux sauf « En ligne ».',exp:DATA.filter(r=>r.Canal!=='En ligne').reduce((s,r)=>s+r.Montant,0),req:/CALCULATE/i,hint:'Utilisez l\'opérateur <> dans le filtre de CALCULATE.',sol:'CA hors ligne = CALCULATE(SUM(Ventes[Montant]), Ventes[Canal] <> "En ligne")'},
+ {t:'Écrivez « Part de la sélection » : CA divisé par le CA de tous les produits (le filtre Produit est ignoré au dénominateur).',exp:null,check:'part',req:/CALCULATE[\s\S]*ALL/i,hint:'DIVIDE([CA], CALCULATE([CA], ALL(Ventes[Produit])))',sol:'Part de la sélection = VAR Tot = CALCULATE(SUM(Ventes[Montant]), ALL(Ventes[Produit]))\nRETURN DIVIDE(SUM(Ventes[Montant]), Tot)'}
+];
+function loadDefi(){const d=DEFIS[+$('#d-sel').value];$('#d-txt').textContent=d.t;$('#d-in').value='';$('#d-msg').innerHTML='';}
+function checkDefi(){
+  const d=DEFIS[+$('#d-sel').value],box=$('#d-msg');
+  try{
+    const mm=parseMeasure($('#d-in').value);
+    if(!d.req.test(mm.expr)){box.innerHTML='<div class="pb-msg ko">Votre formule n\'utilise pas la fonction attendue pour ce défi (voir l\'indice).</div>';return;}
+    let ok=false,got;
+    if(d.check==='part'){
+      MEASURES.push({name:'__t',expr:mm.expr});
+      try{const f=[{col:'Produit',test:v=>v==='Riz'}];got=evalExpr(mm.expr,f);const rizs=DATA.filter(r=>r.Produit==='Riz').reduce((s,r)=>s+r.Montant,0);ok=Math.abs(got-rizs/TOT)<1e-6;
+        if(ok){const got2=evalExpr(mm.expr,[]);ok=Math.abs(got2-1)<1e-9;}}finally{MEASURES.pop();}
+    }else{
+      got=evalExpr(mm.expr,[{col:'Ville',test:v=>v==='Abidjan'}].slice(0,d.t.indexOf('Daloa')>=0?1:0));
+      if(d.t.indexOf('Daloa')>=0)got=evalExpr(mm.expr,[{col:'Ville',test:v=>v==='Abidjan'}]);else got=evalExpr(mm.expr,[]);
+      ok=typeof got==='number'&&Math.abs(got-d.exp)<1e-6*Math.max(1,Math.abs(d.exp));
+    }
+    box.innerHTML=ok?'<div class="pb-msg ok">Correct : la mesure donne le résultat attendu'+(d.check==='part'?' (testée avec le segment Produit = Riz)':' : '+fmt(got))+'. Vous pouvez l\'enregistrer dans l\'onglet Mesures DAX.</div>':'<div class="pb-msg ko">Résultat incorrect'+(typeof got==='number'?' ('+fmt(got)+')':'')+'. Vérifiez les colonnes, le filtre et la fonction utilisée, ou demandez l\'indice.</div>';
+  }catch(e){box.innerHTML='<div class="pb-msg ko">'+esc(e.message)+'</div>';}
+}
+
+/* ---------- Initialisation ---------- */
+document.querySelectorAll('.pb-tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.pb-tab').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.pb-pane').forEach(p=>p.classList.toggle('on',p.id==='p-'+b.dataset.t));});
+$('#v-axis').innerHTML=DIMS.map(d=>'<option value="'+d+'">'+(d==='Annee'?'Année':d)+'</option>').join('');
+$('#r-dim').innerHTML='<option>(aucun)</option>'+DIMS.map(d=>'<option>'+d+'</option>').join('');
+$('#v-type').onchange=()=>{$('#v-axis-w').style.display=$('#v-type').value==='card'?'none':'';};
+$('#v-add').onclick=()=>{visuals.push({type:$('#v-type').value,axis:$('#v-axis').value,meas:$('#v-meas').value});renderCanvas();};
+$('#v-clear').onclick=()=>{visuals=[];cross=null;renderCanvas();};
+$('#r-meas').onchange=$('#r-dim').onchange=renderResult;
+$('#dax-add').onclick=()=>{
+  const box=$('#dax-msg');
+  try{const m=parseMeasure($('#dax-in').value);parse(m.expr);
+    if(MEASURES.some(x=>x.name.toLowerCase()===m.name.toLowerCase()))throw new Error('Une mesure nommée « '+m.name+' » existe déjà.');
+    const v=evalExpr(m.expr,baseFilters());
+    MEASURES.push(m);$('#dax-in').value='';box.innerHTML='<div class="pb-msg ok">Mesure « '+esc(m.name)+' » enregistrée. Valeur actuelle : '+fmt(v)+'. Elle est disponible dans les visuels.</div>';refresh(true);
+  }catch(e){box.innerHTML='<div class="pb-msg ko">'+esc(e.message)+'</div>';}
+};
+$('#dax-test').onclick=()=>{
+  const box=$('#dax-msg');
+  try{const txt=$('#dax-in').value;let expr=txt;try{expr=parseMeasure(txt).expr;}catch(e){}
+    box.innerHTML='<div class="pb-msg info">Résultat : <b>'+fmt(evalExpr(expr,baseFilters()))+'</b></div>';
+  }catch(e){box.innerHTML='<div class="pb-msg ko">'+esc(e.message)+'</div>';}
+};
+$('#d-sel').innerHTML=DEFIS.map((d,i)=>'<option value="'+i+'">Défi '+(i+1)+'</option>').join('');
+$('#d-sel').onchange=loadDefi;$('#d-ok').onclick=checkDefi;
+$('#d-hint').onclick=()=>{$('#d-msg').innerHTML='<div class="pb-msg info">Indice : '+esc(DEFIS[+$('#d-sel').value].hint)+'</div>';};
+$('#d-sol').onclick=()=>{$('#d-msg').innerHTML='<div class="pb-code">'+esc(DEFIS[+$('#d-sel').value].sol)+'</div>';};
+buildSlicers();fillMeasureSelects();loadDefi();refresh();
+window.__pbi={evalExpr,DATA,DEFIS,parseMeasure};
+})();
+</script>
+{% endraw %}
+{% endblock %}
