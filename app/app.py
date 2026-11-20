@@ -10,7 +10,7 @@ from werkzeug.exceptions import HTTPException
 import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
 from sib_api_v3_sdk import TransactionalEmailsApi, SendSmtpEmail, ApiClient, Configuration
-from gemini_chat import chat_with_gemini, get_whatsapp_link
+from assistant_chat import chat_with_assistant, get_whatsapp_link
 import os
 import uuid
 import requests
@@ -1053,7 +1053,7 @@ def profile_picture():
 
 @app.route('/api/chat', methods=['POST'])
 def api_chat():
-    """API du chatbot - Utilise Gemini IA générative"""
+    """API du chatbot - Assistant en ligne"""
     try:
         data = request.get_json()
         user_message = data.get('message', '').strip()
@@ -1065,8 +1065,8 @@ def api_chat():
                 'needs_whatsapp': False
             })
         
-        # Appeler Gemini pour une réponse intelligente
-        response_text, needs_whatsapp = chat_with_gemini(user_message)
+        # Réponse de l'assistant
+        response_text, needs_whatsapp = chat_with_assistant(user_message)
         
         return jsonify({
             'success': True,
@@ -2745,20 +2745,20 @@ def formations_player(outil, niveau):
     return render_template('player.html', outil=outil, niveau=niveau)
 
 
-# Client Groq (initialisé une seule fois)
+# Client de l'assistant pédagogique (initialisé une seule fois)
 try:
     from openai import OpenAI
-    groq_client = OpenAI(
+    tutor_client = OpenAI(
         base_url="https://api.groq.com/openai/v1",
         api_key=os.environ.get("GROQ_API_KEY")
     )
-    print("Client Groq initialisé", flush=True)
+    print("Client assistant initialisé", flush=True)
 except Exception as e:
-    groq_client = None
-    print(f"Erreur initialisation Groq: {e}", flush=True)
+    tutor_client = None
+    print(f"Erreur initialisation assistant: {e}", flush=True)
 
 
-SYSTEM_PROMPT_TUTOR = """Tu es EconBot, un instructeur IA pour DataEcon.Ci, une plateforme ivoirienne de formation en économétrie et data science.
+SYSTEM_PROMPT_TUTOR = """Tu es l'assistant pédagogique pour DataEcon.Ci, une plateforme ivoirienne de formation en économétrie et data science.
 
 Ton rôle :
 - Enseigner R, Python, SQL, Tableau, Power BI (Power Query, modèle en étoile, DAX, visuels, RLS, publication) et SmartPLS (PLS-SEM : modèle de mesure et structurel, fiabilité, AVE, HTMT, bootstrapping, médiation, modération) aux apprenants
@@ -2780,10 +2780,10 @@ Réponds toujours en français."""
 
 @app.route('/api/tutor', methods=['POST'])
 def api_tutor():
-    """Endpoint pour l'instructeur IA de la formation"""
-    if not groq_client:
+    """Endpoint pour l'assistant pédagogique de la formation"""
+    if not tutor_client:
         return jsonify({
-            "reponse": "L'instructeur IA n'est pas disponible. Contactez l'administrateur."
+            "reponse": "L'assistant pédagogique n'est pas disponible. Contactez l'administrateur."
         }), 503
     
     try:
@@ -2795,7 +2795,7 @@ def api_tutor():
         if not message:
             return jsonify({"reponse": "Veuillez poser une question."}), 400
         
-        # Contexte pour l'IA
+        # Contexte de la leçon
         if concept:
             context = f"""Contexte de la session :
 - Outil sélectionné : {outil}
@@ -2825,8 +2825,8 @@ INSTRUCTIONS IMPORTANTES :
 
 Question de l'apprenant : {message}"""
         
-        # Appel à l'API Groq
-        completion = groq_client.chat.completions.create(
+        # Appel au service
+        completion = tutor_client.chat.completions.create(
             model="openai/gpt-oss-20b",
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT_TUTOR},
@@ -2890,7 +2890,7 @@ def api_lesson(outil, niveau):
 def about():
     import datetime
     
-    # Liste des messages motivants (tu peux en ajouter autant que tu veux)
+    # Messages du fondateur (rotation hebdomadaire)
     messages_hebdo = [
         "L'économie de demain se construit avec les données d'aujourd'hui. Formez-vous dès maintenant !",
         "La data n'est pas réservée aux experts. C'est l'outil le plus puissant pour développer votre entreprise.",

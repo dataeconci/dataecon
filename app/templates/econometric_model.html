@@ -4,7 +4,6 @@
 
 {% block content %}
 <div class="container py-4">
-    <!-- En-tête -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold" style="color: var(--primary);">
@@ -17,7 +16,6 @@
     </div>
 
     <div class="row">
-        <!-- Formulaire -->
         <div class="col-lg-5">
             <div class="card">
                 <div class="card-header">
@@ -27,7 +25,6 @@
                 </div>
                 <div class="card-body">
                     <form method="POST" class="needs-validation" novalidate>
-                        <!-- Sélection du dataset -->
                         <div class="mb-3">
                             <label for="dataset_id" class="form-label fw-bold">
                                 <i class="fas fa-database"></i> Jeu de données
@@ -50,7 +47,6 @@
                             {% endif %}
                         </div>
 
-                        <!-- Variable dépendante -->
                         <div class="mb-3">
                             <label for="dependent" class="form-label fw-bold">
                                 <i class="fas fa-arrow-right"></i> Variable dépendante (Y)
@@ -69,7 +65,6 @@
                             </div>
                         </div>
 
-                        <!-- Variables indépendantes -->
                         <div class="mb-3">
                             <label for="independent" class="form-label fw-bold">
                                 <i class="fas fa-arrow-right"></i> Variables indépendantes (X)
@@ -88,7 +83,6 @@
                             </div>
                         </div>
 
-                        <!-- Type de modèle -->
                         <div class="mb-3">
                             <label class="form-label fw-bold">
                                 <i class="fas fa-cubes"></i> Type de modèle
@@ -123,7 +117,6 @@
             </div>
         </div>
 
-        <!-- Résultats -->
         <div class="col-lg-7">
             <div class="card">
                 <div class="card-header">
@@ -133,7 +126,6 @@
                 </div>
                 <div class="card-body">
                     {% if model_info %}
-                        <!-- Résumé du modèle -->
                         <div class="row g-3 mb-4">
                             <div class="col-6 col-md-3 text-center">
                                 <div class="p-2 bg-light rounded">
@@ -161,7 +153,6 @@
                             </div>
                         </div>
 
-                        <!-- Informations -->
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle"></i>
                             <strong>Variable dépendante :</strong> {{ model_info.dependent }}
@@ -176,13 +167,11 @@
                             {% endif %}
                         </div>
 
-                        <!-- Coefficients -->
                         <div class="table-container">
                             <h6 class="fw-bold"><i class="fas fa-table"></i> Coefficients</h6>
                             {{ result_html|safe }}
                         </div>
 
-                        <!-- Interprétation -->
                         <div class="card mt-3 bg-light">
                             <div class="card-body">
                                 <h6><i class="fas fa-lightbulb"></i> Interprétation</h6>

@@ -7,7 +7,6 @@
     <div class="container">
         <div class="row justify-content-center align-items-center min-vh-100 py-5">
             
-            <!-- Colonne gauche : Avantages -->
             <div class="col-lg-5 d-none d-lg-block">
                 <div class="register-info">
                     <h1 class="register-info-title">
@@ -45,7 +44,6 @@
                 </div>
             </div>
 
-            <!-- Colonne droite : Formulaire -->
             <div class="col-lg-6 col-md-8">
                 <div class="register-card">
                     <div class="register-card-header">
@@ -56,7 +54,6 @@
                     <div class="register-card-body">
                         <form method="POST" class="needs-validation" novalidate>
                             
-                            <!-- Nom d'utilisateur -->
                             <div class="form-group-modern">
                                 <label for="username">
                                     <i class="fas fa-user"></i> Nom d'utilisateur
@@ -72,7 +69,6 @@
                                 </div>
                             </div>
 
-                            <!-- Email -->
                             <div class="form-group-modern">
                                 <label for="email">
                                     <i class="fas fa-envelope"></i> Email
@@ -85,7 +81,6 @@
                                        required>
                             </div>
 
-                            <!-- Prénom et Nom -->
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group-modern">
@@ -115,7 +110,6 @@
                                 </div>
                             </div>
 
-                            <!-- Téléphone -->
                             <div class="form-group-modern">
                                 <label for="phone">
                                     <i class="fas fa-phone"></i> Téléphone
@@ -130,7 +124,6 @@
                                 </div>
                             </div>
 
-                            <!-- Mot de passe -->
                             <div class="form-group-modern">
                                 <label for="password">
                                     <i class="fas fa-lock"></i> Mot de passe
@@ -154,7 +147,6 @@
                                 </div>
                             </div>
 
-                            <!-- Confirmer mot de passe -->
                             <div class="form-group-modern">
                                 <label for="password_confirm">
                                     <i class="fas fa-check-circle"></i> Confirmer le mot de passe
@@ -174,7 +166,6 @@
                                 </div>
                             </div>
 
-                            <!-- Conditions -->
                             <div class="form-check-modern">
                                 <input type="checkbox" 
                                        class="form-check-input" 
@@ -187,12 +178,10 @@
                                 </label>
                             </div>
 
-                            <!-- Bouton d'inscription -->
                             <button type="submit" class="btn-register">
                                 <i class="fas fa-user-plus"></i> Créer mon compte
                             </button>
 
-                            <!-- Lien vers connexion -->
                             <div class="register-login-link">
                                 Vous avez déjà un compte ? 
                                 <a href="{{ url_for('login') }}">Se connecter</a>
@@ -200,7 +189,6 @@
                         </form>
                     </div>
 
-                    <!-- Sécurité -->
                     <div class="register-card-footer">
                         <div class="security-badges">
                             <span><i class="fas fa-shield-alt"></i> SSL</span>

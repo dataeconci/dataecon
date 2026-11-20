@@ -3,7 +3,6 @@
 {% block title %}Postuler - {{ offre.titre }}{% endblock %}
 
 {% block extra_css %}
-<!-- On charge le CSS de la page carrières pour avoir le beau bouton bleu -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/carrieres.css') }}">
 {% endblock %}
 
@@ -14,7 +13,6 @@
             <h2 style="color: #0b2a4a; margin-bottom: 10px; font-weight: 700;">Postuler : {{ offre.titre }}</h2>
             <p style="color: #666; margin-bottom: 30px;">Remplissez le formulaire ci-dessous pour soumettre votre candidature.</p>
 
-            <!-- Messages d'alerte (succès/erreur) -->
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     {% for category, message in messages %}
@@ -25,7 +23,6 @@
                 {% endif %}
             {% endwith %}
 
-            <!-- Formulaire (l'attribut enctype est OBLIGATOIRE pour les fichiers) -->
             <form method="POST" enctype="multipart/form-data">
                 <div style="display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap;">
                     <div style="flex: 1; min-width: 200px;">
@@ -53,7 +50,6 @@
                     <input type="file" name="lettre" accept=".pdf,.doc,.docx" required style="width: 100%; padding: 10px; border: 2px dashed #1f5f99; border-radius: 6px; background: #f8f9fa;">
                 </div>
 
-                <!-- J'ai forcé la couleur de fond et le texte en blanc ici pour être sûr à 100% -->
                 <button type="submit" class="btn-postuler" style="width: 100%; font-size: 1.1rem; padding: 15px; border: none; cursor: pointer; background-color: #1f5f99; color: white; border-radius: 6px; font-weight: 600;">
                     Envoyer ma candidature
                 </button>

@@ -9,40 +9,38 @@
 {% block content %}
 <div class="about-page">
     
-    <!-- En-tête -->
     <section class="about-hero">
         <div class="container text-center">
             <h1>À propos de <span>DataEcon.Ci</span></h1>
-            <p>Notre mission : démocratiser la data et l'économétrie en Côte d'Ivoire et en Afrique.</p>
+            <p>La data compréhensible pour tous : former, analyser et décider avec rigueur en Côte d'Ivoire et en Afrique.</p>
         </div>
     </section>
 
     <div class="container about-container">
         
-        <!-- Section CEO regroupée (Photo + Présentation + Discours) -->
         <section class="ceo-section">
             <div class="ceo-image-container">
-                <img src="{{ url_for('static', filename='images/ceo.jpg') }}" alt="Kadoh Innocent G." class="ceo-image">
+                <img src="{{ url_for('static', filename='images/ceo.jpg') }}" alt="Kadoh Innocent G., fondateur de DataEcon.Ci" class="ceo-image">
             </div>
             <div class="ceo-text">
                 <h2>Kadoh Innocent G.</h2>
-                <p class="ceo-title">Data Scientist | Développeur | Data Analyst</p>
-                
+                <p class="ceo-title">Fondateur | Data Scientist | Économètre</p>
                 <div class="ceo-bio">
                     <p>
-                        Diplômé de l'<strong>Université Jean Lorougnon Guédé de Daloa</strong>, 
-                        en spécialité <strong>Modélisation Statistique, Économique et Financière</strong>, 
-                        j'ai fondé DataEcon.Ci avec une conviction profonde : l'Afrique a besoin de professionnels 
-                        capables de transformer les données brutes en décisions stratégiques.
+                        Doctorant en <strong>Modélisation Statistique, Économique et Financière</strong> à l'<strong>Université Jean Lorougnon Guédé de Daloa</strong>
+                        et titulaire d'un Master 2 obtenu avec la mention Très Bien, je consacre mes travaux à la modélisation des séries financières,
+                        à la volatilité et à l'analyse de données appliquée à l'économie africaine.
+                    </p>
+                    <p>
+                        J'ai fondé DataEcon.Ci à partir d'un constat simple : les méthodes quantitatives existent, mais elles restent difficiles d'accès pour les étudiants,
+                        les chercheurs et les cadres qui en ont besoin au quotidien. L'ambition de la plateforme est de les rendre compréhensibles, praticables et
+                        directement utiles à la décision.
                     </p>
                 </div>
-
-                <!-- Discours de la semaine intégré ici -->
                 <div class="ceo-message">
-                    <h3>Le mot du CEO - Cette semaine</h3>
+                    <h3>Le mot du fondateur</h3>
                     <p>"{{ message_semaine }}"</p>
                 </div>
-
                 <div class="ceo-actions">
                     <a href="{{ url_for('courses') }}" class="btn-primary">Découvrir nos formations</a>
                     <a href="#contact" class="btn-secondary">Travailler avec nous</a>
@@ -50,53 +48,116 @@
             </div>
         </section>
 
-        <!-- Notre Mission -->
+        <section class="story-section">
+            <h2 class="section-title">Qui sommes-nous</h2>
+            <div class="story-text">
+                <p>
+                    <strong>DataEcon.Ci</strong> est une plateforme ivoirienne de formation et d'analyse de données dédiée à l'économétrie, à la statistique appliquée
+                    et à la science des données. Elle réunit en un seul espace des cours interactifs, des laboratoires de pratique, des bases de données
+                    publiques et un environnement de modélisation capable de produire, à partir de vos propres données, un rapport d'analyse complet.
+                </p>
+                <p>
+                    Nous partons d'une conviction : on n'apprend les données qu'en les manipulant. Chaque notion est donc introduite par une explication claire,
+                    illustrée par un schéma, puis mise en application dans un exercice corrigé immédiatement. Les contextes retenus (agriculture, commerce, finance,
+                    indicateurs macroéconomiques) sont ceux que rencontrent les apprenants de Côte d'Ivoire et de l'espace UEMOA.
+                </p>
+            </div>
+        </section>
+
+        <section class="stats-section">
+            <div class="stats-grid">
+                <div class="stat"><b>6</b><span>outils enseignés : Python, R, SQL, Tableau, Power BI et SmartPLS</span></div>
+                <div class="stat"><b>3</b><span>niveaux par outil : Débutant, Intermédiaire et Avancé</span></div>
+                <div class="stat"><b>18</b><span>examens, chacun adossé à une banque de 35 questions</span></div>
+                <div class="stat"><b>70 %</b><span>de bonnes réponses requis pour obtenir le certificat</span></div>
+            </div>
+        </section>
+
         <section class="mission-section">
-            <h2 class="section-title">Notre Mission & Objectifs</h2>
+            <h2 class="section-title">Mission, vision et valeurs</h2>
             <div class="mission-grid">
                 <div class="mission-card">
-                    <h3>Notre Mission</h3>
-                    <p>Rendre l'économétrie et la science des données accessibles à tous les étudiants, chercheurs et professionnels en Afrique, pour une prise de décision basée sur les faits.</p>
+                    <h3>Notre mission</h3>
+                    <p>Rendre l'économétrie et la science des données accessibles aux étudiants, aux chercheurs et aux professionnels d'Afrique, afin que leurs décisions reposent sur des faits vérifiés plutôt que sur des intuitions.</p>
                 </div>
                 <div class="mission-card">
-                    <h3>Notre Objectif</h3>
-                    <p>Former plus de 10 000 analystes de données en Côte d'Ivoire d'ici 2030 et devenir la référence n°1 de la formation en data science appliquée à l'économie.</p>
+                    <h3>Notre vision</h3>
+                    <p>Devenir la référence francophone de la formation en analyse de données appliquée à l'économie, et contribuer à former, d'ici 2030, plus de 10 000 analystes en Côte d'Ivoire.</p>
                 </div>
                 <div class="mission-card">
-                    <h3>Notre Cible</h3>
-                    <p>Étudiants en économie/statistique, professionnels des banques et assurances, ONG, entreprises privées et administrations publiques cherchant à exploiter leurs données.</p>
+                    <h3>Nos valeurs</h3>
+                    <p><strong>Rigueur</strong> méthodologique, <strong>clarté</strong> de l'explication, <strong>pratique</strong> avant tout et <strong>intégrité</strong> dans le traitement des données qui nous sont confiées.</p>
                 </div>
             </div>
         </section>
 
-        <!-- Nos Activités -->
         <section class="activities-section">
-            <h2 class="section-title">Nos Activités</h2>
+            <h2 class="section-title">Ce que nous proposons</h2>
             <div class="activities-grid">
                 <div class="activity-card">
                     <i class="fas fa-laptop-code"></i>
-                    <h3>Formations en ligne</h3>
-                    <p>cours interactifs en R, Python, SQL, Tableau, Power BI et SmartPLS avec un instructeur IA pour pratiquer en direct.</p>
+                    <h3>Formations interactives</h3>
+                    <p>Des cours en R, Python, SQL, Tableau, Power BI et SmartPLS, organisés en trois niveaux. Chaque leçon comprend une explication, un schéma, un exemple de code et un exercice corrigé, avec l'appui d'un assistant pédagogique.</p>
                 </div>
                 <div class="activity-card">
-                    <i class="fas fa-chart-pie"></i>
-                    <h3>Analyse de données</h3>
-                    <p>Accompagnement des entreprises dans la collecte, le traitement et l'analyse de leurs données.</p>
+                    <i class="fas fa-flask"></i>
+                    <h3>Laboratoires de pratique</h3>
+                    <p>Des environnements de travail proches des logiciels professionnels pour s'exercer sans installation : éditeurs de code, studio de visualisation, rapports Power BI avec mesures DAX et modélisation PLS-SEM.</p>
                 </div>
                 <div class="activity-card">
                     <i class="fas fa-chart-line"></i>
-                    <h3>Modélisation & Prévisions</h3>
-                    <p>Création de modèles prédictifs (séries temporelles, machine learning) pour anticiper les tendances.</p>
+                    <h3>Modélisation et prévision</h3>
+                    <p>Séries temporelles (AR, MA, ARIMA, SARIMA), volatilité (famille GARCH), données de panel, régressions, classification, machine learning et modèles à équations structurelles, avec tests préliminaires et de robustesse.</p>
+                </div>
+                <div class="activity-card">
+                    <i class="fas fa-database"></i>
+                    <h3>Bibliothèque de données</h3>
+                    <p>Un catalogue de jeux de données publics et un accès aux indicateurs du développement de la Banque mondiale (WDI) pour constituer en quelques clics vos propres bases d'étude.</p>
                 </div>
                 <div class="activity-card">
                     <i class="fas fa-file-alt"></i>
-                    <h3>Rapports & Visualisation</h3>
-                    <p>Production de rapports d'analyse détaillés et de tableaux de bord interactifs pour vos décisions.</p>
+                    <h3>Rapports d'analyse</h3>
+                    <p>Un rapport Word structuré (contexte, statistiques descriptives, tests, résultats, graphiques, robustesse), ainsi que les scripts R, Python, Stata et SQL pour reproduire chaque analyse.</p>
+                </div>
+                <div class="activity-card">
+                    <i class="fas fa-briefcase"></i>
+                    <h3>Accompagnement</h3>
+                    <p>Appui aux organisations pour la collecte, le traitement et l'analyse de leurs données, la conception de tableaux de bord et la formation sur mesure de leurs équipes.</p>
                 </div>
             </div>
         </section>
 
-        <!-- Tarifs -->
+        <section class="steps-section">
+            <h2 class="section-title">Une pédagogie en quatre étapes</h2>
+            <div class="steps-grid">
+                <div class="step"><span>1</span><h3>Comprendre</h3><p>Une notion à la fois, expliquée simplement, avec un schéma et un exemple concret.</p></div>
+                <div class="step"><span>2</span><h3>Pratiquer</h3><p>Un exercice appliqué, corrigé immédiatement, dans un éditeur ou un laboratoire dédié.</p></div>
+                <div class="step"><span>3</span><h3>Évaluer</h3><p>Un examen par niveau : 30 questions tirées d'une banque de 35, dans un temps limité.</p></div>
+                <div class="step"><span>4</span><h3>Certifier</h3><p>Un certificat nominatif, signé et vérifiable en ligne grâce à son code unique.</p></div>
+            </div>
+        </section>
+
+        <section class="trust-section">
+            <h2 class="section-title">Confidentialité et fiabilité</h2>
+            <div class="trust-grid">
+                <div class="trust-item">
+                    <i class="fas fa-lock"></i>
+                    <h3>Vos données restent les vôtres</h3>
+                    <p>Les bases que vous importez ne sont visibles que de vous. Elles sont supprimées automatiquement après le téléchargement de votre rapport, après une suppression manuelle ou au bout de vingt-quatre heures.</p>
+                </div>
+                <div class="trust-item">
+                    <i class="fas fa-circle-check"></i>
+                    <h3>Des méthodes documentées</h3>
+                    <p>Chaque modèle s'accompagne de ses hypothèses, de ses tests de validité et de ses limites, afin que les résultats puissent être interprétés et défendus.</p>
+                </div>
+                <div class="trust-item">
+                    <i class="fas fa-certificate"></i>
+                    <h3>Une certification crédible</h3>
+                    <p>Deux tentatives par examen, un délai d'attente après deux échecs et un code de vérification public garantissent la valeur de chaque certificat délivré.</p>
+                </div>
+            </div>
+        </section>
+
         <section class="tarifs-section">
             <h2 class="section-title">Nos Tarifs</h2>
             <p class="tarifs-subtitle">Choisissez le plan qui correspond à vos ambitions.</p>
@@ -106,7 +167,7 @@
                     <div class="tarif-prix">0 <span>FCFA</span></div>
                     <ul>
                         <li><i class="fas fa-check"></i> Accès aux cours de niveau Débutant</li>
-                        <li><i class="fas fa-check"></i> Instructeur IA (limité)</li>
+                        <li><i class="fas fa-check"></i> Assistant pédagogique (limité)</li>
                         <li><i class="fas fa-check"></i> Accès à la bibliothèque de données publiques</li>
                     </ul>
                     <a href="{{ url_for('register') }}" class="btn-outline">Commencer</a>
@@ -116,7 +177,7 @@
                     <div class="tarif-prix">5 000 <span>FCFA / mois</span></div>
                     <ul>
                         <li><i class="fas fa-check"></i> Accès à tous les niveaux (Débutant, Intermédiaire)</li>
-                        <li><i class="fas fa-check"></i> Instructeur IA complet</li>
+                        <li><i class="fas fa-check"></i> Assistant pédagogique complet</li>
                         <li><i class="fas fa-check"></i> Téléchargement des datasets</li>
                     </ul>
                     <a href="{{ url_for('subscription') }}" class="btn-primary">Choisir</a>
@@ -145,7 +206,6 @@
             </div>
         </section>
 
-        <!-- Contact -->
         <section id="contact" class="contact-section">
             <h2 class="section-title">Contactez-nous</h2>
             <p class="contact-text">Une question ? Un projet ? Envie de collaborer ? N'hésitez pas à nous écrire.</p>

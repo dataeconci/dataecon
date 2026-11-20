@@ -253,6 +253,244 @@
    ],
    "correct": 0,
    "explication": "Unique, de la dimension vers les faits ; le bidirectionnel est réservé à des cas précis."
+  },
+  {
+   "id": "q19",
+   "theme": "Types de données",
+   "question": "Quel type de données Power BI est limité à quatre décimales et destiné aux montants monétaires ?",
+   "code": "",
+   "options": [
+    "Nombre décimal",
+    "Nombre entier",
+    "Nombre décimal fixe",
+    "Texte"
+   ],
+   "correct": 2,
+   "explication": "Le type Nombre décimal fixe conserve quatre chiffres après la virgule, ce qui évite les erreurs d'arrondi sur les montants."
+  },
+  {
+   "id": "q20",
+   "theme": "Formats de fichier",
+   "question": "Quelle extension porte un modèle Power BI Desktop, c'est-à-dire un rapport sans données ?",
+   "code": "",
+   "options": [
+    ".pbit",
+    ".pbix",
+    ".pbids",
+    ".pbiviz"
+   ],
+   "correct": 0,
+   "explication": "Un modèle Power BI (.pbit) conserve la structure du rapport, les requêtes et le modèle, mais pas les données importées."
+  },
+  {
+   "id": "q21",
+   "theme": "Power Query",
+   "question": "Quelle commande de l'onglet Accueil ouvre l'éditeur Power Query ?",
+   "code": "",
+   "options": [
+    "Actualiser",
+    "Modifier les interactions",
+    "Nouvelle mesure",
+    "Transformer les données"
+   ],
+   "correct": 3,
+   "explication": "La commande Transformer les données ouvre l'éditeur Power Query, où les requêtes sont préparées avant chargement."
+  },
+  {
+   "id": "q22",
+   "theme": "Power Query",
+   "question": "Un fichier CSV est importé avec les noms de colonnes en première ligne de données. Quelle commande corrige cela ?",
+   "code": "",
+   "options": [
+    "Fractionner la colonne",
+    "Utiliser la première ligne comme en-têtes",
+    "Dépivoter les colonnes",
+    "Remplacer les valeurs"
+   ],
+   "correct": 1,
+   "explication": "Utiliser la première ligne comme en-têtes promeut cette ligne en noms de colonnes et ajoute une étape appliquée."
+  },
+  {
+   "id": "q23",
+   "theme": "Power Query",
+   "question": "Une colonne contient « Dupont Marie ». Quelle transformation la sépare en deux colonnes selon l'espace ?",
+   "code": "",
+   "options": [
+    "Fusionner les colonnes",
+    "Fractionner la colonne par délimiteur",
+    "Regrouper par",
+    "Supprimer les doublons"
+   ],
+   "correct": 1,
+   "explication": "Fractionner la colonne par délimiteur crée une colonne par segment de texte séparé par le caractère choisi."
+  },
+  {
+   "id": "q24",
+   "theme": "Power Query",
+   "question": "À quoi sert la commande « Colonne à partir d'exemples » ?",
+   "code": "",
+   "options": [
+    "À importer des exemples de données Microsoft",
+    "À copier une colonne vers un autre rapport",
+    "À afficher un aperçu des 1 000 premières lignes",
+    "À créer une colonne en saisissant des exemples de résultat que Power Query traduit en transformation"
+   ],
+   "correct": 3,
+   "explication": "Power Query déduit la transformation à partir des exemples saisis et génère la formule correspondante."
+  },
+  {
+   "id": "q25",
+   "theme": "Visuels",
+   "question": "Pour montrer la part de chaque catégorie dans un total, avec peu de catégories, quel visuel est adapté ?",
+   "code": "",
+   "options": [
+    "Graphique en secteurs",
+    "Graphique en courbes",
+    "Nuage de points",
+    "Jauge"
+   ],
+   "correct": 0,
+   "explication": "Le graphique en secteurs représente des proportions d'un tout, à condition de limiter le nombre de catégories."
+  },
+  {
+   "id": "q26",
+   "theme": "Visuels",
+   "question": "Quelle différence principale entre une matrice et un tableau ?",
+   "code": "",
+   "options": [
+    "La matrice n'accepte que des mesures",
+    "Le tableau ne peut pas être filtré",
+    "La matrice peut regrouper les valeurs en lignes et en colonnes, avec des niveaux hiérarchiques",
+    "La matrice ne s'exporte pas"
+   ],
+   "correct": 2,
+   "explication": "La matrice fonctionne comme un tableau croisé avec hiérarchies en lignes et en colonnes, alors que le tableau est à plat."
+  },
+  {
+   "id": "q27",
+   "theme": "Visuels",
+   "question": "Que s'affiche-t-il lorsqu'on survole un élément d'un visuel avec la souris ?",
+   "code": "",
+   "options": [
+    "Un signet",
+    "Un segment",
+    "Un filtre de page",
+    "Une info-bulle"
+   ],
+   "correct": 3,
+   "explication": "L'info-bulle présente les valeurs de l'élément survolé et peut être personnalisée."
+  },
+  {
+   "id": "q28",
+   "theme": "Visuels",
+   "question": "Quel niveau du volet Filtres s'applique à toutes les pages du rapport ?",
+   "code": "",
+   "options": [
+    "Filtres sur ce visuel",
+    "Filtres sur toutes les pages",
+    "Filtres sur cette page",
+    "Filtres d'extraction"
+   ],
+   "correct": 1,
+   "explication": "Le volet Filtres propose les niveaux visuel, page et toutes les pages ; ce dernier s'applique à l'ensemble du rapport."
+  },
+  {
+   "id": "q29",
+   "theme": "Service Power BI",
+   "question": "Que fait la commande Publier dans Power BI Desktop ?",
+   "code": "",
+   "options": [
+    "Elle envoie le rapport vers un espace de travail du Service Power BI",
+    "Elle exporte le rapport au format PDF",
+    "Elle enregistre le fichier .pbix sur OneDrive uniquement",
+    "Elle actualise les données locales"
+   ],
+   "correct": 0,
+   "explication": "Publier dépose le rapport et son modèle sémantique dans un espace de travail du Service Power BI."
+  },
+  {
+   "id": "q30",
+   "theme": "Service Power BI",
+   "question": "Qu'est-ce qui caractérise un tableau de bord dans le Service Power BI ?",
+   "code": "",
+   "options": [
+    "Un fichier .pbix modifiable dans Desktop",
+    "Un ensemble de requêtes Power Query",
+    "Une page unique de vignettes épinglées pouvant provenir de plusieurs rapports",
+    "Une table de faits"
+   ],
+   "correct": 2,
+   "explication": "Un tableau de bord rassemble des vignettes épinglées issues de rapports différents sur une seule page."
+  },
+  {
+   "id": "q31",
+   "theme": "Modèle",
+   "question": "Comment crée-t-on rapidement une relation dans la vue Modèle ?",
+   "code": "",
+   "options": [
+    "En faisant glisser une colonne vers la colonne correspondante d'une autre table",
+    "En copiant les deux tables dans une troisième",
+    "En écrivant une mesure CALCULATE",
+    "En fusionnant les fichiers sources"
+   ],
+   "correct": 0,
+   "explication": "On glisse la colonne clé d'une table sur la colonne liée de l'autre table, ou on utilise Gérer les relations."
+  },
+  {
+   "id": "q32",
+   "theme": "Types de données",
+   "question": "À quoi sert la catégorie de données d'une colonne, comme Pays/Région ou Ville ?",
+   "code": "",
+   "options": [
+    "À modifier le type de la colonne source",
+    "À supprimer les valeurs nulles",
+    "À indiquer le sens géographique de la colonne aux visuels cartographiques",
+    "À trier la colonne automatiquement"
+   ],
+   "correct": 2,
+   "explication": "La catégorie de données aide Power BI à interpréter la colonne, par exemple pour géocoder correctement les lieux dans une carte."
+  },
+  {
+   "id": "q33",
+   "theme": "Visuels",
+   "question": "Dans un graphique doté d'une hiérarchie Année, Trimestre, Mois, quelle action affiche le niveau inférieur ?",
+   "code": "",
+   "options": [
+    "Le filtrage croisé",
+    "L'exploration vers le bas",
+    "La synchronisation des segments",
+    "La mise en forme conditionnelle"
+   ],
+   "correct": 1,
+   "explication": "L'exploration vers le bas (drill down) descend dans la hiérarchie, par exemple de l'année vers les trimestres."
+  },
+  {
+   "id": "q34",
+   "theme": "Modèle",
+   "question": "Les noms des mois s'affichent par ordre alphabétique. Quelle fonctionnalité corrige cela ?",
+   "code": "",
+   "options": [
+    "Supprimer les doublons",
+    "Changer le type en texte",
+    "Désactiver le filtrage croisé",
+    "Trier par colonne, en utilisant le numéro du mois"
+   ],
+   "correct": 3,
+   "explication": "Trier par colonne associe la colonne texte à une colonne numérique, ce qui donne l'ordre chronologique."
+  },
+  {
+   "id": "q35",
+   "theme": "Power Query",
+   "question": "Que représente la valeur null dans Power Query ?",
+   "code": "",
+   "options": [
+    "Le nombre zéro",
+    "Une chaîne de texte vide",
+    "Une absence de valeur",
+    "Une erreur de conversion"
+   ],
+   "correct": 2,
+   "explication": "Null indique qu'aucune valeur n'est renseignée ; elle se distingue de zéro et du texte vide."
   }
  ]
 }

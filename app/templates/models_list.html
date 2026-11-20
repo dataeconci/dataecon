@@ -24,7 +24,6 @@
         <div class="mdl-step" data-s="3"><span class="n">3</span> Modèles recommandés</div>
     </div>
 
-    <!-- Étape 1 -->
     <section class="mdl-card" id="card1">
         <header><h2><i class="fas fa-database"></i> 1. Choisir le jeu de données</h2></header>
         <div class="body">
@@ -82,7 +81,6 @@
         </div>
     </section>
 
-    <!-- Étape 2 -->
     <section class="mdl-card" id="card2" style="display:none">
         <header><h2><i class="fas fa-sliders"></i> 2. Définir les variables</h2></header>
         <div class="body">
@@ -120,12 +118,11 @@
 
             <div id="errBox" class="mdl-err" style="display:none"></div>
             <div style="margin-top:20px">
-                <button type="button" class="mdl-btn primary" id="analyzeBtn"><i class="fas fa-wand-magic-sparkles"></i> Analyser mes données et proposer les modèles</button>
+                <button type="button" class="mdl-btn primary" id="analyzeBtn"><i class="fas fa-chart-line"></i> Analyser mes données et proposer les modèles</button>
             </div>
         </div>
     </section>
 
-    <!-- Étape 3 -->
     <section class="mdl-card" id="card3" style="display:none">
         <header>
             <h2><i class="fas fa-list-check"></i> 3. Modèles recommandés pour vos données</h2>
@@ -167,7 +164,6 @@
         </form>
     </section>
 
-    <!-- PLS-SEM -->
     <section class="mdl-card" id="cardPls" style="display:none">
         <header><h2><i class="fas fa-project-diagram"></i> Modèle d'équations structurelles (PLS-SEM)</h2></header>
         <div class="body">
@@ -176,7 +172,7 @@
                 <input type="hidden" name="dataset_id" id="plsDs">
                 <input type="hidden" name="pls_spec" id="plsSpec">
                 <div class="d-flex flex-wrap gap-2 mb-2">
-                    <button type="button" class="mdl-btn ghost" id="plsAuto"><i class="fas fa-wand-magic-sparkles"></i> Détecter les construits (QP1, QP2...)</button>
+                    <button type="button" class="mdl-btn ghost" id="plsAuto"><i class="fas fa-chart-line"></i> Détecter les construits (QP1, QP2...)</button>
                     <button type="button" class="mdl-btn ghost" id="plsAddC"><i class="fas fa-plus"></i> Ajouter un construit</button>
                 </div>
                 <div id="plsCons"></div>
@@ -246,7 +242,6 @@
             setStep(2);
         }).catch(function () { showErr($('dsErr'), 'Impossible de lire ce jeu de données.'); });
     });
-
 
     // ---- PLS-SEM
     var PLS_C = [];
@@ -390,13 +385,13 @@
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ dataset_id: DATASET, target: target, features: selectedX(), time_col: $('timeSel').value, entity_col: $('entSel').value })
         }).then(function (r) { return r.json(); }).then(function (d) {
-            btn.disabled = false; btn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Analyser mes données et proposer les modèles';
+            btn.disabled = false; btn.innerHTML = '<i class="fas fa-chart-line"></i> Analyser mes données et proposer les modèles';
             if (d.error) { showErr($('errBox'), d.error); return; }
             LAST = d; renderRecs(d);
             $('card3').style.display = 'block'; setStep(3);
             $('card3').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }).catch(function () {
-            btn.disabled = false; btn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Analyser mes données et proposer les modèles';
+            btn.disabled = false; btn.innerHTML = '<i class="fas fa-chart-line"></i> Analyser mes données et proposer les modèles';
             showErr($('errBox'), 'Erreur de communication avec le serveur.');
         });
     });

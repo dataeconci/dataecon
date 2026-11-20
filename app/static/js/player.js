@@ -1,4 +1,3 @@
-/* ===== Lecteur de cours interactif DataEcon.Ci ===== */
 (function () {
   'use strict';
 
@@ -29,7 +28,6 @@
   }
   function plain(t) { return String(t).replace(/\*\*/g, '').replace(/`/g, '').replace(/\s+/g, ' ').trim(); }
 
-  /* ---------- Illustrations de couverture par outil ---------- */
   function cover(outil) {
     const head = "<svg viewBox='0 0 600 340' xmlns='http://www.w3.org/2000/svg' font-family='Inter,Segoe UI,sans-serif'>" +
       "<defs><linearGradient id='bg' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#0b2a4a'/><stop offset='1' stop-color='#1f5f99'/></linearGradient></defs>" +
@@ -61,7 +59,6 @@
       "<polyline points='300,240 340,220 380,230 430,205 500,215' fill='none' stroke='#c2a15a' stroke-width='3'/><text x='300' y='300' fill='#fff' font-size='20' font-weight='700'>Tableau</text>" + foot;
   }
 
-  /* ---------- Narration vocale (Web Speech API) ---------- */
   const synth = window.speechSynthesis;
   const narrator = {
     queue: [], i: 0, playing: false, paused: false, voice: null, token: 0,
@@ -124,7 +121,6 @@
     }
   };
 
-  /* ---------- Jeux de données du cours (static/data) ---------- */
   const fichiersCache = {};
   async function fichiersPour(code) {
     const noms = [...new Set((String(code).match(/['"]([\w\-]+\.csv)['"]/g) || []).map(m => m.slice(1, -1)))];
@@ -140,7 +136,6 @@
     return res;
   }
 
-  /* ---------- Moteurs d'exécution ---------- */
   const engines = {
     py: null, r: null, sql: null, chart: null,
 
@@ -152,7 +147,6 @@
       let out = '';
       this.py.setStdout({ batched: s => { out += s + '\n'; } });
       this.py.setStderr({ batched: s => { out += s + '\n'; } });
-      // Charger automatiquement les paquets importés (pandas, numpy, scipy, scikit-learn, statsmodels, matplotlib)
       await this.py.loadPackagesFromImports(code);
       for (const [n, buf] of await fichiersPour(code)) this.py.FS.writeFile(n, buf);
       if (/matplotlib|pyplot/.test(code)) {
@@ -229,7 +223,6 @@
     return engines.sql(code);
   }
 
-  /* ---------- Rendu ---------- */
   const body = $('#pl-body');
 
   function majTop() {
@@ -302,7 +295,7 @@
           '<button class="pl-btn ghost" id="b-reset"><i class="fas fa-rotate-left"></i> Réinitialiser</button>' +
           (texte ? '' : '<button class="pl-btn run" id="b-run"><i class="fas fa-play"></i> Exécuter</button>') +
           '<button class="pl-btn submit" id="b-submit"><i class="fas fa-check"></i> Valider ma réponse</button></span></div>' +
-        (studio ? studioHTML() : pls ? plsHTML(c) : '<div class="pl-editor" id="editor"></div><div class="pl-console"><div class="pl-console-head"><span>Console</span><span id="status"></span></div><div class="pl-console-out" id="out"><span class="muted">Exécutez votre code pour voir le résultat. Raccourci : Ctrl + Entrée.</span></div></div>') +
+        (studio ? studioHTML() : pls ? plsHTML(c) : codeHTML()) +
         '<div class="pl-feedback" id="fb"></div>' +
       '</section></div>' +
       '<div class="pl-nav"><button id="b-prev"><i class="fas fa-arrow-left"></i> Précédent</button><button id="b-next" ' + (dejaOk ? '' : 'disabled') + '>Suivant <i class="fas fa-arrow-right"></i></button></div>';
@@ -316,8 +309,34 @@
     $('#b-submit').onclick = () => soumettre(c);
     const cp = $('#cp-ex'); if (cp) cp.onclick = () => { if (texte) { $('#answer').value = c.code_exemple; } else editor.set(c.code_exemple); };
     const rx = $('#run-ex'); if (rx) rx.onclick = () => { editor.set(c.code_exemple); lancer(); };
-    if (!texte) { $('#b-run').onclick = lancer; }
+    if (!texte) { $('#b-run').onclick = lancer; document.querySelectorAll('.app-run').forEach(b => { b.onclick = lancer; }); }
     majBoutons();
+  }
+
+
+  function codeHTML() {
+    const out = '<div class="pl-console-out" id="out"><span class="muted">Exécutez votre code pour voir le résultat. Raccourci : Ctrl + Entrée.</span></div>';
+    if (OUTIL === 'python') {
+      return '<div class="pl-app app-python"><div class="app-menu"><span>Fichier</span><span>Édition</span><span>Affichage</span><span>Insertion</span><span>Cellule</span><span>Noyau</span><span>Aide</span><span class="kern">Python 3 (ipykernel) <i class="fas fa-circle"></i></span></div>' +
+        '<div class="app-tool"><button class="app-run" type="button"><i class="fas fa-play"></i> Exécuter</button><button type="button" disabled><i class="fas fa-stop"></i></button><button type="button" disabled><i class="fas fa-rotate-right"></i></button><select disabled><option>Code</option></select></div>' +
+        '<div class="nb-cell"><span class="nb-in">In [ ]:</span><div class="pl-editor" id="editor"></div></div>' +
+        '<div class="nb-cell nb-res"><span class="nb-in">Out[ ]:</span><div class="pl-console"><div class="pl-console-head"><span>Sortie</span><span id="status"></span></div>' + out + '</div></div></div>';
+    }
+    if (OUTIL === 'r') {
+      return '<div class="pl-app app-r"><div class="app-menu"><span>File</span><span>Edit</span><span>Code</span><span>View</span><span>Plots</span><span>Session</span><span>Build</span><span>Debug</span><span>Tools</span><span>Help</span></div>' +
+        '<div class="app-tabs"><span class="on"><i class="fas fa-file-code"></i> exercice.R</span><span>Untitled2</span></div>' +
+        '<div class="app-tool"><button type="button" disabled><i class="far fa-floppy-disk"></i></button><button class="app-run" type="button"><i class="fas fa-play"></i> Run</button><button type="button" disabled><i class="fas fa-arrow-right-to-bracket"></i> Source</button><span class="app-hint">Ctrl + Entrée</span></div>' +
+        '<div class="pl-editor" id="editor"></div>' +
+        '<div class="pl-console"><div class="app-ctabs"><span class="on">Console</span><span>Terminal</span><span>Background Jobs</span><span class="sp"></span><span id="status"></span></div><div class="r-path">R 4.4 · ~/</div>' + out + '</div></div>';
+    }
+    if (OUTIL === 'sql') {
+      return '<div class="pl-app app-sql"><div class="app-menu"><span>Fichier</span><span>Édition</span><span>Affichage</span><span>Requête</span><span>Outils</span><span>Fenêtre</span><span>Aide</span></div>' +
+        '<div class="app-tool"><button class="app-run" type="button"><i class="fas fa-play"></i> Exécuter</button><button type="button" disabled><i class="fas fa-bug"></i> Déboguer</button><button type="button" disabled><i class="fas fa-stop"></i></button><select disabled><option>ventes.db</option></select><span class="app-hint">F5 / Ctrl + Entrée</span></div>' +
+        '<div class="app-tabs"><span class="on"><i class="fas fa-database"></i> requete.sql</span></div>' +
+        '<div class="pl-editor" id="editor"></div>' +
+        '<div class="pl-console"><div class="app-ctabs"><span class="on">Résultats</span><span>Messages</span><span class="sp"></span><span id="status"></span></div>' + out + '</div></div>';
+    }
+    return '<div class="pl-editor" id="editor"></div><div class="pl-console"><div class="pl-console-head"><span>Console</span><span id="status"></span></div>' + out + '</div>';
   }
 
   function plsHTML(c) {
@@ -363,7 +382,6 @@
     } finally { btn.disabled = false; }
   }
 
-  /* ---------- Studio Tableau ---------- */
   const DONNEES = [
     ['Abidjan', 'Cacao', '2024-01', 120, 1500], ['Abidjan', 'Café', '2024-01', 85, 1200], ['San-Pédro', 'Cacao', '2024-02', 200, 1520], ['Bouaké', 'Anacarde', '2024-02', 150, 800],
     ['Daloa', 'Café', '2024-02', 60, 1180], ['Abidjan', 'Cacao', '2024-03', 180, 1550], ['Korhogo', 'Anacarde', '2024-03', 220, 820], ['Bouaké', 'Coton', '2024-03', 95, 950],
@@ -377,17 +395,32 @@
   const opt = (arr, all) => '<option value="">' + all + '</option>' + arr.map(v => '<option value="' + v + '">' + v + '</option>').join('');
 
   function studioHTML() {
-    return '<div class="pl-studio">' +
-      '<label>Dimension<select id="s-dim"><option value="ville">Ville</option><option value="produit">Produit</option><option value="date">Mois</option></select></label>' +
-      '<label>Mesure<select id="s-mes"><option value="quantite">Quantité totale</option><option value="ca">Chiffre d\'affaires</option><option value="nb">Nombre de ventes</option><option value="prix">Prix moyen (FCFA)</option></select></label>' +
-      '<label>Graphique<select id="s-type"><option value="bar">Barres</option><option value="barh">Barres horizontales</option><option value="pie">Camembert</option><option value="line">Lignes</option><option value="area">Aires</option></select></label>' +
-      '<label>Produit<select id="s-fp">' + opt(PRODUITS, 'Tous') + '</select></label>' +
-      '<label>Ville<select id="s-fv">' + opt(VILLES, 'Toutes') + '</select></label>' +
-      '<label>Période<select id="s-per"><option value="">Toute l\'année</option><option value="T1">1er trimestre</option><option value="T2">2e trimestre</option><option value="T3">3e trimestre</option></select></label>' +
-      '<label>Tri<select id="s-tri"><option value="">Aucun</option><option value="desc">Décroissant</option><option value="asc">Croissant</option></select></label>' +
-      '<label>Afficher<select id="s-top"><option value="0">Tout</option><option value="3">Top 3</option><option value="5">Top 5</option></select></label>' +
-      '<button class="pl-btn run" id="s-go"><i class="fas fa-chart-column"></i> Générer</button></div>' +
-      '<div class="pl-chartbox"><canvas id="chart"></canvas></div>' +
+    return '<div class="tb-app">' +
+      '<div class="tb-title"><span class="tb-logo">+</span> Classeur1 - Tableau Public</div>' +
+      '<div class="tb-menu"><span>Fichier</span><span>Données</span><span>Feuille de calcul</span><span>Tableau de bord</span><span>Histoire</span><span>Analyse</span><span>Carte</span><span>Format</span><span>Fenêtre</span><span>Aide</span></div>' +
+      '<div class="tb-body">' +
+        '<aside class="tb-data"><div class="tb-h">Données</div><div class="tb-src"><i class="fas fa-database"></i> Ventes (échantillon)</div>' +
+          '<div class="tb-sub">Tables</div><ul><li><i class="fas fa-table"></i> Ventes</li></ul>' +
+          '<div class="tb-sub">Dimensions</div><ul class="dim"><li><i class="fas fa-calendar"></i> Date</li><li><i>Abc</i> Produit</li><li><i>Abc</i> Ville</li></ul>' +
+          '<div class="tb-sub">Mesures</div><ul class="mes"><li><i>#</i> Quantité</li><li><i>#</i> Chiffre d\'affaires</li><li><i>#</i> Nombre de ventes</li></ul></aside>' +
+        '<section class="tb-main">' +
+          '<div class="tb-shelf"><span>Colonnes<br><small>Dimension</small></span><div class="tb-pill dim"><select id="s-dim"><option value="ville">Ville</option><option value="produit">Produit</option><option value="date">Mois</option></select></div></div>' +
+          '<div class="tb-shelf"><span>Lignes<br><small>Mesure</small></span><div class="tb-pill mes"><select id="s-mes"><option value="quantite">Quantité totale</option><option value="ca">Chiffre d\'affaires</option><option value="nb">Nombre de ventes</option><option value="prix">Prix moyen (FCFA)</option></select></div></div>' +
+          '<div class="pl-chartbox"><canvas id="chart"></canvas></div>' +
+        '</section>' +
+        '<aside class="tb-right">' +
+          '<div class="tb-card"><div class="tb-h">Filtres</div>' +
+            '<label>Produit<select id="s-fp">' + opt(PRODUITS, 'Tous') + '</select></label>' +
+            '<label>Ville<select id="s-fv">' + opt(VILLES, 'Toutes') + '</select></label>' +
+            '<label>Période<select id="s-per"><option value="">Toute l\'année</option><option value="T1">1er trimestre</option><option value="T2">2e trimestre</option><option value="T3">3e trimestre</option></select></label></div>' +
+          '<div class="tb-card"><div class="tb-h">Repères</div>' +
+            '<label>Graphique (type de marque)<select id="s-type"><option value="bar">Barres</option><option value="barh">Barres horizontales</option><option value="pie">Camembert</option><option value="line">Lignes</option><option value="area">Aires</option></select></label>' +
+            '<label>Tri<select id="s-tri"><option value="">Aucun</option><option value="desc">Décroissant</option><option value="asc">Croissant</option></select></label>' +
+            '<label>Afficher<select id="s-top"><option value="0">Tout</option><option value="3">Top 3</option><option value="5">Top 5</option></select></label></div>' +
+          '<button class="pl-btn run" id="s-go"><i class="fas fa-chart-column"></i> Générer</button>' +
+        '</aside>' +
+      '</div>' +
+      '<div class="tb-sheets"><span class="on">Feuille 1</span><span class="add">+</span></div></div>' +
       '<textarea class="pl-answer" id="answer" placeholder="Décrivez ce que vous observez (une ou deux phrases)..."></textarea>';
   }
   async function initStudio() {
@@ -417,7 +450,6 @@
     };
   }
 
-  /* ---------- Validation ---------- */
   const norm = s => String(s).replace(/\r/g, '').split('\n').map(l => l.trim()).filter(Boolean).join('\n').replace(/\s+/g, ' ').toLowerCase();
 
   async function soumettre(c) {
@@ -498,7 +530,6 @@
     $('#redo').onclick = () => { etat = { xp: 0, valides: {}, auto: etat.auto }; save(); aller(-1); };
   }
 
-  /* ---------- Instructeur IA ---------- */
   function tutor() {
     const panel = $('#tutor'), msgs = $('#tutor-msgs');
     $('#tutor-fab').onclick = () => { panel.hidden = !panel.hidden; if (!panel.hidden) $('#tutor-input').focus(); };
@@ -521,7 +552,6 @@
     function add(cls, t) { const d = document.createElement('div'); d.className = 'msg ' + cls; d.textContent = t; msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight; return d; }
   }
 
-  /* ---------- Démarrage ---------- */
   async function init() {
     narrator.init();
     $('#v-play').onclick = () => narrator.start();

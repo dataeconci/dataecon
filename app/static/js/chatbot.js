@@ -1,11 +1,7 @@
-/* ============================================
-   CHATBOT DataEcon.Ci - Logique JavaScript
-   ============================================ */
 
 (function() {
     'use strict';
     
-    // Configuration
     const API_URL = '/api/chat';
     const SUGGESTIONS = [
         'Comment s\'inscrire ?',
@@ -14,7 +10,6 @@
         'Mot de passe oublié'
     ];
     
-    // Récupérer les éléments du DOM
     const toggleBtn = document.getElementById('chatbotToggle');
     const closeBtn = document.getElementById('chatbotClose');
     const chatWindow = document.getElementById('chatbotWindow');
@@ -27,13 +22,10 @@
     let isOpen = false;
     let isFirstOpen = true;
     
-    // ==================== INITIALISATION ====================
     function init() {
-        // Ouvrir/Fermer le chat
         toggleBtn.addEventListener('click', toggleChat);
         closeBtn.addEventListener('click', closeChat);
         
-        // Envoyer un message
         sendBtn.addEventListener('click', sendMessage);
         inputField.addEventListener('keypress', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -42,14 +34,11 @@
             }
         });
         
-        // Suggestions
         renderSuggestions();
         
-        // Message de bienvenue
         loadHistory();
     }
     
-    // ==================== OUVERTURE / FERMETURE ====================
     function toggleChat() {
         if (isOpen) {
             closeChat();
@@ -64,15 +53,13 @@
         toggleBtn.classList.add('active');
         toggleBtn.innerHTML = '<i class="fas fa-times"></i>';
         
-        // Masquer le badge
         if (badge) {
             badge.style.display = 'none';
         }
         
-        // Afficher le message de bienvenue la première fois
         if (isFirstOpen) {
             setTimeout(() => {
-                addBotMessage(`Bonjour ! Je suis **EconBot**, votre assistant DataEcon.Ci.
+                addBotMessage(`Bonjour ! Je suis l'assistant **DataEcon.Ci**.
 
 Je peux vous aider sur :
 • Inscription et connexion
@@ -85,7 +72,6 @@ Comment puis-je vous aider ?`);
             }, 300);
         }
         
-        // Focus sur l'input
         setTimeout(() => inputField.focus(), 400);
     }
     
@@ -96,22 +82,17 @@ Comment puis-je vous aider ?`);
         toggleBtn.innerHTML = '<i class="fas fa-comments"></i>';
     }
     
-    // ==================== GESTION DES MESSAGES ====================
     function sendMessage() {
         const message = inputField.value.trim();
         if (!message) return;
         
-        // Afficher le message de l'utilisateur
         addUserMessage(message);
         inputField.value = '';
         
-        // Désactiver l'envoi
         sendBtn.disabled = true;
         
-        // Afficher l'indicateur de saisie
         showTyping();
         
-        // Envoyer au serveur
         fetch(API_URL, {
             method: 'POST',
             headers: {
@@ -155,7 +136,6 @@ Comment puis-je vous aider ?`);
         const messageDiv = document.createElement('div');
         messageDiv.className = 'chatbot-message bot';
         
-        // Convertir le markdown basique (** gras **)
         let formattedText = escapeHtml(text)
             .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
             .replace(/\*(.+?)\*/g, '<em>$1</em>');
@@ -173,7 +153,7 @@ Comment puis-je vous aider ?`);
         
         messageDiv.innerHTML = `
             <div class="chatbot-message-avatar">
-                <i class="fas fa-robot"></i>
+                <i class="fas fa-headset"></i>
             </div>
             <div class="chatbot-message-content">
                 ${formattedText}
@@ -184,14 +164,13 @@ Comment puis-je vous aider ?`);
         scrollToBottom();
     }
     
-    // ==================== INDICATEUR DE SAISIE ====================
     function showTyping() {
         const typingDiv = document.createElement('div');
         typingDiv.className = 'chatbot-message bot';
         typingDiv.id = 'chatbotTyping';
         typingDiv.innerHTML = `
             <div class="chatbot-message-avatar">
-                <i class="fas fa-robot"></i>
+                <i class="fas fa-headset"></i>
             </div>
             <div class="chatbot-typing">
                 <span></span>
@@ -210,7 +189,6 @@ Comment puis-je vous aider ?`);
         }
     }
     
-    // ==================== SUGGESTIONS ====================
     function renderSuggestions() {
         if (!suggestionsContainer) return;
         
@@ -227,16 +205,12 @@ Comment puis-je vous aider ?`);
         });
     }
     
-    // ==================== HISTORIQUE ====================
     function loadHistory() {
-        // Optionnel : charger l'historique depuis localStorage
         const history = localStorage.getItem('chatbot_history');
         if (history) {
             try {
                 const messages = JSON.parse(history);
-                // Limiter aux 3 derniers pour éviter surcharge
                 messages.slice(-3).forEach(msg => {
-                    // Ne pas recharger pour l'instant
                 });
             } catch (e) {
                 console.error('Erreur chargement historique:', e);
@@ -244,7 +218,6 @@ Comment puis-je vous aider ?`);
         }
     }
     
-    // ==================== UTILITAIRES ====================
     function scrollToBottom() {
         setTimeout(() => {
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -257,7 +230,6 @@ Comment puis-je vous aider ?`);
         return div.innerHTML;
     }
     
-    // ==================== DÉMARRAGE ====================
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {

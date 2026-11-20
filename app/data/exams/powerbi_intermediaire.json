@@ -253,6 +253,244 @@
    ],
    "correct": 0,
    "explication": "On choisit filtre, surbrillance ou aucun effet."
+  },
+  {
+   "id": "q19",
+   "theme": "Power Query avancé",
+   "question": "Qu'est-ce que le repli de requête (query folding) ?",
+   "code": "",
+   "options": [
+    "La compression des données dans VertiPaq",
+    "La fusion automatique de deux requêtes",
+    "La suppression des lignes en double",
+    "La traduction des étapes Power Query en une requête native exécutée par la source de données"
+   ],
+   "correct": 3,
+   "explication": "Quand les étapes peuvent être repliées, la source effectue les transformations, ce qui allège l'actualisation."
+  },
+  {
+   "id": "q20",
+   "theme": "Power Query avancé",
+   "question": "Quel est l'intérêt principal d'un paramètre Power Query ?",
+   "code": "",
+   "options": [
+    "Créer une relation entre deux tables",
+    "Modifier une valeur utilisée par les requêtes, comme un chemin ou un serveur, sans éditer les étapes",
+    "Définir un rôle de sécurité",
+    "Remplacer une mesure DAX"
+   ],
+   "correct": 1,
+   "explication": "Un paramètre centralise une valeur réutilisable, ce qui facilite par exemple le changement d'environnement source."
+  },
+  {
+   "id": "q21",
+   "theme": "Power Query avancé",
+   "question": "Dans la boîte de dialogue Fusionner les requêtes, quel type de jointure est sélectionné par défaut ?",
+   "code": "",
+   "options": [
+    "Externe gauche",
+    "Interne",
+    "Externe droite",
+    "Anti gauche"
+   ],
+   "correct": 0,
+   "explication": "Le type par défaut est Externe gauche : toutes les lignes de la première table et les correspondances de la seconde."
+  },
+  {
+   "id": "q22",
+   "theme": "DAX",
+   "question": "Dans la table Ventes, que fait cette colonne calculée ?",
+   "code": "Prix unitaire = RELATED(Produits[Prix])",
+   "options": [
+    "Elle additionne les prix de tous les produits",
+    "Elle supprime la relation entre les tables",
+    "Elle récupère le prix du produit dans la table Produits grâce à la relation",
+    "Elle calcule le prix moyen par client"
+   ],
+   "correct": 2,
+   "explication": "RELATED suit la relation du côté plusieurs vers le côté un pour ramener la valeur d'une colonne de l'autre table."
+  },
+  {
+   "id": "q23",
+   "theme": "DAX",
+   "question": "Que renvoie la fonction FILTER dans cette mesure ?",
+   "code": "CA Premium =\nCALCULATE(\n [CA],\n FILTER(Produits, Produits[Prix] > 100)\n)",
+   "options": [
+    "Une valeur scalaire égale au prix maximal",
+    "Une colonne de prix triée",
+    "Une table contenant les lignes de Produits dont le prix dépasse 100",
+    "Le nombre de produits"
+   ],
+   "correct": 2,
+   "explication": "FILTER est une fonction de table : elle renvoie les lignes qui vérifient la condition, utilisées ensuite comme filtre par CALCULATE."
+  },
+  {
+   "id": "q24",
+   "theme": "DAX",
+   "question": "Que renvoie cette mesure lorsque plusieurs années sont sélectionnées dans un segment ?",
+   "code": "Titre =\n\"CA \" & SELECTEDVALUE(Dates[Année], \"toutes années\")",
+   "options": [
+    "CA toutes années",
+    "CA ",
+    "CA 2026",
+    "Une erreur"
+   ],
+   "correct": 0,
+   "explication": "SELECTEDVALUE renvoie la valeur de remplacement lorsque le contexte contient plusieurs valeurs ou aucune."
+  },
+  {
+   "id": "q25",
+   "theme": "DAX",
+   "question": "Pour un CA de 700, que renvoie cette mesure ?",
+   "code": "Segment =\nSWITCH(\n TRUE(),\n [CA] >= 1000, \"Fort\",\n [CA] >= 500, \"Moyen\",\n \"Faible\"\n)",
+   "options": [
+    "Fort",
+    "Moyen",
+    "Faible",
+    "BLANK"
+   ],
+   "correct": 1,
+   "explication": "SWITCH évalue les conditions dans l'ordre et s'arrête à la première vraie : 700 est inférieur à 1000 mais supérieur ou égal à 500."
+  },
+  {
+   "id": "q26",
+   "theme": "DAX",
+   "question": "Avec cette mesure, quel rang obtient le produit dont le CA est le plus élevé ?",
+   "code": "Rang = RANKX(ALL(Produits[Nom]), [CA])",
+   "options": [
+    "0",
+    "Le dernier rang",
+    "BLANK",
+    "1"
+   ],
+   "correct": 3,
+   "explication": "Sans argument d'ordre, RANKX classe par ordre décroissant : la plus grande valeur reçoit le rang 1."
+  },
+  {
+   "id": "q27",
+   "theme": "DAX",
+   "question": "Quelle formule compte le nombre de clients différents présents dans la table Ventes ?",
+   "code": "",
+   "options": [
+    "DISTINCTCOUNT(Ventes[ClientID])",
+    "COUNT(Ventes[ClientID])",
+    "SUM(Ventes[ClientID])",
+    "COUNTROWS(Ventes)"
+   ],
+   "correct": 0,
+   "explication": "DISTINCTCOUNT ignore les répétitions, alors que COUNT et COUNTROWS comptent chaque ligne de ventes."
+  },
+  {
+   "id": "q28",
+   "theme": "Interactions",
+   "question": "Comment afficher un visuel détaillé dans l'info-bulle d'un autre visuel ?",
+   "code": "",
+   "options": [
+    "Créer un signet masqué",
+    "Ajouter un segment à la page",
+    "Créer une page d'info-bulle et l'affecter au visuel",
+    "Activer le filtrage croisé inversé"
+   ],
+   "correct": 2,
+   "explication": "Une page configurée comme info-bulle peut contenir des visuels qui s'affichent au survol et se filtrent sur l'élément survolé."
+  },
+  {
+   "id": "q29",
+   "theme": "Interactions",
+   "question": "À quoi sert la fonction Synchroniser les segments ?",
+   "code": "",
+   "options": [
+    "Copier un segment vers un autre rapport",
+    "Appliquer un même segment à plusieurs pages du rapport",
+    "Actualiser les données du segment",
+    "Trier les valeurs du segment"
+   ],
+   "correct": 1,
+   "explication": "Le volet Synchroniser les segments permet de choisir les pages où le segment est visible et celles où il filtre."
+  },
+  {
+   "id": "q30",
+   "theme": "Interactions",
+   "question": "Quelle fonctionnalité permet, par clic droit sur une valeur, d'ouvrir une page de détail filtrée sur cette valeur ?",
+   "code": "",
+   "options": [
+    "L'exploration vers le haut",
+    "Le filtrage croisé",
+    "Le signet de données",
+    "L'extraction (drillthrough)"
+   ],
+   "correct": 3,
+   "explication": "La page d'extraction (drillthrough) reçoit le contexte de la valeur choisie et affiche le détail correspondant."
+  },
+  {
+   "id": "q31",
+   "theme": "Interactions",
+   "question": "Que permet un paramètre de champ ?",
+   "code": "",
+   "options": [
+    "Définir une valeur par défaut pour une requête",
+    "Laisser l'utilisateur choisir, via un segment, les mesures ou colonnes affichées dans un visuel",
+    "Limiter les lignes visibles par utilisateur",
+    "Changer la source de données du rapport"
+   ],
+   "correct": 1,
+   "explication": "Un paramètre de champ crée une table de champs sélectionnable dans un segment pour changer dynamiquement l'axe ou les valeurs."
+  },
+  {
+   "id": "q32",
+   "theme": "Service Power BI",
+   "question": "Sur quel élément du Service peut-on définir une alerte de données ?",
+   "code": "",
+   "options": [
+    "Une colonne calculée",
+    "Un segment de rapport",
+    "Une requête Power Query",
+    "Une vignette numérique de tableau de bord, comme une carte, une jauge ou un KPI"
+   ],
+   "correct": 3,
+   "explication": "Les alertes s'appliquent aux vignettes de tableau de bord et envoient une notification quand le seuil est franchi."
+  },
+  {
+   "id": "q33",
+   "theme": "Langage M",
+   "question": "Dans cette formule M, que désigne le mot-clé each ?",
+   "code": "= Table.AddColumn(Source, \"Classe\", each if [Montant] > 100 then \"Élevé\" else \"Faible\")",
+   "options": [
+    "Une boucle qui répète la requête",
+    "Un filtre sur toutes les tables",
+    "Une fonction appliquée à chaque ligne, où [Montant] est la valeur de la ligne courante",
+    "Une référence à la requête précédente"
+   ],
+   "correct": 2,
+   "explication": "each est un raccourci de fonction à un paramètre ; il évalue l'expression pour chaque ligne de la table."
+  },
+  {
+   "id": "q34",
+   "theme": "Power Query avancé",
+   "question": "Quelle transformation Power Query agrège des lignes par catégorie, avec une somme ou un comptage ?",
+   "code": "",
+   "options": [
+    "Regrouper par",
+    "Fractionner la colonne",
+    "Remplir vers le bas",
+    "Transposer"
+   ],
+   "correct": 0,
+   "explication": "Regrouper par produit une ligne par groupe avec l'agrégation choisie, comme un GROUP BY en SQL."
+  },
+  {
+   "id": "q35",
+   "theme": "Thèmes et mise en forme",
+   "question": "Comment applique-t-on une charte graphique personnalisée à l'ensemble d'un rapport ?",
+   "code": "",
+   "options": [
+    "En copiant le fichier .pbix",
+    "En créant une mesure de couleur",
+    "En modifiant le modèle de données",
+    "En important un fichier de thème JSON"
+   ],
+   "correct": 3,
+   "explication": "Un fichier JSON définit couleurs, polices et styles par défaut ; il s'importe depuis le menu Affichage, Thèmes."
   }
  ]
 }

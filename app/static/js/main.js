@@ -1,12 +1,6 @@
-// ============================================
-// DataEcon.Ci - Scripts principaux
-// ============================================
 
 document.addEventListener('DOMContentLoaded', function() {
 
-    // ========================================
-    // 1. AUTO-DISMISS DES ALERTES
-    // ========================================
     const alerts = document.querySelectorAll('.alert');
     alerts.forEach(alert => {
         setTimeout(() => {
@@ -20,9 +14,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 5000);
     });
 
-    // ========================================
-    // 2. SMOOTH SCROLL POUR LES ANCRES
-    // ========================================
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             const targetId = this.getAttribute('href');
@@ -39,23 +30,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // ========================================
-    // 3. PREVISUALISATION DES FICHIERS UPLOAD
-    // ========================================
     const fileInputs = document.querySelectorAll('input[type="file"]');
     fileInputs.forEach(input => {
         input.addEventListener('change', function() {
             const fileName = this.files[0]?.name || 'Aucun fichier sélectionné';
             const fileSize = this.files[0]?.size || 0;
             
-            // Afficher le nom du fichier
             const label = this.closest('.form-group')?.querySelector('.file-label') || 
                           this.nextElementSibling;
             if (label && label.classList.contains('file-label')) {
                 label.textContent = fileName;
             }
 
-            // Afficher la taille si disponible
             const sizeDisplay = this.closest('.form-group')?.querySelector('.file-size');
             if (sizeDisplay) {
                 if (fileSize > 0) {
@@ -72,9 +58,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // ========================================
-    // 4. CONFIRMATION DE SUPPRESSION
-    // ========================================
     document.querySelectorAll('.delete-confirm').forEach(btn => {
         btn.addEventListener('click', function(e) {
             const message = this.dataset.confirmMessage || 'Êtes-vous sûr de vouloir supprimer cet élément ?';
@@ -85,17 +68,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // ========================================
-    // 5. TOOLTIPS (Bootstrap 5)
-    // ========================================
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.map(function(tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 
-    // ========================================
-    // 6. ANIMATION AU SCROLL (Intersection Observer)
-    // ========================================
     const animateElements = document.querySelectorAll('.fade-in, .slide-up');
     
     if ('IntersectionObserver' in window) {
@@ -103,8 +80,6 @@ document.addEventListener('DOMContentLoaded', function() {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
-                    // Si on veut une animation unique, on peut arrêter l'observation
-                    // observer.unobserve(entry.target);
                 }
             });
         }, {
@@ -116,15 +91,11 @@ document.addEventListener('DOMContentLoaded', function() {
             observer.observe(el);
         });
     } else {
-        // Fallback pour les navigateurs plus anciens
         animateElements.forEach(el => {
             el.classList.add('visible');
         });
     }
 
-    // ========================================
-    // 7. VALIDATION DE FORMULAIRE EN TEMPS RÉEL
-    // ========================================
     const forms = document.querySelectorAll('.needs-validation');
     forms.forEach(form => {
         form.addEventListener('submit', function(e) {
@@ -136,9 +107,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // ========================================
-    // 8. MASQUER/AFFICHER LE MOT DE PASSE
-    // ========================================
     document.querySelectorAll('.toggle-password').forEach(btn => {
         btn.addEventListener('click', function() {
             const targetId = this.dataset.target;
@@ -151,9 +119,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // ========================================
-    // 9. BARRE DE PROGRESSION DES COURS
-    // ========================================
     document.querySelectorAll('.progress-simulate').forEach(container => {
         const progressBar = container.querySelector('.progress-bar');
         if (progressBar) {
@@ -175,9 +140,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // ========================================
-    // 10. DARK MODE TOGGLE (optionnel)
-    // ========================================
     const darkModeToggle = document.querySelector('#darkModeToggle');
     if (darkModeToggle) {
         darkModeToggle.addEventListener('click', function() {
@@ -187,16 +149,12 @@ document.addEventListener('DOMContentLoaded', function() {
             this.textContent = isDark ? '' : '';
         });
 
-        // Vérifier la préférence stockée
         if (localStorage.getItem('darkMode') === 'true') {
             document.body.classList.add('dark-mode');
             darkModeToggle.textContent = '';
         }
     }
 
-    // ========================================
-    // 11. COPY TO CLIPBOARD
-    // ========================================
     document.querySelectorAll('.copy-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const targetId = this.dataset.target;
@@ -210,7 +168,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         this.textContent = originalText;
                     }, 2000);
                 }).catch(() => {
-                    // Fallback
                     const range = document.createRange();
                     range.selectNode(target);
                     window.getSelection().removeAllRanges();
@@ -221,9 +178,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // ========================================
-    // 12. GESTION DES TABS PERSISTANTS
-    // ========================================
     const activeTab = localStorage.getItem('activeTab');
     if (activeTab) {
         const tab = document.querySelector(`[data-bs-target="${activeTab}"]`);
@@ -239,9 +193,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // ========================================
-    // 13. DATE HEURE EN TEMPS RÉEL (si présent)
-    // ========================================
     const clockElement = document.querySelector('#live-clock');
     if (clockElement) {
         function updateClock() {
@@ -260,9 +211,6 @@ document.addEventListener('DOMContentLoaded', function() {
         setInterval(updateClock, 1000);
     }
 
-    // ========================================
-    // 14. SCROLL TO TOP BUTTON
-    // ========================================
     const scrollTopBtn = document.querySelector('#scrollTopBtn');
     if (scrollTopBtn) {
         window.addEventListener('scroll', function() {
@@ -287,9 +235,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ========================================
-    // 15. CHART.JS INITIALIZATION (si présent)
-    // ========================================
     if (typeof Chart !== 'undefined') {
         document.querySelectorAll('.chart-canvas').forEach(canvas => {
             const chartType = canvas.dataset.chartType || 'line';

@@ -253,6 +253,244 @@
    ],
    "correct": 2,
    "explication": "Les dimensions regroupent les catégories de type texte ou date."
+  },
+  {
+   "id": "q19",
+   "theme": "Volet Données",
+   "question": "Dans une feuille de calcul Tableau, où retrouve-t-on la liste des champs de la source de données ?",
+   "code": "",
+   "options": [
+    "Dans la barre de menus uniquement",
+    "Dans la carte Repères",
+    "Dans le volet Données, à gauche",
+    "Dans l'étagère Filtres"
+   ],
+   "correct": 2,
+   "explication": "Le volet Données, à gauche de la feuille de calcul, répertorie les dimensions et les mesures de la source de données."
+  },
+  {
+   "id": "q20",
+   "theme": "Étagère Colonnes",
+   "question": "Quelle étagère reçoit les champs qui définissent les colonnes d'une vue, c'est-à-dire l'axe horizontal ?",
+   "code": "",
+   "options": [
+    "L'étagère Colonnes",
+    "L'étagère Lignes",
+    "La carte Repères Étiquette",
+    "L'étagère Pages"
+   ],
+   "correct": 0,
+   "explication": "Les champs déposés sur l'étagère Colonnes forment les colonnes de la vue, donc l'axe horizontal."
+  },
+  {
+   "id": "q21",
+   "theme": "Étagère Lignes",
+   "question": "Que produit une dimension placée sur l'étagère Lignes ?",
+   "code": "",
+   "options": [
+    "Une seule ligne de total",
+    "Une légende de couleurs",
+    "Un axe continu pour chaque membre",
+    "Un en-tête de ligne pour chaque membre de la dimension"
+   ],
+   "correct": 3,
+   "explication": "Une dimension sur Lignes crée une ligne, avec son en-tête, pour chacun de ses membres."
+  },
+  {
+   "id": "q22",
+   "theme": "Carte Repères Couleur",
+   "question": "Quel élément de la carte Repères faut-il utiliser pour colorer les barres selon une dimension telle que la Région ?",
+   "code": "",
+   "options": [
+    "Taille",
+    "Couleur",
+    "Détail",
+    "Info-bulle"
+   ],
+   "correct": 1,
+   "explication": "Déposer un champ sur Couleur dans la carte Repères colore chaque marque en fonction des valeurs du champ."
+  },
+  {
+   "id": "q23",
+   "theme": "Carte Repères Taille",
+   "question": "Quel élément de la carte Repères permet de faire varier la taille des marques selon une mesure ?",
+   "code": "",
+   "options": [
+    "Couleur",
+    "Taille",
+    "Étiquette",
+    "Chemin"
+   ],
+   "correct": 1,
+   "explication": "Le repère Taille ajuste la grandeur des marques proportionnellement à la mesure qui lui est associée."
+  },
+  {
+   "id": "q24",
+   "theme": "Étiquettes",
+   "question": "Comment afficher directement la valeur de la mesure sur chaque barre ?",
+   "code": "",
+   "options": [
+    "En la plaçant sur l'étagère Pages",
+    "En la plaçant sur Couleur uniquement",
+    "En masquant l'axe",
+    "En plaçant la mesure sur Étiquette dans la carte Repères"
+   ],
+   "correct": 3,
+   "explication": "Le repère Étiquette affiche la valeur du champ à côté de chaque marque."
+  },
+  {
+   "id": "q25",
+   "theme": "Info-bulle",
+   "question": "Quel texte s'affiche lorsque l'on survole une marque avec le pointeur ?",
+   "code": "",
+   "options": [
+    "L'info-bulle",
+    "Le titre de la feuille",
+    "La légende des couleurs",
+    "Le sous-titre du tableau de bord"
+   ],
+   "correct": 0,
+   "explication": "L'info-bulle présente les valeurs associées à la marque survolée et peut être personnalisée."
+  },
+  {
+   "id": "q26",
+   "theme": "Champs continus et discrets",
+   "question": "Dans une vue, un champ affiché en vert est :",
+   "code": "",
+   "options": [
+    "Discret",
+    "Une dimension obligatoirement",
+    "Continu",
+    "Un jeu"
+   ],
+   "correct": 2,
+   "explication": "Par convention, les champs discrets sont bleus et les champs continus verts ; les mesures sont en général continues."
+  },
+  {
+   "id": "q27",
+   "theme": "Agrégation par défaut",
+   "question": "Quelle agrégation Tableau applique-t-il par défaut lorsqu'on dépose une mesure numérique dans la vue ?",
+   "code": "",
+   "options": [
+    "La moyenne",
+    "Le minimum",
+    "Le nombre de valeurs",
+    "La somme"
+   ],
+   "correct": 3,
+   "explication": "Par défaut, une mesure numérique est agrégée par une somme, modifiable à tout moment."
+  },
+  {
+   "id": "q28",
+   "theme": "Tableau de bord",
+   "question": "À quoi sert un tableau de bord dans Tableau ?",
+   "code": "",
+   "options": [
+    "À modifier directement les données sources",
+    "À assembler plusieurs feuilles de calcul dans une même présentation",
+    "À remplacer l'étagère Colonnes",
+    "À créer uniquement des cartes"
+   ],
+   "correct": 1,
+   "explication": "Un tableau de bord rassemble des feuilles de calcul et d'autres objets pour offrir une vue d'ensemble interactive."
+  },
+  {
+   "id": "q29",
+   "theme": "Histoire",
+   "question": "Qu'est-ce qu'une Histoire dans Tableau ?",
+   "code": "",
+   "options": [
+    "Une séquence de feuilles de calcul ou de tableaux de bord présentés point par point",
+    "Une description textuelle de la source de données",
+    "Un type de filtre",
+    "Un format d'export en image"
+   ],
+   "correct": 0,
+   "explication": "Une Histoire enchaîne des points d'histoire, chacun reposant sur une feuille ou un tableau de bord, pour guider le lecteur."
+  },
+  {
+   "id": "q30",
+   "theme": "Tableau Public",
+   "question": "Que faut-il retenir des classeurs enregistrés avec Tableau Public ?",
+   "code": "",
+   "options": [
+    "Ils restent privés par défaut",
+    "Ils sont chiffrés et réservés à l'auteur",
+    "Ils sont accessibles publiquement sur le web",
+    "Ils ne peuvent contenir aucune donnée"
+   ],
+   "correct": 2,
+   "explication": "Tableau Public sert à partager des visualisations ; les classeurs et leurs données y sont publics, il ne faut donc rien y mettre de confidentiel."
+  },
+  {
+   "id": "q31",
+   "theme": "Formats de fichier",
+   "question": "Quel format de fichier Tableau regroupe le classeur et ses données dans une seule archive ?",
+   "code": "",
+   "options": [
+    "Le classeur (.twb)",
+    "Le classeur compressé (.twbx)",
+    "Le fichier .csv",
+    "Le fichier .pdf"
+   ],
+   "correct": 1,
+   "explication": "Le .twbx embarque le classeur et les fichiers de données locaux, alors que le .twb ne contient que la définition du classeur."
+  },
+  {
+   "id": "q32",
+   "theme": "Rôles géographiques",
+   "question": "Quel type de champ permet à Tableau de créer automatiquement une carte ?",
+   "code": "",
+   "options": [
+    "Un champ de type booléen",
+    "Un champ calculé de type texte libre",
+    "N'importe quelle mesure",
+    "Un champ à rôle géographique, comme Pays ou Ville"
+   ],
+   "correct": 3,
+   "explication": "Tableau génère Latitude et Longitude pour les champs reconnus comme géographiques, ce qui rend la carte possible."
+  },
+  {
+   "id": "q33",
+   "theme": "Nuage de points",
+   "question": "Quel graphique convient pour étudier la relation entre deux mesures, par exemple le prix et la quantité vendue ?",
+   "code": "",
+   "options": [
+    "Un camembert",
+    "Un graphique en barres empilées",
+    "Un nuage de points",
+    "Un tableau de texte"
+   ],
+   "correct": 2,
+   "explication": "Un nuage de points place chaque observation selon deux mesures et fait apparaître leur corrélation éventuelle."
+  },
+  {
+   "id": "q34",
+   "theme": "Permuter les axes",
+   "question": "Que fait la commande Permuter les lignes et les colonnes ?",
+   "code": "",
+   "options": [
+    "Elle échange le contenu des étagères Lignes et Colonnes",
+    "Elle trie les données par ordre alphabétique",
+    "Elle supprime tous les filtres",
+    "Elle transforme les dimensions en mesures"
+   ],
+   "correct": 0,
+   "explication": "Cette commande inverse l'orientation de la vue, par exemple pour passer de barres verticales à des barres horizontales."
+  },
+  {
+   "id": "q35",
+   "theme": "Hiérarchie de dates",
+   "question": "Que permet le signe plus (+) sur un champ de date de type Année placé dans la vue ?",
+   "code": "",
+   "options": [
+    "Ajouter une mesure à la vue",
+    "Convertir la date en texte",
+    "Supprimer le champ de la vue",
+    "Descendre au niveau suivant, le trimestre"
+   ],
+   "correct": 3,
+   "explication": "Les dates forment une hiérarchie : développer l'année fait apparaître le trimestre, puis le mois, etc."
   }
  ]
 }

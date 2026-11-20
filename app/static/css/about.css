@@ -1,6 +1,3 @@
-/* ============================================
-   PAGE À PROPOS - DESIGN PROFESSIONNEL
-   ============================================ */
 
 .about-page {
     background-color: #f8f9fa;
@@ -35,9 +32,6 @@
     margin-top: 40px;
 }
 
-/* ============================================
-   SECTION CEO (Regroupée)
-   ============================================ */
 .ceo-section {
     background: white;
     border-radius: 15px;
@@ -93,7 +87,6 @@
     color: #0b2a4a;
 }
 
-/* Discours du CEO intégré */
 .ceo-message {
     background: #f8f9fa;
     border-left: 5px solid #c2a15a;
@@ -123,9 +116,6 @@
     gap: 15px;
 }
 
-/* ============================================
-   TITRES DE SECTION
-   ============================================ */
 .section-title {
     text-align: center;
     color: #0b2a4a;
@@ -145,9 +135,6 @@
     border-radius: 2px;
 }
 
-/* ============================================
-   MISSION
-   ============================================ */
 .mission-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -176,9 +163,6 @@
     text-align: justify;
 }
 
-/* ============================================
-   ACTIVITÉS
-   ============================================ */
 .activities-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -211,9 +195,6 @@
     line-height: 1.5;
 }
 
-/* ============================================
-   TARIFS
-   ============================================ */
 .tarifs-subtitle {
     text-align: center;
     color: #666;
@@ -310,7 +291,6 @@
     border-bottom: none;
 }
 
-/* Boutons */
 .btn-primary, .btn-secondary, .btn-outline {
     display: block;
     text-align: center;
@@ -353,9 +333,6 @@
     background: #f0f5ff;
 }
 
-/* ============================================
-   CONTACT
-   ============================================ */
 .contact-section {
     text-align: center;
     padding-bottom: 50px;
@@ -404,9 +381,6 @@
     margin-top: 10px;
 }
 
-/* ============================================
-   RESPONSIVE (Mobiles)
-   ============================================ */
 @media (max-width: 768px) {
     .ceo-section {
         flex-direction: column;
@@ -429,3 +403,23 @@
         width: 100%;
     }
 }
+.story-section{margin:3rem 0}
+.story-text{max-width:860px;margin:0 auto;text-align:left}
+.story-text p{font-size:1.05rem;line-height:1.85;color:#33414f;margin-bottom:1.1rem}
+.stats-section{margin:2.5rem 0}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem}
+.stat{background:#0b2a4a;color:#fff;border-radius:14px;padding:1.4rem 1.2rem;text-align:center;border-bottom:4px solid #c2a15a}
+.stat b{display:block;font-size:2.3rem;line-height:1.1;color:#c2a15a;font-weight:800;margin-bottom:.4rem}
+.stat span{font-size:.92rem;color:#dbe6f2;line-height:1.5}
+.steps-section,.trust-section{margin:3rem 0}
+.steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.1rem}
+.step{background:#fff;border:1px solid #dbe3ec;border-radius:14px;padding:1.4rem 1.3rem;position:relative}
+.step span{display:inline-flex;width:38px;height:38px;border-radius:50%;background:#0b2a4a;color:#c2a15a;font-weight:800;align-items:center;justify-content:center;margin-bottom:.7rem}
+.step h3{font-size:1.1rem;color:#0b2a4a;font-weight:700;margin-bottom:.4rem}
+.step p{font-size:.95rem;color:#4b5a69;line-height:1.65;margin:0}
+.trust-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.2rem}
+.trust-item{background:#fff;border:1px solid #dbe3ec;border-left:4px solid #1f5f99;border-radius:12px;padding:1.4rem}
+.trust-item i{font-size:1.5rem;color:#1f5f99;margin-bottom:.6rem}
+.trust-item h3{font-size:1.1rem;color:#0b2a4a;font-weight:700;margin-bottom:.4rem}
+.trust-item p{font-size:.95rem;color:#4b5a69;line-height:1.65;margin:0}
+.ceo-bio p{margin-bottom:.9rem;line-height:1.75}

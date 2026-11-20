@@ -1,13 +1,9 @@
-/* ============================================
-   PAGE FORMATION PRATIQUE
-   ============================================ */
 
 .formations-page {
     min-height: 100vh;
     background: #f8f9fa;
 }
 
-/* Bannière */
 .formations-hero {
     background: linear-gradient(135deg, #0b2a4a 0%, #1f5f99 100%);
     color: white;
@@ -39,7 +35,6 @@
     opacity: 0.9;
 }
 
-/* Container */
 .formations-container {
     padding: 40px 15px;
 }
@@ -55,7 +50,6 @@
     margin-right: 8px;
 }
 
-/* Section Outils */
 .outils-section {
     margin-bottom: 30px;
 }
@@ -107,7 +101,6 @@
     margin: 0;
 }
 
-/* Section Niveau */
 .niveau-section {
     margin-bottom: 30px;
 }
@@ -139,7 +132,6 @@
     border-color: #1f5f99;
 }
 
-/* Section Pratique */
 .pratique-section {
     margin-bottom: 40px;
 }
@@ -156,9 +148,8 @@
     }
 }
 
-/* Panels */
 .editeur-panel,
-.ia-panel {
+.assistant-panel {
     background: white;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
@@ -201,7 +192,6 @@
     font-weight: 600;
 }
 
-/* Éditeur */
 .editeur-content {
     flex: 1;
     padding: 0;
@@ -232,7 +222,6 @@
     color: #ccc;
 }
 
-/* Chat IA */
 .chat-messages {
     flex: 1;
     padding: 15px;
@@ -241,7 +230,7 @@
     max-height: 450px;
 }
 
-.msg-ia,
+.msg-assistant,
 .msg-user {
     margin-bottom: 15px;
     padding: 10px 14px;
@@ -250,7 +239,7 @@
     line-height: 1.5;
 }
 
-.msg-ia {
+.msg-assistant {
     background: white;
     border-left: 3px solid #1f5f99;
 }
@@ -261,13 +250,13 @@
     margin-left: 20px;
 }
 
-.msg-ia strong {
+.msg-assistant strong {
     display: block;
     margin-bottom: 5px;
     color: #0b2a4a;
 }
 
-.msg-ia p {
+.msg-assistant p {
     margin: 0;
     white-space: pre-wrap;
 }
@@ -313,10 +302,6 @@
     color: #999;
     font-style: italic;
 }
-
-/* ============================================
-   ÉDITEUR SQL
-   ============================================ */
 
 .sql-editor-wrapper {
     display: flex;
@@ -442,11 +427,6 @@
     background: #e8f4fd;
 }
 
-
-/* ============================================
-   ÉDITEUR R (WebR)
-   ============================================ */
-
 .r-editor-wrapper {
     display: flex;
     flex-direction: column;
@@ -558,10 +538,6 @@
     font-weight: 600;
 }
 
-/* ============================================
-   MINI-TABLEAU INTERACTIF
-   ============================================ */
-
 .tableau-wrapper {
     display: flex;
     flex-direction: column;
@@ -666,10 +642,6 @@
     line-height: 1.5;
 }
 
-/* ============================================
-   MODE COURS GUIDÉ - BOUTON
-   ============================================ */
-
 .cours-section {
     margin-bottom: 30px;
 }
@@ -730,11 +702,6 @@
     font-size: 1.2rem;
 }
 
-
-/* ============================================
-   MODE COURS GUIDÉ - INTERFACE
-   ============================================ */
-
 .cours-loading {
     display: flex;
     flex-direction: column;
@@ -758,7 +725,6 @@
     background: #fafafa;
 }
 
-/* Header avec progression */
 .cours-header {
     display: flex;
     justify-content: space-between;
@@ -811,7 +777,6 @@
     background: rgba(255, 255, 255, 0.3);
 }
 
-/* Corps du cours */
 .cours-body {
     flex: 1;
     overflow-y: auto;
@@ -848,7 +813,6 @@
     font-style: italic;
 }
 
-/* Sections */
 .cours-section-explication,
 .cours-section-image,
 .cours-section-code,
@@ -891,7 +855,6 @@
     color: #0b2a4a;
 }
 
-/* Image SVG */
 .cours-image-container {
     display: flex;
     justify-content: center;
@@ -906,7 +869,6 @@
     max-height: 200px;
 }
 
-/* Bloc code */
 .cours-code-header {
     display: flex;
     justify-content: space-between;
@@ -953,7 +915,6 @@
     color: inherit;
 }
 
-/* Question de réflexion */
 .cours-section-reflexion {
     background: #fff9e6;
     border-left: 4px solid #c2a15a;
@@ -971,7 +932,6 @@
     font-style: italic;
 }
 
-/* Exercice */
 .cours-section-exercice {
     background: #e8f5e9;
     border-left: 4px solid #27ae60;
@@ -1032,7 +992,6 @@
     transform: translateY(-1px);
 }
 
-/* Navigation */
 .cours-navigation {
     display: flex;
     justify-content: space-between;
@@ -1076,11 +1035,6 @@
 .cours-nav-next:hover:not(:disabled) {
     background: #0b2a4a;
 }
-
-
-/* ============================================
-   ÉDITEUR D'EXERCICE INTÉGRÉ
-   ============================================ */
 
 .exercice-editeur {
     margin-top: 15px;
@@ -1178,7 +1132,6 @@
     white-space: pre-wrap;
     word-wrap: break-word;
 }
-/* ===== Catalogue des cours interactifs ===== */
 .catalogue-section { margin: 10px 0 40px; }
 .catalogue-section h2, .outils-section h2 { color: #0b2a4a; font-weight: 700; margin-bottom: 8px; }
 .catalogue-lead { color: #52606d; max-width: 760px; margin-bottom: 22px; }

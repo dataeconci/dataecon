@@ -253,6 +253,244 @@
    ],
    "correct": 1,
    "explication": "get_dummies avec drop_first=True supprime la première modalité (R) pour éviter la colinéarité parfaite avec la constante."
+  },
+  {
+   "id": "q19",
+   "theme": "Validation croisée",
+   "question": "Quel est l'intérêt principal d'une validation croisée à k plis ?",
+   "code": "",
+   "options": [
+    "Estimer la performance sur plusieurs partitions, pour une mesure moins dépendante d'un seul découpage",
+    "Augmenter mécaniquement la taille du jeu de données",
+    "Garantir que le modèle ne surapprend jamais",
+    "Remplacer le jeu de test final par un jeu d'apprentissage"
+   ],
+   "correct": 0,
+   "explication": "Chaque observation sert tour à tour à l'évaluation, ce qui stabilise l'estimation de la performance par rapport à un unique découpage."
+  },
+  {
+   "id": "q20",
+   "theme": "Fuite d'information (data leakage)",
+   "question": "Quel défaut présente ce code ?",
+   "code": "from sklearn.preprocessing import StandardScaler\nfrom sklearn.model_selection import train_test_split\nX_s = StandardScaler().fit_transform(X)\nX_tr, X_te, y_tr, y_te = train_test_split(X_s, y, random_state=0)",
+   "options": [
+    "StandardScaler ne s'applique pas aux tableaux numériques",
+    "La moyenne et l'écart-type sont calculés sur tout le jeu, test compris : il y a fuite d'information",
+    "train_test_split exige que les données soient centrées avant",
+    "La variable cible y devrait être standardisée à la place de X"
+   ],
+   "correct": 1,
+   "explication": "La transformation doit être ajustée sur l'échantillon d'apprentissage seul, puis appliquée au test ; sinon le test influence le modèle."
+  },
+  {
+   "id": "q21",
+   "theme": "Exactitude et classes déséquilibrées",
+   "question": "Qu'affiche ce code ?",
+   "code": "from sklearn.metrics import accuracy_score, recall_score\ny_true = [0] * 95 + [1] * 5\ny_pred = [0] * 100\nprint(accuracy_score(y_true, y_pred), recall_score(y_true, y_pred))",
+   "options": [
+    "0.95 1.0",
+    "0.05 0.0",
+    "0.95 0.0",
+    "1.0 0.95"
+   ],
+   "correct": 2,
+   "explication": "Prédire toujours la classe majoritaire donne 95 % d'exactitude, mais aucun cas positif n'est détecté : le rappel vaut 0."
+  },
+  {
+   "id": "q22",
+   "theme": "Précision et rappel",
+   "question": "Qu'affiche ce code ?",
+   "code": "from sklearn.metrics import precision_score, recall_score\ny_true = [1, 1, 0, 0, 1]\ny_pred = [1, 0, 1, 1, 1]\nprint(precision_score(y_true, y_pred), round(recall_score(y_true, y_pred), 2))",
+   "options": [
+    "0.67 0.5",
+    "0.5 0.5",
+    "0.67 0.67",
+    "0.5 0.67"
+   ],
+   "correct": 3,
+   "explication": "Il y a 2 vrais positifs, 2 faux positifs et 1 faux négatif : précision = 2/4 = 0.5 et rappel = 2/3, soit 0.67."
+  },
+  {
+   "id": "q23",
+   "theme": "Régression Ridge",
+   "question": "Que provoque l'augmentation du paramètre alpha dans une régression Ridge ?",
+   "code": "",
+   "options": [
+    "Les coefficients sont rétrécis vers zéro, sans être en général exactement nuls",
+    "Les coefficients deviennent tous exactement nuls dès que alpha est positif",
+    "Les coefficients augmentent pour mieux ajuster les données",
+    "Le nombre de variables explicatives est réduit automatiquement"
+   ],
+   "correct": 0,
+   "explication": "La pénalité L2 contracte les coefficients, ce qui réduit la variance du modèle, mais n'élimine pas les variables."
+  },
+  {
+   "id": "q24",
+   "theme": "Sélection de variables avec Lasso",
+   "question": "Quelle pénalisation peut annuler exactement certains coefficients et ainsi sélectionner des variables ?",
+   "code": "",
+   "options": [
+    "La pénalité L2 (Ridge)",
+    "La pénalité L1 (Lasso)",
+    "L'absence de toute pénalisation",
+    "La standardisation de la variable cible"
+   ],
+   "correct": 1,
+   "explication": "La pénalité L1 produit des solutions parcimonieuses : certains coefficients sont fixés à zéro, ce que ne fait pas la pénalité L2."
+  },
+  {
+   "id": "q25",
+   "theme": "Test de Dickey-Fuller augmenté",
+   "question": "Quelle est l'hypothèse nulle du test de Dickey-Fuller augmenté (ADF) ?",
+   "code": "",
+   "options": [
+    "La série est stationnaire autour d'une tendance déterministe",
+    "Les résidus sont homoscédastiques",
+    "La série possède une racine unitaire (elle est non stationnaire)",
+    "La série ne présente aucune autocorrélation"
+   ],
+   "correct": 2,
+   "explication": "Une p-value faible conduit à rejeter l'hypothèse de racine unitaire et à conclure en faveur de la stationnarité."
+  },
+  {
+   "id": "q26",
+   "theme": "Différenciation d'une série",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\nprint(pd.Series([5, 8, 14, 15]).diff().tolist())",
+   "options": [
+    "[3, 6, 1]",
+    "[0.0, 3.0, 6.0, 1.0]",
+    "[nan, 5.0, 8.0, 14.0]",
+    "[nan, 3.0, 6.0, 1.0]"
+   ],
+   "correct": 3,
+   "explication": "diff calcule la différence avec l'observation précédente ; la première valeur n'a pas de précédente et vaut donc NaN."
+  },
+  {
+   "id": "q27",
+   "theme": "Rééchantillonnage temporel",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\ns = pd.Series([1, 2, 3, 4, 5, 6], index=pd.date_range('2024-01-01', periods=6, freq='D'))\nprint(s.resample('2D').sum().tolist())",
+   "options": [
+    "[3, 7, 11]",
+    "[1, 3, 5]",
+    "[21]",
+    "[3, 4, 5, 6]"
+   ],
+   "correct": 0,
+   "explication": "Les observations sont regroupées par fenêtres de deux jours : 1+2, 3+4 et 5+6."
+  },
+  {
+   "id": "q28",
+   "theme": "Lecture d'un autocorrélogramme",
+   "question": "Une fonction d'autocorrélation qui décroît très lentement, avec des valeurs élevées aux premiers retards, suggère quoi ?",
+   "code": "",
+   "options": [
+    "Un bruit blanc",
+    "Une série non stationnaire (tendance ou racine unitaire)",
+    "Une série stationnaire sans mémoire",
+    "Des résidus parfaitement indépendants"
+   ],
+   "correct": 1,
+   "explication": "Une décroissance lente de l'ACF est typique d'une série à tendance ou à racine unitaire, qu'il faut souvent différencier."
+  },
+  {
+   "id": "q29",
+   "theme": "Colinéarité et VIF",
+   "question": "Que révèle un facteur d'inflation de la variance (VIF) très élevé, par exemple supérieur à 10, pour une variable explicative ?",
+   "code": "",
+   "options": [
+    "Le modèle est parfaitement ajusté",
+    "La variable cible est mal mesurée",
+    "Cette variable est fortement corrélée linéairement avec les autres variables explicatives",
+    "Les résidus ne suivent pas une loi normale"
+   ],
+   "correct": 2,
+   "explication": "Le VIF mesure l'inflation de la variance d'un coefficient due à la multicolinéarité, ce qui rend l'estimation instable."
+  },
+  {
+   "id": "q30",
+   "theme": "Probabilités prédites",
+   "question": "Qu'affiche ce code ?",
+   "code": "import numpy as np\nfrom sklearn.linear_model import LogisticRegression\nX = np.array([[0], [1], [2], [3]])\ny = np.array([0, 0, 1, 1])\nmodel = LogisticRegression().fit(X, y)\nprint(model.predict_proba(X).shape)",
+   "options": [
+    "(4,)",
+    "(2, 4)",
+    "(4, 1)",
+    "(4, 2)"
+   ],
+   "correct": 3,
+   "explication": "predict_proba renvoie une probabilité par observation et par classe : 4 observations et 2 classes donnent (4, 2)."
+  },
+  {
+   "id": "q31",
+   "theme": "Reproductibilité",
+   "question": "Pourquoi fixe-t-on le paramètre random_state dans train_test_split ?",
+   "code": "",
+   "options": [
+    "Pour obtenir le même découpage, et donc des résultats reproductibles, à chaque exécution",
+    "Pour accélérer le calcul du découpage",
+    "Pour garantir un échantillon représentatif de la population",
+    "Pour éviter tout surapprentissage du modèle"
+   ],
+   "correct": 0,
+   "explication": "Le générateur aléatoire est alors initialisé de façon identique, ce qui rend l'analyse reproductible."
+  },
+  {
+   "id": "q32",
+   "theme": "Vectorisation et performance",
+   "question": "Pourquoi une opération vectorisée pandas ou NumPy est-elle en général beaucoup plus rapide qu'une boucle Python sur les lignes ?",
+   "code": "",
+   "options": [
+    "Elle ne calcule que la moitié des lignes",
+    "Elle s'exécute dans du code compilé sur des tableaux entiers, sans le surcoût de l'interpréteur à chaque élément",
+    "Elle utilise toujours plusieurs ordinateurs en parallèle",
+    "Elle ignore les valeurs manquantes sans les traiter"
+   ],
+   "correct": 1,
+   "explication": "Le travail est délégué à des routines compilées (C) qui traitent l'ensemble du tableau d'un seul appel."
+  },
+  {
+   "id": "q33",
+   "theme": "Critère d'information AIC",
+   "question": "Entre deux modèles estimés sur les mêmes données, lequel est préféré selon le critère d'Akaike (AIC) ?",
+   "code": "",
+   "options": [
+    "Celui dont l'AIC est le plus élevé",
+    "Celui qui possède le plus de paramètres",
+    "Celui dont l'AIC est le plus faible",
+    "Celui dont l'AIC est le plus proche de 1"
+   ],
+   "correct": 2,
+   "explication": "L'AIC pénalise la complexité : à données identiques, la valeur la plus faible indique le meilleur compromis ajustement-parcimonie."
+  },
+  {
+   "id": "q34",
+   "theme": "Statistique de Durbin-Watson",
+   "question": "Une statistique de Durbin-Watson proche de 2 sur les résidus d'une régression indique quoi ?",
+   "code": "",
+   "options": [
+    "Une forte autocorrélation positive des résidus",
+    "Une forte autocorrélation négative des résidus",
+    "Une hétéroscédasticité sévère",
+    "L'absence d'autocorrélation d'ordre 1 des résidus"
+   ],
+   "correct": 3,
+   "explication": "Les valeurs proches de 0 signalent une autocorrélation positive, celles proches de 4 une autocorrélation négative ; 2 correspond à son absence."
+  },
+  {
+   "id": "q35",
+   "theme": "Surapprentissage",
+   "question": "Un modèle obtient un R² de 0,99 sur l'échantillon d'apprentissage et de 0,55 sur l'échantillon de test. Quel diagnostic est le plus probable ?",
+   "code": "",
+   "options": [
+    "Un surapprentissage : le modèle généralise mal",
+    "Un sous-apprentissage : le modèle est trop simple",
+    "Une absence de fuite d'information",
+    "Un échantillon de test trop petit pour calculer un R²"
+   ],
+   "correct": 0,
+   "explication": "Un écart important entre la performance d'apprentissage et celle du test traduit un modèle trop adapté au bruit de l'apprentissage."
   }
  ]
 }

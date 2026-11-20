@@ -281,6 +281,216 @@
    ],
    "correct": 3,
    "explication": "Il faut joindre les deux tables, calculer la marge ligne par ligne en tenant compte de la quantité, puis sommer par produit."
+  },
+  {
+   "theme": "CROSS JOIN",
+   "question": "Que renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nCREATE TABLE produits (produit TEXT PRIMARY KEY, categorie TEXT, cout_unitaire REAL);\nINSERT INTO produits VALUES ('Cacao','Export',800),('Café','Export',600),('Anacarde','Export',400),('Riz','Vivrier',300);\nSELECT COUNT(*) FROM ventes CROSS JOIN produits;",
+   "options": [
+    "32",
+    "8",
+    "4",
+    "12"
+   ],
+   "correct": 0,
+   "explication": "Un produit cartésien associe chaque ligne de ventes (8) à chaque ligne de produits (4) : 8 x 4 = 32.",
+   "id": "q21"
+  },
+  {
+   "theme": "LEFT JOIN et COUNT",
+   "question": "Quelle ligne (produit | compte) renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nCREATE TABLE produits (produit TEXT PRIMARY KEY, categorie TEXT, cout_unitaire REAL);\nINSERT INTO produits VALUES ('Cacao','Export',800),('Café','Export',600),('Anacarde','Export',400),('Riz','Vivrier',300);\nSELECT p.produit, COUNT(v.id) FROM produits p LEFT JOIN ventes v ON v.produit = p.produit WHERE p.produit = 'Riz' GROUP BY p.produit;",
+   "options": [
+    "Riz | 1",
+    "Riz | 0",
+    "Riz | NULL",
+    "Aucune ligne"
+   ],
+   "correct": 1,
+   "explication": "Le Riz n'a aucune vente : le LEFT JOIN le conserve avec des valeurs NULL et COUNT(v.id) ignore les NULL, d'où Riz | 0.",
+   "id": "q22"
+  },
+  {
+   "theme": "COALESCE",
+   "question": "Que renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nCREATE TABLE produits (produit TEXT PRIMARY KEY, categorie TEXT, cout_unitaire REAL);\nINSERT INTO produits VALUES ('Cacao','Export',800),('Café','Export',600),('Anacarde','Export',400),('Riz','Vivrier',300);\nSELECT COALESCE(SUM(quantite), 0) FROM ventes WHERE ville = 'Absente';",
+   "options": [
+    "NULL",
+    "1",
+    "0",
+    "Une erreur"
+   ],
+   "correct": 2,
+   "explication": "SUM sur aucune ligne vaut NULL ; COALESCE remplace ce NULL par 0 : 0.",
+   "id": "q23"
+  },
+  {
+   "theme": "Sous-requête scalaire",
+   "question": "Que renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nCREATE TABLE produits (produit TEXT PRIMARY KEY, categorie TEXT, cout_unitaire REAL);\nINSERT INTO produits VALUES ('Cacao','Export',800),('Café','Export',600),('Anacarde','Export',400),('Riz','Vivrier',300);\nSELECT COUNT(*) FROM ventes WHERE prix_unitaire > (SELECT AVG(prix_unitaire) FROM ventes);",
+   "options": [
+    "3",
+    "4",
+    "5",
+    "8"
+   ],
+   "correct": 1,
+   "explication": "La moyenne des prix vaut 975 ; quatre ventes la dépassent (1200, 1250, 1300 et 980) : 4.",
+   "id": "q24"
+  },
+  {
+   "theme": "INTERSECT",
+   "question": "Que renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nCREATE TABLE produits (produit TEXT PRIMARY KEY, categorie TEXT, cout_unitaire REAL);\nINSERT INTO produits VALUES ('Cacao','Export',800),('Café','Export',600),('Anacarde','Export',400),('Riz','Vivrier',300);\nSELECT COUNT(*) FROM (SELECT ville FROM ventes WHERE produit='Cacao' INTERSECT SELECT ville FROM ventes WHERE produit='Café');",
+   "options": [
+    "0",
+    "1",
+    "2",
+    "3"
+   ],
+   "correct": 3,
+   "explication": "Villes communes au cacao (Abidjan, Daloa, Bouaké) et au café (Daloa, Abidjan, Bouaké) : 3.",
+   "id": "q25"
+  },
+  {
+   "theme": "EXCEPT",
+   "question": "Que renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nCREATE TABLE produits (produit TEXT PRIMARY KEY, categorie TEXT, cout_unitaire REAL);\nINSERT INTO produits VALUES ('Cacao','Export',800),('Café','Export',600),('Anacarde','Export',400),('Riz','Vivrier',300);\nSELECT COUNT(*) FROM (SELECT ville FROM ventes WHERE produit='Café' EXCEPT SELECT ville FROM ventes WHERE produit='Anacarde');",
+   "options": [
+    "3",
+    "1",
+    "0",
+    "2"
+   ],
+   "correct": 0,
+   "explication": "Villes du café (Daloa, Abidjan, Bouaké) moins celles de l'anacarde (Man) : EXCEPT retire les villes communes, il reste 3.",
+   "id": "q26"
+  },
+  {
+   "theme": "Jointure et marge",
+   "question": "Que renvoie cette requête (marge totale du Café) ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nCREATE TABLE produits (produit TEXT PRIMARY KEY, categorie TEXT, cout_unitaire REAL);\nINSERT INTO produits VALUES ('Cacao','Export',800),('Café','Export',600),('Anacarde','Export',400),('Riz','Vivrier',300);\nSELECT SUM(v.quantite * (v.prix_unitaire - p.cout_unitaire)) FROM ventes v JOIN produits p ON p.produit = v.produit WHERE v.produit = 'Café';",
+   "options": [
+    "112300",
+    "112000",
+    "12000",
+    "99200"
+   ],
+   "correct": 0,
+   "explication": "Marge de chaque vente (quantité x (prix - coût)) : 60x300 + 150x350 + 110x380 = 18000 + 52500 + 41800 = 112300.",
+   "id": "q27"
+  },
+  {
+   "theme": "CASE",
+   "question": "Que renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nCREATE TABLE produits (produit TEXT PRIMARY KEY, categorie TEXT, cout_unitaire REAL);\nINSERT INTO produits VALUES ('Cacao','Export',800),('Café','Export',600),('Anacarde','Export',400),('Riz','Vivrier',300);\nSELECT CASE WHEN quantite >= 100 THEN 'Gros' WHEN quantite >= 80 THEN 'Moyen' ELSE 'Petit' END AS t FROM ventes WHERE id = 6;",
+   "options": [
+    "Gros",
+    "Petit",
+    "NULL",
+    "Moyen"
+   ],
+   "correct": 3,
+   "explication": "La vente 6 porte sur 90 unités : la première condition (>= 100) est fausse, la seconde (>= 80) est vraie : Moyen.",
+   "id": "q28"
+  },
+  {
+   "theme": "strftime",
+   "question": "Que renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nCREATE TABLE produits (produit TEXT PRIMARY KEY, categorie TEXT, cout_unitaire REAL);\nINSERT INTO produits VALUES ('Cacao','Export',800),('Café','Export',600),('Anacarde','Export',400),('Riz','Vivrier',300);\nSELECT strftime('%m', date) FROM ventes WHERE id = 3;",
+   "options": [
+    "15",
+    "2024",
+    "03",
+    "3"
+   ],
+   "correct": 2,
+   "explication": "strftime('%m', ...) renvoie le mois sur deux chiffres, sous forme de texte : 03.",
+   "id": "q29"
+  },
+  {
+   "theme": "EXISTS",
+   "question": "Que renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nCREATE TABLE produits (produit TEXT PRIMARY KEY, categorie TEXT, cout_unitaire REAL);\nINSERT INTO produits VALUES ('Cacao','Export',800),('Café','Export',600),('Anacarde','Export',400),('Riz','Vivrier',300);\nSELECT COUNT(*) FROM produits p WHERE EXISTS (SELECT 1 FROM ventes v WHERE v.produit = p.produit);",
+   "options": [
+    "3",
+    "4",
+    "0",
+    "8"
+   ],
+   "correct": 0,
+   "explication": "EXISTS ne garde que les produits ayant au moins une vente : Cacao, Café et Anacarde, soit 3 (le Riz est exclu).",
+   "id": "q30"
+  },
+  {
+   "theme": "COUNT DISTINCT et jointure",
+   "question": "Que renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nCREATE TABLE produits (produit TEXT PRIMARY KEY, categorie TEXT, cout_unitaire REAL);\nINSERT INTO produits VALUES ('Cacao','Export',800),('Café','Export',600),('Anacarde','Export',400),('Riz','Vivrier',300);\nSELECT COUNT(DISTINCT v.ville) FROM ventes v JOIN produits p ON p.produit = v.produit WHERE p.categorie = 'Export';",
+   "options": [
+    "8",
+    "2",
+    "5",
+    "4"
+   ],
+   "correct": 3,
+   "explication": "Toutes les ventes sont des produits d'export ; les villes distinctes sont Abidjan, Daloa, Man et Bouaké : 4.",
+   "id": "q31"
+  },
+  {
+   "theme": "Anti-jointure",
+   "question": "Quel produit renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nCREATE TABLE produits (produit TEXT PRIMARY KEY, categorie TEXT, cout_unitaire REAL);\nINSERT INTO produits VALUES ('Cacao','Export',800),('Café','Export',600),('Anacarde','Export',400),('Riz','Vivrier',300);\nSELECT p.produit FROM produits p LEFT JOIN ventes v ON v.produit = p.produit WHERE v.id IS NULL;",
+   "options": [
+    "Cacao",
+    "Riz",
+    "Café",
+    "Anacarde"
+   ],
+   "correct": 1,
+   "explication": "Le LEFT JOIN suivi de IS NULL isole les produits sans vente : Riz.",
+   "id": "q32"
+  },
+  {
+   "theme": "NULLIF",
+   "question": "Que renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nCREATE TABLE produits (produit TEXT PRIMARY KEY, categorie TEXT, cout_unitaire REAL);\nINSERT INTO produits VALUES ('Cacao','Export',800),('Café','Export',600),('Anacarde','Export',400),('Riz','Vivrier',300);\nSELECT NULLIF(quantite, 80) FROM ventes WHERE id = 4;",
+   "options": [
+    "NULL",
+    "80",
+    "0",
+    "4"
+   ],
+   "correct": 0,
+   "explication": "NULLIF(a, b) renvoie NULL si a = b : ici la quantité vaut 80, le résultat est NULL.",
+   "id": "q33"
+  },
+  {
+   "theme": "Tri sur agrégat",
+   "question": "Quelle ville renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nCREATE TABLE produits (produit TEXT PRIMARY KEY, categorie TEXT, cout_unitaire REAL);\nINSERT INTO produits VALUES ('Cacao','Export',800),('Café','Export',600),('Anacarde','Export',400),('Riz','Vivrier',300);\nSELECT ville FROM ventes GROUP BY ville ORDER BY SUM(quantite) DESC LIMIT 1;",
+   "options": [
+    "Man",
+    "Bouaké",
+    "Abidjan",
+    "Daloa"
+   ],
+   "correct": 2,
+   "explication": "Daloa totalise 60 + 200 = 260 unités, Abidjan 270 : la plus élevée est Abidjan.",
+   "id": "q34"
+  },
+  {
+   "theme": "UNION",
+   "question": "Quelle condition les requêtes d'un UNION doivent-elles respecter ?",
+   "code": "",
+   "options": [
+    "Avoir le même nombre de colonnes, de types compatibles",
+    "Porter sur la même table",
+    "Avoir un WHERE identique",
+    "Contenir un GROUP BY"
+   ],
+   "correct": 0,
+   "explication": "Les colonnes sont appariées par position : leur nombre doit être identique et leurs types compatibles.",
+   "id": "q35"
   }
  ]
 }

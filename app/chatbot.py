@@ -17,7 +17,7 @@ KNOWLEDGE_BASE = {
     # Salutations
     "salutation": {
         "keywords": ["bonjour", "salut", "bonsoir", "hello", "hi", "coucou", "hey"],
-        "response": "Bonjour ! Je suis **EconBot**, votre assistant DataEcon.Ci. Comment puis-je vous aider aujourd'hui ?"
+        "response": "Bonjour ! Je suis l'assistant **DataEcon.Ci**. Comment puis-je vous aider aujourd'hui ?"
     },
     "remerciement": {
         "keywords": ["merci", "thanks", "thank you", "super", "parfait"],

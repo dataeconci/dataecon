@@ -253,6 +253,244 @@
    ],
    "correct": 0,
    "explication": "Elles isolent l'effet de facteurs externes comme l'âge ou le sexe."
+  },
+  {
+   "id": "q19",
+   "theme": "Médiation",
+   "question": "Dans une médiation simple, a = 0,40 (X → M) et b = 0,35 (M → Y). Quel est l'effet indirect de X sur Y ?",
+   "code": "",
+   "options": [
+    "0,75",
+    "0,05",
+    "0,38",
+    "0,14"
+   ],
+   "correct": 3,
+   "explication": "L'effet indirect est le produit des coefficients : 0,40 × 0,35 = 0,14."
+  },
+  {
+   "id": "q20",
+   "theme": "Médiation",
+   "question": "L'effet direct de X sur Y vaut 0,22 et l'effet indirect via M vaut 0,14. Quel est l'effet total ?",
+   "code": "",
+   "options": [
+    "0,08",
+    "0,36",
+    "0,03",
+    "0,18"
+   ],
+   "correct": 1,
+   "explication": "L'effet total est la somme de l'effet direct et des effets indirects : 0,22 + 0,14 = 0,36."
+  },
+  {
+   "id": "q21",
+   "theme": "Médiation",
+   "question": "Dans un modèle à deux médiateurs parallèles, a1 = 0,40, b1 = 0,35, a2 = 0,30 et b2 = 0,20. Quel est l'effet indirect total ?",
+   "code": "",
+   "options": [
+    "0,14",
+    "0,06",
+    "0,20",
+    "1,25"
+   ],
+   "correct": 2,
+   "explication": "L'effet indirect total est la somme des effets indirects spécifiques : (0,40 × 0,35) + (0,30 × 0,20) = 0,14 + 0,06 = 0,20."
+  },
+  {
+   "id": "q22",
+   "theme": "Médiation",
+   "question": "L'effet indirect est non significatif alors que l'effet direct est significatif. Selon la typologie de Zhao et al. (2010), il s'agit de :",
+   "code": "",
+   "options": [
+    "Non-médiation à effet direct seul",
+    "Médiation complémentaire",
+    "Médiation compétitive",
+    "Médiation indirecte seule"
+   ],
+   "correct": 0,
+   "explication": "Sans effet indirect significatif, il n'y a pas de médiation : l'effet de X sur Y est direct uniquement (direct-only nonmediation)."
+  },
+  {
+   "id": "q23",
+   "theme": "Modération",
+   "question": "Dans un modèle de modération, l'effet principal de X sur Y est de 0,30 et le terme d'interaction X × W vaut 0,12 (W standardisé). Quel est l'effet de X sur Y lorsque W est à +1 écart-type ?",
+   "code": "",
+   "options": [
+    "0,18",
+    "0,30",
+    "0,42",
+    "0,12"
+   ],
+   "correct": 2,
+   "explication": "L'effet conditionnel est β(X) + β(X×W) × W = 0,30 + 0,12 × 1 = 0,42 ; à -1 écart-type, il serait de 0,18."
+  },
+  {
+   "id": "q24",
+   "theme": "Modération",
+   "question": "Quelle approche de construction du terme d'interaction est particulièrement recommandée lorsque le prédicteur ou le modérateur est mesuré de façon formative ?",
+   "code": "",
+   "options": [
+    "L'approche en deux étapes (two-stage)",
+    "L'approche du produit d'indicateurs",
+    "L'approche des indicateurs répétés",
+    "Le test de Sobel"
+   ],
+   "correct": 0,
+   "explication": "Dans l'approche en deux étapes, les scores latents estimés à la première étape servent à construire l'interaction, ce qui convient aux mesures formatives."
+  },
+  {
+   "id": "q25",
+   "theme": "Multi-groupes",
+   "question": "Quel est l'objet de la première étape de MICOM ?",
+   "code": "",
+   "options": [
+    "Tester l'égalité des moyennes et des variances des scores composites",
+    "Vérifier l'invariance de configuration (même modèle de mesure, mêmes données traitées et mêmes réglages dans tous les groupes)",
+    "Vérifier que les corrélations de scores composites ne diffèrent pas de 1",
+    "Comparer les coefficients de chemin entre les groupes"
+   ],
+   "correct": 1,
+   "explication": "L'étape 1 porte sur l'invariance de configuration ; l'étape 2 sur l'invariance compositionnelle et l'étape 3 sur l'égalité des moyennes et des variances."
+  },
+  {
+   "id": "q26",
+   "theme": "Multi-groupes",
+   "question": "À l'étape 2 de MICOM, la p-value du test de permutation de la corrélation c d'un construit est de 0,21. Que conclut-on pour ce construit ?",
+   "code": "",
+   "options": [
+    "L'invariance compositionnelle est rejetée, car p dépasse 0,05",
+    "L'invariance de configuration est rejetée",
+    "Les deux groupes ont nécessairement des moyennes égales",
+    "L'invariance compositionnelle est établie : c n'est pas significativement différente de 1"
+   ],
+   "correct": 3,
+   "explication": "Une p-value de permutation supérieure à 0,05 signifie que c ne diffère pas significativement de 1, donc que les scores composites sont comparables entre groupes."
+  },
+  {
+   "id": "q27",
+   "theme": "Multi-groupes",
+   "question": "Que permet l'invariance de mesure complète (étapes 2 et 3 de MICOM satisfaites) ?",
+   "code": "",
+   "options": [
+    "Regrouper les données des groupes et analyser le modèle sur l'ensemble de l'échantillon",
+    "Se dispenser de l'étape 1 de configuration",
+    "Remplacer le bootstrapping par un test de Student",
+    "Ignorer les différences de taille entre les groupes"
+   ],
+   "correct": 0,
+   "explication": "Lorsque l'invariance compositionnelle et l'égalité des moyennes et variances sont établies, les données peuvent être regroupées (pooling)."
+  },
+  {
+   "id": "q28",
+   "theme": "Prédiction",
+   "question": "Dans PLSpredict, la majorité (mais pas la totalité) des indicateurs du construit cible présente une erreur de prédiction PLS inférieure à celle du benchmark LM. Selon Shmueli et al. (2019), le pouvoir prédictif est :",
+   "code": "",
+   "options": [
+    "Élevé",
+    "Moyen",
+    "Faible",
+    "Nul"
+   ],
+   "correct": 1,
+   "explication": "Tous les indicateurs meilleurs que le benchmark : pouvoir élevé ; la majorité : moyen ; la minorité : faible ; aucun : pas de pouvoir prédictif."
+  },
+  {
+   "id": "q29",
+   "theme": "Prédiction",
+   "question": "Dans PLSpredict, un Q²predict supérieur à 0 pour un indicateur signifie que :",
+   "code": "",
+   "options": [
+    "Le modèle explique plus de 50 % de la variance",
+    "Le modèle surpasse le benchmark de régression linéaire (LM)",
+    "L'indicateur a un loading supérieur à 0,708",
+    "Le modèle prédit mieux que le benchmark naïf, la moyenne des données d'entraînement"
+   ],
+   "correct": 3,
+   "explication": "Le Q²predict compare l'erreur du modèle à celle d'une simple prédiction par la moyenne ; la comparaison au benchmark LM se fait séparément, sur la RMSE ou la MAE."
+  },
+  {
+   "id": "q30",
+   "theme": "Prédiction",
+   "question": "Lorsque la distribution des erreurs de prédiction est fortement asymétrique, quelle statistique Shmueli et al. (2019) conseillent-ils pour comparer le PLS au benchmark LM ?",
+   "code": "",
+   "options": [
+    "La RMSE, car elle est insensible à l'asymétrie",
+    "Le R² ajusté",
+    "La MAE (erreur absolue moyenne) plutôt que la RMSE",
+    "Le HTMT"
+   ],
+   "correct": 2,
+   "explication": "La RMSE pénalise fortement les grandes erreurs ; si la distribution des erreurs est très asymétrique, la MAE est préférée."
+  },
+  {
+   "id": "q31",
+   "theme": "Prédiction",
+   "question": "Dans une IPMA, l'importance d'un construit pour le construit cible est mesurée par :",
+   "code": "",
+   "options": [
+    "Son effet total (direct et indirect) non standardisé sur le construit cible",
+    "Son coefficient de chemin direct standardisé uniquement",
+    "Son AVE",
+    "Son VIF"
+   ],
+   "correct": 0,
+   "explication": "L'IPMA utilise l'effet total non standardisé comme mesure d'importance, qu'elle confronte à la performance moyenne des scores latents."
+  },
+  {
+   "id": "q32",
+   "theme": "Prédiction",
+   "question": "Dans une IPMA, sur quelle échelle la performance des construits est-elle exprimée ?",
+   "code": "",
+   "options": [
+    "De -1 à +1",
+    "De 0 à 10",
+    "De 0 à 100, après rééchelonnement des scores",
+    "De 1 à 5 quel que soit l'indicateur"
+   ],
+   "correct": 2,
+   "explication": "Les scores des construits sont rééchelonnés de 0 (performance la plus faible) à 100 (la plus élevée) afin de les rendre comparables."
+  },
+  {
+   "id": "q33",
+   "theme": "Ordre supérieur",
+   "question": "Dans l'approche des indicateurs répétés pour un construit d'ordre supérieur, ce dernier est mesuré par :",
+   "code": "",
+   "options": [
+    "Les scores latents des LOC, utilisés seulement en seconde étape",
+    "L'ensemble des indicateurs de ses composantes d'ordre inférieur (LOC), répétés",
+    "Un seul indicateur choisi au hasard parmi les LOC",
+    "Les variables de contrôle du modèle"
+   ],
+   "correct": 1,
+   "explication": "Dans cette approche, tous les indicateurs des composantes d'ordre inférieur sont répétés sur la composante d'ordre supérieur ; l'utilisation des scores latents caractérise l'approche en deux étapes."
+  },
+  {
+   "id": "q34",
+   "theme": "Biais",
+   "question": "Quelle mesure procédurale, appliquée lors de la collecte, contribue à limiter le biais de méthode commune ?",
+   "code": "",
+   "options": [
+    "Garantir l'anonymat, séparer les mesures dans l'espace ou le temps et varier les échelles de réponse",
+    "Rappeler aux répondants les hypothèses de l'étude",
+    "Utiliser exactement la même échelle de réponse pour tous les items",
+    "Réaliser un test de Harman à un facteur après la collecte"
+   ],
+   "correct": 0,
+   "explication": "Les remèdes procéduraux agissent en amont (anonymat, séparation des mesures, variété des formats) ; le test de Harman n'est qu'un diagnostic statistique, peu sensible."
+  },
+  {
+   "id": "q35",
+   "theme": "Mesure formative",
+   "question": "Pour valider un construit formatif par analyse de redondance, le coefficient de chemin entre ce construit et une mesure réflexive globale du même concept devrait être d'environ :",
+   "code": "",
+   "options": [
+    "0,20 ou plus",
+    "0,35 ou plus",
+    "0,50 ou plus",
+    "0,70 ou plus (soit un R² d'environ 0,50)"
+   ],
+   "correct": 3,
+   "explication": "L'analyse de redondance évalue la validité convergente d'un construit formatif ; un chemin d'au moins 0,70 environ (R² d'environ 0,50) est attendu."
   }
  ]
 }

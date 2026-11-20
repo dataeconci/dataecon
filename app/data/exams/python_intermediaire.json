@@ -253,6 +253,244 @@
    ],
    "correct": 0,
    "explication": "Le regroupement par année cumule les montants de 2023 (10 + 20) et ceux de 2024 (40)."
+  },
+  {
+   "id": "q19",
+   "theme": "Tableau croisé avec pivot_table",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\ndf = pd.DataFrame({'region': ['A', 'A', 'B', 'B'], 'milieu': ['U', 'R', 'U', 'U'], 'v': [10, 20, 30, 50]})\npt = df.pivot_table(values='v', index='region', columns='milieu', aggfunc='mean')\nprint(pt.loc['B', 'U'])",
+   "options": [
+    "40.0",
+    "80.0",
+    "30.0",
+    "20.0"
+   ],
+   "correct": 0,
+   "explication": "Dans la région B et le milieu U, la moyenne de 30 et 50 vaut 40.0."
+  },
+  {
+   "id": "q20",
+   "theme": "Méthodes de chaînes avec .str",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\ns = pd.Series([' Abidjan', 'daloa '])\nprint(s.str.strip().str.title().tolist())",
+   "options": [
+    "[' Abidjan', 'Daloa ']",
+    "['Abidjan', 'Daloa']",
+    "['ABIDJAN', 'DALOA']",
+    "['abidjan', 'daloa']"
+   ],
+   "correct": 1,
+   "explication": "strip supprime les espaces en début et fin de chaîne, puis title met la première lettre de chaque mot en majuscule."
+  },
+  {
+   "id": "q21",
+   "theme": "Détecter les doublons",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\ndf = pd.DataFrame({'id': [1, 2, 2, 3, 3, 3]})\nprint(df.duplicated().sum())",
+   "options": [
+    "2",
+    "1",
+    "3",
+    "6"
+   ],
+   "correct": 2,
+   "explication": "duplicated marque comme doublon toute ligne déjà rencontrée : une pour la valeur 2 et deux pour la valeur 3, soit 3."
+  },
+  {
+   "id": "q22",
+   "theme": "Conversion numérique tolérante",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\ns = pd.to_numeric(pd.Series(['12', 'x', '7']), errors='coerce')\nprint(s.sum())",
+   "options": [
+    "19",
+    "12.0",
+    "Une erreur de conversion",
+    "19.0"
+   ],
+   "correct": 3,
+   "explication": "Avec errors='coerce', la valeur 'x' devient NaN, ignoré par sum ; le résultat est 12 + 7 = 19.0 (type flottant)."
+  },
+  {
+   "id": "q23",
+   "theme": "Concaténation et index",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\na = pd.DataFrame({'x': [1, 2]})\nb = pd.DataFrame({'x': [3]})\nprint(pd.concat([a, b], ignore_index=True).index.tolist())",
+   "options": [
+    "[0, 1, 2]",
+    "[0, 1, 0]",
+    "[1, 2, 3]",
+    "[0, 1]"
+   ],
+   "correct": 0,
+   "explication": "ignore_index=True renumérote les lignes de 0 à n-1 ; sans cette option les index d'origine seraient conservés ([0, 1, 0])."
+  },
+  {
+   "id": "q24",
+   "theme": "loc versus iloc",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\ns = pd.Series([10, 20, 30], index=[2, 1, 0])\nprint(s.loc[0], s.iloc[0])",
+   "options": [
+    "10 10",
+    "30 10",
+    "30 30",
+    "10 30"
+   ],
+   "correct": 1,
+   "explication": "loc sélectionne par étiquette d'index (l'étiquette 0 correspond à 30) et iloc par position (la première valeur est 10)."
+  },
+  {
+   "id": "q25",
+   "theme": "Somme selon un axe NumPy",
+   "question": "Qu'affiche ce code ?",
+   "code": "import numpy as np\nm = np.array([[1, 2, 3], [4, 5, 6]])\nprint(m.sum(axis=0))",
+   "options": [
+    "[ 6 15]",
+    "21",
+    "[5 7 9]",
+    "[3 7 11]"
+   ],
+   "correct": 2,
+   "explication": "axis=0 somme le long des lignes, colonne par colonne : 1+4, 2+5 et 3+6."
+  },
+  {
+   "id": "q26",
+   "theme": "Changer la forme d'un tableau",
+   "question": "Qu'affiche ce code ?",
+   "code": "import numpy as np\nprint(np.arange(6).reshape(3, -1).shape)",
+   "options": [
+    "(2, 3)",
+    "(3, 1)",
+    "(6, 3)",
+    "(3, 2)"
+   ],
+   "correct": 3,
+   "explication": "Le -1 laisse NumPy déduire la dimension manquante : 6 éléments sur 3 lignes donnent 2 colonnes."
+  },
+  {
+   "id": "q27",
+   "theme": "Diffusion (broadcasting)",
+   "question": "Qu'affiche ce code ?",
+   "code": "import numpy as np\na = np.array([[1, 2], [3, 4]])\nb = np.array([10, 20])\nprint((a + b)[1].tolist())",
+   "options": [
+    "[13, 14]",
+    "[13, 24]",
+    "[11, 22]",
+    "[31, 42]"
+   ],
+   "correct": 1,
+   "explication": "Le vecteur b est ajouté à chaque ligne de a ; la seconde ligne devient [3 + 10, 4 + 20]."
+  },
+  {
+   "id": "q28",
+   "theme": "Écart-type : ddof",
+   "question": "Qu'affiche ce code ?",
+   "code": "import numpy as np\nimport pandas as pd\nprint(round(np.std([2, 4, 6]), 2), round(pd.Series([2, 4, 6]).std(), 2))",
+   "options": [
+    "2.0 1.63",
+    "2.0 2.0",
+    "1.63 2.0",
+    "1.63 1.63"
+   ],
+   "correct": 2,
+   "explication": "np.std divise par n (ddof=0) alors que la méthode std de pandas divise par n-1 (ddof=1), d'où 1.63 et 2.0."
+  },
+  {
+   "id": "q29",
+   "theme": "Rangs et ex aequo",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\nprint(pd.Series([30, 10, 20, 10]).rank().tolist())",
+   "options": [
+    "[4.0, 1.0, 3.0, 1.0]",
+    "[4, 1, 3, 2]",
+    "[4.0, 2.0, 3.0, 2.0]",
+    "[4.0, 1.5, 3.0, 1.5]"
+   ],
+   "correct": 3,
+   "explication": "Par défaut, rank attribue aux ex aequo la moyenne de leurs rangs : les deux valeurs 10 occupent les rangs 1 et 2, donc 1.5 chacune."
+  },
+  {
+   "id": "q30",
+   "theme": "groupby et transform",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\ndf = pd.DataFrame({'g': ['a', 'a', 'b'], 'v': [1, 3, 5]})\nprint(df.groupby('g')['v'].transform('mean').tolist())",
+   "options": [
+    "[2.0, 2.0, 5.0]",
+    "[2.0, 5.0]",
+    "[1.0, 3.0, 5.0]",
+    "[4.0, 4.0, 4.0]"
+   ],
+   "correct": 0,
+   "explication": "transform renvoie une série de même longueur que l'original, où chaque ligne reçoit la moyenne de son groupe."
+  },
+  {
+   "id": "q31",
+   "theme": "Plusieurs agrégations",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\ndf = pd.DataFrame({'g': ['a', 'a', 'b'], 'v': [1, 3, 5]})\nprint(df.groupby('g')['v'].agg(['min', 'max']).loc['a'].tolist())",
+   "options": [
+    "[1, 5]",
+    "[1, 3]",
+    "[3, 1]",
+    "[2, 2]"
+   ],
+   "correct": 1,
+   "explication": "agg calcule le minimum et le maximum de chaque groupe ; pour le groupe a, les valeurs sont 1 et 3."
+  },
+  {
+   "id": "q32",
+   "theme": "Format long avec melt",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\ndf = pd.DataFrame({'id': [1, 2], 'a': [5, 6], 'b': [7, 8]})\nprint(df.melt(id_vars='id').shape)",
+   "options": [
+    "(2, 3)",
+    "(4, 2)",
+    "(4, 3)",
+    "(2, 4)"
+   ],
+   "correct": 2,
+   "explication": "melt empile les colonnes a et b : on obtient 2 x 2 = 4 lignes et 3 colonnes (id, variable, value)."
+  },
+  {
+   "id": "q33",
+   "theme": "Propager la dernière valeur",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\nprint(pd.Series([1, None, None, 4]).ffill().tolist())",
+   "options": [
+    "[1.0, 4.0, 4.0, 4.0]",
+    "[1.0, 0.0, 0.0, 4.0]",
+    "[1.0, 2.0, 3.0, 4.0]",
+    "[1.0, 1.0, 1.0, 4.0]"
+   ],
+   "correct": 3,
+   "explication": "ffill remplace chaque valeur manquante par la dernière valeur observée avant elle."
+  },
+  {
+   "id": "q34",
+   "theme": "Comparer des distributions par groupe",
+   "question": "Quel graphique convient le mieux pour comparer la distribution du revenu entre plusieurs régions ?",
+   "code": "",
+   "options": [
+    "Une boîte à moustaches (boxplot) par région",
+    "Un diagramme circulaire du revenu moyen",
+    "Un nuage de points entre l'indice des lignes et le revenu",
+    "Une courbe reliant les observations dans l'ordre du fichier"
+   ],
+   "correct": 0,
+   "explication": "Le boxplot résume médiane, quartiles et valeurs extrêmes de chaque groupe et permet de les comparer côte à côte."
+  },
+  {
+   "id": "q35",
+   "theme": "Borner des valeurs avec clip",
+   "question": "Qu'affiche ce code ?",
+   "code": "import pandas as pd\nprint(pd.Series([-5, 50, 500]).clip(0, 100).tolist())",
+   "options": [
+    "[-5, 50, 500]",
+    "[0, 50, 100]",
+    "[0, 50, 500]",
+    "[0, 0, 100]"
+   ],
+   "correct": 1,
+   "explication": "clip ramène toute valeur inférieure à 0 à 0 et toute valeur supérieure à 100 à 100."
   }
  ]
 }

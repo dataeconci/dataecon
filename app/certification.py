@@ -3,7 +3,7 @@
 Examens de certification et certificats DataEcon.Ci
 
 Règles :
-- un examen par cours (outil + niveau) : 10 questions tirées au hasard dans la banque,
+- un examen par cours (outil + niveau) : 30 questions tirées au hasard dans la banque de 35,
   options mélangées, durée limitée, note de passage 70 %
 - 2 tentatives maximum ; après 2 échecs consécutifs, nouvelle tentative possible
   30 jours après le second échec
@@ -24,8 +24,8 @@ from flask_login import login_required, current_user
 OUTILS = {'python': 'Python', 'r': 'R', 'sql': 'SQL', 'tableau': 'Tableau', 'smartpls': 'SmartPLS', 'powerbi': 'Power BI'}
 NIVEAUX = {'debutant': 'Débutant', 'intermediaire': 'Intermédiaire', 'avance': 'Avancé'}
 
-NB_QUESTIONS = 10
-DUREE_MIN = 20
+NB_QUESTIONS = 30
+DUREE_MIN = 45
 NOTE_PASSAGE = 70          # pourcentage
 MAX_TENTATIVES = 2
 BLOCAGE_JOURS = 30

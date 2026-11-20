@@ -253,6 +253,244 @@
    ],
    "correct": 1,
    "explication": "On valide d'abord la mesure (fiabilité, validités), puis le modèle structurel."
+  },
+  {
+   "id": "q19",
+   "theme": "Fiabilité",
+   "question": "Pourquoi la fiabilité composite (rho_c) est-elle préférée à l'alpha de Cronbach en PLS-SEM ?",
+   "code": "",
+   "options": [
+    "Parce que rho_c ne dépend d'aucun loading",
+    "Parce que l'alpha suppose des loadings égaux et dépend du nombre d'items, alors que rho_c tient compte des loadings de chaque indicateur",
+    "Parce que l'alpha n'est calculable que pour les construits formatifs",
+    "Parce que rho_c est toujours inférieure à l'alpha"
+   ],
+   "correct": 1,
+   "explication": "L'alpha est sensible au nombre d'items et suppose des loadings identiques, ce qui tend à sous-estimer la fiabilité ; rho_c pondère chaque indicateur selon son loading."
+  },
+  {
+   "id": "q20",
+   "theme": "Validité convergente",
+   "question": "Un construit réflexif a quatre indicateurs de loadings 0,85 ; 0,80 ; 0,75 et 0,70. Quelle est son AVE (arrondie à deux décimales) ?",
+   "code": "",
+   "options": [
+    "0,78",
+    "0,45",
+    "0,90",
+    "0,60"
+   ],
+   "correct": 3,
+   "explication": "L'AVE est la moyenne des loadings au carré : (0,7225 + 0,64 + 0,5625 + 0,49) / 4 ≈ 0,60. La moyenne simple des loadings (0,78) n'est pas l'AVE."
+  },
+  {
+   "id": "q21",
+   "theme": "Fiabilité",
+   "question": "Trois indicateurs ont chacun un loading standardisé de 0,80. Quelle est la fiabilité composite rho_c (arrondie à deux décimales) ?",
+   "code": "",
+   "options": [
+    "0,84",
+    "0,64",
+    "0,80",
+    "0,92"
+   ],
+   "correct": 0,
+   "explication": "rho_c = (Σλ)² / [(Σλ)² + Σ(1 - λ²)] = 5,76 / (5,76 + 1,08) ≈ 0,84. La valeur 0,64 correspond à l'AVE, non à rho_c."
+  },
+  {
+   "id": "q22",
+   "theme": "Validité discriminante",
+   "question": "Un construit a une AVE de 0,64 et une corrélation de 0,85 avec un autre construit. Que conclut le critère de Fornell-Larcker ?",
+   "code": "",
+   "options": [
+    "Il est satisfait : l'AVE (0,64) dépasse 0,50",
+    "Il est satisfait : la corrélation (0,85) dépasse l'AVE (0,64)",
+    "Il n'est pas satisfait : la racine carrée de l'AVE (0,80) est inférieure à la corrélation (0,85)",
+    "Il ne peut pas être appliqué sans calculer le HTMT"
+   ],
+   "correct": 2,
+   "explication": "Le critère exige que la racine carrée de l'AVE d'un construit soit supérieure à ses corrélations avec les autres construits ; ici 0,80 < 0,85."
+  },
+  {
+   "id": "q23",
+   "theme": "Validité discriminante",
+   "question": "Selon le critère des cross-loadings, la validité discriminante d'un indicateur est acceptable lorsque :",
+   "code": "",
+   "options": [
+    "Son loading sur son propre construit est inférieur à ses cross-loadings",
+    "Son loading sur son propre construit est supérieur à ses loadings sur tous les autres construits",
+    "Ses loadings sont identiques sur tous les construits",
+    "Son cross-loading le plus élevé se situe sur un autre construit"
+   ],
+   "correct": 1,
+   "explication": "Chaque indicateur doit saturer davantage sur son construit que sur les autres ; sinon il se confond avec un autre construit. Ce critère est jugé moins sensible que le HTMT."
+  },
+  {
+   "id": "q24",
+   "theme": "Validité discriminante",
+   "question": "Quels sont les seuils usuels du HTMT proposés par Henseler et al. (2015) ?",
+   "code": "",
+   "options": [
+    "0,85 pour des construits conceptuellement distincts et 0,90 pour des construits conceptuellement proches",
+    "0,50 pour tous les cas, sans distinction",
+    "1,96 pour des construits distincts et 2,58 pour des construits proches",
+    "0,95 pour des construits distincts et 1,00 pour des construits proches"
+   ],
+   "correct": 0,
+   "explication": "Henseler et al. (2015) retiennent 0,85 (critère strict) et 0,90 (critère plus souple lorsque les construits sont proches sur le plan conceptuel)."
+  },
+  {
+   "id": "q25",
+   "theme": "Colinéarité",
+   "question": "Pour un construit formatif, un indicateur présente un VIF de 6,2. Quelle interprétation est appropriée ?",
+   "code": "",
+   "options": [
+    "La colinéarité est faible : l'indicateur est idéal",
+    "Il atteste la validité convergente du construit",
+    "La colinéarité est critique : il faut envisager de retirer, fusionner ou regrouper des indicateurs",
+    "Il indique que le loading dépasse 0,708"
+   ],
+   "correct": 2,
+   "explication": "Pour les indicateurs formatifs, un VIF supérieur ou égal à 5 signale une colinéarité critique (idéalement inférieur à 3) qui rend les poids instables."
+  },
+  {
+   "id": "q26",
+   "theme": "Mesure formative",
+   "question": "Un indicateur formatif a un poids externe non significatif, mais un loading de 0,72 significatif. Que recommande-t-on ?",
+   "code": "",
+   "options": [
+    "Le supprimer immédiatement, car un poids non significatif suffit à l'écarter",
+    "Le conserver uniquement si son VIF est supérieur à 5",
+    "Requalifier tout le construit en construit réflexif",
+    "Le conserver : sa contribution absolue au construit est importante"
+   ],
+   "correct": 3,
+   "explication": "Si le poids est non significatif mais que le loading est élevé et significatif (au moins 0,50), l'indicateur contribue de façon absolue au construit et peut être conservé."
+  },
+  {
+   "id": "q27",
+   "theme": "Bootstrapping",
+   "question": "Un coefficient de chemin vaut 0,30, avec une erreur standard bootstrap de 0,12. Quelle est la valeur t et la conclusion à 5 % (bilatéral) ?",
+   "code": "",
+   "options": [
+    "t = 0,40 : coefficient non significatif",
+    "t = 2,50 : coefficient significatif",
+    "t = 3,60 : coefficient significatif",
+    "t = 0,04 : coefficient non significatif"
+   ],
+   "correct": 1,
+   "explication": "t = coefficient / erreur standard = 0,30 / 0,12 = 2,50, valeur supérieure à 1,96 : le coefficient est significatif à 5 %."
+  },
+  {
+   "id": "q28",
+   "theme": "Bootstrapping",
+   "question": "Un intervalle de confiance bootstrap à 95 % pour un coefficient de chemin estimé à 0,11 est [-0,04 ; 0,26]. Que conclut-on ?",
+   "code": "",
+   "options": [
+    "L'effet est significatif, car la borne supérieure est positive",
+    "L'effet est significatif, car l'estimation 0,11 est positive",
+    "L'effet n'est pas significatif à 5 %, car l'intervalle contient 0",
+    "L'effet est négatif, car la borne inférieure est négative"
+   ],
+   "correct": 2,
+   "explication": "Un effet est significatif lorsque l'intervalle de confiance exclut 0 ; ici 0 appartient à l'intervalle, donc l'effet ne peut pas être distingué de zéro."
+  },
+  {
+   "id": "q29",
+   "theme": "Qualité du modèle",
+   "question": "Le R² d'un construit endogène vaut 0,60 avec le prédicteur X et 0,52 sans lui. Quel est f² et comment l'interprète-t-on ?",
+   "code": "",
+   "options": [
+    "f² = 0,20 : effet moyen",
+    "f² = 0,08 : effet petit",
+    "f² = 0,52 : effet grand",
+    "f² = 0,20 : effet petit"
+   ],
+   "correct": 0,
+   "explication": "f² = (R² inclus - R² exclu) / (1 - R² inclus) = (0,60 - 0,52) / 0,40 = 0,20, supérieur au repère de 0,15 (effet moyen) et inférieur à 0,35."
+  },
+  {
+   "id": "q30",
+   "theme": "Qualité du modèle",
+   "question": "Un Q² de Stone-Geisser (blindfolding) de 0,31 est obtenu pour un construit endogène. Comment l'interprète-t-on ?",
+   "code": "",
+   "options": [
+    "Aucune pertinence prédictive, car Q² est inférieur à 0,50",
+    "Grande pertinence prédictive, car Q² dépasse 0,25",
+    "Modèle rejeté, car Q² doit valoir au moins 0,70",
+    "Pertinence prédictive moyenne (Q² supérieur à 0, avec 0,25 comme repère moyen)"
+   ],
+   "correct": 3,
+   "explication": "Un Q² supérieur à 0 indique une pertinence prédictive ; les repères de 0, 0,25 et 0,50 correspondent à une pertinence faible, moyenne et grande."
+  },
+  {
+   "id": "q31",
+   "theme": "Qualité du modèle",
+   "question": "Pour n = 100 observations et k = 4 prédicteurs, un construit a un R² de 0,50. Quel est le R² ajusté, selon 1 - (1 - R²)(n - 1)/(n - k - 1) ?",
+   "code": "",
+   "options": [
+    "0,50",
+    "0,52",
+    "0,48",
+    "0,42"
+   ],
+   "correct": 2,
+   "explication": "R² ajusté = 1 - 0,50 × 99 / 95 ≈ 0,48. Il pénalise le nombre de prédicteurs et sert à comparer des modèles de complexité différente."
+  },
+  {
+   "id": "q32",
+   "theme": "Qualité du modèle",
+   "question": "Parmi les indices d'ajustement approximatif, le SRMR est généralement jugé acceptable lorsqu'il est inférieur à :",
+   "code": "",
+   "options": [
+    "0,30",
+    "0,08",
+    "0,50",
+    "0,95"
+   ],
+   "correct": 1,
+   "explication": "Le SRMR mesure l'écart entre corrélations observées et corrélations impliquées par le modèle ; le repère courant est 0,08, l'ajustement global restant secondaire en PLS-SEM."
+  },
+  {
+   "id": "q33",
+   "theme": "Bootstrapping",
+   "question": "En quoi consiste le bootstrapping ?",
+   "code": "",
+   "options": [
+    "À tirer avec remise, dans l'échantillon d'origine, de nombreux sous-échantillons de même taille afin d'estimer l'erreur standard des paramètres",
+    "À tirer sans remise de petits sous-échantillons de moitié moins d'observations",
+    "À remplacer les valeurs manquantes par la moyenne",
+    "À simuler des données normales à partir de la moyenne et de l'écart-type"
+   ],
+   "correct": 0,
+   "explication": "Le bootstrapping rééchantillonne avec remise des sous-échantillons de même taille que l'échantillon d'origine ; la distribution des estimations fournit erreurs standard, valeurs t et intervalles de confiance."
+  },
+  {
+   "id": "q34",
+   "theme": "Validité convergente",
+   "question": "Un construit réflexif présente rho_c = 0,88 et une AVE de 0,42. Que conclure ?",
+   "code": "",
+   "options": [
+    "La validité convergente est établie, car rho_c dépasse 0,70",
+    "La fiabilité est insuffisante, car l'AVE est inférieure à 0,50",
+    "La validité discriminante est établie, car rho_c dépasse l'AVE",
+    "La fiabilité de consistance interne est satisfaisante, mais la validité convergente est insuffisante : examiner les indicateurs à faible loading"
+   ],
+   "correct": 3,
+   "explication": "La fiabilité (rho_c supérieure à 0,70) et la validité convergente (AVE supérieure ou égale à 0,50) sont deux critères distincts ; ici seule l'AVE est insuffisante."
+  },
+  {
+   "id": "q35",
+   "theme": "Bootstrapping",
+   "question": "Pour une hypothèse directionnelle testée à 5 % en unilatéral, quelle valeur t critique retient-on (grands échantillons) ?",
+   "code": "",
+   "options": [
+    "1,96",
+    "2,58",
+    "1,65",
+    "0,05"
+   ],
+   "correct": 2,
+   "explication": "Un test unilatéral à 5 % équivaut à un test bilatéral à 10 %, soit un t critique d'environ 1,65 ; il n'est justifié que si le sens de l'effet est fondé théoriquement."
   }
  ]
 }

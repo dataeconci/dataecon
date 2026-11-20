@@ -2,110 +2,129 @@
 {% block title %}Laboratoire Power BI - DataEcon.ci{% endblock %}
 {% block content %}
 <style>
-.pb-lab{--navy:#0b2a4a;--steel:#1f5f99;--gold:#c2a15a;--line:#d9e2ec;max-width:1280px;margin:0 auto;padding:1.4rem 1rem 3rem;color:#1f2933}
-.pb-lab h1{font-size:1.5rem;color:var(--navy);font-weight:800;margin:0}
-.pb-lab .lead{color:#5b6b7b;margin:.2rem 0 1.2rem}
-.pb-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:1rem 1.1rem;margin-bottom:1rem}
-.pb-card h2{font-size:1rem;color:var(--navy);font-weight:700;margin:0 0 .7rem}
-.pb-row{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
-.pb-btn{border:1px solid var(--steel);background:#fff;color:var(--steel);border-radius:8px;padding:.45rem .9rem;font-weight:600;font-size:.88rem;cursor:pointer}
-.pb-btn:hover{background:#eaf1f8}.pb-btn.primary{background:var(--navy);border-color:var(--navy);color:#fff}.pb-btn.primary:hover{background:var(--steel)}
-.pb-lab select,.pb-lab input[type=text]{border:1px solid #c5d1de;border-radius:7px;padding:.4rem .55rem;font-size:.88rem;background:#fff}
-.pb-lab label{font-size:.78rem;color:#5b6b7b;font-weight:600;display:block;margin-bottom:.15rem}
-.pb-tabs{display:flex;gap:.3rem;border-bottom:2px solid var(--line);margin-bottom:1rem;flex-wrap:wrap}
-.pb-tab{padding:.5rem .9rem;border:0;background:none;font-weight:600;color:#5b6b7b;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
-.pb-tab.on{color:var(--navy);border-bottom-color:var(--gold)}
+.pbd{--y:#f2c811;--ink:#252423;--bg:#f3f2f1;--line:#e1dfdd;--blue:#118dff;font-family:"Segoe UI",Inter,Arial,sans-serif;color:var(--ink);max-width:1480px;margin:1rem auto 3rem;border:1px solid #c8c6c4;border-radius:6px;overflow:hidden;background:#fff;box-shadow:0 6px 24px rgba(11,42,74,.12)}
+.pbd button,.pbd select,.pbd input,.pbd textarea{font-family:inherit}
+.pbd-title{display:flex;align-items:center;gap:.7rem;background:#fff;border-bottom:1px solid var(--line);padding:.35rem .8rem;font-size:.82rem}
+.pbd-logo{display:inline-flex;gap:2px;align-items:flex-end;height:18px}.pbd-logo i{display:block;width:5px;background:var(--y);border-radius:1px}.pbd-logo i:nth-child(1){height:9px}.pbd-logo i:nth-child(2){height:14px}.pbd-logo i:nth-child(3){height:18px}
+.pbd-title .nm{font-weight:600}.pbd-title .sub{color:#605e5c}.pbd-title .sp{flex:1}.pbd-title .srch{border:1px solid #c8c6c4;border-radius:3px;padding:.15rem .6rem;color:#8a8886;min-width:220px;font-size:.78rem}
+.pbd-rtabs{display:flex;gap:.1rem;background:#fff;padding:0 .6rem;border-bottom:1px solid var(--line);font-size:.84rem}
+.pbd-rtabs span{padding:.45rem .85rem;cursor:default;color:#323130}.pbd-rtabs span.on{border-bottom:3px solid var(--y);font-weight:600}
+.pbd-ribbon{display:flex;gap:0;background:#faf9f8;border-bottom:1px solid var(--line);padding:.3rem .6rem;overflow-x:auto}
+.pbd-grp{display:flex;gap:.25rem;padding:0 .8rem;border-right:1px solid var(--line);align-items:flex-start;position:relative;padding-bottom:1.1rem}
+.pbd-grp:last-child{border-right:0}.pbd-grp small{position:absolute;bottom:.05rem;left:0;right:0;text-align:center;color:#605e5c;font-size:.68rem}
+.pbd-rb{display:flex;flex-direction:column;align-items:center;gap:.15rem;border:1px solid transparent;background:none;border-radius:3px;padding:.25rem .5rem;font-size:.72rem;color:#323130;cursor:pointer;min-width:62px}
+.pbd-rb i{font-size:1.25rem;color:#323130}.pbd-rb:hover{background:#edebe9;border-color:#c8c6c4}.pbd-rb.dis{opacity:.45;cursor:not-allowed}
+.pbd-body{display:grid;grid-template-columns:48px minmax(0,1fr) 238px 190px;min-height:640px;background:var(--bg)}
+@media(max-width:1100px){.pbd-body{grid-template-columns:44px minmax(0,1fr)}.pbd-pane-r,.pbd-pane-f{grid-column:2}}
+.pbd-rail{background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding-top:.5rem;gap:.2rem}
+.pbd-rail .pb-tab{width:44px;height:48px;border:0;background:none;color:#605e5c;font-size:1.15rem;cursor:pointer;position:relative;padding:0;margin:0;border-radius:0}
+.pbd-rail .pb-tab.on{color:var(--ink);background:#f3f2f1}.pbd-rail .pb-tab.on::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:3px;background:var(--y)}
+.pbd-rail .pb-tab span{display:none}
+.pbd-main{padding:.8rem;overflow:auto;min-width:0}
+.pbd-page{background:#fff;border:1px solid #d2d0ce;box-shadow:0 1px 4px rgba(0,0,0,.12);padding:.7rem;min-height:480px}
+.pbd-pagetabs{display:flex;gap:.2rem;margin-top:.5rem;font-size:.8rem;align-items:flex-end}
+.pbd-pagetabs span{padding:.3rem .9rem;background:#fff;border:1px solid #d2d0ce;border-bottom:3px solid var(--y);font-weight:600}.pbd-pagetabs span.add{border:0;background:none;font-size:1rem;color:#605e5c}
+.pbd-pane-r,.pbd-pane-f{background:#fff;border-left:1px solid var(--line);padding:.6rem .7rem;font-size:.8rem;overflow:auto}
+.pbd-ph{font-weight:600;font-size:.82rem;margin:0 0 .5rem;display:flex;justify-content:space-between;align-items:center;color:#323130}
+.pbd-sec{margin-bottom:.9rem}.pbd-sec>b{display:block;font-size:.74rem;color:#605e5c;font-weight:600;margin:.4rem 0 .25rem;text-transform:none}
+.pbd-vgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin-bottom:.5rem}
+.pbd-vgrid button{border:1px solid #d2d0ce;background:#fff;border-radius:3px;height:34px;cursor:pointer;color:#323130;font-size:1rem;padding:0}.pbd-vgrid button.on{background:#fff4c2;border-color:var(--y)}
+.pbd-well{border:1px solid #d2d0ce;border-radius:2px;padding:.3rem .4rem;margin-bottom:.5rem;background:#fff}.pbd-well label{display:block;font-size:.7rem;color:#605e5c;margin:0 0 .15rem}
+.pbd-pane-r select{width:100%;border:1px solid #c8c6c4;border-radius:2px;padding:.2rem .3rem;font-size:.8rem;background:#faf9f8}
+.pbd-fields{list-style:none;padding:0;margin:0}.pbd-fields li{display:flex;align-items:center;gap:.4rem;padding:.2rem .3rem;cursor:pointer;border-radius:2px}.pbd-fields li:hover{background:#f3f2f1}.pbd-fields li.on{background:#fff4c2}
+.pbd-fields i{width:16px;text-align:center;color:#605e5c;font-size:.78rem}.pbd-fields li.m i{color:#c19c00}
+.pbd-tblname{font-weight:600;display:flex;gap:.4rem;align-items:center;margin:.2rem 0}.pbd-tblname i{color:#605e5c}
+.pbd-search{border:1px solid #c8c6c4;border-radius:2px;padding:.25rem .4rem;width:100%;margin-bottom:.5rem;font-size:.78rem;background:#faf9f8}
+.pb-slicers{display:block}.pb-slicer{border:0;padding:0;margin-bottom:.7rem;background:none}.pb-slicer b{font-size:.76rem;color:#323130;margin-bottom:.25rem}
+.chips{display:flex;flex-direction:column;gap:2px}.chip{border:0;border-radius:2px;padding:.18rem .4rem;font-size:.78rem;cursor:pointer;background:none;display:flex;gap:.4rem;align-items:center}.chip::before{content:"";width:12px;height:12px;border:1px solid #8a8886;border-radius:2px;display:inline-block}.chip.on{background:#eaf3fc}.chip.on::before{background:var(--blue);border-color:var(--blue);box-shadow:inset 0 0 0 2px #fff}
 .pb-pane{display:none}.pb-pane.on{display:block}
-.chips{display:flex;flex-wrap:wrap;gap:.3rem}
-.chip{border:1px solid #c5d1de;border-radius:999px;padding:.15rem .65rem;font-size:.8rem;cursor:pointer;background:#fff;user-select:none}
-.chip.on{background:var(--steel);color:#fff;border-color:var(--steel)}
-.pb-slicers{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:.8rem}
-.pb-slicer{border:1px solid var(--line);border-radius:10px;padding:.6rem .7rem;background:#fbfcfe}
-.pb-slicer b{display:block;font-size:.8rem;color:var(--navy);margin-bottom:.35rem}
-.pb-canvas{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:.9rem;margin-top:.9rem}
-.pb-vis{border:1px solid var(--line);border-radius:12px;background:#fff;padding:.6rem .7rem;position:relative}
-.pb-vis h3{font-size:.9rem;color:var(--navy);font-weight:700;margin:0 0 .3rem;padding-right:1.6rem}
-.pb-vis .x{position:absolute;right:.5rem;top:.35rem;border:0;background:none;color:#a33;cursor:pointer}
-.pb-vis svg{width:100%;height:auto;display:block}
-.pb-vis table{width:100%;font-size:.85rem;border-collapse:collapse}
-.pb-vis td,.pb-vis th{padding:.25rem .4rem;border-bottom:1px solid #edf1f5}
-.pb-vis th{background:#f1f5f9;color:var(--navy);text-align:left}.pb-vis td.num{text-align:right}
-.pb-card-kpi{font-size:2.2rem;font-weight:800;color:var(--navy);text-align:center;padding:1.2rem 0 .6rem}
-.pb-kpi-sub{text-align:center;color:#5b6b7b;font-size:.85rem;padding-bottom:.8rem}
-.pb-lab textarea{width:100%;border:1px solid #c5d1de;border-radius:8px;padding:.6rem;font-family:Consolas,Menlo,monospace;font-size:.88rem;min-height:92px}
-.pb-msg{margin-top:.6rem;padding:.6rem .8rem;border-radius:8px;font-size:.88rem}
-.pb-msg.ok{background:#e8f4ec;color:#1d6a3a;border:1px solid #bfe0cb}.pb-msg.ko{background:#fbeaea;color:#a02828;border:1px solid #efc6c6}.pb-msg.info{background:#eef4fa;color:#0b2a4a;border:1px solid #cddcec}
-.pb-mlist{list-style:none;padding:0;margin:0;font-family:Consolas,Menlo,monospace;font-size:.84rem}
-.pb-mlist li{display:flex;justify-content:space-between;gap:.5rem;padding:.3rem .5rem;border-bottom:1px solid #edf1f5}
-.pb-mlist button{border:0;background:none;color:#a33;cursor:pointer}
-.pb-grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}@media(max-width:900px){.pb-grid2{grid-template-columns:1fr}}
-.pb-code{background:#0b2a4a;color:#e8eef5;border-radius:8px;padding:.6rem .8rem;font-family:Consolas,Menlo,monospace;font-size:.82rem;white-space:pre-wrap}
-.pb-res{width:100%;border-collapse:collapse;font-size:.88rem;margin-top:.6rem}.pb-res th{background:var(--navy);color:#fff;padding:.35rem .5rem;text-align:left}.pb-res td{padding:.3rem .5rem;border-bottom:1px solid #edf1f5}.pb-res td.num{text-align:right}
+.pb-canvas{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:.7rem}
+.pb-vis{border:1px solid #edebe9;border-radius:2px;background:#fff;padding:.5rem .6rem;position:relative}.pb-vis:hover{border-color:#a19f9d}
+.pb-vis h3{font-size:.8rem;color:#323130;font-weight:600;margin:0 0 .25rem;padding-right:1.4rem}.pb-vis .x{position:absolute;right:.4rem;top:.25rem;border:0;background:none;color:#605e5c;cursor:pointer;font-size:.8rem}
+.pb-vis svg{width:100%;height:auto;display:block}.pb-vis table{width:100%;font-size:.8rem;border-collapse:collapse}.pb-vis td,.pb-vis th{padding:.2rem .4rem;border-bottom:1px solid #edebe9}.pb-vis th{background:#faf9f8;text-align:left;font-weight:600}.pb-vis td.num{text-align:right}
+.pb-card-kpi{font-size:2.4rem;font-weight:600;color:#252423;text-align:center;padding:1.2rem 0 .3rem}.pb-kpi-sub{text-align:center;color:#605e5c;font-size:.8rem;padding-bottom:.8rem}
+.pb-card{background:#fff;border:1px solid #d2d0ce;border-radius:2px;padding:.9rem 1rem;margin-bottom:.8rem}.pb-card h2{font-size:.95rem;font-weight:600;margin:0 0 .6rem}
+.pb-btn{border:1px solid #8a8886;background:#fff;color:#252423;border-radius:2px;padding:.35rem .9rem;font-size:.84rem;cursor:pointer}.pb-btn:hover{background:#f3f2f1}.pb-btn.primary{background:var(--y);border-color:var(--y);font-weight:600}.pb-btn.primary:hover{background:#e0b800}
+.pb-row{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
+.pbd select,.pbd input[type=text]{border:1px solid #c8c6c4;border-radius:2px;padding:.3rem .45rem;font-size:.84rem;background:#fff}
+.pbd label{font-size:.74rem;color:#605e5c;display:block;margin-bottom:.12rem}
+.pbd textarea{width:100%;border:1px solid #c8c6c4;border-radius:2px;padding:.5rem;font-family:Consolas,Menlo,monospace;font-size:.86rem;min-height:92px}
+.pb-msg{margin-top:.6rem;padding:.55rem .75rem;border-radius:2px;font-size:.84rem}.pb-msg.ok{background:#dff6dd;color:#107c10}.pb-msg.ko{background:#fde7e9;color:#a4262c}.pb-msg.info{background:#eff6fc;color:#004578}
+.pb-mlist{list-style:none;padding:0;margin:0;font-family:Consolas,Menlo,monospace;font-size:.82rem}.pb-mlist li{display:flex;justify-content:space-between;gap:.5rem;padding:.3rem .4rem;border-bottom:1px solid #edebe9}.pb-mlist button{border:0;background:none;color:#a4262c;cursor:pointer}
+.pb-grid2{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}@media(max-width:900px){.pb-grid2{grid-template-columns:1fr}}
+.pb-code{background:#1b1a19;color:#f3f2f1;border-radius:2px;padding:.6rem .8rem;font-family:Consolas,Menlo,monospace;font-size:.82rem;white-space:pre-wrap}
+.pb-res{width:100%;border-collapse:collapse;font-size:.84rem;margin-top:.6rem}.pb-res th{background:#f3f2f1;padding:.3rem .5rem;text-align:left;border-bottom:2px solid #c8c6c4}.pb-res td{padding:.28rem .5rem;border-bottom:1px solid #edebe9}.pb-res td.num{text-align:right}
+.pbd-status{display:flex;justify-content:space-between;background:#fff;border-top:1px solid var(--line);padding:.25rem .8rem;font-size:.74rem;color:#605e5c}
+.pbd-intro{max-width:1480px;margin:1rem auto 0;padding:0 1rem}.pbd-intro h1{font-size:1.4rem;color:#0b2a4a;font-weight:800;margin:0}.pbd-intro p{color:#5b6b7b;margin:.2rem 0 0}
 </style>
 
-<div class="pb-lab">
-  <h1>Laboratoire Power BI</h1>
-  <p class="lead">Construisez un rapport interactif sur un jeu de ventes de démonstration, puis écrivez et testez vos mesures DAX. Toutes les mesures s'évaluent selon le contexte de filtre des segments, comme dans Power BI.</p>
-
-  <div class="pb-card">
-    <h2>Table <code>Ventes</code> (<span id="nrows"></span> lignes) : colonnes <code>Date, Annee, Mois, Ville, Produit, Canal, Client, Quantite, Prix, Montant</code></h2>
-    <div class="pb-slicers" id="slicers"></div>
+<div class="pbd-intro"><h1>Laboratoire Power BI</h1><p>Un environnement de pratique fidèle à Power BI Desktop : champs, visuels, segments et mesures DAX évaluées selon le contexte de filtre.</p></div>
+<div class="pbd">
+  <div class="pbd-title"><span class="pbd-logo"><i></i><i></i><i></i></span><span class="nm">Rapport_Ventes</span><span class="sub">- Power BI Desktop</span><span class="sp"></span><span class="srch">Rechercher</span></div>
+  <div class="pbd-rtabs"><span>Fichier</span><span class="on">Accueil</span><span>Insertion</span><span>Modélisation</span><span>Affichage</span><span>Aide</span></div>
+  <div class="pbd-ribbon">
+    <div class="pbd-grp"><button class="pbd-rb dis" type="button"><i class="fas fa-database"></i>Obtenir les<br>données</button><button class="pbd-rb" id="rb-refresh" type="button"><i class="fas fa-rotate"></i>Actualiser</button><small>Données</small></div>
+    <div class="pbd-grp"><button class="pbd-rb" id="rb-visual" type="button"><i class="fas fa-chart-column"></i>Nouveau<br>visuel</button><button class="pbd-rb" id="rb-clear" type="button"><i class="fas fa-eraser"></i>Vider la<br>page</button><small>Insérer</small></div>
+    <div class="pbd-grp"><button class="pbd-rb" id="rb-measure" type="button"><i class="fas fa-calculator"></i>Nouvelle<br>mesure</button><button class="pbd-rb" id="rb-quick" type="button"><i class="fas fa-bolt"></i>Défis<br>DAX</button><small>Calculs</small></div>
+    <div class="pbd-grp"><button class="pbd-rb dis" type="button"><i class="fas fa-cloud-arrow-up"></i>Publier</button><small>Partager</small></div>
   </div>
-
-  <div class="pb-tabs">
-    <button class="pb-tab on" data-t="rapport">Rapport</button>
-    <button class="pb-tab" data-t="dax">Mesures DAX</button>
-    <button class="pb-tab" data-t="defis">Défis DAX</button>
-  </div>
-
-  <div class="pb-pane on" id="p-rapport">
-    <div class="pb-card">
-      <h2>Ajouter un visuel</h2>
-      <div class="pb-row">
-        <div><label>Visuel</label><select id="v-type"><option value="bar">Histogramme</option><option value="line">Courbes</option><option value="donut">Anneau</option><option value="card">Carte</option><option value="table">Tableau</option></select></div>
-        <div id="v-axis-w"><label>Axe / catégorie</label><select id="v-axis"></select></div>
-        <div><label>Valeur (mesure)</label><select id="v-meas"></select></div>
-        <div style="align-self:flex-end"><button class="pb-btn primary" id="v-add">Ajouter au rapport</button> <button class="pb-btn" id="v-clear">Vider la page</button></div>
-      </div>
-      <p class="pb-kpi-sub" style="text-align:left;margin:.6rem 0 0">Cliquez sur une barre, un point ou une part pour filtrer les autres visuels (filtrage croisé) ; cliquez à nouveau pour annuler.</p>
+  <div class="pbd-body">
+    <div class="pbd-rail">
+      <button class="pb-tab on" data-t="rapport" title="Vue Rapport"><i class="fas fa-chart-simple"></i><span>Rapport</span></button>
+      <button class="pb-tab" data-t="dax" title="Mesures DAX (vue Modèle)"><i class="fas fa-diagram-project"></i><span>Mesures DAX</span></button>
+      <button class="pb-tab" data-t="defis" title="Défis DAX"><i class="fas fa-list-check"></i><span>Défis</span></button>
     </div>
-    <div class="pb-canvas" id="canvas"></div>
-  </div>
-
-  <div class="pb-pane" id="p-dax">
-    <div class="pb-grid2">
-      <div class="pb-card">
-        <h2>Nouvelle mesure</h2>
-        <textarea id="dax-in" spellcheck="false" placeholder="Part % = DIVIDE([CA], CALCULATE([CA], ALL(Ventes[Produit])))"></textarea>
-        <div class="pb-row" style="margin-top:.6rem">
-          <button class="pb-btn primary" id="dax-add">Enregistrer la mesure</button>
-          <button class="pb-btn" id="dax-test">Évaluer sans enregistrer</button>
+    <div class="pbd-main">
+      <div class="pb-pane on" id="p-rapport"><div class="pbd-page"><div class="pb-canvas" id="canvas"></div></div>
+        <div class="pbd-pagetabs"><span>Page 1</span><span class="add">+</span></div></div>
+      <div class="pb-pane" id="p-dax">
+        <div class="pb-grid2">
+          <div class="pb-card"><h2>Nouvelle mesure</h2>
+            <textarea id="dax-in" spellcheck="false" placeholder="Part % = DIVIDE([CA], CALCULATE([CA], ALL(Ventes[Produit])))"></textarea>
+            <div class="pb-row" style="margin-top:.6rem"><button class="pb-btn primary" id="dax-add">Enregistrer la mesure</button><button class="pb-btn" id="dax-test">Évaluer</button></div>
+            <div id="dax-msg"></div>
+            <p class="pb-kpi-sub" style="text-align:left">Fonctions : SUM, AVERAGE, MIN, MAX, COUNT, COUNTROWS, DISTINCTCOUNT, DIVIDE, CALCULATE, ALL, REMOVEFILTERS, SUMX, AVERAGEX, IF, ROUND, ABS, VAR/RETURN. Les noms de colonnes n'ont pas d'accent : <code>Ventes[Quantite]</code>.</p></div>
+          <div class="pb-card"><h2>Mesures du modèle</h2><ul class="pb-mlist" id="mlist"></ul></div>
         </div>
-        <div id="dax-msg"></div>
-        <p class="pb-kpi-sub" style="text-align:left">Fonctions : SUM, AVERAGE, MIN, MAX, COUNT, COUNTROWS, DISTINCTCOUNT, DIVIDE, CALCULATE, ALL, REMOVEFILTERS, SUMX, AVERAGEX, IF, ROUND, ABS, VAR/RETURN. Opérateurs : + - * / = &lt;&gt; &lt; &gt; &lt;= &gt;= &amp;&amp; ||. Les noms de colonnes n'ont pas d'accent : <code>Ventes[Quantite]</code>.</p>
+        <div class="pb-card"><h2>Résultat par catégorie (selon les segments)</h2>
+          <div class="pb-row"><div><label>Mesure</label><select id="r-meas"></select></div><div><label>Grouper par</label><select id="r-dim"></select></div></div>
+          <div id="r-out"></div></div>
       </div>
-      <div class="pb-card">
-        <h2>Mesures du modèle</h2>
-        <ul class="pb-mlist" id="mlist"></ul>
+      <div class="pb-pane" id="p-defis">
+        <div class="pb-card"><h2>Défis : écrivez la mesure demandée</h2>
+          <div class="pb-row"><div><label>Défi</label><select id="d-sel"></select></div></div>
+          <p id="d-txt" style="margin:.7rem 0 .4rem;font-weight:600"></p>
+          <textarea id="d-in" spellcheck="false" placeholder="Ma mesure = ..."></textarea>
+          <div class="pb-row" style="margin-top:.6rem"><button class="pb-btn primary" id="d-ok">Vérifier</button><button class="pb-btn" id="d-hint">Indice</button><button class="pb-btn" id="d-sol">Voir une solution</button></div>
+          <div id="d-msg"></div></div>
       </div>
     </div>
-    <div class="pb-card">
-      <h2>Résultat par catégorie (selon les segments)</h2>
-      <div class="pb-row"><div><label>Mesure</label><select id="r-meas"></select></div><div><label>Grouper par</label><select id="r-dim"></select></div></div>
-      <div id="r-out"></div>
+    <div class="pbd-pane-r">
+      <div class="pbd-ph">Visualisations</div>
+      <div class="pbd-vgrid" id="vgrid">
+        <button type="button" data-v="bar" title="Histogramme groupé"><i class="fas fa-chart-column"></i></button>
+        <button type="button" data-v="line" title="Graphique en courbes"><i class="fas fa-chart-line"></i></button>
+        <button type="button" data-v="donut" title="Graphique en anneau"><i class="fas fa-circle-notch"></i></button>
+        <button type="button" data-v="card" title="Carte"><i class="far fa-square"></i></button>
+        <button type="button" data-v="table" title="Tableau"><i class="fas fa-table"></i></button>
+      </div>
+      <select id="v-type" style="display:none"><option value="bar">Histogramme</option><option value="line">Courbes</option><option value="donut">Anneau</option><option value="card">Carte</option><option value="table">Tableau</option></select>
+      <div class="pbd-well" id="v-axis-w"><label>Axe X / Catégorie</label><select id="v-axis"></select></div>
+      <div class="pbd-well"><label>Valeurs Y</label><select id="v-meas"></select></div>
+      <button class="pb-btn primary" id="v-add" style="width:100%">Ajouter à la page</button>
+      <button class="pb-btn" id="v-clear" style="width:100%;margin-top:.4rem">Vider la page</button>
+      <p class="pb-kpi-sub" style="text-align:left;padding:.5rem 0 0">Cliquez sur un élément d'un visuel pour filtrer les autres (filtrage croisé).</p>
+    </div>
+    <div class="pbd-pane-f">
+      <div class="pbd-ph">Filtres</div>
+      <div class="pb-slicers" id="slicers"></div>
+      <div class="pbd-ph" style="margin-top:.8rem">Champs</div>
+      <input class="pbd-search" placeholder="Rechercher" disabled>
+      <div class="pbd-tblname"><i class="fas fa-table"></i>Ventes <span style="color:#605e5c;font-weight:400">(<span id="nrows"></span> lignes)</span></div>
+      <ul class="pbd-fields" id="fieldlist"></ul>
     </div>
   </div>
-
-  <div class="pb-pane" id="p-defis">
-    <div class="pb-card">
-      <h2>Défis : écrivez la mesure demandée</h2>
-      <div class="pb-row"><div><label>Défi</label><select id="d-sel"></select></div></div>
-      <p id="d-txt" style="margin:.7rem 0 .4rem;font-weight:600;color:var(--navy)"></p>
-      <textarea id="d-in" spellcheck="false" placeholder="Ma mesure = ..."></textarea>
-      <div class="pb-row" style="margin-top:.6rem"><button class="pb-btn primary" id="d-ok">Vérifier</button><button class="pb-btn" id="d-hint">Indice</button><button class="pb-btn" id="d-sol">Voir une solution</button></div>
-      <div id="d-msg"></div>
-    </div>
-  </div>
+  <div class="pbd-status"><span>Page 1 sur 1</span><span>Mode Importation</span></div>
 </div>
 
 {% raw %}
@@ -298,7 +317,7 @@ function groupValues(dim,filters,mname){
 }
 
 /* ---------- Visuels ---------- */
-const PAL=['#0b2a4a','#1f5f99','#c2a15a','#6fa3cf','#8a6d2f','#9db7cf'];
+const PAL=['#118dff','#12239e','#e66c37','#6b007b','#e044a7','#744ec2'];
 let visuals=[{type:'card',axis:'Ville',meas:'CA'},{type:'bar',axis:'Ville',meas:'CA'},{type:'line',axis:'Mois',meas:'CA'},{type:'donut',axis:'Produit',meas:'CA'}];
 function filtersFor(v){const f=baseFilters();if(cross&&!(v.type!=='card'&&v.type!=='table'&&v.axis===cross.col))f.push({col:cross.col,test:x=>x===cross.val});else if(cross&&v.type==='card')f.push({col:cross.col,test:x=>x===cross.val});return f;}
 function svgBar(d,v){
@@ -306,7 +325,7 @@ function svgBar(d,v){
   let s='<svg viewBox="0 0 '+W+' '+H+'" font-family="Inter,Segoe UI,sans-serif">';
   for(let i=0;i<=4;i++){const y=T+(H-T-B)*(1-i/4);s+='<line x1="'+L+'" x2="'+(W-6)+'" y1="'+y+'" y2="'+y+'" stroke="#e6ecf2"/><text x="'+(L-5)+'" y="'+(y+3)+'" font-size="9" text-anchor="end" fill="#5b6b7b">'+fmt(Math.round(mx*i/4*10)/10)+'</text>';}
   d.forEach((x,i)=>{const h=(H-T-B)*(x.val||0)/mx,xx=L+i*bw+bw*.15,y=H-B-h;const sel=cross&&cross.col===v.axis&&cross.val===x.key;
-    s+='<rect data-k="'+esc(x.key)+'" x="'+xx+'" y="'+y+'" width="'+bw*.7+'" height="'+Math.max(h,0)+'" fill="'+(cross&&cross.col===v.axis&&!sel?'#b9c9da':'#1f5f99')+'" style="cursor:pointer"><title>'+esc(x.label)+' : '+fmt(x.val)+'</title></rect>';
+    s+='<rect data-k="'+esc(x.key)+'" x="'+xx+'" y="'+y+'" width="'+bw*.7+'" height="'+Math.max(h,0)+'" fill="'+(cross&&cross.col===v.axis&&!sel?'#b8d6f5':'#118dff')+'" style="cursor:pointer"><title>'+esc(x.label)+' : '+fmt(x.val)+'</title></rect>';
     s+='<text x="'+(xx+bw*.35)+'" y="'+(H-B+13)+'" font-size="9.5" text-anchor="middle" fill="#1f2933">'+esc(x.label.length>9?x.label.slice(0,8)+'.':x.label)+'</text>';});
   return s+'</svg>';
 }
@@ -315,8 +334,8 @@ function svgLine(d,v){
   let s='<svg viewBox="0 0 '+W+' '+H+'" font-family="Inter,Segoe UI,sans-serif">';
   for(let i=0;i<=4;i++){const y=T+(H-T-B)*(1-i/4);s+='<line x1="'+L+'" x2="'+(W-6)+'" y1="'+y+'" y2="'+y+'" stroke="#e6ecf2"/><text x="'+(L-5)+'" y="'+(y+3)+'" font-size="9" text-anchor="end" fill="#5b6b7b">'+fmt(Math.round(mx*i/4*10)/10)+'</text>';}
   const pts=d.map((x,i)=>[L+8+i*st,H-B-(H-T-B)*(x.val||0)/mx]);
-  s+='<polyline fill="none" stroke="#1f5f99" stroke-width="2.5" points="'+pts.map(p=>p.join(',')).join(' ')+'"/>';
-  d.forEach((x,i)=>{const sel=cross&&cross.col===v.axis&&cross.val===x.key;s+='<circle data-k="'+esc(x.key)+'" cx="'+pts[i][0]+'" cy="'+pts[i][1]+'" r="'+(sel?6:4)+'" fill="'+(sel?'#c2a15a':'#0b2a4a')+'" style="cursor:pointer"><title>'+esc(x.label)+' : '+fmt(x.val)+'</title></circle><text x="'+pts[i][0]+'" y="'+(H-B+13)+'" font-size="9.5" text-anchor="middle" fill="#1f2933">'+esc(x.label.slice(0,6))+'</text>';});
+  s+='<polyline fill="none" stroke="#118dff" stroke-width="2.5" points="'+pts.map(p=>p.join(',')).join(' ')+'"/>';
+  d.forEach((x,i)=>{const sel=cross&&cross.col===v.axis&&cross.val===x.key;s+='<circle data-k="'+esc(x.key)+'" cx="'+pts[i][0]+'" cy="'+pts[i][1]+'" r="'+(sel?6:4)+'" fill="'+(sel?'#e66c37':'#12239e')+'" style="cursor:pointer"><title>'+esc(x.label)+' : '+fmt(x.val)+'</title></circle><text x="'+pts[i][0]+'" y="'+(H-B+13)+'" font-size="9.5" text-anchor="middle" fill="#1f2933">'+esc(x.label.slice(0,6))+'</text>';});
   return s+'</svg>';
 }
 function svgDonut(d,v){
@@ -365,7 +384,7 @@ function renderResult(){
   }catch(e){html='<div class="pb-msg ko">'+esc(e.message)+'</div>';}
   $('#r-out').innerHTML=html;
 }
-function refresh(sel){if(sel)fillMeasureSelects();renderMeasures();renderCanvas();renderResult();}
+function refresh(sel){if(sel)fillMeasureSelects();renderMeasures();renderCanvas();renderResult();renderFields();}
 
 /* ---------- Défis ---------- */
 const TOT=DATA.reduce((s,r)=>s+r.Montant,0), QTE=DATA.reduce((s,r)=>s+r.Quantite,0);
@@ -401,7 +420,7 @@ function checkDefi(){
 document.querySelectorAll('.pb-tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.pb-tab').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.pb-pane').forEach(p=>p.classList.toggle('on',p.id==='p-'+b.dataset.t));});
 $('#v-axis').innerHTML=DIMS.map(d=>'<option value="'+d+'">'+(d==='Annee'?'Année':d)+'</option>').join('');
 $('#r-dim').innerHTML='<option>(aucun)</option>'+DIMS.map(d=>'<option>'+d+'</option>').join('');
-$('#v-type').onchange=()=>{$('#v-axis-w').style.display=$('#v-type').value==='card'?'none':'';};
+
 $('#v-add').onclick=()=>{visuals.push({type:$('#v-type').value,axis:$('#v-axis').value,meas:$('#v-meas').value});renderCanvas();};
 $('#v-clear').onclick=()=>{visuals=[];cross=null;renderCanvas();};
 $('#r-meas').onchange=$('#r-dim').onchange=renderResult;
@@ -424,6 +443,31 @@ $('#d-sel').onchange=loadDefi;$('#d-ok').onclick=checkDefi;
 $('#d-hint').onclick=()=>{$('#d-msg').innerHTML='<div class="pb-msg info">Indice : '+esc(DEFIS[+$('#d-sel').value].hint)+'</div>';};
 $('#d-sol').onclick=()=>{$('#d-msg').innerHTML='<div class="pb-code">'+esc(DEFIS[+$('#d-sel').value].sol)+'</div>';};
 buildSlicers();fillMeasureSelects();loadDefi();refresh();
+
+/* ---------- Habillage Power BI Desktop ---------- */
+function renderFields(){
+  const NUMCOLS=['Quantite','Prix','Montant'];
+  let h=COLS.map(c=>{const num=NUMCOLS.indexOf(c)>=0,dt=c==='Date',dim=DIMS.indexOf(c)>=0;
+    return '<li data-dim="'+(dim?c:'')+'"><i class="fas '+(num?'fa-sigma':dt?'fa-calendar':'fa-font')+'"></i>'+(c==='Annee'?'Annee':c)+'</li>';}).join('');
+  h=h.replace(/fa-sigma/g,'fa-hashtag');
+  h+=MEASURES.map(m=>'<li class="m" data-m="'+esc(m.name)+'"><i class="fas fa-calculator"></i>'+esc(m.name)+'</li>').join('');
+  $('#fieldlist').innerHTML=h;
+  document.querySelectorAll('#fieldlist li').forEach(li=>li.onclick=()=>{
+    if(li.dataset.dim){$('#v-axis').value=li.dataset.dim;}
+    else if(li.dataset.m){$('#v-meas').value=li.dataset.m;}
+    document.querySelectorAll('#fieldlist li').forEach(x=>x.classList.toggle('on',x===li&&(li.dataset.dim||li.dataset.m)));
+  });
+}
+function syncVGrid(){document.querySelectorAll('#vgrid button').forEach(b=>b.classList.toggle('on',b.dataset.v===$('#v-type').value));$('#v-axis-w').style.display=$('#v-type').value==='card'?'none':'';}
+document.querySelectorAll('#vgrid button').forEach(b=>b.onclick=()=>{$('#v-type').value=b.dataset.v;syncVGrid();});
+syncVGrid();
+function goTab(t){const b=document.querySelector('.pb-tab[data-t='+t+']');if(b)b.click();}
+$('#rb-visual').onclick=()=>{goTab('rapport');$('#v-add').click();};
+$('#rb-clear').onclick=()=>{goTab('rapport');$('#v-clear').click();};
+$('#rb-measure').onclick=()=>{goTab('dax');$('#dax-in').focus();};
+$('#rb-quick').onclick=()=>goTab('defis');
+$('#rb-refresh').onclick=()=>refresh(true);
+renderFields();
 window.__pbi={evalExpr,DATA,DEFIS,parseMeasure};
 })();
 </script>

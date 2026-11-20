@@ -1,258 +1,496 @@
 {
-  "outil": "r",
-  "niveau": "avance",
-  "questions": [
-    {
-      "id": "q1",
-      "theme": "Quantiles",
-      "question": "Quel est le résultat affiché par ce code ?",
-      "code": "print(unname(quantile(1:10, 0.25)))",
-      "options": [
-        "[1] 3.25",
-        "[1] 2.5",
-        "[1] 3",
-        "[1] 2.75"
-      ],
-      "correct": 0,
-      "explication": "Avec la méthode par défaut (type 7), le premier quartile de 1 à 10 vaut 3.25."
-    },
-    {
-      "id": "q2",
-      "theme": "Valeurs aberrantes",
-      "question": "Selon la règle de Tukey, quand une valeur est-elle considérée comme aberrante ?",
-      "code": "",
-      "options": [
-        "Si elle est à plus de 1,5 écart-type de la moyenne",
-        "Si elle est inférieure à Q1 - 1,5 x IQR ou supérieure à Q3 + 1,5 x IQR",
-        "Si elle dépasse le 99e centile uniquement",
-        "Si elle est inférieure à Q1 ou supérieure à Q3"
-      ],
-      "correct": 1,
-      "explication": "La règle utilise l'écart interquartile IQR = Q3 - Q1 pour définir les bornes des moustaches."
-    },
-    {
-      "id": "q3",
-      "theme": "Médiane et moyenne",
-      "question": "Quel est le résultat affiché par ce code ?",
-      "code": "x <- c(10, 12, 11, 13, 200)\nprint(median(x))",
-      "options": [
-        "[1] 49.2",
-        "[1] 11",
-        "[1] 12",
-        "[1] 13"
-      ],
-      "correct": 2,
-      "explication": "La médiane (valeur centrale) est robuste à la valeur extrême 200, contrairement à la moyenne (49,2)."
-    },
-    {
-      "id": "q4",
-      "theme": "Corrélation",
-      "question": "Quel est le résultat affiché par ce code ?",
-      "code": "x <- 1:5\ny <- c(10, 8, 6, 4, 2)\nprint(cor(x, y))",
-      "options": [
-        "[1] 1",
-        "[1] 0",
-        "[1] -0.5",
-        "[1] -1"
-      ],
-      "correct": 3,
-      "explication": "y décroît parfaitement de façon linéaire avec x : le coefficient de Pearson vaut -1."
-    },
-    {
-      "id": "q5",
-      "theme": "Reproductibilité",
-      "question": "Pourquoi appelle-t-on set.seed(123) avant une simulation ou un bootstrap ?",
-      "code": "",
-      "options": [
-        "Pour accélérer le calcul des tirages",
-        "Pour obtenir des tirages sans remise",
-        "Pour obtenir les mêmes tirages aléatoires à chaque exécution",
-        "Pour rendre l'échantillon représentatif de la population"
-      ],
-      "correct": 2,
-      "explication": "La graine initialise le générateur pseudo-aléatoire, ce qui rend les résultats reproductibles."
-    },
-    {
-      "id": "q6",
-      "theme": "Test t",
-      "question": "Un test t sur deux moyennes donne une p-value de 0,01. Quelle conclusion est correcte au seuil de 5 % ?",
-      "code": "",
-      "options": [
-        "On rejette l'hypothèse nulle d'égalité des moyennes",
-        "On accepte l'hypothèse nulle d'égalité des moyennes",
-        "La probabilité que H0 soit vraie est de 1 %",
-        "La différence de moyennes vaut exactement 0,01"
-      ],
-      "correct": 0,
-      "explication": "p < 0,05 : les données sont peu compatibles avec H0, que l'on rejette. La p-value n'est pas la probabilité que H0 soit vraie."
-    },
-    {
-      "id": "q7",
-      "theme": "Test t",
-      "question": "Quel est le résultat affiché par ce code ?",
-      "code": "x <- c(5, 6, 7, 8, 9)\nprint(round(unname(t.test(x, mu = 5)$statistic), 2))",
-      "options": [
-        "[1] 7",
-        "[1] 1.58",
-        "[1] 4",
-        "[1] 2.83"
-      ],
-      "correct": 3,
-      "explication": "t = (moyenne - mu) / (écart-type / racine de n) = (7 - 5) / (1,581 / 2,236) = 2,83."
-    },
-    {
-      "id": "q8",
-      "theme": "Khi-deux",
-      "question": "Que teste chisq.test appliqué à un tableau croisé de deux variables qualitatives ?",
-      "code": "",
-      "options": [
-        "L'égalité des moyennes des deux variables",
-        "L'indépendance entre les deux variables",
-        "La normalité des deux variables",
-        "La corrélation linéaire entre les deux variables"
-      ],
-      "correct": 1,
-      "explication": "H0 du test d'indépendance du khi-deux : les deux variables qualitatives sont indépendantes."
-    },
-    {
-      "id": "q9",
-      "theme": "Khi-deux",
-      "question": "Quel est le résultat affiché par ce code ?",
-      "code": "tab <- matrix(c(30, 10, 20, 40), nrow = 2)\nprint(round(unname(chisq.test(tab, correct = FALSE)$statistic), 2))",
-      "options": [
-        "[1] 0.05",
-        "[1] 16.67",
-        "[1] 4.76",
-        "[1] 8.33"
-      ],
-      "correct": 1,
-      "explication": "La statistique de khi-deux compare effectifs observés et théoriques sous indépendance (ici sans correction de continuité)."
-    },
-    {
-      "id": "q10",
-      "theme": "Régression simple",
-      "question": "Quel est le résultat affiché par ce code ?",
-      "code": "x <- 1:10\ny <- 2 * x + 3\nprint(unname(round(coef(lm(y ~ x)), 2)))",
-      "options": [
-        "[1] 2 3",
-        "[1] 3 3",
-        "[1] 2 2",
-        "[1] 3 2"
-      ],
-      "correct": 3,
-      "explication": "coef renvoie d'abord la constante (3) puis la pente (2)."
-    },
-    {
-      "id": "q11",
-      "theme": "Coefficient R²",
-      "question": "Que mesure le R² d'une régression linéaire ?",
-      "code": "",
-      "options": [
-        "La part de la variance de la variable expliquée par le modèle",
-        "La probabilité que le modèle soit vrai",
-        "La pente de la droite de régression",
-        "La part des observations bien classées"
-      ],
-      "correct": 0,
-      "explication": "R² varie entre 0 et 1 : c'est la proportion de variance de y expliquée par les régresseurs."
-    },
-    {
-      "id": "q12",
-      "theme": "Syntaxe lm",
-      "question": "Quelle syntaxe estime la régression des dépenses sur le revenu ?",
-      "code": "",
-      "options": [
-        "lm(revenu ~ depenses, data = df)",
-        "lm(df, depenses + revenu)",
-        "lm(depenses ~ revenu, data = df)",
-        "lm(depenses, revenu, data = df)"
-      ],
-      "correct": 2,
-      "explication": "La formule s'écrit variable_expliquée ~ variables_explicatives."
-    },
-    {
-      "id": "q13",
-      "theme": "Régression multiple",
-      "question": "Dans une régression multiple, comment interprète-t-on le coefficient d'une variable ?",
-      "code": "",
-      "options": [
-        "Effet total de la variable, sans tenir compte des autres",
-        "Corrélation entre la variable et les résidus",
-        "Effet moyen d'une unité de plus, toutes choses égales par ailleurs",
-        "Part de variance expliquée par cette seule variable"
-      ],
-      "correct": 2,
-      "explication": "Chaque coefficient se lit en maintenant constantes les autres variables du modèle."
-    },
-    {
-      "id": "q14",
-      "theme": "Spécification log",
-      "question": "Dans lm(log(revenu) ~ taille), un coefficient de 0,05 sur taille signifie environ :",
-      "code": "",
-      "options": [
-        "+0,05 FCFA de revenu par unité de taille",
-        "+5 % de revenu par unité supplémentaire de taille",
-        "+0,05 point de pourcentage de revenu",
-        "+50 % de revenu par unité de taille"
-      ],
-      "correct": 1,
-      "explication": "Avec une variable expliquée en logarithme, un coefficient b se lit comme une variation relative d'environ 100 x b %."
-    },
-    {
-      "id": "q15",
-      "theme": "Régression logistique",
-      "question": "Dans une régression logistique glm(..., family = binomial), que représente exp(coef(modele)) ?",
-      "code": "",
-      "options": [
-        "Les rapports de cotes (odds ratios)",
-        "Les probabilités prédites",
-        "Les erreurs standards",
-        "Les variations en points de pourcentage"
-      ],
-      "correct": 0,
-      "explication": "Les coefficients sont des log-odds : leur exponentielle donne les odds ratios."
-    },
-    {
-      "id": "q16",
-      "theme": "Fonction logistique",
-      "question": "Quel est le résultat affiché par ce code ?",
-      "code": "print(plogis(0))",
-      "options": [
-        "[1] 0",
-        "[1] 1",
-        "[1] 0.693",
-        "[1] 0.5"
-      ],
-      "correct": 3,
-      "explication": "La fonction logistique 1 / (1 + exp(-x)) vaut 0,5 en x = 0."
-    },
-    {
-      "id": "q17",
-      "theme": "Séries temporelles",
-      "question": "Quel est le résultat affiché par ce code ?",
-      "code": "v <- c(100, 110, 121)\nprint(round((v[-1] / v[-length(v)] - 1) * 100, 1))",
-      "options": [
-        "[1] 10 10",
-        "[1] 21",
-        "[1] 10 11",
-        "[1] 1.1 1.1"
-      ],
-      "correct": 0,
-      "explication": "Chaque taux de croissance vaut (valeur / valeur précédente - 1) x 100 : 10 % puis 10 %."
-    },
-    {
-      "id": "q18",
-      "theme": "Bootstrap",
-      "question": "Quelle instruction réalise un tirage bootstrap d'un vecteur x ?",
-      "code": "",
-      "options": [
-        "sample(x, length(x), replace = FALSE)",
-        "sample(x, 1)",
-        "sample(x, length(x), replace = TRUE)",
-        "rnorm(length(x), mean(x), sd(x))"
-      ],
-      "correct": 2,
-      "explication": "Le bootstrap rééchantillonne avec remise un échantillon de même taille que l'original."
-    }
-  ]
+ "outil": "r",
+ "niveau": "avance",
+ "questions": [
+  {
+   "id": "q1",
+   "theme": "Quantiles",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "print(unname(quantile(1:10, 0.25)))",
+   "options": [
+    "[1] 3.25",
+    "[1] 2.5",
+    "[1] 3",
+    "[1] 2.75"
+   ],
+   "correct": 0,
+   "explication": "Avec la méthode par défaut (type 7), le premier quartile de 1 à 10 vaut 3.25."
+  },
+  {
+   "id": "q2",
+   "theme": "Valeurs aberrantes",
+   "question": "Selon la règle de Tukey, quand une valeur est-elle considérée comme aberrante ?",
+   "code": "",
+   "options": [
+    "Si elle est à plus de 1,5 écart-type de la moyenne",
+    "Si elle est inférieure à Q1 - 1,5 x IQR ou supérieure à Q3 + 1,5 x IQR",
+    "Si elle dépasse le 99e centile uniquement",
+    "Si elle est inférieure à Q1 ou supérieure à Q3"
+   ],
+   "correct": 1,
+   "explication": "La règle utilise l'écart interquartile IQR = Q3 - Q1 pour définir les bornes des moustaches."
+  },
+  {
+   "id": "q3",
+   "theme": "Médiane et moyenne",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "x <- c(10, 12, 11, 13, 200)\nprint(median(x))",
+   "options": [
+    "[1] 49.2",
+    "[1] 11",
+    "[1] 12",
+    "[1] 13"
+   ],
+   "correct": 2,
+   "explication": "La médiane (valeur centrale) est robuste à la valeur extrême 200, contrairement à la moyenne (49,2)."
+  },
+  {
+   "id": "q4",
+   "theme": "Corrélation",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "x <- 1:5\ny <- c(10, 8, 6, 4, 2)\nprint(cor(x, y))",
+   "options": [
+    "[1] 1",
+    "[1] 0",
+    "[1] -0.5",
+    "[1] -1"
+   ],
+   "correct": 3,
+   "explication": "y décroît parfaitement de façon linéaire avec x : le coefficient de Pearson vaut -1."
+  },
+  {
+   "id": "q5",
+   "theme": "Reproductibilité",
+   "question": "Pourquoi appelle-t-on set.seed(123) avant une simulation ou un bootstrap ?",
+   "code": "",
+   "options": [
+    "Pour accélérer le calcul des tirages",
+    "Pour obtenir des tirages sans remise",
+    "Pour obtenir les mêmes tirages aléatoires à chaque exécution",
+    "Pour rendre l'échantillon représentatif de la population"
+   ],
+   "correct": 2,
+   "explication": "La graine initialise le générateur pseudo-aléatoire, ce qui rend les résultats reproductibles."
+  },
+  {
+   "id": "q6",
+   "theme": "Test t",
+   "question": "Un test t sur deux moyennes donne une p-value de 0,01. Quelle conclusion est correcte au seuil de 5 % ?",
+   "code": "",
+   "options": [
+    "On rejette l'hypothèse nulle d'égalité des moyennes",
+    "On accepte l'hypothèse nulle d'égalité des moyennes",
+    "La probabilité que H0 soit vraie est de 1 %",
+    "La différence de moyennes vaut exactement 0,01"
+   ],
+   "correct": 0,
+   "explication": "p < 0,05 : les données sont peu compatibles avec H0, que l'on rejette. La p-value n'est pas la probabilité que H0 soit vraie."
+  },
+  {
+   "id": "q7",
+   "theme": "Test t",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "x <- c(5, 6, 7, 8, 9)\nprint(round(unname(t.test(x, mu = 5)$statistic), 2))",
+   "options": [
+    "[1] 7",
+    "[1] 1.58",
+    "[1] 4",
+    "[1] 2.83"
+   ],
+   "correct": 3,
+   "explication": "t = (moyenne - mu) / (écart-type / racine de n) = (7 - 5) / (1,581 / 2,236) = 2,83."
+  },
+  {
+   "id": "q8",
+   "theme": "Khi-deux",
+   "question": "Que teste chisq.test appliqué à un tableau croisé de deux variables qualitatives ?",
+   "code": "",
+   "options": [
+    "L'égalité des moyennes des deux variables",
+    "L'indépendance entre les deux variables",
+    "La normalité des deux variables",
+    "La corrélation linéaire entre les deux variables"
+   ],
+   "correct": 1,
+   "explication": "H0 du test d'indépendance du khi-deux : les deux variables qualitatives sont indépendantes."
+  },
+  {
+   "id": "q9",
+   "theme": "Khi-deux",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "tab <- matrix(c(30, 10, 20, 40), nrow = 2)\nprint(round(unname(chisq.test(tab, correct = FALSE)$statistic), 2))",
+   "options": [
+    "[1] 0.05",
+    "[1] 16.67",
+    "[1] 4.76",
+    "[1] 8.33"
+   ],
+   "correct": 1,
+   "explication": "La statistique de khi-deux compare effectifs observés et théoriques sous indépendance (ici sans correction de continuité)."
+  },
+  {
+   "id": "q10",
+   "theme": "Régression simple",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "x <- 1:10\ny <- 2 * x + 3\nprint(unname(round(coef(lm(y ~ x)), 2)))",
+   "options": [
+    "[1] 2 3",
+    "[1] 3 3",
+    "[1] 2 2",
+    "[1] 3 2"
+   ],
+   "correct": 3,
+   "explication": "coef renvoie d'abord la constante (3) puis la pente (2)."
+  },
+  {
+   "id": "q11",
+   "theme": "Coefficient R²",
+   "question": "Que mesure le R² d'une régression linéaire ?",
+   "code": "",
+   "options": [
+    "La part de la variance de la variable expliquée par le modèle",
+    "La probabilité que le modèle soit vrai",
+    "La pente de la droite de régression",
+    "La part des observations bien classées"
+   ],
+   "correct": 0,
+   "explication": "R² varie entre 0 et 1 : c'est la proportion de variance de y expliquée par les régresseurs."
+  },
+  {
+   "id": "q12",
+   "theme": "Syntaxe lm",
+   "question": "Quelle syntaxe estime la régression des dépenses sur le revenu ?",
+   "code": "",
+   "options": [
+    "lm(revenu ~ depenses, data = df)",
+    "lm(df, depenses + revenu)",
+    "lm(depenses ~ revenu, data = df)",
+    "lm(depenses, revenu, data = df)"
+   ],
+   "correct": 2,
+   "explication": "La formule s'écrit variable_expliquée ~ variables_explicatives."
+  },
+  {
+   "id": "q13",
+   "theme": "Régression multiple",
+   "question": "Dans une régression multiple, comment interprète-t-on le coefficient d'une variable ?",
+   "code": "",
+   "options": [
+    "Effet total de la variable, sans tenir compte des autres",
+    "Corrélation entre la variable et les résidus",
+    "Effet moyen d'une unité de plus, toutes choses égales par ailleurs",
+    "Part de variance expliquée par cette seule variable"
+   ],
+   "correct": 2,
+   "explication": "Chaque coefficient se lit en maintenant constantes les autres variables du modèle."
+  },
+  {
+   "id": "q14",
+   "theme": "Spécification log",
+   "question": "Dans lm(log(revenu) ~ taille), un coefficient de 0,05 sur taille signifie environ :",
+   "code": "",
+   "options": [
+    "+0,05 FCFA de revenu par unité de taille",
+    "+5 % de revenu par unité supplémentaire de taille",
+    "+0,05 point de pourcentage de revenu",
+    "+50 % de revenu par unité de taille"
+   ],
+   "correct": 1,
+   "explication": "Avec une variable expliquée en logarithme, un coefficient b se lit comme une variation relative d'environ 100 x b %."
+  },
+  {
+   "id": "q15",
+   "theme": "Régression logistique",
+   "question": "Dans une régression logistique glm(..., family = binomial), que représente exp(coef(modele)) ?",
+   "code": "",
+   "options": [
+    "Les rapports de cotes (odds ratios)",
+    "Les probabilités prédites",
+    "Les erreurs standards",
+    "Les variations en points de pourcentage"
+   ],
+   "correct": 0,
+   "explication": "Les coefficients sont des log-odds : leur exponentielle donne les odds ratios."
+  },
+  {
+   "id": "q16",
+   "theme": "Fonction logistique",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "print(plogis(0))",
+   "options": [
+    "[1] 0",
+    "[1] 1",
+    "[1] 0.693",
+    "[1] 0.5"
+   ],
+   "correct": 3,
+   "explication": "La fonction logistique 1 / (1 + exp(-x)) vaut 0,5 en x = 0."
+  },
+  {
+   "id": "q17",
+   "theme": "Séries temporelles",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "v <- c(100, 110, 121)\nprint(round((v[-1] / v[-length(v)] - 1) * 100, 1))",
+   "options": [
+    "[1] 10 10",
+    "[1] 21",
+    "[1] 10 11",
+    "[1] 1.1 1.1"
+   ],
+   "correct": 0,
+   "explication": "Chaque taux de croissance vaut (valeur / valeur précédente - 1) x 100 : 10 % puis 10 %."
+  },
+  {
+   "id": "q18",
+   "theme": "Bootstrap",
+   "question": "Quelle instruction réalise un tirage bootstrap d'un vecteur x ?",
+   "code": "",
+   "options": [
+    "sample(x, length(x), replace = FALSE)",
+    "sample(x, 1)",
+    "sample(x, length(x), replace = TRUE)",
+    "rnorm(length(x), mean(x), sd(x))"
+   ],
+   "correct": 2,
+   "explication": "Le bootstrap rééchantillonne avec remise un échantillon de même taille que l'original."
+  },
+  {
+   "id": "q19",
+   "theme": "Données de panel",
+   "question": "Dans le package plm, quel argument de la fonction plm() permet d'estimer un modèle à effets fixes individuels ?",
+   "code": "",
+   "options": [
+    "model = \"pooling\"",
+    "model = \"random\"",
+    "model = \"within\"",
+    "effect = \"time\""
+   ],
+   "correct": 2,
+   "explication": "L'estimateur intra (within) élimine les effets individuels constants ; model = \"pooling\" ignore la dimension panel."
+  },
+  {
+   "id": "q20",
+   "theme": "Données de panel",
+   "question": "Quel est l'objectif du test de Hausman (phtest) en données de panel ?",
+   "code": "",
+   "options": [
+    "Choisir entre le modèle à effets fixes et le modèle à effets aléatoires",
+    "Tester la stationnarité des séries du panel",
+    "Détecter l'autocorrélation des résidus",
+    "Comparer un modèle linéaire et un modèle logistique"
+   ],
+   "correct": 0,
+   "explication": "Sous H0, l'effet aléatoire est cohérent et efficace ; le rejet de H0 conduit à préférer l'effet fixe."
+  },
+  {
+   "id": "q21",
+   "theme": "Stationnarité",
+   "question": "Quelle est l'hypothèse nulle du test de Dickey-Fuller augmenté (adf.test du package tseries) ?",
+   "code": "",
+   "options": [
+    "La série est stationnaire autour d'une constante",
+    "Les résidus sont homoscédastiques",
+    "La série est un bruit blanc gaussien",
+    "La série possède une racine unitaire (elle est non stationnaire)"
+   ],
+   "correct": 3,
+   "explication": "Une p-value faible conduit à rejeter la racine unitaire et à conclure à la stationnarité."
+  },
+  {
+   "id": "q22",
+   "theme": "Prévision",
+   "question": "Que fait la fonction auto.arima du package forecast ?",
+   "code": "",
+   "options": [
+    "Elle teste la stationnarité puis supprime les valeurs aberrantes",
+    "Elle sélectionne automatiquement les ordres (p, d, q) d'un modèle ARIMA selon un critère d'information",
+    "Elle ajuste uniquement un modèle GARCH(1,1)",
+    "Elle simule des trajectoires à partir d'un modèle fixé par l'utilisateur"
+   ],
+   "correct": 1,
+   "explication": "auto.arima parcourt plusieurs spécifications et retient celle qui minimise un critère comme l'AICc."
+  },
+  {
+   "id": "q23",
+   "theme": "Différenciation",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "print(diff(c(1, 4, 9, 16), differences = 2))",
+   "options": [
+    "[1] 3 5 7",
+    "[1] 2 2",
+    "[1] 2",
+    "[1] 1 4 9 16"
+   ],
+   "correct": 1,
+   "explication": "La différence première donne 3, 5, 7 ; la différence seconde donne 2 et 2."
+  },
+  {
+   "id": "q24",
+   "theme": "Autocorrélation",
+   "question": "Que suggère un graphique ACF dont les autocorrélations décroissent très lentement ?",
+   "code": "",
+   "options": [
+    "Que la série est un bruit blanc",
+    "Que la série est stationnaire avec une variance constante",
+    "Que les résidus sont normalement distribués",
+    "Que la série est probablement non stationnaire (racine unitaire ou forte persistance)"
+   ],
+   "correct": 3,
+   "explication": "Pour un bruit blanc, les autocorrélations sont nulles dès le retard 1 ; une décroissance lente révèle une forte persistance."
+  },
+  {
+   "id": "q25",
+   "theme": "Diagnostics de régression",
+   "question": "Quel test, disponible via dwtest du package lmtest, vérifie l'autocorrélation d'ordre 1 des résidus d'un modèle lm ?",
+   "code": "",
+   "options": [
+    "Le test de Durbin-Watson",
+    "Le test de Jarque-Bera",
+    "Le test de Breusch-Pagan",
+    "Le test de Hausman"
+   ],
+   "correct": 0,
+   "explication": "La statistique de Durbin-Watson, proche de 2 en l'absence d'autocorrélation, concerne les résidus consécutifs."
+  },
+  {
+   "id": "q26",
+   "theme": "Diagnostics de régression",
+   "question": "Quel problème le test de Breusch-Pagan (bptest) permet-il de détecter dans un modèle lm ?",
+   "code": "",
+   "options": [
+    "La multicolinéarité des régresseurs",
+    "L'autocorrélation des résidus",
+    "L'hétéroscédasticité des résidus",
+    "La non-stationnarité des variables"
+   ],
+   "correct": 2,
+   "explication": "H0 du test de Breusch-Pagan : la variance des erreurs est constante (homoscédasticité)."
+  },
+  {
+   "id": "q27",
+   "theme": "Multicolinéarité",
+   "question": "À quoi sert la fonction vif du package car appliquée à un modèle lm ?",
+   "code": "",
+   "options": [
+    "Mesurer la multicolinéarité entre les variables explicatives",
+    "Tester la normalité des résidus",
+    "Estimer l'effet marginal de chaque variable",
+    "Sélectionner automatiquement les variables significatives"
+   ],
+   "correct": 0,
+   "explication": "Un facteur d'inflation de la variance élevé (souvent supérieur à 5 ou 10) signale une forte colinéarité."
+  },
+  {
+   "id": "q28",
+   "theme": "Erreurs-types robustes",
+   "question": "Quelle approche fournit des erreurs-types robustes à l'hétéroscédasticité pour un modèle lm ?",
+   "code": "",
+   "options": [
+    "summary(modele, robust = FALSE)",
+    "anova(modele, test = \"HC1\")",
+    "coeftest(modele, vcov = vcovHC(modele, type = \"HC1\"))",
+    "confint(modele, level = 0.05)"
+   ],
+   "correct": 2,
+   "explication": "Le package sandwich fournit vcovHC, et lmtest::coeftest l'utilise pour recalculer les tests de significativité."
+  },
+  {
+   "id": "q29",
+   "theme": "Sélection de modèles",
+   "question": "Pour comparer deux modèles estimés sur les mêmes données avec AIC(), quel modèle faut-il préférer ?",
+   "code": "",
+   "options": [
+    "Celui dont l'AIC est le plus élevé",
+    "Celui dont l'AIC est le plus faible",
+    "Celui dont l'AIC est le plus proche de zéro en valeur positive uniquement",
+    "Celui qui comporte le plus de paramètres"
+   ],
+   "correct": 1,
+   "explication": "L'AIC pénalise le nombre de paramètres : à données identiques, la valeur la plus faible indique le meilleur compromis ajustement-parcimonie."
+  },
+  {
+   "id": "q30",
+   "theme": "Formules",
+   "question": "En R, à quoi est équivalente la formule y ~ x1 * x2 ?",
+   "code": "",
+   "options": [
+    "y ~ x1 + x2",
+    "y ~ x1:x2",
+    "y ~ I(x1 * x2)",
+    "y ~ x1 + x2 + x1:x2"
+   ],
+   "correct": 3,
+   "explication": "L'opérateur * inclut les effets principaux et leur interaction ; x1:x2 seul n'ajoute que l'interaction."
+  },
+  {
+   "id": "q31",
+   "theme": "Programmation fonctionnelle",
+   "question": "Quel type de résultat renvoie map_dbl(1:3, ~ .x^2) du package purrr ?",
+   "code": "",
+   "options": [
+    "Une liste de trois éléments",
+    "Un data.frame de trois lignes",
+    "Une matrice de dimension 3 x 3",
+    "Un vecteur numérique : 1, 4, 9"
+   ],
+   "correct": 3,
+   "explication": "map_dbl applique la fonction à chaque élément et garantit un résultat de type double, simplifié en vecteur."
+  },
+  {
+   "id": "q32",
+   "theme": "Simulation",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "print(dim(replicate(3, rnorm(4))))",
+   "options": [
+    "[1] 3 4",
+    "[1] 4 3",
+    "[1] 12",
+    "[1] 3"
+   ],
+   "correct": 1,
+   "explication": "replicate répète trois fois l'expression qui renvoie un vecteur de longueur 4 : le résultat est une matrice 4 x 3."
+  },
+  {
+   "id": "q33",
+   "theme": "Manipulation de listes",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "print(dim(do.call(rbind, list(1:3, 4:6, 7:9, 10:12))))",
+   "options": [
+    "[1] 3 4",
+    "[1] 12",
+    "[1] 4 3",
+    "[1] 4"
+   ],
+   "correct": 2,
+   "explication": "do.call(rbind, liste) empile les quatre vecteurs en lignes : matrice de 4 lignes et 3 colonnes."
+  },
+  {
+   "id": "q34",
+   "theme": "Modèles de comptage",
+   "question": "Quelle famille faut-il utiliser dans glm() pour modéliser une variable de comptage (nombre d'événements) ?",
+   "code": "",
+   "options": [
+    "family = poisson",
+    "family = binomial",
+    "family = gaussian(link = \"logit\")",
+    "family = quasi_comptage"
+   ],
+   "correct": 0,
+   "explication": "La régression de Poisson utilise par défaut le lien log et convient aux variables entières non négatives."
+  },
+  {
+   "id": "q35",
+   "theme": "Régression logistique",
+   "question": "Que renvoie predict(modele, type = \"response\") pour un modèle glm(..., family = binomial) ?",
+   "code": "",
+   "options": [
+    "Les log-odds prédits",
+    "Les résidus de déviance",
+    "Les probabilités prédites que l'événement se réalise",
+    "Les coefficients exponentiés"
+   ],
+   "correct": 2,
+   "explication": "Par défaut, predict renvoie le prédicteur linéaire (log-odds) ; type = \"response\" applique la fonction logistique inverse."
+  }
+ ]
 }

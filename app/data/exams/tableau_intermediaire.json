@@ -253,6 +253,244 @@
    ],
    "correct": 2,
    "explication": "Le Top N doit être appliqué après un tri décroissant ; sans tri, il ne garantit pas les meilleures valeurs."
+  },
+  {
+   "id": "q19",
+   "theme": "Champ calculé conditionnel",
+   "question": "Que renvoie ce champ calculé pour une ligne dont la valeur de Ventes est 800 ?",
+   "code": "IF [Ventes] > 1000 THEN \"Élevé\" ELSE \"Faible\" END",
+   "options": [
+    "Élevé",
+    "Null",
+    "Faible",
+    "800"
+   ],
+   "correct": 2,
+   "explication": "La condition 800 > 1000 est fausse : c'est donc la branche ELSE qui s'applique."
+  },
+  {
+   "id": "q20",
+   "theme": "Paramètres",
+   "question": "Quel objet permet à l'utilisateur de choisir ou saisir une valeur qui sera ensuite utilisée dans un calcul ou un filtre ?",
+   "code": "",
+   "options": [
+    "Un paramètre",
+    "Une hiérarchie",
+    "Un extrait",
+    "Une action de tableau de bord"
+   ],
+   "correct": 0,
+   "explication": "Un paramètre est une valeur dynamique, indépendante des données, que l'on peut référencer dans des champs calculés."
+  },
+  {
+   "id": "q21",
+   "theme": "Groupes",
+   "question": "Comment regrouper manuellement la Côte d'Ivoire et le Ghana sous l'étiquette Afrique de l'Ouest ?",
+   "code": "",
+   "options": [
+    "En créant un paramètre numérique",
+    "En changeant l'agrégation en moyenne",
+    "En ajoutant une ligne de référence",
+    "En créant un groupe sur le champ Pays"
+   ],
+   "correct": 3,
+   "explication": "Un groupe rassemble plusieurs membres d'une dimension sous une même étiquette."
+  },
+  {
+   "id": "q22",
+   "theme": "Jeux",
+   "question": "Quelle structure définit un sous-ensemble de données selon une condition et distingue les valeurs Dans le jeu et Hors du jeu ?",
+   "code": "",
+   "options": [
+    "Un groupe",
+    "Un jeu",
+    "Une hiérarchie",
+    "Un paramètre"
+   ],
+   "correct": 1,
+   "explication": "Un jeu est un champ personnalisé qui indique, pour chaque membre, s'il appartient ou non au sous-ensemble défini."
+  },
+  {
+   "id": "q23",
+   "theme": "Hiérarchies",
+   "question": "À quoi sert la hiérarchie Pays > Région > Ville ?",
+   "code": "",
+   "options": [
+    "À trier automatiquement les ventes",
+    "À descendre ou remonter progressivement dans le niveau de détail",
+    "À joindre deux tables",
+    "À filtrer les valeurs nulles"
+   ],
+   "correct": 1,
+   "explication": "Une hiérarchie permet d'explorer les données du niveau général au niveau détaillé par le signe plus (+) et le signe moins (-)."
+  },
+  {
+   "id": "q24",
+   "theme": "Axe double",
+   "question": "Quand utilise-t-on un axe double ?",
+   "code": "",
+   "options": [
+    "Pour dupliquer une feuille de calcul",
+    "Pour afficher deux filtres côte à côte",
+    "Pour remplacer une dimension par une mesure",
+    "Pour superposer deux mesures sur un même graphique, chacune avec son propre axe"
+   ],
+   "correct": 3,
+   "explication": "L'axe double superpose deux mesures, par exemple des ventes en barres et un taux en ligne, d'échelles différentes."
+  },
+  {
+   "id": "q25",
+   "theme": "Jointure interne",
+   "question": "Table Clients : identifiants 1, 2, 3, 4. Table Commandes : identifiants clients 1, 1, 2, 5. Combien de lignes une jointure interne sur l'identifiant client produit-elle ?",
+   "code": "",
+   "options": [
+    "3",
+    "2",
+    "4",
+    "6"
+   ],
+   "correct": 0,
+   "explication": "Seuls les identifiants 1 (deux commandes) et 2 (une commande) existent dans les deux tables, soit 3 lignes."
+  },
+  {
+   "id": "q26",
+   "theme": "Jointure gauche",
+   "question": "Avec les mêmes tables (Clients : 1, 2, 3, 4 ; Commandes : 1, 1, 2, 5), combien de lignes produit une jointure gauche depuis Clients ?",
+   "code": "",
+   "options": [
+    "3",
+    "4",
+    "5",
+    "7"
+   ],
+   "correct": 2,
+   "explication": "Le client 1 donne deux lignes, le client 2 une, les clients 3 et 4 une chacune avec des valeurs nulles : 5 lignes."
+  },
+  {
+   "id": "q27",
+   "theme": "Union",
+   "question": "Pour empiler deux fichiers de ventes (T1 et T2) qui ont les mêmes colonnes, que faut-il utiliser ?",
+   "code": "",
+   "options": [
+    "Une jointure externe complète sur la date",
+    "Un mélange de données",
+    "Un jeu",
+    "Une union"
+   ],
+   "correct": 3,
+   "explication": "L'union ajoute les lignes d'une table à celles d'une autre lorsque leurs colonnes correspondent."
+  },
+  {
+   "id": "q28",
+   "theme": "Relations",
+   "question": "Quelle caractéristique distingue une relation d'une jointure classique ?",
+   "code": "",
+   "options": [
+    "Elle fusionne toujours les tables en une seule physique",
+    "Les tables restent distinctes et sont combinées selon les champs utilisés dans la vue",
+    "Elle exige un extrait",
+    "Elle ne fonctionne qu'avec des dates"
+   ],
+   "correct": 1,
+   "explication": "Avec les relations, Tableau choisit le type de jointure au moment de l'analyse selon les champs employés, sans aplatir les tables."
+  },
+  {
+   "id": "q29",
+   "theme": "Ratio de totaux",
+   "question": "Pourquoi écrire SUM([Profit]) / SUM([Ventes]) plutôt que [Profit] / [Ventes] pour la marge d'une ville ?",
+   "code": "SUM([Profit]) / SUM([Ventes])",
+   "options": [
+    "Pour calculer le ratio des totaux et non la somme des ratios ligne par ligne",
+    "Pour accélérer l'affichage de la carte",
+    "Pour convertir le résultat en dimension",
+    "Pour ignorer les valeurs nulles"
+   ],
+   "correct": 0,
+   "explication": "Un ratio calculé au niveau de la ligne puis agrégé donne un résultat faux ; il faut agréger avant de diviser."
+  },
+  {
+   "id": "q30",
+   "theme": "Fonctions de date",
+   "question": "Que renvoie ce calcul ?",
+   "code": "DATEDIFF('day', [Date commande], [Date livraison])",
+   "options": [
+    "La date de livraison au format texte",
+    "Le nombre de commandes par jour",
+    "Le nombre de jours entre la commande et la livraison",
+    "La somme des deux dates"
+   ],
+   "correct": 2,
+   "explication": "DATEDIFF compte les intervalles, ici des jours, entre deux dates."
+  },
+  {
+   "id": "q31",
+   "theme": "Fonctions de texte",
+   "question": "Pour un Code égal à \"CI-ABJ-01\", que renvoie ce calcul ?",
+   "code": "LEFT([Code], 2)",
+   "options": [
+    "CI-",
+    "CI",
+    "01",
+    "ABJ"
+   ],
+   "correct": 1,
+   "explication": "LEFT extrait les deux premiers caractères de la chaîne."
+  },
+  {
+   "id": "q32",
+   "theme": "Valeurs nulles",
+   "question": "Que fait la fonction ZN([Ventes]) lorsque Ventes est Null ?",
+   "code": "",
+   "options": [
+    "Elle renvoie Null",
+    "Elle supprime la ligne",
+    "Elle renvoie le texte \"Null\"",
+    "Elle renvoie 0"
+   ],
+   "correct": 3,
+   "explication": "ZN remplace les valeurs nulles par zéro et laisse inchangées les autres valeurs."
+  },
+  {
+   "id": "q33",
+   "theme": "Dates discrètes et continues",
+   "question": "Quelle est la conséquence de placer une date continue sur l'étagère Colonnes ?",
+   "code": "",
+   "options": [
+    "Tableau crée un en-tête par valeur distincte",
+    "Le champ devient une mesure",
+    "Tableau crée un axe continu au lieu d'en-têtes",
+    "La vue est automatiquement filtrée"
+   ],
+   "correct": 2,
+   "explication": "Un champ continu produit un axe, alors qu'un champ discret produit des en-têtes."
+  },
+  {
+   "id": "q34",
+   "theme": "Nombre distinct",
+   "question": "Les clients d'un fichier sont A, B, A, C, B. Que renvoient respectivement COUNT([Client]) et COUNTD([Client]) ?",
+   "code": "",
+   "options": [
+    "5 et 3",
+    "3 et 5",
+    "5 et 5",
+    "3 et 3"
+   ],
+   "correct": 0,
+   "explication": "COUNT dénombre toutes les valeurs (5) et COUNTD uniquement les valeurs distinctes (A, B, C), soit 3."
+  },
+  {
+   "id": "q35",
+   "theme": "Filtres de tableau de bord",
+   "question": "Comment appliquer un même filtre à plusieurs feuilles de calcul d'un tableau de bord ?",
+   "code": "",
+   "options": [
+    "Recopier le filtre dans chaque feuille à la main uniquement",
+    "Créer un paramètre sans lien avec les données",
+    "Convertir le filtre en groupe",
+    "Utiliser l'option Appliquer aux feuilles de calcul du filtre"
+   ],
+   "correct": 3,
+   "explication": "Le menu du filtre propose Appliquer aux feuilles de calcul, puis Toutes celles utilisant cette source de données ou une sélection."
   }
  ]
 }

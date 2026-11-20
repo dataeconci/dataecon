@@ -171,16 +171,14 @@
 
     <div class="container">
         
-        <!-- Cartes Tarifs -->
         <div class="tarifs-grid">
             
-            <!-- Gratuit -->
             <div class="tarif-card">
                 <h3>Gratuit</h3>
                 <div class="tarif-prix">0 <span>FCFA</span></div>
                 <ul>
                     <li><i class="fas fa-check"></i> Accès aux cours Débutant</li>
-                    <li><i class="fas fa-check"></i> Instructeur IA (limité)</li>
+                    <li><i class="fas fa-check"></i> Assistant pédagogique (limité)</li>
                     <li><i class="fas fa-check"></i> Bibliothèque de données publiques</li>
                     <li><i class="fas fa-times" style="color:#e74c3c;"></i> Téléchargement de datasets</li>
                 </ul>
@@ -191,36 +189,31 @@
                 {% endif %}
             </div>
 
-            <!-- Standard -->
             <div class="tarif-card">
                 <h3>Standard</h3>
                 <div class="tarif-prix">5 000 <span>FCFA / mois</span></div>
                 <ul>
                     <li><i class="fas fa-check"></i> Accès aux niveaux Débutant & Intermédiaire</li>
-                    <li><i class="fas fa-check"></i> Instructeur IA complet</li>
+                    <li><i class="fas fa-check"></i> Assistant pédagogique complet</li>
                     <li><i class="fas fa-check"></i> Téléchargement des datasets</li>
                     <li><i class="fas fa-times" style="color:#e74c3c;"></i> Accès aux modèles avancés</li>
                 </ul>
-                <!-- BOUTON MODIFIÉ ICI -->
                 <a href="{{ url_for('payer_abonnement', plan='standard') }}" class="btn-subscribe">Choisir Standard</a>
             </div>
 
-            <!-- Premium -->
             <div class="tarif-card popular">
                 <div class="badge-popular">Le plus choisi</div>
                 <h3>Premium</h3>
                 <div class="tarif-prix">15 000 <span>FCFA / mois</span></div>
                 <ul>
                     <li><i class="fas fa-check"></i> Accès à TOUS les niveaux (Avancé inclus)</li>
-                    <li><i class="fas fa-check"></i> Instructeur IA illimité</li>
+                    <li><i class="fas fa-check"></i> Assistant pédagogique illimité</li>
                     <li><i class="fas fa-check"></i> Téléchargement des datasets</li>
                     <li><i class="fas fa-check"></i> Accès à tous les modèles d'économétrie</li>
                 </ul>
-                <!-- BOUTON MODIFIÉ ICI -->
                 <a href="{{ url_for('payer_abonnement', plan='premium') }}" class="btn-subscribe">Choisir Premium</a>
             </div>
 
-            <!-- Entreprise -->
             <div class="tarif-card">
                 <h3>Entreprise</h3>
                 <div class="tarif-prix">Sur devis</div>
@@ -235,7 +228,6 @@
 
         </div>
 
-        <!-- Tableau Comparatif -->
         <h2 style="text-align: center; color: #0b2a4a; font-weight: 700; margin-top: 60px; margin-bottom: 20px;">Comparatif détaillé des offres</h2>
         
         <div class="tableau-comparatif">
@@ -272,7 +264,7 @@
                         <td><i class="fas fa-check text-check"></i></td>
                     </tr>
                     <tr>
-                        <td>Instructeur IA</td>
+                        <td>Assistant pédagogique</td>
                         <td>Limité (5/jour)</td>
                         <td>Complet</td>
                         <td>Illimité</td>

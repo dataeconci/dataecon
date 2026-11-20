@@ -17,7 +17,6 @@
                 </div>
                 <div class="card-body p-4">
                     <form method="POST" class="needs-validation" novalidate>
-                        <!-- Nom d'utilisateur -->
                         <div class="mb-3">
                             <label for="username" class="form-label">
                                 <i class="fas fa-user"></i> Nom d'utilisateur
@@ -33,7 +32,6 @@
                             </div>
                         </div>
 
-                        <!-- Mot de passe -->
                         <div class="mb-3">
                             <label for="password" class="form-label">
                                 <i class="fas fa-lock"></i> Mot de passe
@@ -56,7 +54,6 @@
                             </div>
                         </div>
 
-                        <!-- Se souvenir de moi -->
                         <div class="mb-3 form-check">
                             <input type="checkbox" 
                                    class="form-check-input" 
@@ -67,19 +64,16 @@
                             </label>
                         </div>
 
-                        <!-- Mot de passe oublié -->
                         <div class="mb-3 text-end">
                             <a href="{{ url_for('reset_password_request') }}" class="text-decoration-none small">
                                 <i class="fas fa-key"></i> Mot de passe oublié ?
                             </a>
                         </div>
 
-                        <!-- Bouton de connexion -->
                         <button type="submit" class="btn btn-primary w-100">
                             <i class="fas fa-sign-in-alt"></i> Se connecter
                         </button>
 
-                        <!-- Lien vers inscription -->
                         <div class="text-center mt-3">
                             <p class="text-muted small">
                                 Pas encore de compte ? 
@@ -90,7 +84,6 @@
                         </div>
                     </form>
 
-                    <!-- Séparateur -->
                     <hr class="my-4">
                     <div class="text-center">
                         <p class="text-muted small">
@@ -111,7 +104,6 @@
                 </div>
             </div>
 
-            <!-- Crédits -->
             <div class="text-center mt-4">
                 <p class="text-muted small">
                     <i class="fas fa-graduation-cap"></i> 
@@ -122,7 +114,6 @@
     </div>
 </div>
 
-<!-- Validation JavaScript -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('.needs-validation');

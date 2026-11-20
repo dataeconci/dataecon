@@ -253,6 +253,244 @@
    ],
    "correct": 2,
    "explication": "Le croisement des deux mesures révèle si une ville fait beaucoup de petites ventes ou peu de grosses ventes."
+  },
+  {
+   "id": "q19",
+   "theme": "LOD FIXED",
+   "question": "Que calcule cette expression ?",
+   "code": "{ FIXED [Ville] : SUM([Ventes]) }",
+   "options": [
+    "Le total des ventes de toutes les villes, sans distinction",
+    "Le nombre de villes distinctes",
+    "Le total des ventes par ville, quel que soit le niveau de détail de la vue",
+    "La somme cumulée des ventes dans la vue"
+   ],
+   "correct": 2,
+   "explication": "FIXED calcule l'agrégation aux dimensions indiquées, indépendamment des dimensions présentes dans la vue."
+  },
+  {
+   "id": "q20",
+   "theme": "Ordre des opérations",
+   "question": "Par rapport aux filtres de dimension ordinaires, quand une expression FIXED est-elle évaluée ?",
+   "code": "",
+   "options": [
+    "Avant eux : ils n'affectent donc pas son résultat",
+    "Après eux : ils réduisent toujours son résultat",
+    "En même temps que les filtres de mesure",
+    "Seulement après les calculs de table"
+   ],
+   "correct": 0,
+   "explication": "Dans l'ordre des opérations, les expressions FIXED passent avant les filtres de dimension ordinaires."
+  },
+  {
+   "id": "q21",
+   "theme": "Filtre de contexte",
+   "question": "Comment faire en sorte qu'un filtre de dimension modifie le résultat d'une expression FIXED ?",
+   "code": "",
+   "options": [
+    "En le convertissant en filtre de mesure",
+    "En le plaçant sur l'étagère Pages",
+    "En changeant l'expression en INCLUDE",
+    "En le transformant en filtre de contexte"
+   ],
+   "correct": 3,
+   "explication": "Les filtres de contexte sont appliqués avant les expressions FIXED, qui en tiennent donc compte."
+  },
+  {
+   "id": "q22",
+   "theme": "LOD INCLUDE",
+   "question": "Dans une vue au niveau Région, que renvoie AVG({ INCLUDE [Client] : SUM([Ventes]) }) ?",
+   "code": "AVG({ INCLUDE [Client] : SUM([Ventes]) })",
+   "options": [
+    "Le total des ventes de la région",
+    "Pour chaque région, la moyenne des ventes totales par client",
+    "La moyenne des ventes de toutes les régions",
+    "Le nombre de clients de la région"
+   ],
+   "correct": 1,
+   "explication": "INCLUDE ajoute la dimension Client au calcul ; le total par client est ensuite moyenné au niveau Région."
+  },
+  {
+   "id": "q23",
+   "theme": "LOD EXCLUDE",
+   "question": "Une vue est détaillée par Région et par Produit. Que renvoie cette expression ?",
+   "code": "{ EXCLUDE [Produit] : SUM([Ventes]) }",
+   "options": [
+    "Les ventes de chaque produit",
+    "Le total des ventes de la région, répété pour chaque produit",
+    "Le total des ventes tous produits et toutes régions confondus",
+    "Le nombre de produits par région"
+   ],
+   "correct": 1,
+   "explication": "EXCLUDE retire Produit du niveau de détail : le total est calculé par région puis répété sur chaque ligne de produit."
+  },
+  {
+   "id": "q24",
+   "theme": "Calculs de table",
+   "question": "Sur quelles valeurs un calcul de table s'applique-t-il ?",
+   "code": "",
+   "options": [
+    "Sur chaque ligne de la source de données avant agrégation",
+    "Sur le fichier d'extrait uniquement",
+    "Sur les paramètres de la source",
+    "Sur les valeurs agrégées présentes dans la vue"
+   ],
+   "correct": 3,
+   "explication": "Un calcul de table est exécuté sur les résultats déjà agrégés de la vue, selon une direction et une partition."
+  },
+  {
+   "id": "q25",
+   "theme": "Somme cumulée",
+   "question": "Les ventes mensuelles sont 10, 20 et 30. Que renvoie RUNNING_SUM(SUM([Ventes])) au troisième mois ?",
+   "code": "RUNNING_SUM(SUM([Ventes]))",
+   "options": [
+    "60",
+    "30",
+    "20",
+    "90"
+   ],
+   "correct": 0,
+   "explication": "La somme cumulée au troisième mois est 10 + 20 + 30, soit 60."
+  },
+  {
+   "id": "q26",
+   "theme": "Moyenne mobile",
+   "question": "Les ventes de quatre mois sont 10, 20, 30 et 40. Que renvoie ce calcul au quatrième mois ?",
+   "code": "WINDOW_AVG(SUM([Ventes]), -2, 0)",
+   "options": [
+    "25",
+    "20",
+    "30",
+    "35"
+   ],
+   "correct": 2,
+   "explication": "La fenêtre couvre les deux valeurs précédentes et la valeur courante, soit la moyenne de 20, 30 et 40, donc 30."
+  },
+  {
+   "id": "q27",
+   "theme": "Calculer en utilisant",
+   "question": "Que définit l'option Calculer en utilisant d'un calcul de table ?",
+   "code": "",
+   "options": [
+    "La source de données utilisée",
+    "Le type d'agrégation de la mesure",
+    "Le format d'affichage des nombres",
+    "Le sens de parcours et la partition sur lesquels le calcul est effectué"
+   ],
+   "correct": 3,
+   "explication": "Elle précise comment les valeurs de la vue sont regroupées et ordonnées pour le calcul, par exemple Table (horizontale) ou Table (vers le bas)."
+  },
+  {
+   "id": "q28",
+   "theme": "Fonction RANK",
+   "question": "Les ventes par ville, de la plus grande à la plus petite, sont 500, 300, 300 et 100. Quel rang RANK(SUM([Ventes])) donne-t-il à la valeur 100 ?",
+   "code": "RANK(SUM([Ventes]))",
+   "options": [
+    "3",
+    "4",
+    "2",
+    "1"
+   ],
+   "correct": 1,
+   "explication": "Avec la méthode par défaut, les ex æquo partagent un rang (1, 2, 2) et le suivant saute au rang 4."
+  },
+  {
+   "id": "q29",
+   "theme": "Fonction LOOKUP",
+   "question": "Que renvoie ce calcul de table ?",
+   "code": "LOOKUP(SUM([Ventes]), -1)",
+   "options": [
+    "La valeur de la marque précédente dans la partition",
+    "La valeur de la marque suivante",
+    "La somme de toutes les marques précédentes",
+    "La valeur maximale de la partition"
+   ],
+   "correct": 0,
+   "explication": "LOOKUP avec un décalage de -1 lit la valeur de la ligne précédente, ce qui sert par exemple aux variations d'une période à l'autre."
+  },
+  {
+   "id": "q30",
+   "theme": "Extraits",
+   "question": "Quel est l'intérêt principal d'un extrait de données (.hyper) par rapport à une connexion directe ?",
+   "code": "",
+   "options": [
+    "Les données se mettent à jour seules en temps réel",
+    "Il supprime la nécessité de modéliser les données",
+    "Les données sont stockées dans un format optimisé, ce qui accélère les requêtes",
+    "Il rend le classeur public"
+   ],
+   "correct": 2,
+   "explication": "Un extrait est une copie compressée en colonnes, rapide à interroger et utilisable sans accès continu à la source."
+  },
+  {
+   "id": "q31",
+   "theme": "Actualisation d'extrait",
+   "question": "Que se passe-t-il si la source change mais que l'extrait n'est pas actualisé ?",
+   "code": "",
+   "options": [
+    "Les nouvelles données apparaissent automatiquement",
+    "Le classeur continue d'afficher les anciennes données",
+    "L'extrait est supprimé",
+    "Le classeur repasse en connexion directe"
+   ],
+   "correct": 1,
+   "explication": "Un extrait est un instantané : il ne reflète les changements de la source qu'après une actualisation manuelle ou planifiée."
+  },
+  {
+   "id": "q32",
+   "theme": "Action de filtre",
+   "question": "Quelle action permet de filtrer les autres feuilles d'un tableau de bord en cliquant sur une marque ?",
+   "code": "",
+   "options": [
+    "Une action URL",
+    "Une action de jeu de paramètres",
+    "Une action Aller à la feuille",
+    "Une action de filtre"
+   ],
+   "correct": 3,
+   "explication": "Une action de filtre utilise la sélection faite dans une feuille pour filtrer d'autres feuilles du tableau de bord."
+  },
+  {
+   "id": "q33",
+   "theme": "Action URL",
+   "question": "Quelle action ouvre une page web à partir d'une marque sélectionnée ?",
+   "code": "",
+   "options": [
+    "Une action de surlignage",
+    "Une action de filtre",
+    "Une action URL",
+    "Une action de jeu"
+   ],
+   "correct": 2,
+   "explication": "Une action URL ouvre l'adresse indiquée, qui peut intégrer des valeurs de champs de la marque."
+  },
+  {
+   "id": "q34",
+   "theme": "Performance",
+   "question": "Laquelle de ces pratiques améliore en général les performances d'un tableau de bord ?",
+   "code": "",
+   "options": [
+    "Limiter le nombre de feuilles, de filtres et de marques",
+    "Multiplier les filtres affichés pour chaque dimension",
+    "Rendre toutes les dimensions disponibles en liste déroulante",
+    "Éviter les extraits dans tous les cas"
+   ],
+   "correct": 0,
+   "explication": "Chaque feuille, filtre et marque supplémentaire génère du calcul ou des requêtes ; un tableau de bord épuré se charge plus vite."
+  },
+  {
+   "id": "q35",
+   "theme": "Tableau Server et Cloud",
+   "question": "Que permet la publication d'un classeur sur Tableau Server ou Tableau Cloud ?",
+   "code": "",
+   "options": [
+    "Le rendre automatiquement public sur Internet",
+    "Le convertir en fichier PDF figé",
+    "Supprimer la source de données d'origine",
+    "Le partager par navigateur avec des autorisations et un contrôle d'accès"
+   ],
+   "correct": 3,
+   "explication": "Ces plateformes hébergent les classeurs pour des utilisateurs authentifiés, avec gestion des droits et actualisations planifiées."
   }
  ]
 }

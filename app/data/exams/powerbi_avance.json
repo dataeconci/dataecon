@@ -253,6 +253,244 @@
    ],
    "correct": 0,
    "explication": "Lecteur : consultation uniquement."
+  },
+  {
+   "id": "q19",
+   "theme": "Intelligence temporelle",
+   "question": "Dans cette mesure, que représente le troisième argument de TOTALYTD ?",
+   "code": "CA exercice =\nTOTALYTD([CA], Dates[Date], \"30/06\")",
+   "options": [
+    "La date de fin de l'exercice",
+    "La date de début du calcul",
+    "Un filtre sur le mois",
+    "Le nombre de jours du cumul"
+   ],
+   "correct": 0,
+   "explication": "Le troisième argument facultatif définit la fin de l'année fiscale : ici le cumul repart du 1er juillet."
+  },
+  {
+   "id": "q20",
+   "theme": "Intelligence temporelle",
+   "question": "Quel avantage DATEADD présente-t-il sur SAMEPERIODLASTYEAR ?",
+   "code": "CA N-1 =\nCALCULATE([CA], DATEADD(Dates[Date], -1, YEAR))",
+   "options": [
+    "Il ne nécessite pas de table de dates",
+    "Il fonctionne sans CALCULATE",
+    "Il permet de décaler d'un intervalle au choix : jour, mois, trimestre ou année",
+    "Il ignore les filtres de la table de dates"
+   ],
+   "correct": 2,
+   "explication": "DATEADD accepte un nombre d'intervalles positif ou négatif et une unité, ce qui permet de comparer au trimestre ou au mois précédent."
+  },
+  {
+   "id": "q21",
+   "theme": "Contextes",
+   "question": "Que fait cette mesure ?",
+   "code": "CA région =\nCALCULATE([CA], ALLEXCEPT(Ventes, Ventes[Région]))",
+   "options": [
+    "Elle supprime uniquement le filtre sur Région",
+    "Elle supprime tous les filtres sur la table Ventes sauf celui de la colonne Région",
+    "Elle ne conserve que la ligne courante",
+    "Elle trie les ventes par région"
+   ],
+   "correct": 1,
+   "explication": "ALLEXCEPT retire tous les filtres de la table sauf ceux des colonnes indiquées, ce qui est utile pour un total par région."
+  },
+  {
+   "id": "q22",
+   "theme": "Contextes",
+   "question": "Que renvoie TOPN dans cette mesure ?",
+   "code": "CA Top 3 =\nCALCULATE(\n [CA],\n TOPN(3, ALL(Produits[Nom]), [CA])\n)",
+   "options": [
+    "La valeur du troisième produit",
+    "Un classement de tous les produits",
+    "Le total des trois derniers mois",
+    "Une table des 3 produits au CA le plus élevé, utilisée comme filtre"
+   ],
+   "correct": 3,
+   "explication": "TOPN est une fonction de table qui retourne les N meilleures lignes selon l'expression ; CALCULATE l'applique comme filtre."
+  },
+  {
+   "id": "q23",
+   "theme": "Performance",
+   "question": "Que permet le mode de stockage composite ?",
+   "code": "",
+   "options": [
+    "Utiliser uniquement des données en mémoire",
+    "Remplacer la passerelle de données",
+    "Chiffrer le fichier .pbix",
+    "Combiner dans un même modèle des tables en Import et des tables en DirectQuery"
+   ],
+   "correct": 3,
+   "explication": "Un modèle composite associe plusieurs modes de stockage ou sources, par exemple des dimensions importées et un fait en DirectQuery."
+  },
+  {
+   "id": "q24",
+   "theme": "Performance",
+   "question": "À quoi sert le mode de stockage Double pour une table de dimension ?",
+   "code": "",
+   "options": [
+    "Elle est stockée en deux exemplaires dans le Service",
+    "La table se comporte en Import ou en DirectQuery selon la requête, ce qui évite des jointures coûteuses",
+    "Elle est visible uniquement par deux utilisateurs",
+    "Elle est actualisée deux fois par jour"
+   ],
+   "correct": 1,
+   "explication": "En mode Double, la table peut être servie depuis le cache ou depuis la source selon que la requête touche d'autres tables en DirectQuery."
+  },
+  {
+   "id": "q25",
+   "theme": "Performance",
+   "question": "Quel est le rôle d'une table d'agrégations ?",
+   "code": "",
+   "options": [
+    "Remplacer la table de dates",
+    "Appliquer la sécurité au niveau des lignes",
+    "Fournir des données pré-résumées pour accélérer les requêtes sur un volume important",
+    "Dédupliquer les clés"
+   ],
+   "correct": 2,
+   "explication": "Les requêtes qui peuvent être servies par l'agrégation évitent d'interroger la table détaillée, surtout en DirectQuery."
+  },
+  {
+   "id": "q26",
+   "theme": "Performance",
+   "question": "Quels paramètres Power Query doivent être créés pour configurer l'actualisation incrémentielle ?",
+   "code": "",
+   "options": [
+    "RangeStart et RangeEnd, de type Date/Heure",
+    "DateDebut et DateFin, de type Texte",
+    "Incremental et Full, de type Booléen",
+    "Min et Max, de type Nombre entier"
+   ],
+   "correct": 0,
+   "explication": "Ces deux paramètres réservés de type Date/Heure délimitent les partitions à actualiser et filtrent la table source."
+  },
+  {
+   "id": "q27",
+   "theme": "Service Power BI",
+   "question": "Quel est l'intérêt d'un flux de données (dataflow) ?",
+   "code": "",
+   "options": [
+    "Remplacer les rapports par des tableaux de bord",
+    "Centraliser des transformations Power Query dans le Service pour les réutiliser dans plusieurs modèles",
+    "Sécuriser les données au niveau des lignes",
+    "Tester les performances des visuels"
+   ],
+   "correct": 1,
+   "explication": "Un flux de données prépare les données une seule fois avec Power Query Online ; plusieurs modèles sémantiques peuvent s'y connecter."
+  },
+  {
+   "id": "q28",
+   "theme": "Licences",
+   "question": "Quel est le nombre maximal d'actualisations planifiées par jour pour un modèle sémantique en capacité partagée avec licence Pro ?",
+   "code": "",
+   "options": [
+    "4",
+    "24",
+    "48",
+    "8"
+   ],
+   "correct": 3,
+   "explication": "En capacité partagée, la limite est de 8 actualisations par jour ; la capacité Premium monte à 48."
+  },
+  {
+   "id": "q29",
+   "theme": "Espaces de travail",
+   "question": "Quel rôle d'espace de travail permet de gérer les accès de tous les utilisateurs et de supprimer l'espace ?",
+   "code": "",
+   "options": [
+    "Membre",
+    "Contributeur",
+    "Administrateur",
+    "Lecteur"
+   ],
+   "correct": 2,
+   "explication": "L'Administrateur dispose de tous les droits, y compris la gestion des autorisations et la suppression de l'espace de travail."
+  },
+  {
+   "id": "q30",
+   "theme": "Déploiement",
+   "question": "À quoi sert une application Power BI ?",
+   "code": "",
+   "options": [
+    "Distribuer à une large audience un ensemble de rapports et tableaux de bord issu d'un espace de travail",
+    "Créer un rapport dans Desktop",
+    "Configurer la passerelle",
+    "Écrire des mesures DAX"
+   ],
+   "correct": 0,
+   "explication": "L'application regroupe le contenu choisi d'un espace de travail et le met à disposition des consommateurs avec une navigation dédiée."
+  },
+  {
+   "id": "q31",
+   "theme": "Service Power BI",
+   "question": "Que permet un abonnement par e-mail dans le Service ?",
+   "code": "",
+   "options": [
+    "Modifier les données sources à distance",
+    "Créer des rôles RLS",
+    "Recevoir selon un calendrier un instantané d'une page de rapport ou d'un tableau de bord",
+    "Publier automatiquement depuis Desktop"
+   ],
+   "correct": 2,
+   "explication": "Un abonnement envoie à intervalles réguliers un aperçu de la page, avec un lien vers le rapport."
+  },
+  {
+   "id": "q32",
+   "theme": "Sécurité",
+   "question": "À quels utilisateurs la RLS ne s'applique-t-elle pas dans le Service ?",
+   "code": "",
+   "options": [
+    "À ceux qui ont le rôle Contributeur ou un rôle supérieur sur l'espace de travail",
+    "Aux utilisateurs ayant le rôle Lecteur",
+    "À tous les utilisateurs externes",
+    "Aux utilisateurs d'une application publiée"
+   ],
+   "correct": 0,
+   "explication": "La RLS restreint les lecteurs ; les rôles Contributeur, Membre et Administrateur peuvent modifier le contenu et ne sont pas filtrés."
+  },
+  {
+   "id": "q33",
+   "theme": "Accessibilité",
+   "question": "Quelle propriété décrit un visuel pour les utilisateurs de lecteurs d'écran ?",
+   "code": "",
+   "options": [
+    "Le titre de l'info-bulle",
+    "Le signet",
+    "Le thème JSON",
+    "Le texte de remplacement"
+   ],
+   "correct": 3,
+   "explication": "Le texte de remplacement (alt text) est lu par les technologies d'assistance ; l'ordre de tabulation complète l'accessibilité."
+  },
+  {
+   "id": "q34",
+   "theme": "Performance",
+   "question": "Pourquoi désactiver l'option Date/heure automatique dans un grand modèle ?",
+   "code": "",
+   "options": [
+    "Elle empêche l'actualisation incrémentielle",
+    "Elle crée une table de dates masquée pour chaque colonne de date, ce qui alourdit le modèle",
+    "Elle supprime les relations actives",
+    "Elle désactive le calcul des mesures"
+   ],
+   "correct": 1,
+   "explication": "Avec une table Calendrier dédiée, ces tables automatiques sont inutiles et augmentent la taille du modèle."
+  },
+  {
+   "id": "q35",
+   "theme": "Déploiement",
+   "question": "Quelle passerelle de données prend en charge DirectQuery et l'utilisation par plusieurs utilisateurs ?",
+   "code": "",
+   "options": [
+    "La passerelle en mode standard (entreprise)",
+    "La passerelle en mode personnel",
+    "Aucune, DirectQuery n'utilise jamais de passerelle",
+    "La passerelle intégrée à Desktop"
+   ],
+   "correct": 0,
+   "explication": "Le mode personnel ne gère que l'actualisation Import pour un utilisateur ; le mode standard sert plusieurs utilisateurs et DirectQuery."
   }
  ]
 }

@@ -24,7 +24,6 @@
 .cert-btn[disabled], .cert-btn.disabled { opacity:.5; pointer-events:none; }
 .cert-list { margin:0; padding-left:20px; color:#334155; }
 .cert-list li { margin-bottom:6px; }
-/* examen */
 .ex-bar { position:sticky; top:0; z-index:20; background:var(--navy); color:#fff; padding:10px 0; }
 .ex-bar .in { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
 .ex-timer { font-variant-numeric:tabular-nums; font-weight:700; font-size:1.2rem; background:rgba(255,255,255,.14); padding:4px 14px; border-radius:8px; }

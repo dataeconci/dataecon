@@ -4,7 +4,6 @@
 
 {% block content %}
 <div class="container py-4">
-    <!-- Fil d'Ariane -->
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Accueil</a></li>
@@ -14,7 +13,6 @@
     </nav>
 
     <div class="row">
-        <!-- Contenu principal -->
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
@@ -36,13 +34,11 @@
                         {% endif %}
                     </p>
 
-                    <!-- Description -->
                     <div class="mb-4">
                         <h5><i class="fas fa-align-left"></i> Description</h5>
                         <p class="text-muted">{{ course.description or 'Aucune description disponible.' }}</p>
                     </div>
 
-                    <!-- ========== AFFICHAGE DU PDF ========== -->
                     {% if course.file_path %}
                         <div class="mb-4">
                             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -55,7 +51,6 @@
                                 </div>
                             </div>
                             
-                            <!-- Lecteur PDF intégré -->
                             <div class="border rounded p-2 bg-light" style="height: 600px;">
                                 <object data="{{ url_for('view_pdf', course_id=course.id) }}" 
                                         type="application/pdf" 

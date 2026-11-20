@@ -42,8 +42,30 @@
 .crit{font-size:.8rem;color:#5b6b7b;margin-top:.5rem}
 .spin{display:inline-block;width:14px;height:14px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:sp .8s linear infinite;vertical-align:-2px;margin-right:6px}
 @keyframes sp{to{transform:rotate(360deg)}}
+
+.spw{max-width:1400px;margin:1rem auto 3rem;border:1px solid #b9c5d3;border-radius:6px;overflow:hidden;background:#fff;box-shadow:0 6px 24px rgba(11,42,74,.12);font-family:"Segoe UI",Inter,Arial,sans-serif}
+.spw-title{background:#1b3a5c;color:#fff;padding:.35rem .8rem;font-size:.8rem;display:flex;align-items:center;gap:.6rem}.spw-mark{background:#4aa3df;color:#0b2a4a;font-weight:800;font-size:.66rem;padding:.1rem .35rem;border-radius:3px}.spw-sp{flex:1}.spw-win{letter-spacing:.4rem;color:#cfe0f1}
+.spw-menu{display:flex;gap:1rem;padding:.3rem .8rem;background:#f3f5f8;border-bottom:1px solid #d5dde6;font-size:.78rem;color:#33414f}
+.spw-tool{display:flex;gap:.5rem;align-items:center;padding:.3rem .8rem;background:#fafbfc;border-bottom:1px solid #d5dde6;font-size:.78rem}
+.spw-ic{border:1px solid #c9d3de;border-radius:3px;width:26px;height:24px;display:inline-flex;align-items:center;justify-content:center;color:#52606d;background:#fff}
+.spw-sep{width:1px;height:20px;background:#d5dde6}.spw-calc{border:1px solid #9bc3e6;background:#e8f3fc;color:#1f5f99;border-radius:3px;padding:.15rem .6rem;font-weight:600}.spw-hint{margin-left:auto;color:#8795a4;font-size:.72rem}
+.spw-body{display:grid;grid-template-columns:200px minmax(0,1fr);background:#eef1f5}
+@media(max-width:900px){.spw-body{grid-template-columns:minmax(0,1fr)}.spw-explorer{display:none}}
+.spw-explorer{background:#fff;border-right:1px solid #d5dde6;font-size:.8rem}.spw-eh{background:#e4eaf1;padding:.35rem .7rem;font-weight:600;font-size:.76rem;color:#33414f;border-bottom:1px solid #d5dde6}
+.spw-explorer ul{list-style:none;margin:0;padding:.4rem 0}.spw-explorer li{padding:.18rem .8rem;color:#33414f}.spw-explorer li.top{font-weight:700;color:#1b3a5c}.spw-explorer li.sub{padding-left:1.1rem;color:#52606d;font-weight:600;margin-top:.25rem}.spw-explorer li.leaf{padding-left:1.9rem}.spw-explorer li.on{background:#dcecfa}
+.spw-work{min-width:0;overflow:hidden}.spw-work .pl-lab{padding:1rem 1rem 1.5rem}
+.spw-work .lab-card{border-radius:3px;border-color:#c9d3de}.spw-work .lab-card h2 .n{background:#1b3a5c;border-radius:3px}
+.spw-status{display:flex;justify-content:space-between;background:#1b3a5c;color:#cfe0f1;padding:.25rem .8rem;font-size:.72rem}
 </style>
 
+<div class="spw">
+  <div class="spw-title"><span class="spw-mark">PLS</span> SmartPLS 4 - Satisfaction.splsm <span class="spw-sp"></span><span class="spw-win">&#8211; &#9633; &#10005;</span></div>
+  <div class="spw-menu"><span>Fichier</span><span>Édition</span><span>Affichage</span><span>Calcul</span><span>Rapport</span><span>Fenêtre</span><span>Aide</span></div>
+  <div class="spw-tool"><span class="spw-ic" title="Nouveau">&#9633;</span><span class="spw-ic" title="Ouvrir">&#9644;</span><span class="spw-ic" title="Enregistrer">&#9635;</span><span class="spw-sep"></span><span class="spw-calc">Calculer</span><span class="spw-calc">Bootstrapping</span><span class="spw-sep"></span><span class="spw-hint">Les commandes de calcul se trouvent à l'étape 4</span></div>
+  <div class="spw-body">
+    <aside class="spw-explorer"><div class="spw-eh">Explorateur de projet</div>
+      <ul><li class="top">Satisfaction</li><li class="sub">Modèles</li><li class="leaf on">Modèle 1</li><li class="sub">Données</li><li class="leaf">enquete.csv</li><li class="sub">Rapports</li><li class="leaf">Résultats PLS-SEM</li><li class="leaf">Bootstrapping</li></ul></aside>
+    <div class="spw-work">
 <div class="pl-lab">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
         <div>
@@ -97,6 +119,10 @@
         <div class="tabs" id="tabs"></div>
         <div id="tabbody" class="res-wrap"></div>
     </div>
+</div>
+    </div>
+  </div>
+  <div class="spw-status"><span>Prêt</span><span>PLS-SEM · schéma de pondération path</span></div>
 </div>
 
 <script>

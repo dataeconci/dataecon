@@ -1,8 +1,4 @@
-/* ============================================
-   CHATBOT DataEcon.Ci - Widget flottant
-   ============================================ */
 
-/* Bouton flottant */
 .chatbot-toggle {
     position: fixed;
     bottom: 25px;
@@ -46,7 +42,6 @@
     }
 }
 
-/* Notification badge */
 .chatbot-badge {
     position: absolute;
     top: -5px;
@@ -70,7 +65,6 @@
     50% { transform: scale(1.15); }
 }
 
-/* Fenêtre du chatbot */
 .chatbot-window {
     position: fixed;
     bottom: 100px;
@@ -97,7 +91,6 @@
     pointer-events: all;
 }
 
-/* En-tête */
 .chatbot-header {
     background: linear-gradient(135deg, #0b2a4a 0%, #123a63 100%);
     color: white;
@@ -175,7 +168,6 @@
     transform: rotate(90deg);
 }
 
-/* Zone des messages */
 .chatbot-messages {
     flex: 1;
     overflow-y: auto;
@@ -203,7 +195,6 @@
     background: #0b2a4a;
 }
 
-/* Message */
 .chatbot-message {
     display: flex;
     gap: 10px;
@@ -283,7 +274,6 @@
     color: #c2a15a;
 }
 
-/* Bouton WhatsApp dans le chat */
 .chatbot-whatsapp-btn {
     display: inline-flex;
     align-items: center;
@@ -311,7 +301,6 @@
     font-size: 1.1rem;
 }
 
-/* Indicateur de saisie */
 .chatbot-typing {
     display: flex;
     gap: 4px;
@@ -344,7 +333,6 @@
     }
 }
 
-/* Suggestions rapides */
 .chatbot-suggestions {
     padding: 10px 20px 5px;
     background: #f8f9fc;
@@ -373,7 +361,6 @@
     transform: translateY(-2px);
 }
 
-/* Zone de saisie */
 .chatbot-input-area {
     padding: 15px 20px;
     background: white;
@@ -425,7 +412,6 @@
     cursor: not-allowed;
 }
 
-/* Footer */
 .chatbot-footer {
     text-align: center;
     padding: 8px;
@@ -435,7 +421,6 @@
     border-top: 1px solid #e8eaf0;
 }
 
-/* Responsive mobile */
 @media (max-width: 576px) {
     .chatbot-window {
         width: calc(100vw - 20px);

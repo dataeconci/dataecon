@@ -253,6 +253,244 @@
    ],
    "correct": 0,
    "explication": "Sans guillemets, SQL prend Daloa pour un nom de colonne. Les valeurs texte s'écrivent entre apostrophes."
+  },
+  {
+   "theme": "DISTINCT",
+   "question": "Combien de villes différentes la table contient-elle ? (que renvoie cette requête)",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT COUNT(*) FROM (SELECT DISTINCT ville FROM ventes);",
+   "options": [
+    "8",
+    "3",
+    "4",
+    "5"
+   ],
+   "correct": 2,
+   "explication": "DISTINCT supprime les doublons : Abidjan, Daloa, Man et Bouaké, soit 4 villes.",
+   "id": "q19"
+  },
+  {
+   "theme": "MAX",
+   "question": "Que renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT MAX(prix_unitaire) FROM ventes;",
+   "options": [
+    "1300",
+    "1250",
+    "1200",
+    "980"
+   ],
+   "correct": 0,
+   "explication": "MAX retourne la plus grande valeur de la colonne : 1300.",
+   "id": "q20"
+  },
+  {
+   "theme": "IS NULL",
+   "question": "Que renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT COUNT(*) FROM ventes WHERE quantite IS NULL;",
+   "options": [
+    "0",
+    "8",
+    "7",
+    "1"
+   ],
+   "correct": 3,
+   "explication": "Une seule vente (id 7) n'a pas de quantité : IS NULL la sélectionne, résultat 1.",
+   "id": "q21"
+  },
+  {
+   "theme": "ORDER BY DESC",
+   "question": "Quel id renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT id FROM ventes ORDER BY date DESC LIMIT 1;",
+   "options": [
+    "1",
+    "8",
+    "7",
+    "5"
+   ],
+   "correct": 1,
+   "explication": "Triées de la plus récente à la plus ancienne, la première ligne est la vente du 2024-08-30, id 8.",
+   "id": "q22"
+  },
+  {
+   "theme": "AND",
+   "question": "Combien de lignes renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT COUNT(*) FROM ventes WHERE quantite > 100 AND ville = 'Daloa';",
+   "options": [
+    "0",
+    "1",
+    "2",
+    "3"
+   ],
+   "correct": 1,
+   "explication": "Seule la vente 3 (200 unités à Daloa) satisfait les deux conditions : 1.",
+   "id": "q23"
+  },
+  {
+   "theme": "NOT IN",
+   "question": "Que renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT COUNT(*) FROM ventes WHERE produit NOT IN ('Cacao','Café');",
+   "options": [
+    "3",
+    "8",
+    "2",
+    "6"
+   ],
+   "correct": 2,
+   "explication": "Il ne reste que les deux ventes d'Anacarde : 2.",
+   "id": "q24"
+  },
+  {
+   "theme": "LIKE",
+   "question": "Que renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT COUNT(*) FROM ventes WHERE ville LIKE 'B%';",
+   "options": [
+    "2",
+    "1",
+    "4",
+    "0"
+   ],
+   "correct": 0,
+   "explication": "Le motif 'B%' retient les villes commençant par B : les deux ventes de Bouaké, soit 2.",
+   "id": "q25"
+  },
+  {
+   "theme": "SUM et NULL",
+   "question": "Que renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT SUM(quantite * prix_unitaire) FROM ventes WHERE produit = 'Anacarde';",
+   "options": [
+    "48000 + 620",
+    "48000",
+    "0",
+    "124000"
+   ],
+   "correct": 1,
+   "explication": "La ligne dont la quantité est NULL donne un produit NULL, ignoré par SUM : seule 80 x 600 = 48000 compte.",
+   "id": "q26"
+  },
+  {
+   "theme": "GROUP BY",
+   "question": "Que renvoie cette requête (nombre de groupes créés par GROUP BY) ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT COUNT(*) FROM (SELECT ville FROM ventes GROUP BY ville);",
+   "options": [
+    "8",
+    "3",
+    "5",
+    "4"
+   ],
+   "correct": 3,
+   "explication": "Un groupe par ville distincte : 4.",
+   "id": "q27"
+  },
+  {
+   "theme": "MIN",
+   "question": "Que renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT MIN(date) FROM ventes;",
+   "options": [
+    "2024-01-10",
+    "2024-08-30",
+    "2024-01-01",
+    "2024-02-05"
+   ],
+   "correct": 0,
+   "explication": "Les dates au format ISO se comparent comme du texte : la plus petite est 2024-01-10.",
+   "id": "q28"
+  },
+  {
+   "theme": "AVG",
+   "question": "Que renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT ROUND(AVG(prix_unitaire), 0) FROM ventes WHERE produit = 'Cacao';",
+   "options": [
+    "1200",
+    "1250",
+    "1300",
+    "3750"
+   ],
+   "correct": 1,
+   "explication": "(1200 + 1250 + 1300) / 3 = 1250.",
+   "id": "q29"
+  },
+  {
+   "theme": "Comparaison avec NULL",
+   "question": "Que renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT COUNT(*) FROM ventes WHERE quantite = NULL;",
+   "options": [
+    "1",
+    "8",
+    "0",
+    "7"
+   ],
+   "correct": 2,
+   "explication": "Toute comparaison avec NULL via = est inconnue, donc aucune ligne n'est retenue : le résultat est 0. Il faut écrire IS NULL.",
+   "id": "q30"
+  },
+  {
+   "theme": "LIMIT OFFSET",
+   "question": "Quels id renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT id FROM ventes ORDER BY id LIMIT 2 OFFSET 3;",
+   "options": [
+    "1, 2",
+    "3, 4",
+    "5, 6",
+    "4, 5"
+   ],
+   "correct": 3,
+   "explication": "OFFSET 3 saute les trois premières lignes ; LIMIT 2 prend les deux suivantes : 4, 5.",
+   "id": "q31"
+  },
+  {
+   "theme": "Fonctions de texte",
+   "question": "Que renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT LENGTH(ville) FROM ventes WHERE id = 6;",
+   "options": [
+    "5",
+    "6",
+    "7",
+    "8"
+   ],
+   "correct": 1,
+   "explication": "« Bouaké » compte 6 caractères.",
+   "id": "q32"
+  },
+  {
+   "theme": "Tri multiple",
+   "question": "Quel id renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT id FROM ventes ORDER BY ville ASC, quantite DESC LIMIT 1;",
+   "options": [
+    "5",
+    "2",
+    "8",
+    "6"
+   ],
+   "correct": 0,
+   "explication": "Tri par ville croissante : Abidjan arrive en premier ; à égalité, la plus grande quantité (150) passe d'abord : id 5.",
+   "id": "q33"
+  },
+  {
+   "theme": "Clé primaire",
+   "question": "Quel est le rôle d'une clé primaire ?",
+   "code": "",
+   "options": [
+    "Trier automatiquement la table",
+    "Limiter le nombre de colonnes",
+    "Identifier chaque ligne de la table de façon unique",
+    "Autoriser les doublons"
+   ],
+   "correct": 2,
+   "explication": "Une clé primaire est unique et non nulle : elle identifie chaque ligne sans ambiguïté.",
+   "id": "q34"
+  },
+  {
+   "theme": "GROUP BY et tri",
+   "question": "Quelle ligne (produit | n) renvoie cette requête ?",
+   "code": "CREATE TABLE ventes (id INTEGER PRIMARY KEY, date TEXT, produit TEXT, quantite INTEGER, prix_unitaire REAL, ville TEXT);\nINSERT INTO ventes VALUES\n(1,'2024-01-10','Cacao',120,1200,'Abidjan'),\n(2,'2024-02-05','Café',60,900,'Daloa'),\n(3,'2024-03-15','Cacao',200,1250,'Daloa'),\n(4,'2024-04-20','Anacarde',80,600,'Man'),\n(5,'2024-05-02','Café',150,950,'Abidjan'),\n(6,'2024-06-18','Cacao',90,1300,'Bouaké'),\n(7,'2024-07-07','Anacarde',NULL,620,'Man'),\n(8,'2024-08-30','Café',110,980,'Bouaké');\nSELECT produit, COUNT(*) AS n FROM ventes GROUP BY produit ORDER BY n DESC, produit LIMIT 1;",
+   "options": [
+    "Cacao | 3",
+    "Café | 3",
+    "Anacarde | 2",
+    "Cacao | 2"
+   ],
+   "correct": 0,
+   "explication": "Cacao et Café comptent chacun 3 ventes ; à égalité, l'ordre alphabétique place Cacao en premier : Cacao | 3.",
+   "id": "q35"
   }
  ]
 }

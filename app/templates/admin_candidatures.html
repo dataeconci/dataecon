@@ -10,7 +10,6 @@
         <a href="{{ url_for('carrieres') }}" class="btn-postuler" style="text-decoration: none; font-size: 0.9rem; padding: 10px 20px; background: #1f5f99; color: white; border-radius: 6px; font-weight: 600;">Voir les offres en ligne</a>
     </div>
 
-    <!-- Messages Flash -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}

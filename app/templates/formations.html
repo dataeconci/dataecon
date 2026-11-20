@@ -9,7 +9,6 @@
 {% block content %}
 <div class="formations-page">
 
-    <!-- Bannière -->
     <section class="formations-hero">
         <div class="container">
             <div class="formations-hero-content">
@@ -17,14 +16,13 @@
                     <i class="fas fa-laptop-code"></i> Formation pratique
                 </span>
                 <h1>Apprenez en <span>pratiquant</span></h1>
-                <p>R, Python, SQL, Tableau, Power BI, SmartPLS — avec un instructeur IA à vos côtés</p>
+                <p>R, Python, SQL, Tableau, Power BI, SmartPLS — avec un assistant pédagogique à vos côtés</p>
             </div>
         </div>
     </section>
 
     <div class="container formations-container">
 
-        <!-- Catalogue des cours interactifs -->
         <section class="catalogue-section">
             <h2><i class="fas fa-graduation-cap"></i> Cours interactifs</h2>
             <p class="catalogue-lead">Chaque cours combine une explication lue à voix haute, un schéma illustré, un éditeur de code avec correction instantanée, des indices et des points d'expérience.</p>
@@ -68,10 +66,9 @@
             </div>
         </section>
 
-        <!-- Bac à sable libre -->
         <section class="outils-section">
             <h2><i class="fas fa-flask"></i> Bac à sable libre</h2>
-            <p class="catalogue-lead">Testez du code librement et posez vos questions à l'instructeur IA.</p>
+            <p class="catalogue-lead">Testez du code librement et posez vos questions à l'assistant pédagogique.</p>
             <div class="outils-grid">
                 <button class="outil-card" data-outil="python" onclick="chargerOutil('python')">
                     <i class="fab fa-python"></i>
@@ -117,7 +114,6 @@
         <section class="pratique-section">
             <div class="pratique-grid">
 
-                <!-- Éditeur -->
                 <div class="editeur-panel">
                     <div class="panel-header">
                         <h3><i class="fas fa-code"></i> Zone de pratique libre</h3>
@@ -131,20 +127,19 @@
                     </div>
                 </div>
 
-                <!-- Instructeur IA -->
-                <div class="ia-panel">
+                <div class="assistant-panel">
                     <div class="panel-header">
-                        <h3><i class="fas fa-robot"></i> Instructeur IA</h3>
+                        <h3><i class="fas fa-user-graduate"></i> Assistant pédagogique</h3>
                         <span class="status-online">● En ligne</span>
                     </div>
                     <div class="chat-messages" id="chat-messages">
-                        <div class="msg-ia">
-                            <strong>EconBot</strong>
-                            <p>Bonjour ! Je suis votre instructeur IA. Choisissez un outil et un niveau, puis posez-moi vos questions. Je vous expliquerai les concepts et vous proposerai des exercices pratiques.</p>
+                        <div class="msg-assistant">
+                            <strong>Assistant DataEcon</strong>
+                            <p>Bonjour ! Je suis votre assistant pédagogique. Choisissez un outil et un niveau, puis posez-moi vos questions. Je vous expliquerai les concepts et vous proposerai des exercices pratiques.</p>
                         </div>
                     </div>
                     <div class="chat-input">
-                        <input type="text" id="question-ia" placeholder="Posez votre question..." onkeypress="if(event.key==='Enter') envoyerQuestion()">
+                        <input type="text" id="question-assistant" placeholder="Posez votre question..." onkeypress="if(event.key==='Enter') envoyerQuestion()">
                         <button onclick="envoyerQuestion()"><i class="fas fa-paper-plane"></i></button>
                     </div>
                 </div>

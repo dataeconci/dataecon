@@ -4,7 +4,6 @@
 
 {% block content %}
 <div class="container py-4">
-    <!-- Fil d'Ariane -->
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Accueil</a></li>
@@ -13,7 +12,6 @@
         </ol>
     </nav>
 
-    <!-- En-tête -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold" style="color: var(--primary);">
@@ -32,7 +30,6 @@
         </div>
     </div>
 
-    <!-- Statistiques -->
     <div class="row g-3 mb-4">
         <div class="col-md-3 col-6">
             <div class="stat-card text-center">
@@ -58,7 +55,6 @@
         </div>
     </div>
 
-    <!-- Graphique -->
     {% if plot_url %}
         <div class="card mb-4">
             <div class="card-header">
@@ -72,7 +68,6 @@
         </div>
     {% endif %}
 
-    <!-- Statistiques descriptives -->
     {% if stats %}
         <div class="card mb-4">
             <div class="card-header">
@@ -86,7 +81,6 @@
         </div>
     {% endif %}
 
-    <!-- Aperçu des données -->
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">
@@ -101,7 +95,6 @@
         </div>
     </div>
 
-    <!-- Actions -->
     <div class="d-flex gap-2 mt-4">
         <a href="{{ url_for('models_list', dataset=dataset.id) }}" class="btn btn-warning rounded-pill">
             <i class="fas fa-calculator"></i> Modèles recommandés pour ces données

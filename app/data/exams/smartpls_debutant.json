@@ -253,6 +253,244 @@
    ],
    "correct": 1,
    "explication": "On retire un indicateur à la fois en recalculant le modèle, pour ne pas dégrader la validité de contenu."
+  },
+  {
+   "id": "q19",
+   "theme": "Concepts",
+   "question": "Dans quel cas le PLS-SEM est-il généralement préféré à la SEM fondée sur la covariance (CB-SEM) ?",
+   "code": "",
+   "options": [
+    "Lorsque l'objectif est uniquement de confirmer une théorie par des indices d'ajustement global",
+    "Lorsque les données suivent strictement une loi normale multivariée",
+    "Lorsque l'objectif est la prédiction ou l'exploration théorique, avec un modèle complexe",
+    "Lorsqu'on ne dispose que de variables mesurées, sans construits latents"
+   ],
+   "correct": 2,
+   "explication": "Le PLS-SEM maximise la variance expliquée des construits endogènes ; il convient aux études prédictives ou exploratoires et aux modèles complexes. La CB-SEM est plutôt destinée à la confirmation de théories."
+  },
+  {
+   "id": "q20",
+   "theme": "Concepts",
+   "question": "Qu'est-ce qu'un construit exogène ?",
+   "code": "",
+   "options": [
+    "Un construit qui n'est expliqué par aucun autre construit du modèle (aucune flèche entrante)",
+    "Un construit qui ne possède aucun indicateur",
+    "Un construit expliqué par tous les autres construits du modèle",
+    "Un construit situé en dehors de la base de données"
+   ],
+   "correct": 0,
+   "explication": "Un construit exogène joue le rôle de variable explicative : il émet des flèches dans le modèle structurel mais n'en reçoit aucune."
+  },
+  {
+   "id": "q21",
+   "theme": "Concepts",
+   "question": "Dans un modèle où A → B et B → C, quels construits sont endogènes ?",
+   "code": "",
+   "options": [
+    "A uniquement",
+    "A et B",
+    "A, B et C",
+    "B et C"
+   ],
+   "correct": 3,
+   "explication": "Un construit est endogène dès qu'il reçoit au moins une flèche du modèle structurel : B (de A) et C (de B). A n'en reçoit aucune, il est exogène."
+  },
+  {
+   "id": "q22",
+   "theme": "Concepts",
+   "question": "Entre quelles valeurs se situent en général les coefficients de chemin standardisés ?",
+   "code": "",
+   "options": [
+    "Entre 0 et 100",
+    "Entre -1 et +1",
+    "Entre 0 et 10",
+    "Entre -100 et +100"
+   ],
+   "correct": 1,
+   "explication": "Les coefficients de chemin sont des coefficients de régression standardisés ; ils sont en pratique compris entre -1 et +1, et une valeur absolue élevée traduit une relation forte."
+  },
+  {
+   "id": "q23",
+   "theme": "Données",
+   "question": "Selon Hair et al., le remplacement des valeurs manquantes par la moyenne est jugé acceptable tant que la proportion de valeurs manquantes par indicateur reste inférieure à :",
+   "code": "",
+   "options": [
+    "15 %",
+    "25 %",
+    "40 %",
+    "5 %"
+   ],
+   "correct": 3,
+   "explication": "Lorsque moins de 5 % des valeurs d'un indicateur sont manquantes, le remplacement par la moyenne est raisonnable ; au-delà, il faut envisager de retirer l'indicateur."
+  },
+  {
+   "id": "q24",
+   "theme": "Données",
+   "question": "Un répondant donne exactement la même réponse à tous les items d'un long questionnaire (straight-lining). Ce comportement doit être considéré comme :",
+   "code": "",
+   "options": [
+    "Un signe de forte fiabilité des mesures",
+    "Un signe de réponse peu attentive, à examiner et éventuellement à exclure",
+    "Une valeur manquante à remplacer par la moyenne",
+    "Une preuve que les données sont normalement distribuées"
+   ],
+   "correct": 1,
+   "explication": "Des réponses identiques sur l'ensemble des items traduisent souvent un manque d'attention et réduisent artificiellement la variance ; ces observations sont à inspecter puis, le cas échéant, à exclure."
+  },
+  {
+   "id": "q25",
+   "theme": "Données",
+   "question": "Quelle exigence de distribution des données s'applique au PLS-SEM ?",
+   "code": "",
+   "options": [
+    "Aucune hypothèse de normalité : l'inférence repose sur le bootstrapping",
+    "Une normalité multivariée parfaite des indicateurs",
+    "Une distribution uniforme de tous les indicateurs",
+    "Des indicateurs tous distribués selon une loi de Poisson"
+   ],
+   "correct": 0,
+   "explication": "Le PLS-SEM est une méthode non paramétrique : il ne suppose pas la normalité des données et évalue la significativité des paramètres par bootstrapping."
+  },
+  {
+   "id": "q26",
+   "theme": "Échantillon",
+   "question": "Pour déterminer la taille d'échantillon avec G*Power, quels paramètres faut-il renseigner ?",
+   "code": "",
+   "options": [
+    "Le nombre de pages du questionnaire et la date de collecte",
+    "La moyenne et l'écart-type de chaque indicateur",
+    "La taille d'effet f², le seuil alpha, la puissance et le nombre maximal de prédicteurs d'un construit",
+    "Le nombre total d'indicateurs et le nombre d'itérations de l'algorithme"
+   ],
+   "correct": 2,
+   "explication": "Une analyse de puissance requiert la taille d'effet minimale à détecter, le niveau de signification, la puissance visée (souvent 80 %) et le nombre maximal de prédicteurs pointant vers un construit."
+  },
+  {
+   "id": "q27",
+   "theme": "Mesure",
+   "question": "Dans le modèle de mesure, quel est le loading d'un construit mesuré par un seul indicateur ?",
+   "code": "",
+   "options": [
+    "0,708",
+    "1,000",
+    "0,500",
+    "Il n'est pas défini et provoque une erreur"
+   ],
+   "correct": 1,
+   "explication": "Un construit à item unique est confondu avec son indicateur : son loading vaut 1 et les critères de fiabilité de consistance interne ne s'y appliquent pas."
+  },
+  {
+   "id": "q28",
+   "theme": "Mesure",
+   "question": "Quel mode d'estimation des poids externes correspond à un construit formatif ?",
+   "code": "",
+   "options": [
+    "Le Mode A (poids de corrélation)",
+    "Le mode des poids égaux imposés",
+    "Le mode des moindres carrés ordinaires sans itération",
+    "Le Mode B (poids de régression)"
+   ],
+   "correct": 3,
+   "explication": "Le Mode A (poids de corrélation) est associé aux construits réflexifs, le Mode B (poids de régression) aux construits formatifs."
+  },
+  {
+   "id": "q29",
+   "theme": "Mesure",
+   "question": "Pour un construit réflexif, dans quel sens pointent les flèches du modèle de mesure ?",
+   "code": "",
+   "options": [
+    "Du construit vers ses indicateurs",
+    "Des indicateurs vers le construit",
+    "Entre les indicateurs, dans les deux sens",
+    "Du premier indicateur vers les suivants"
+   ],
+   "correct": 0,
+   "explication": "En mesure réflexive, le construit cause les indicateurs, qui en sont des manifestations ; en mesure formative, les flèches vont des indicateurs vers le construit."
+  },
+  {
+   "id": "q30",
+   "theme": "Algorithme",
+   "question": "L'algorithme PLS-SEM converge et s'arrête lorsque :",
+   "code": "",
+   "options": [
+    "Le nombre de répondants atteint 10 fois le nombre de flèches",
+    "Tous les loadings sont égaux à 1",
+    "La variation des poids externes entre deux itérations devient inférieure au critère d'arrêt",
+    "Le R² atteint exactement 1"
+   ],
+   "correct": 2,
+   "explication": "L'algorithme est itératif : il s'arrête quand les poids varient de moins que le critère d'arrêt, ou lorsque le nombre maximal d'itérations est atteint."
+  },
+  {
+   "id": "q31",
+   "theme": "Algorithme",
+   "question": "Quel schéma de pondération du modèle structurel est recommandé et proposé par défaut dans SmartPLS ?",
+   "code": "",
+   "options": [
+    "Le schéma centroïde",
+    "Le schéma factoriel",
+    "Aucun schéma : tous les poids sont fixés à 1",
+    "Le schéma path weighting"
+   ],
+   "correct": 3,
+   "explication": "Le schéma path weighting exploite à la fois la direction et la force des relations du modèle structurel ; c'est le choix recommandé par défaut."
+  },
+  {
+   "id": "q32",
+   "theme": "Algorithme",
+   "question": "Pourquoi aucun R² n'est-il rapporté pour un construit exogène ?",
+   "code": "",
+   "options": [
+    "Parce qu'il n'est expliqué par aucun autre construit du modèle : il n'a pas de variance expliquée à calculer",
+    "Parce qu'il est toujours mesuré avec un seul indicateur",
+    "Parce que son R² vaut systématiquement 1",
+    "Parce que le bootstrapping n'a pas encore été lancé"
+   ],
+   "correct": 0,
+   "explication": "Le R² mesure la part de variance d'un construit expliquée par ses prédicteurs ; il n'est calculé que pour les construits endogènes."
+  },
+  {
+   "id": "q33",
+   "theme": "Algorithme",
+   "question": "Pourquoi retient-on 0,708 comme seuil de loading ?",
+   "code": "",
+   "options": [
+    "Parce qu'il garantit un VIF inférieur à 3",
+    "Parce que 0,708² ≈ 0,50 : l'indicateur partage environ 50 % de sa variance avec le construit",
+    "Parce qu'il correspond à une valeur t de 1,96",
+    "Parce que c'est la valeur par défaut imposée par SmartPLS"
+   ],
+   "correct": 1,
+   "explication": "Le carré du loading est la variance de l'indicateur expliquée par le construit : 0,708² ≈ 0,50, soit au moins la moitié de la variance."
+  },
+  {
+   "id": "q34",
+   "theme": "Algorithme",
+   "question": "L'hypothèse H1 postule un effet positif de A sur B. Le bootstrapping donne β = -0,25 avec p < 0,001. Que conclut-on ?",
+   "code": "",
+   "options": [
+    "H1 est soutenue, car l'effet est significatif à 5 %",
+    "H1 est soutenue, car la valeur absolue de β dépasse 0,10",
+    "H1 n'est pas soutenue : l'effet est significatif mais de signe opposé à celui attendu",
+    "Le résultat est invalide, car un coefficient de chemin ne peut pas être négatif"
+   ],
+   "correct": 2,
+   "explication": "Une hypothèse directionnelle exige à la fois la significativité et le signe attendu ; ici l'effet est significatif mais négatif, ce qui contredit H1."
+  },
+  {
+   "id": "q35",
+   "theme": "Données",
+   "question": "Un item est formulé négativement alors que les autres items du même construit sont formulés positivement. Que faut-il faire avant l'analyse ?",
+   "code": "",
+   "options": [
+    "Le conserver tel quel : SmartPLS corrige automatiquement le sens",
+    "Recoder (inverser) cet item pour que toutes les échelles aillent dans le même sens",
+    "Le supprimer systématiquement du fichier",
+    "Multiplier son poids externe par 10"
+   ],
+   "correct": 1,
+   "explication": "Sans recodage, l'item produirait un loading négatif et dégraderait la fiabilité ; l'inversion (par exemple 6 - x sur une échelle à 5 points) aligne le sens des échelles."
   }
  ]
 }

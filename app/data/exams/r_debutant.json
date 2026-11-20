@@ -1,258 +1,496 @@
 {
-  "outil": "r",
-  "niveau": "debutant",
-  "questions": [
-    {
-      "id": "q1",
-      "theme": "Affectation",
-      "question": "Quel opérateur est la convention d'affectation en R ?",
-      "code": "",
-      "options": [
-        "<-",
-        "=>",
-        ":=",
-        "<="
-      ],
-      "correct": 0,
-      "explication": "En R, on affecte une valeur à une variable avec l'opérateur <- (le signe = fonctionne aussi mais est moins recommandé)."
-    },
-    {
-      "id": "q2",
-      "theme": "Variables",
-      "question": "Quel est le résultat affiché par ce code ?",
-      "code": "x <- 5\nx <- x * 2\nprint(x)",
-      "options": [
-        "[1] 5",
-        "[1] 10",
-        "[1] 25",
-        "Erreur : x est déjà défini"
-      ],
-      "correct": 1,
-      "explication": "La seconde affectation écrase x par 5 * 2, soit 10."
-    },
-    {
-      "id": "q3",
-      "theme": "Types de données",
-      "question": "Quelle est la classe de la valeur TRUE (sans guillemets) ?",
-      "code": "",
-      "options": [
-        "numeric",
-        "character",
-        "logical",
-        "factor"
-      ],
-      "correct": 2,
-      "explication": "TRUE et FALSE sont de classe logical ; TRUE entre guillemets serait un character."
-    },
-    {
-      "id": "q4",
-      "theme": "Conversion de type",
-      "question": "Quel est le résultat affiché par ce code ?",
-      "code": "print(as.numeric('12') + 1)",
-      "options": [
-        "[1] \"121\"",
-        "Erreur : on ne peut pas additionner",
-        "[1] 12",
-        "[1] 13"
-      ],
-      "correct": 3,
-      "explication": "as.numeric convertit le texte '12' en nombre 12, auquel on ajoute 1."
-    },
-    {
-      "id": "q5",
-      "theme": "Indexation",
-      "question": "Quel est l'indice du premier élément d'un vecteur en R ?",
-      "code": "",
-      "options": [
-        "0",
-        "-1",
-        "1",
-        "Cela dépend du type du vecteur"
-      ],
-      "correct": 2,
-      "explication": "En R, l'indexation commence à 1, contrairement à Python où elle commence à 0."
-    },
-    {
-      "id": "q6",
-      "theme": "Vecteurs",
-      "question": "Quel est le résultat affiché par ce code ?",
-      "code": "prix <- c(1500, 1200, 800, 950)\nprint(prix[2:3])",
-      "options": [
-        "[1] 1200  800",
-        "[1] 1500 1200",
-        "[1] 1200  800  950",
-        "[1] 800 950"
-      ],
-      "correct": 0,
-      "explication": "prix[2:3] extrait les éléments aux positions 2 et 3."
-    },
-    {
-      "id": "q7",
-      "theme": "Opérations vectorielles",
-      "question": "Quel est le résultat affiché par ce code ?",
-      "code": "prix <- c(1500, 1200, 800, 950, 2200)\nprint(sum(prix > 1000))",
-      "options": [
-        "[1] 5",
-        "[1] 4",
-        "[1] 5650",
-        "[1] 3"
-      ],
-      "correct": 3,
-      "explication": "prix > 1000 donne un vecteur logique ; sum compte les TRUE : 1500, 1200 et 2200, soit 3."
-    },
-    {
-      "id": "q8",
-      "theme": "Opérations vectorielles",
-      "question": "Que renvoie l'expression c(1, 2, 3) * 2 ?",
-      "code": "",
-      "options": [
-        "c(1, 2, 3, 1, 2, 3)",
-        "c(2, 4, 6)",
-        "6",
-        "c(1, 2, 6)"
-      ],
-      "correct": 1,
-      "explication": "Les opérations arithmétiques en R s'appliquent élément par élément."
-    },
-    {
-      "id": "q9",
-      "theme": "Chaînes de caractères",
-      "question": "Quelle fonction donne le nombre de caractères d'une chaîne ?",
-      "code": "",
-      "options": [
-        "length()",
-        "nchar()",
-        "count()",
-        "size()"
-      ],
-      "correct": 1,
-      "explication": "nchar() compte les caractères ; length() renvoie le nombre d'éléments d'un vecteur."
-    },
-    {
-      "id": "q10",
-      "theme": "Chaînes de caractères",
-      "question": "Quel est le résultat affiché par ce code ?",
-      "code": "print(substr('Korhogo', 1, 3))",
-      "options": [
-        "[1] \"Korh\"",
-        "[1] \"orh\"",
-        "[1] \"Ko\"",
-        "[1] \"Kor\""
-      ],
-      "correct": 3,
-      "explication": "substr(x, 1, 3) extrait les caractères des positions 1 à 3 incluses."
-    },
-    {
-      "id": "q11",
-      "theme": "Listes",
-      "question": "Soit menage <- list(region = 'Savanes', taille = 6). Quelle expression renvoie 6 ?",
-      "code": "",
-      "options": [
-        "menage$taille",
-        "menage[taille]",
-        "menage.taille",
-        "menage(taille)"
-      ],
-      "correct": 0,
-      "explication": "On accède à un élément nommé d'une liste avec $ ou avec [[ ]]."
-    },
-    {
-      "id": "q12",
-      "theme": "Conditions",
-      "question": "Quel est le résultat affiché par ce code ?",
-      "code": "revenu <- 95000\nif (revenu < 60000) {\n  print('Faible')\n} else if (revenu < 150000) {\n  print('Moyen')\n} else {\n  print('Élevé')\n}",
-      "options": [
-        "[1] \"Faible\"",
-        "[1] \"Élevé\"",
-        "[1] \"Moyen\"",
-        "Rien ne s'affiche"
-      ],
-      "correct": 2,
-      "explication": "95000 n'est pas inférieur à 60000 mais l'est à 150000 : la deuxième branche s'exécute."
-    },
-    {
-      "id": "q13",
-      "theme": "ifelse",
-      "question": "Quel est le résultat affiché par ce code ?",
-      "code": "notes <- c(8, 12, 15)\nprint(ifelse(notes >= 10, 'Admis', 'Recalé'))",
-      "options": [
-        "[1] \"Admis\"  \"Admis\"  \"Admis\"",
-        "[1] \"Recalé\" \"Recalé\" \"Admis\"",
-        "[1] \"Recalé\" \"Admis\"  \"Admis\"",
-        "[1] \"Recalé\""
-      ],
-      "correct": 2,
-      "explication": "ifelse teste chaque élément : 8 est recalé, 12 et 15 sont admis."
-    },
-    {
-      "id": "q14",
-      "theme": "Boucles for",
-      "question": "Quel est le résultat affiché par ce code ?",
-      "code": "total <- 0\nfor (v in c(120, 85, 200)) {\n  total <- total + v\n}\nprint(total)",
-      "options": [
-        "[1] 200",
-        "[1] 405",
-        "[1] 120",
-        "[1] 85"
-      ],
-      "correct": 1,
-      "explication": "La boucle cumule chaque valeur : 120 + 85 + 200 = 405."
-    },
-    {
-      "id": "q15",
-      "theme": "Lecture de données",
-      "question": "Quelle fonction R de base lit un fichier CSV dans un data.frame ?",
-      "code": "",
-      "options": [
-        "read.csv()",
-        "load.csv()",
-        "open.table()",
-        "import.csv()"
-      ],
-      "correct": 0,
-      "explication": "read.csv() lit un fichier CSV et renvoie un data.frame."
-    },
-    {
-      "id": "q16",
-      "theme": "Fonctions",
-      "question": "Quel est le résultat affiché par ce code ?",
-      "code": "tva <- function(prix, taux = 0.18) {\n  prix * (1 + taux)\n}\nprint(tva(1000, taux = 0.09))",
-      "options": [
-        "[1] 1180",
-        "[1] 90",
-        "[1] 1009",
-        "[1] 1090"
-      ],
-      "correct": 3,
-      "explication": "L'argument taux = 0.09 remplace la valeur par défaut : 1000 * 1.09 = 1090."
-    },
-    {
-      "id": "q17",
-      "theme": "Fonctions",
-      "question": "Quel mot-clé permet de définir une fonction en R ?",
-      "code": "",
-      "options": [
-        "function",
-        "def",
-        "fun",
-        "func"
-      ],
-      "correct": 0,
-      "explication": "En R, on écrit nom <- function(arguments) { ... }."
-    },
-    {
-      "id": "q18",
-      "theme": "Data.frame",
-      "question": "Quelle fonction renvoie le nombre de lignes et de colonnes d'un data.frame ?",
-      "code": "",
-      "options": [
-        "length()",
-        "nchar()",
-        "dim()",
-        "size()"
-      ],
-      "correct": 2,
-      "explication": "dim(df) renvoie c(nombre de lignes, nombre de colonnes)."
-    }
-  ]
+ "outil": "r",
+ "niveau": "debutant",
+ "questions": [
+  {
+   "id": "q1",
+   "theme": "Affectation",
+   "question": "Quel opérateur est la convention d'affectation en R ?",
+   "code": "",
+   "options": [
+    "<-",
+    "=>",
+    ":=",
+    "<="
+   ],
+   "correct": 0,
+   "explication": "En R, on affecte une valeur à une variable avec l'opérateur <- (le signe = fonctionne aussi mais est moins recommandé)."
+  },
+  {
+   "id": "q2",
+   "theme": "Variables",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "x <- 5\nx <- x * 2\nprint(x)",
+   "options": [
+    "[1] 5",
+    "[1] 10",
+    "[1] 25",
+    "Erreur : x est déjà défini"
+   ],
+   "correct": 1,
+   "explication": "La seconde affectation écrase x par 5 * 2, soit 10."
+  },
+  {
+   "id": "q3",
+   "theme": "Types de données",
+   "question": "Quelle est la classe de la valeur TRUE (sans guillemets) ?",
+   "code": "",
+   "options": [
+    "numeric",
+    "character",
+    "logical",
+    "factor"
+   ],
+   "correct": 2,
+   "explication": "TRUE et FALSE sont de classe logical ; TRUE entre guillemets serait un character."
+  },
+  {
+   "id": "q4",
+   "theme": "Conversion de type",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "print(as.numeric('12') + 1)",
+   "options": [
+    "[1] \"121\"",
+    "Erreur : on ne peut pas additionner",
+    "[1] 12",
+    "[1] 13"
+   ],
+   "correct": 3,
+   "explication": "as.numeric convertit le texte '12' en nombre 12, auquel on ajoute 1."
+  },
+  {
+   "id": "q5",
+   "theme": "Indexation",
+   "question": "Quel est l'indice du premier élément d'un vecteur en R ?",
+   "code": "",
+   "options": [
+    "0",
+    "-1",
+    "1",
+    "Cela dépend du type du vecteur"
+   ],
+   "correct": 2,
+   "explication": "En R, l'indexation commence à 1, contrairement à Python où elle commence à 0."
+  },
+  {
+   "id": "q6",
+   "theme": "Vecteurs",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "prix <- c(1500, 1200, 800, 950)\nprint(prix[2:3])",
+   "options": [
+    "[1] 1200  800",
+    "[1] 1500 1200",
+    "[1] 1200  800  950",
+    "[1] 800 950"
+   ],
+   "correct": 0,
+   "explication": "prix[2:3] extrait les éléments aux positions 2 et 3."
+  },
+  {
+   "id": "q7",
+   "theme": "Opérations vectorielles",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "prix <- c(1500, 1200, 800, 950, 2200)\nprint(sum(prix > 1000))",
+   "options": [
+    "[1] 5",
+    "[1] 4",
+    "[1] 5650",
+    "[1] 3"
+   ],
+   "correct": 3,
+   "explication": "prix > 1000 donne un vecteur logique ; sum compte les TRUE : 1500, 1200 et 2200, soit 3."
+  },
+  {
+   "id": "q8",
+   "theme": "Opérations vectorielles",
+   "question": "Que renvoie l'expression c(1, 2, 3) * 2 ?",
+   "code": "",
+   "options": [
+    "c(1, 2, 3, 1, 2, 3)",
+    "c(2, 4, 6)",
+    "6",
+    "c(1, 2, 6)"
+   ],
+   "correct": 1,
+   "explication": "Les opérations arithmétiques en R s'appliquent élément par élément."
+  },
+  {
+   "id": "q9",
+   "theme": "Chaînes de caractères",
+   "question": "Quelle fonction donne le nombre de caractères d'une chaîne ?",
+   "code": "",
+   "options": [
+    "length()",
+    "nchar()",
+    "count()",
+    "size()"
+   ],
+   "correct": 1,
+   "explication": "nchar() compte les caractères ; length() renvoie le nombre d'éléments d'un vecteur."
+  },
+  {
+   "id": "q10",
+   "theme": "Chaînes de caractères",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "print(substr('Korhogo', 1, 3))",
+   "options": [
+    "[1] \"Korh\"",
+    "[1] \"orh\"",
+    "[1] \"Ko\"",
+    "[1] \"Kor\""
+   ],
+   "correct": 3,
+   "explication": "substr(x, 1, 3) extrait les caractères des positions 1 à 3 incluses."
+  },
+  {
+   "id": "q11",
+   "theme": "Listes",
+   "question": "Soit menage <- list(region = 'Savanes', taille = 6). Quelle expression renvoie 6 ?",
+   "code": "",
+   "options": [
+    "menage$taille",
+    "menage[taille]",
+    "menage.taille",
+    "menage(taille)"
+   ],
+   "correct": 0,
+   "explication": "On accède à un élément nommé d'une liste avec $ ou avec [[ ]]."
+  },
+  {
+   "id": "q12",
+   "theme": "Conditions",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "revenu <- 95000\nif (revenu < 60000) {\n  print('Faible')\n} else if (revenu < 150000) {\n  print('Moyen')\n} else {\n  print('Élevé')\n}",
+   "options": [
+    "[1] \"Faible\"",
+    "[1] \"Élevé\"",
+    "[1] \"Moyen\"",
+    "Rien ne s'affiche"
+   ],
+   "correct": 2,
+   "explication": "95000 n'est pas inférieur à 60000 mais l'est à 150000 : la deuxième branche s'exécute."
+  },
+  {
+   "id": "q13",
+   "theme": "ifelse",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "notes <- c(8, 12, 15)\nprint(ifelse(notes >= 10, 'Admis', 'Recalé'))",
+   "options": [
+    "[1] \"Admis\"  \"Admis\"  \"Admis\"",
+    "[1] \"Recalé\" \"Recalé\" \"Admis\"",
+    "[1] \"Recalé\" \"Admis\"  \"Admis\"",
+    "[1] \"Recalé\""
+   ],
+   "correct": 2,
+   "explication": "ifelse teste chaque élément : 8 est recalé, 12 et 15 sont admis."
+  },
+  {
+   "id": "q14",
+   "theme": "Boucles for",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "total <- 0\nfor (v in c(120, 85, 200)) {\n  total <- total + v\n}\nprint(total)",
+   "options": [
+    "[1] 200",
+    "[1] 405",
+    "[1] 120",
+    "[1] 85"
+   ],
+   "correct": 1,
+   "explication": "La boucle cumule chaque valeur : 120 + 85 + 200 = 405."
+  },
+  {
+   "id": "q15",
+   "theme": "Lecture de données",
+   "question": "Quelle fonction R de base lit un fichier CSV dans un data.frame ?",
+   "code": "",
+   "options": [
+    "read.csv()",
+    "load.csv()",
+    "open.table()",
+    "import.csv()"
+   ],
+   "correct": 0,
+   "explication": "read.csv() lit un fichier CSV et renvoie un data.frame."
+  },
+  {
+   "id": "q16",
+   "theme": "Fonctions",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "tva <- function(prix, taux = 0.18) {\n  prix * (1 + taux)\n}\nprint(tva(1000, taux = 0.09))",
+   "options": [
+    "[1] 1180",
+    "[1] 90",
+    "[1] 1009",
+    "[1] 1090"
+   ],
+   "correct": 3,
+   "explication": "L'argument taux = 0.09 remplace la valeur par défaut : 1000 * 1.09 = 1090."
+  },
+  {
+   "id": "q17",
+   "theme": "Fonctions",
+   "question": "Quel mot-clé permet de définir une fonction en R ?",
+   "code": "",
+   "options": [
+    "function",
+    "def",
+    "fun",
+    "func"
+   ],
+   "correct": 0,
+   "explication": "En R, on écrit nom <- function(arguments) { ... }."
+  },
+  {
+   "id": "q18",
+   "theme": "Data.frame",
+   "question": "Quelle fonction renvoie le nombre de lignes et de colonnes d'un data.frame ?",
+   "code": "",
+   "options": [
+    "length()",
+    "nchar()",
+    "dim()",
+    "size()"
+   ],
+   "correct": 2,
+   "explication": "dim(df) renvoie c(nombre de lignes, nombre de colonnes)."
+  },
+  {
+   "id": "q19",
+   "theme": "Séquences",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "print(seq(2, 10, by = 4))",
+   "options": [
+    "[1]  2  4  6  8 10",
+    "[1] 2 6",
+    "[1]  2  6 10",
+    "[1]  4  8 12"
+   ],
+   "correct": 2,
+   "explication": "seq(2, 10, by = 4) part de 2 et avance par pas de 4 sans dépasser 10 : 2, 6, 10."
+  },
+  {
+   "id": "q20",
+   "theme": "Répétition",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "print(rep(c(1, 2), times = 2))",
+   "options": [
+    "[1] 1 2 1 2",
+    "[1] 1 1 2 2",
+    "[1] 2 4",
+    "[1] 1 2"
+   ],
+   "correct": 0,
+   "explication": "Avec times = 2, tout le vecteur c(1, 2) est répété deux fois ; l'argument each répéterait chaque élément."
+  },
+  {
+   "id": "q21",
+   "theme": "Opérateurs arithmétiques",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "print(17 %% 5)",
+   "options": [
+    "[1] 3",
+    "[1] 3.4",
+    "[1] 12",
+    "[1] 2"
+   ],
+   "correct": 3,
+   "explication": "L'opérateur %% renvoie le reste de la division entière : 17 = 3 x 5 + 2."
+  },
+  {
+   "id": "q22",
+   "theme": "Chaînes de caractères",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "print(paste('ID', 7, sep = '-'))",
+   "options": [
+    "[1] \"ID 7\"",
+    "[1] \"ID-7\"",
+    "[1] \"ID7\"",
+    "[1] \"7-ID\""
+   ],
+   "correct": 1,
+   "explication": "paste concatène ses arguments en les séparant par la valeur de sep, ici le tiret."
+  },
+  {
+   "id": "q23",
+   "theme": "Coercition de types",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "print(class(c(1, 'a', TRUE)))",
+   "options": [
+    "[1] \"numeric\"",
+    "[1] \"character\"",
+    "[1] \"logical\"",
+    "[1] \"list\""
+   ],
+   "correct": 1,
+   "explication": "Un vecteur ne contient qu'un seul type : les éléments sont convertis vers le type le plus général, ici character."
+  },
+  {
+   "id": "q24",
+   "theme": "Facteurs",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "print(levels(factor(c('b', 'a', 'b', 'c'))))",
+   "options": [
+    "[1] \"b\" \"a\" \"c\"",
+    "[1] \"b\" \"b\" \"a\" \"c\"",
+    "[1] 3",
+    "[1] \"a\" \"b\" \"c\""
+   ],
+   "correct": 3,
+   "explication": "levels renvoie les modalités distinctes d'un facteur, triées par ordre alphabétique par défaut."
+  },
+  {
+   "id": "q25",
+   "theme": "Recherche d'indices",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "print(which(c(4, 9, 2, 9) == 9))",
+   "options": [
+    "[1] 2 4",
+    "[1] 9 9",
+    "[1] 2",
+    "[1] FALSE  TRUE FALSE  TRUE"
+   ],
+   "correct": 0,
+   "explication": "which renvoie les positions des éléments pour lesquels la condition est TRUE : ici 2 et 4."
+  },
+  {
+   "id": "q26",
+   "theme": "Tri",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "print(sort(c(3, 1, 2), decreasing = TRUE))",
+   "options": [
+    "[1] 1 2 3",
+    "[1] 2 3 1",
+    "[1] 3 2 1",
+    "[1] 3 1 2"
+   ],
+   "correct": 2,
+   "explication": "sort trie les valeurs ; avec decreasing = TRUE l'ordre est décroissant."
+  },
+  {
+   "id": "q27",
+   "theme": "Sommes cumulées",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "print(cumsum(c(5, 10, 15)))",
+   "options": [
+    "[1]  5 15 30",
+    "[1] 30",
+    "[1]  5 10 15",
+    "[1] 15 25 30"
+   ],
+   "correct": 0,
+   "explication": "cumsum renvoie la somme cumulée à chaque position : 5, 5+10 = 15, 15+15 = 30."
+  },
+  {
+   "id": "q28",
+   "theme": "Matrices",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "m <- matrix(1:6, nrow = 2)\nprint(dim(m))",
+   "options": [
+    "[1] 3 2",
+    "[1] 6",
+    "[1] 2 3",
+    "[1] 2"
+   ],
+   "correct": 2,
+   "explication": "matrix(1:6, nrow = 2) comporte 2 lignes ; les 6 valeurs sont réparties en 3 colonnes. dim renvoie c(2, 3)."
+  },
+  {
+   "id": "q29",
+   "theme": "Indexation d'un data.frame",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "df <- data.frame(a = 1:3, b = c('x', 'y', 'z'))\nprint(df[2, 'b'])",
+   "options": [
+    "[1] \"x\"",
+    "[1] \"y\"",
+    "[1] 2",
+    "[1] \"z\""
+   ],
+   "correct": 1,
+   "explication": "df[2, 'b'] extrait la valeur située à la ligne 2 de la colonne b."
+  },
+  {
+   "id": "q30",
+   "theme": "Appartenance",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "print('Daloa' %in% c('Abidjan', 'Daloa', 'Man'))",
+   "options": [
+    "[1] 2",
+    "[1] FALSE",
+    "[1] \"Daloa\"",
+    "[1] TRUE"
+   ],
+   "correct": 3,
+   "explication": "L'opérateur %in% teste l'appartenance et renvoie un booléen : ici TRUE."
+  },
+  {
+   "id": "q31",
+   "theme": "Boucles while",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "i <- 0\nwhile (i < 3) {\n  i <- i + 2\n}\nprint(i)",
+   "options": [
+    "[1] 3",
+    "[1] 2",
+    "[1] 6",
+    "[1] 4"
+   ],
+   "correct": 3,
+   "explication": "La boucle s'exécute pour i = 0 puis i = 2 (deux fois) ; elle s'arrête quand i atteint 4, qui n'est plus inférieur à 3."
+  },
+  {
+   "id": "q32",
+   "theme": "Vecteurs",
+   "question": "Quelle fonction renvoie le nombre d'éléments d'un vecteur ?",
+   "code": "",
+   "options": [
+    "nchar",
+    "length",
+    "nrow",
+    "count"
+   ],
+   "correct": 1,
+   "explication": "length donne le nombre d'éléments d'un vecteur ; nchar compte les caractères d'une chaîne et nrow s'applique aux tableaux."
+  },
+  {
+   "id": "q33",
+   "theme": "Commentaires",
+   "question": "Quel symbole introduit un commentaire en R ?",
+   "code": "",
+   "options": [
+    "//",
+    "--",
+    "#",
+    "/*"
+   ],
+   "correct": 2,
+   "explication": "Tout ce qui suit le symbole # jusqu'à la fin de la ligne est ignoré par l'interpréteur."
+  },
+  {
+   "id": "q34",
+   "theme": "Packages",
+   "question": "Quelle instruction charge dans la session un package déjà installé ?",
+   "code": "",
+   "options": [
+    "library(dplyr)",
+    "install.packages(\"dplyr\")",
+    "source(\"dplyr\")",
+    "load(dplyr)"
+   ],
+   "correct": 0,
+   "explication": "library charge un package installé ; install.packages ne fait que le télécharger et l'installer."
+  },
+  {
+   "id": "q35",
+   "theme": "Arrondis",
+   "question": "Quel est le résultat affiché par ce code ?",
+   "code": "print(round(3.14159, 2))",
+   "options": [
+    "[1] 3",
+    "[1] 3.1",
+    "[1] 3.14",
+    "[1] 3.15"
+   ],
+   "correct": 2,
+   "explication": "round(x, 2) arrondit à deux décimales : 3.14."
+  }
+ ]
 }

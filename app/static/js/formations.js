@@ -1,26 +1,17 @@
-// ============================================
-// FORMATION PRATIQUE - Logique JavaScript
-// ============================================
 
 let outilActif = null;
 let niveauActif = 'debutant';
 
-// ============================================
-// CHARGER UN OUTIL
-// ============================================
 function chargerOutil(outil) {
     outilActif = outil;
     
-    // Mettre à jour la classe active sur les boutons
     document.querySelectorAll('.outil-card').forEach(btn => {
         btn.classList.remove('active');
     });
     document.querySelector(`.outil-card[data-outil="${outil}"]`).classList.add('active');
     
-    // Mettre à jour le label
     mettreAJourLabel();
     
-    // Charger l'éditeur correspondant
     const editeur = document.getElementById('editeur');
     
     if (outil === 'python') {
@@ -128,9 +119,6 @@ SELECT * FROM ventes LIMIT 5;">SELECT * FROM ventes LIMIT 5;</textarea>
     }
 }
 
-// ============================================
-// CHANGER DE NIVEAU
-// ============================================
 function changerNiveau(niveau) {
     niveauActif = niveau;
     
@@ -141,7 +129,6 @@ function changerNiveau(niveau) {
     
     mettreAJourLabel();
     
-    // Message de l'IA quand on change de niveau
     const messages = {
         debutant: "Niveau **Débutant** activé Je vais vous expliquer les concepts pas à pas, avec des exemples simples.",
         intermediaire: "Niveau **Intermédiaire** activé On va approfondir les concepts et faire des exercices plus poussés.",
@@ -151,9 +138,6 @@ function changerNiveau(niveau) {
     ajouterMessageIA(messages[niveau]);
 }
 
-// ============================================
-// METTRE À JOUR LE LABEL
-// ============================================
 function mettreAJourLabel() {
     const label = document.getElementById('outil-actif-label');
     if (outilActif) {
@@ -165,20 +149,15 @@ function mettreAJourLabel() {
     }
 }
 
-// ============================================
-// ENVOYER UNE QUESTION À L'IA
-// ============================================
 async function envoyerQuestion() {
-    const input = document.getElementById('question-ia');
+    const input = document.getElementById('question-assistant');
     const question = input.value.trim();
     
     if (!question) return;
     
-    // Afficher la question
     ajouterMessageUtilisateur(question);
     input.value = '';
     
-    // Afficher l'indicateur de chargement
     const loadingId = ajouterMessageIA('...', true);
     
     try {
@@ -202,10 +181,8 @@ async function envoyerQuestion() {
         
         const data = await response.json();
         
-        // Supprimer l'indicateur de chargement
         document.getElementById(loadingId).remove();
         
-        // Afficher la réponse
         ajouterMessageIA(data.reponse);
         
     } catch (error) {
@@ -215,25 +192,21 @@ async function envoyerQuestion() {
     }
 }
 
-// ============================================
-// AJOUTER UN MESSAGE DE L'IA
-// ============================================
 function ajouterMessageIA(texte, isLoading = false) {
     const container = document.getElementById('chat-messages');
     const id = 'msg-' + Date.now() + Math.random().toString(36).substr(2, 5);
     
     const div = document.createElement('div');
-    div.className = 'msg-ia';
+    div.className = 'msg-assistant';
     div.id = id;
     
     if (isLoading) {
-        div.innerHTML = `<strong>EconBot</strong><p class="loading-dots">${texte}</p>`;
+        div.innerHTML = `<strong>Assistant DataEcon</strong><p class="loading-dots">${texte}</p>`;
     } else {
-        // Convertir les **gras** en <strong>
         const html = texte
             .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
             .replace(/\n/g, '<br>');
-        div.innerHTML = `<strong>EconBot</strong><p>${html}</p>`;
+        div.innerHTML = `<strong>Assistant DataEcon</strong><p>${html}</p>`;
     }
     
     container.appendChild(div);
@@ -242,9 +215,6 @@ function ajouterMessageIA(texte, isLoading = false) {
     return id;
 }
 
-// ============================================
-// AJOUTER UN MESSAGE UTILISATEUR
-// ============================================
 function ajouterMessageUtilisateur(texte) {
     const container = document.getElementById('chat-messages');
     
@@ -256,25 +226,15 @@ function ajouterMessageUtilisateur(texte) {
     container.scrollTop = container.scrollHeight;
 }
 
-// ============================================
-// SÉCURITÉ : échapper le HTML
-// ============================================
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
 }
 
-// ============================================
-// INITIALISATION
-// ============================================
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Section Formation chargée');
 });
-
-// ============================================
-// SQL.JS - MOTEUR SQL DANS LE NAVIGATEUR
-// ============================================
 
 let sqlDb = null;
 let sqlJsLoaded = false;
@@ -303,7 +263,6 @@ function initialiserBaseSQL() {
     }).then(function(SQLModule) {
         sqlDb = new SQLModule.Database();
         
-        // Création de la table ventes avec données fictives ivoiriennes
         sqlDb.run(`
             CREATE TABLE ventes (
                 id INTEGER PRIMARY KEY,
@@ -315,7 +274,6 @@ function initialiserBaseSQL() {
             );
         `);
         
-        // Insertion de 20 lignes de données fictives
         sqlDb.run(`
             INSERT INTO ventes VALUES
             (1, '2024-01-15', 'Cacao', 120, 1500.00, 'Abidjan'),
@@ -371,7 +329,6 @@ function executerSQL() {
             return;
         }
         
-        // Construire le tableau HTML
         let html = '';
         resultats.forEach(function(resultat) {
             html += '<table class="sql-table"><thead><tr>';
@@ -399,13 +356,6 @@ function executerSQL() {
     }
 }
 
-
-
-
-// ============================================
-// R - MOTEUR WEBR DANS LE NAVIGATEUR
-// ============================================
-
 let webRInstance = null;
 let webRLoaded = false;
 
@@ -418,14 +368,11 @@ async function chargerWebR() {
     if (status) status.textContent = 'Chargement de R...';
     
     try {
-        // Utilisation d'une version spécifique et stable
         const webRVersion = 'v0.4.2';
         const webRUrl = `https://webr.r-wasm.org/${webRVersion}/webr.mjs`;
         
-        // Import dynamique du module WebR
         const { WebR } = await import(webRUrl);
         
-        // Forcer le channel PostMessage pour éviter les problèmes de SharedArrayBuffer
         webRInstance = new WebR({
             channelType: 'PostMessage'
         });
@@ -468,7 +415,6 @@ async function executerR() {
     status.textContent = '';
     
     try {
-        // Utiliser Shelter pour capturer stdout + résultat
         const shelter = await new webRInstance.Shelter();
         let html = '';
         let duration;
@@ -477,7 +423,6 @@ async function executerR() {
             const captured = await shelter.captureR(input);
             duration = (performance.now() - start).toFixed(0);
             
-            // Sortie console (print, cat, etc.)
             if (captured.output && captured.output.length > 0) {
                 captured.output.forEach(item => {
                     if (item.type === 'stdout' || item.type === 'stderr') {
@@ -486,7 +431,6 @@ async function executerR() {
                 });
             }
             
-            // Valeur de retour du code R
             if (captured.result) {
                 const jsValue = await captured.result.toJs();
                 const valueStr = formaterValeurR(jsValue);
@@ -512,23 +456,18 @@ async function executerR() {
     }
 }
 
-// Formater les valeurs retournées par R
 function formaterValeurR(jsValue) {
     if (jsValue === null || jsValue === undefined) return null;
     
-    // Cas simple : valeur unique
     if (typeof jsValue === 'number' || typeof jsValue === 'boolean' || typeof jsValue === 'string') {
         return `[1] ${jsValue}`;
     }
     
-    // Cas avec structure { type, names, values }
     if (jsValue.values) {
         const values = jsValue.values;
         const names = jsValue.names || [];
         
-        // Tableau de valeurs
         if (Array.isArray(values)) {
-            // Cas data frame
             if (values.length > 0 && Array.isArray(values[0])) {
                 let output = '';
                 values.forEach((col, i) => {
@@ -537,25 +476,16 @@ function formaterValeurR(jsValue) {
                 });
                 return output.trim();
             }
-            // Cas vecteur simple
             return `[1] ${values.join(' ')}`;
         }
         
-        // Objet
         if (typeof values === 'object') {
             return JSON.stringify(values, null, 2);
         }
     }
     
-    // Cas par défaut
     return String(jsValue);
 }
-
-
-
-// ============================================
-// MINI-TABLEAU INTERACTIF (Chart.js)
-// ============================================
 
 let tableauChart = null;
 let chartJsLoaded = false;
@@ -609,7 +539,6 @@ function genererGraphique() {
     const dimension = document.getElementById('tableau-dim').value;
     const mesure = document.getElementById('tableau-mesure').value;
     
-    // Agréger les données
     const agreg = {};
     TABLEAU_DATA.forEach(row => {
         const key = row[dimension];
@@ -621,7 +550,6 @@ function genererGraphique() {
         agreg[key].count += 1;
     });
     
-    // Calculer la valeur finale selon la mesure
     const labels = Object.keys(agreg).sort();
     const data = labels.map(label => {
         if (mesure === 'prix_unitaire') {
@@ -630,16 +558,13 @@ function genererGraphique() {
         return agreg[label][mesure];
     });
     
-    // Couleurs
     const couleurs = [
         '#1f5f99', '#27ae60', '#e67e22', '#e74c3c', '#9b59b6',
         '#3498db', '#16a085', '#f39c12', '#c0392b', '#8e44ad'
     ];
     
-    // Détruire l'ancien graphique
     if (tableauChart) tableauChart.destroy();
     
-    // Créer le graphique
     const ctx = canvas.getContext('2d');
     tableauChart = new Chart(ctx, {
         type: type === 'doughnut' ? 'doughnut' : type,
@@ -698,17 +623,11 @@ function getLabelDimension(dim) {
     return labels[dim] || dim;
 }
 
-
-// ============================================
-// MODE COURS GUIDÉ
-// ============================================
-
 let leconActuelle = null;
 let conceptIndex = 0;
 let exerciceValide = false;
 
 async function demarrerCours() {
-    // Vérifier qu'un outil et un niveau sont sélectionnés
     if (!outilActif) {
         alert('Choisissez d\'abord un outil (Python, R, SQL ou Tableau).');
         return;
@@ -731,7 +650,7 @@ async function demarrerCours() {
                     <i class="fas fa-info-circle"></i>
                     <p>${data.message || 'Cours non disponible pour le moment.'}</p>
                     <small style="margin-top:10px; color:#aaa;">
-                        Le cours ${outilActif} / ${niveauActif} sera bientôt disponible. En attendant, utilisez l'instructeur IA à droite.
+                        Le cours ${outilActif} / ${niveauActif} sera bientôt disponible. En attendant, utilisez l'assistant pédagogique à droite.
                     </small>
                 </div>`;
             return;
@@ -743,7 +662,6 @@ async function demarrerCours() {
         
         afficherConcept();
         
-        // Message de bienvenue de l'IA
         ajouterMessageIA(` **${data.titre}**\n\nNous allons parcourir ensemble **${data.concepts.length} concepts**. Je vous explique chaque notion, puis vous pratiquez dans l'éditeur. Prêt ? C'est parti ! `);
         
     } catch (error) {
@@ -809,7 +727,7 @@ function afficherConcept() {
                 <div class="cours-section-reflexion">
                     <h4> Question de réflexion</h4>
                     <p>${concept.question_reflexion}</p>
-                    <small>Posez votre réponse à l'instructeur IA à droite, il vous corrigera.</small>
+                    <small>Posez votre réponse à l'assistant pédagogique à droite, il vous corrigera.</small>
                 </div>
                 
                             <div class="cours-section-exercice">
@@ -829,7 +747,7 @@ function afficherConcept() {
                                     <i class="fas fa-play"></i> Exécuter
                                 </button>
                                 <button class="exercice-submit-btn" onclick="soumettreExerciceIA()">
-                                    <i class="fas fa-paper-plane"></i> Soumettre à l'IA
+                                    <i class="fas fa-paper-plane"></i> Soumettre pour correction
                                 </button>
                             </div>
                             <div id="exercice-resultat" class="exercice-resultat"></div>
@@ -848,11 +766,9 @@ function afficherConcept() {
             </div>
         </div>`;
     
-    // Message de l'IA pour accompagner le concept
     ajouterMessageIA(`**Concept ${conceptIndex + 1}/${total} : ${concept.titre}**\n\n${concept.objectif}\n\nLisez l'explication et testez le code. Posez-moi toutes vos questions !`);
 }
 
-// Formater le markdown basique (**gras**, `code`)
 function formaterMarkdown(texte) {
     return texte
         .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
@@ -865,8 +781,6 @@ function copierCodeExemple() {
     const concept = leconActuelle.concepts[conceptIndex];
     const editeur = document.getElementById('editeur');
     
-    // Si on est sur Python, on remplit un textarea temporaire
-    // Sinon, on affiche le code dans un message IA
     ajouterMessageIA(`Voici le code à tester :\n\n\`\`\`\n${concept.code_exemple}\n\`\`\`\n\nCopiez-le dans l'éditeur à gauche pour l'exécuter.`);
 }
 
@@ -906,10 +820,8 @@ function validerExercice() {
     if (!leconActuelle) return;
     const concept = leconActuelle.concepts[conceptIndex];
     
-    // Récupérer le code depuis l'éditeur selon l'outil
     let codeUtilisateur = '';
     
-    // Chercher dans les différents textareas
     const sqlInput = document.getElementById('sql-input');
     const rInput = document.getElementById('r-input');
     const pythonFrame = document.querySelector('#editeur iframe');
@@ -919,8 +831,6 @@ function validerExercice() {
     } else if (rInput) {
         codeUtilisateur = rInput.value.trim();
     } else {
-        // Pour Python (iframe JupyterLite), on ne peut pas lire directement
-        // On demande à l'utilisateur de décrire ou on envoie le code à l'IA
         ajouterMessageIA('Pour valider votre exercice Python, **copiez votre code dans le chat à droite** et je vous dirai si c\'est correct.');
         return;
     }
@@ -930,7 +840,6 @@ function validerExercice() {
         return;
     }
     
-    // Vérification basique par mots-clés
     const motsCles = concept.exercice.mots_cles || [];
     const codeLower = codeUtilisateur.toLowerCase();
     const motsTrouves = motsCles.filter(mot => codeLower.includes(mot.toLowerCase()));
@@ -940,7 +849,6 @@ function validerExercice() {
         exerciceValide = true;
         ajouterMessageIA(`**Bravo !** Votre exercice semble correct (${motsTrouves.length}/${motsCles.length} critères validés).\n\nVous pouvez passer au concept suivant !`);
         
-        // Mettre à jour le bouton "Suivant"
         const nextBtn = document.querySelector('.cours-nav-next');
         if (nextBtn) {
             nextBtn.style.background = '#27ae60';
@@ -950,11 +858,6 @@ function validerExercice() {
         ajouterMessageIA(`**Presque !** ${motsTrouves.length}/${motsCles.length} critères validés.\n\n **Indice :** ${concept.exercice.indice}\n\nReprenez votre code et réessayez. Posez-moi une question si vous bloquez !`);
     }
 }
-
-
-// ============================================
-// EXERCICES INTÉGRÉS - EXÉCUTION ET SOUMISSION
-// ============================================
 
 let pyodideInstance = null;
 let pyodideLoading = false;
@@ -1037,7 +940,6 @@ async function executerCodeExercice() {
                 });
                 pyodideLoading = false;
             }
-            // Rediriger stdout
             pyodideInstance.setStdout({ batched: (s) => { output += s + '\n'; } });
             pyodideInstance.setStderr({ batched: (s) => { output += '' + s + '\n'; } });
             try {
@@ -1070,7 +972,6 @@ async function soumettreExerciceIA() {
     const concept = leconActuelle.concepts[conceptIndex];
     const message = `Voici ma réponse à l'exercice :\n\n\`\`\`\n${code}\n\`\`\`\n\nEst-ce correct ? Si non, donne-moi un indice sans la solution.`;
     
-    // Ajouter au chat
     ajouterMessageUtilisateur(`Soumission de l'exercice :\n${code}`);
     
     const loadingId = ajouterMessageIA('Analyse de votre réponse...', true);
@@ -1098,7 +999,6 @@ async function soumettreExerciceIA() {
         document.getElementById(loadingId).remove();
         ajouterMessageIA(data.reponse);
         
-        // Détecter si l'IA valide (mots-clés positifs)
         const reponseLower = data.reponse.toLowerCase();
         const estValide = reponseLower.includes('bravo') || 
                           reponseLower.includes('correct') || 
