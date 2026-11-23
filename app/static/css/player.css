@@ -226,3 +226,46 @@
 .tb-right .pl-btn{width:100%}
 .tb-sheets{display:flex;gap:2px;background:#e9edf2;border-top:1px solid #c9d3de;padding:.2rem .5rem 0;font-size:.76rem}.tb-sheets span{padding:.25rem .8rem;color:#52606d}.tb-sheets span.on{background:#fff;border:1px solid #c9d3de;border-bottom:0;font-weight:600;color:#1f2933}
 .tb-shelf>span small{font-weight:400;color:#8795a4;font-size:.64rem}.tb-shelf>span{width:74px}
+
+/* ===== Applications fonctionnelles ===== */
+.hide{display:none !important}
+.pl-app .app-menu.ac-bar{gap:0;padding:0 .3rem}
+.pl-app .app-menu .ac-m{padding:.32rem .65rem;cursor:default}
+.pl-app .app-tool .tb{padding:.2rem .55rem;min-width:28px}
+.pl-app .app-tool .tb:hover:not(:disabled){background:#e8eef5}
+.pl-app .spx{width:1px;height:18px;background:#d5dde6;margin:0 .25rem}
+.pl-app .app-tabs span{cursor:pointer}.pl-app .app-tabs .dx{margin-left:.4rem;color:#8795a4;font-weight:400}.pl-app .app-tabs .dx:hover{color:#c0392b}
+.pl-app .app-tabs .dadd{font-weight:700;color:#52606d;padding:.28rem .6rem}
+.pl-app .app-ctabs span[data-p]{cursor:pointer}
+.cpane{display:none;flex:1;min-height:0;flex-direction:column}.cpane.on{display:flex}
+.pl-console-out.term{flex:1;color:#cfe0f1}
+.term-in{display:flex;gap:.4rem;padding:.3rem .9rem;background:#0a1420;color:#8fd3a7;font-family:Consolas,monospace;font-size:.85rem;border-top:1px solid #1d3047}
+.term-in input{flex:1;background:transparent;border:0;color:#cfe0f1;outline:none;font:inherit}
+#envbox table{width:100%}
+/* Jupyter */
+.nb-head{display:flex;gap:.8rem;align-items:center;padding:.4rem .8rem;background:#fff;border-bottom:1px solid #e1e6ec;font-size:.85rem}
+.nb-head b{color:#f37726;font-size:1rem}.nb-saved{margin-left:auto;color:#8795a4;font-size:.75rem}
+.nb-cells{flex:1;overflow:auto;padding:.8rem 1rem;background:#fff;min-height:0}
+.nb-c{display:flex;gap:.6rem;margin-bottom:.5rem;padding:.2rem;border-left:4px solid transparent;border-radius:2px;outline:none}
+.nb-c.sel{border-left-color:#2f7de1;background:#f8fafd}.nb-c:focus{border-left-color:#2f7de1}
+.nb-c .nb-in{width:68px;flex:none;text-align:right;color:#307fc1;font:.75rem Consolas,monospace;padding-top:.45rem}
+.nb-body{flex:1;min-width:0}
+.nb-c .nb-ed{border:1px solid #cfd8e3;border-radius:2px;background:#f7f7f7;min-height:38px}
+.nb-c .nb-ed .CodeMirror{height:auto;min-height:36px;background:#f7f7f7;color:#1f2933;font-size:13px}
+.nb-c .nb-ed .CodeMirror-gutters{background:#f0f0f0;border-right:1px solid #ddd}.nb-c .nb-ed .CodeMirror-linenumber{color:#999}
+.nb-c .nb-ed .CodeMirror-cursor{border-left:1px solid #000}
+.nb-c .nb-ed .cm-keyword{color:#008000;font-weight:700}.nb-c .nb-ed .cm-string{color:#ba2121}.nb-c .nb-ed .cm-number{color:#080}.nb-c .nb-ed .cm-comment{color:#408080}.nb-c .nb-ed .cm-builtin{color:#008000}.nb-c .nb-ed .cm-def{color:#00f}
+.nb-c .nb-ed textarea.fallback{width:100%;min-height:80px;background:#f7f7f7;color:#1f2933;border:0;padding:8px;font:13px/1.5 Consolas,monospace;resize:vertical;outline:none}
+.nb-md{padding:.4rem .6rem;font-size:.95rem;color:#1f2933}
+.nb-out{display:flex;gap:.5rem;margin-top:.3rem}.nb-ol{width:0;overflow:visible;white-space:nowrap;position:relative;left:-76px;color:#d84315;font:.72rem Consolas,monospace}
+.nb-out .nbo{flex:1;font:13px Consolas,monospace;color:#1f2933;overflow:auto}.nb-out pre{margin:0;white-space:pre-wrap;background:none;color:inherit}.nb-out .err{color:#c0392b;white-space:pre-wrap}
+/* SQL */
+.sql-body{flex:1;display:flex;min-height:0}.sql-main{flex:1;display:flex;flex-direction:column;min-width:0}
+.sql-obj{width:190px;flex:none;background:#f3f5f8;border-right:1px solid #d5dde6;overflow:auto;font-size:.78rem;color:#33414f;padding:.3rem 0}
+.sql-obj .obj-h{font-weight:700;padding:.2rem .6rem;color:#1f5f99}.sql-obj .obj-n{padding:.15rem .6rem}.sql-obj .obj-n.db{font-weight:600}.sql-obj .obj-n.g{color:#52606d;padding-left:1rem}
+.sql-obj .obj-t{padding:.15rem .6rem .15rem 1.3rem;cursor:pointer}.sql-obj .obj-t:hover,.sql-obj .obj-c div:hover{background:#dfe8f2}
+.sql-obj .obj-c div{padding:.1rem .6rem .1rem 2.6rem;cursor:pointer}.sql-obj small{color:#8795a4}
+.pl-app.dark{background:#1e1e1e}
+@media(max-width:700px){.sql-obj{display:none}}
+.tb-menu.ac-bar{gap:0;padding:0 .3rem}.tb-menu .ac-m{padding:.32rem .65rem}
+.tb-sheets span{cursor:pointer}.tb-sheets .tbx{margin-left:.4rem;color:#8795a4}.tb-data li[draggable]{cursor:grab}.tb-shelf[data-drop]{outline-offset:-2px}

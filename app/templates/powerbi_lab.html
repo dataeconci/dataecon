@@ -1,6 +1,8 @@
 {% extends "layout.html" %}
 {% block title %}Laboratoire Power BI - DataEcon.ci{% endblock %}
 {% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/appchrome.css') }}">
+<script src="{{ url_for('static', filename='js/appchrome.js') }}"></script>
 <style>
 .pbd{--y:#f2c811;--ink:#252423;--bg:#f3f2f1;--line:#e1dfdd;--blue:#118dff;font-family:"Segoe UI",Inter,Arial,sans-serif;color:var(--ink);max-width:1480px;margin:1rem auto 3rem;border:1px solid #c8c6c4;border-radius:6px;overflow:hidden;background:#fff;box-shadow:0 6px 24px rgba(11,42,74,.12)}
 .pbd button,.pbd select,.pbd input,.pbd textarea{font-family:inherit}
@@ -56,27 +58,32 @@
 .pb-res{width:100%;border-collapse:collapse;font-size:.84rem;margin-top:.6rem}.pb-res th{background:#f3f2f1;padding:.3rem .5rem;text-align:left;border-bottom:2px solid #c8c6c4}.pb-res td{padding:.28rem .5rem;border-bottom:1px solid #edebe9}.pb-res td.num{text-align:right}
 .pbd-status{display:flex;justify-content:space-between;background:#fff;border-top:1px solid var(--line);padding:.25rem .8rem;font-size:.74rem;color:#605e5c}
 .pbd-intro{max-width:1480px;margin:1rem auto 0;padding:0 1rem}.pbd-intro h1{font-size:1.4rem;color:#0b2a4a;font-weight:800;margin:0}.pbd-intro p{color:#5b6b7b;margin:.2rem 0 0}
+.pbd-rb.act{background:#fff4c2;border-color:#f2c811}.pb-vis.sel{outline:2px solid #118dff;outline-offset:-1px}.pb-vis.txt .tx{min-height:60px;font-size:1rem;outline:none;padding:.3rem}
+.pbd-page.grid{background-image:radial-gradient(#d8d6d4 1px,transparent 1px);background-size:16px 16px}
+.pbd-pagetabs span.pg{cursor:pointer;background:#f3f2f1;border-bottom-color:transparent;font-weight:400}.pbd-pagetabs span.pg.on{background:#fff;border-bottom-color:var(--y);font-weight:600}.pbd-pagetabs .px{margin-left:.4rem;color:#605e5c}.pbd-pagetabs .add{cursor:pointer}
+.mdl-t{display:inline-block;min-width:220px;border:1px solid #c8c6c4;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.12)}.mdl-h{background:#f2c811;font-weight:600;padding:.35rem .6rem}.mdl-c{padding:.2rem .6rem;font-size:.82rem;border-top:1px solid #f3f2f1}.mdl-c i{width:18px;color:#605e5c}.mdl-c.m i{color:#c19c00}
+.gd{display:grid;gap:.6rem}.gd button{text-align:left;padding:.7rem}.bs{display:grid;gap:.4rem}.bs button{text-align:left}
+.pq-ops>div{margin-bottom:.4rem}.pq-steps{font-size:.8rem;padding-left:1.1rem;color:#323130}
 </style>
 
 <div class="pbd-intro"><h1>Laboratoire Power BI</h1><p>Un environnement de pratique fidèle à Power BI Desktop : champs, visuels, segments et mesures DAX évaluées selon le contexte de filtre.</p></div>
 <div class="pbd">
-  <div class="pbd-title"><span class="pbd-logo"><i></i><i></i><i></i></span><span class="nm">Rapport_Ventes</span><span class="sub">- Power BI Desktop</span><span class="sp"></span><span class="srch">Rechercher</span></div>
-  <div class="pbd-rtabs"><span>Fichier</span><span class="on">Accueil</span><span>Insertion</span><span>Modélisation</span><span>Affichage</span><span>Aide</span></div>
-  <div class="pbd-ribbon">
-    <div class="pbd-grp"><button class="pbd-rb dis" type="button"><i class="fas fa-database"></i>Obtenir les<br>données</button><button class="pbd-rb" id="rb-refresh" type="button"><i class="fas fa-rotate"></i>Actualiser</button><small>Données</small></div>
-    <div class="pbd-grp"><button class="pbd-rb" id="rb-visual" type="button"><i class="fas fa-chart-column"></i>Nouveau<br>visuel</button><button class="pbd-rb" id="rb-clear" type="button"><i class="fas fa-eraser"></i>Vider la<br>page</button><small>Insérer</small></div>
-    <div class="pbd-grp"><button class="pbd-rb" id="rb-measure" type="button"><i class="fas fa-calculator"></i>Nouvelle<br>mesure</button><button class="pbd-rb" id="rb-quick" type="button"><i class="fas fa-bolt"></i>Défis<br>DAX</button><small>Calculs</small></div>
-    <div class="pbd-grp"><button class="pbd-rb dis" type="button"><i class="fas fa-cloud-arrow-up"></i>Publier</button><small>Partager</small></div>
-  </div>
+  <div class="pbd-title"><span class="pbd-logo"><i></i><i></i><i></i></span><span class="nm" id="rptname">Rapport_Ventes</span><span class="sub">- Power BI Desktop</span><span class="sp"></span><span class="srch" id="tsearch">Rechercher</span></div>
+  <div class="pbd-rtabs" id="rtabs"><span data-r="fichier">Fichier</span><span class="on" data-r="accueil">Accueil</span><span data-r="insertion">Insertion</span><span data-r="modelisation">Modélisation</span><span data-r="affichage">Affichage</span><span data-r="aide">Aide</span></div>
+  <div class="pbd-ribbon" id="ribbon"></div>
   <div class="pbd-body">
     <div class="pbd-rail">
       <button class="pb-tab on" data-t="rapport" title="Vue Rapport"><i class="fas fa-chart-simple"></i><span>Rapport</span></button>
-      <button class="pb-tab" data-t="dax" title="Mesures DAX (vue Modèle)"><i class="fas fa-diagram-project"></i><span>Mesures DAX</span></button>
+      <button class="pb-tab" data-t="donnees" title="Vue Données"><i class="fas fa-table"></i><span>Données</span></button>
+      <button class="pb-tab" data-t="modele" title="Vue Modèle"><i class="fas fa-diagram-project"></i><span>Modèle</span></button>
+      <button class="pb-tab" data-t="dax" title="Vue Requête DAX"><i class="fas fa-terminal"></i><span>Requête DAX</span></button>
       <button class="pb-tab" data-t="defis" title="Défis DAX"><i class="fas fa-list-check"></i><span>Défis</span></button>
     </div>
     <div class="pbd-main">
       <div class="pb-pane on" id="p-rapport"><div class="pbd-page"><div class="pb-canvas" id="canvas"></div></div>
-        <div class="pbd-pagetabs"><span>Page 1</span><span class="add">+</span></div></div>
+        <div class="pbd-pagetabs" id="pagetabs"></div></div>
+      <div class="pb-pane" id="p-donnees"><div class="pb-card"><h2>Données <span id="dn-info" style="font-weight:400;color:#605e5c"></span></h2><div style="max-height:560px;overflow:auto"><table class="pb-res" id="dn-tbl"></table></div></div></div>
+      <div class="pb-pane" id="p-modele"><div class="pb-card"><h2>Modèle</h2><div id="mdl"></div></div></div>
       <div class="pb-pane" id="p-dax">
         <div class="pb-grid2">
           <div class="pb-card"><h2>Nouvelle mesure</h2>
@@ -119,12 +126,12 @@
       <div class="pbd-ph">Filtres</div>
       <div class="pb-slicers" id="slicers"></div>
       <div class="pbd-ph" style="margin-top:.8rem">Champs</div>
-      <input class="pbd-search" placeholder="Rechercher" disabled>
-      <div class="pbd-tblname"><i class="fas fa-table"></i>Ventes <span style="color:#605e5c;font-weight:400">(<span id="nrows"></span> lignes)</span></div>
+      <input class="pbd-search" id="fsearch" placeholder="Rechercher">
+      <div class="pbd-tblname"><i class="fas fa-table"></i><span id="tblnm">Ventes</span> <span style="color:#605e5c;font-weight:400">(<span id="nrows"></span> lignes)</span></div>
       <ul class="pbd-fields" id="fieldlist"></ul>
     </div>
   </div>
-  <div class="pbd-status"><span>Page 1 sur 1</span><span>Mode Importation</span></div>
+  <div class="pbd-status"><span id="pgstat">Page 1 sur 1</span><span id="modestat">Mode Importation</span></div>
 </div>
 
 {% raw %}
@@ -136,14 +143,14 @@ let seed=20260;function rnd(){seed=(seed*16807)%2147483647;return (seed-1)/21474
 const VILLES=['Abidjan','Bouaké','Daloa','San-Pédro','Korhogo'];
 const PRODUITS=[['Riz',650],['Cacao',1450],['Café',1100],['Anacarde',900],['Huile',1250]];
 const CANAUX=['Boutique','En ligne','Grossiste'];
-const DATA=[];
+const DATA=[];let TBL='Ventes';
 for(let i=0;i<480;i++){
   const an=2024+(rnd()<.45?0:1), mo=1+Math.floor(rnd()*12), v=Math.floor(rnd()*5), p=Math.floor(rnd()*5), c=Math.floor(rnd()*3);
   const q=1+Math.floor(rnd()*(c===2?40:12)), prix=Math.round(PRODUITS[p][1]*(0.92+rnd()*.16)*(an===2025?1.06:1));
   DATA.push({Date:an+'-'+String(mo).padStart(2,'0')+'-'+String(1+Math.floor(rnd()*27)).padStart(2,'0'),Annee:an,Mois:mo,Ville:VILLES[v],Produit:PRODUITS[p][0],Canal:CANAUX[c],Client:'C'+String(1+Math.floor(rnd()*60)).padStart(2,'0'),Quantite:q,Prix:prix,Montant:q*prix});
 }
-const COLS=['Date','Annee','Mois','Ville','Produit','Canal','Client','Quantite','Prix','Montant'];
-const DIMS=['Ville','Produit','Canal','Annee','Mois'];
+let COLS=['Date','Annee','Mois','Ville','Produit','Canal','Client','Quantite','Prix','Montant'];
+let DIMS=['Ville','Produit','Canal','Annee','Mois'];
 const MOIS=['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'];
 const fmt=v=>v==null?'(vide)':typeof v==='number'?(Math.abs(v)<1&&v!==0?v.toLocaleString('fr-FR',{maximumFractionDigits:3}):v.toLocaleString('fr-FR',{maximumFractionDigits:2})):String(v);
 const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -197,7 +204,7 @@ function parse(src){
     if(t.k==='id'){
       if(isOp('(')){p++;const args=[];if(!isOp(')')){args.push(or());while(isOp(',')){p++;args.push(or());}}expect(')');return {n:'call',f:t.v.toUpperCase(),args};}
       const u=t.v.toUpperCase();if(u==='TRUE')return {n:'num',v:true};if(u==='FALSE')return {n:'num',v:false};
-      if(u==='VENTES')return {n:'table'};
+      if(u===TBL.toUpperCase())return {n:'table'};
       return {n:'var',v:t.v};
     }
     throw new Error('Élément inattendu.');
@@ -283,14 +290,14 @@ function parseMeasure(text){
 }
 
 /* ---------- Segments ---------- */
-const SL={Ville:VILLES,Produit:PRODUITS.map(x=>x[0]),Annee:[2024,2025]};
+let SL={Ville:VILLES,Produit:PRODUITS.map(x=>x[0]),Annee:[2024,2025]};
 const selected={Ville:new Set(),Produit:new Set(),Annee:new Set()};
 let cross=null;
-function baseFilters(){
+let baseFilters=function(){
   const f=[];
   Object.keys(selected).forEach(c=>{if(selected[c].size)f.push({col:c,test:v=>selected[c].has(v)});});
   return f;
-}
+};
 function buildSlicers(){
   const h=Object.keys(SL).map(c=>'<div class="pb-slicer"><b>'+(c==='Annee'?'Année':c)+'</b><div class="chips" data-c="'+c+'">'+SL[c].map(v=>'<span class="chip'+(selected[c].has(v)?' on':'')+'" data-v="'+esc(v)+'">'+esc(v)+'</span>').join('')+'</div></div>').join('');
   $('#slicers').innerHTML=h;
@@ -325,7 +332,7 @@ function svgBar(d,v){
   let s='<svg viewBox="0 0 '+W+' '+H+'" font-family="Inter,Segoe UI,sans-serif">';
   for(let i=0;i<=4;i++){const y=T+(H-T-B)*(1-i/4);s+='<line x1="'+L+'" x2="'+(W-6)+'" y1="'+y+'" y2="'+y+'" stroke="#e6ecf2"/><text x="'+(L-5)+'" y="'+(y+3)+'" font-size="9" text-anchor="end" fill="#5b6b7b">'+fmt(Math.round(mx*i/4*10)/10)+'</text>';}
   d.forEach((x,i)=>{const h=(H-T-B)*(x.val||0)/mx,xx=L+i*bw+bw*.15,y=H-B-h;const sel=cross&&cross.col===v.axis&&cross.val===x.key;
-    s+='<rect data-k="'+esc(x.key)+'" x="'+xx+'" y="'+y+'" width="'+bw*.7+'" height="'+Math.max(h,0)+'" fill="'+(cross&&cross.col===v.axis&&!sel?'#b8d6f5':'#118dff')+'" style="cursor:pointer"><title>'+esc(x.label)+' : '+fmt(x.val)+'</title></rect>';
+    s+='<rect data-k="'+esc(x.key)+'" x="'+xx+'" y="'+y+'" width="'+bw*.7+'" height="'+Math.max(h,0)+'" fill="'+(cross&&cross.col===v.axis&&!sel?'#b8d6f5':PAL[0])+'" style="cursor:pointer"><title>'+esc(x.label)+' : '+fmt(x.val)+'</title></rect>';
     s+='<text x="'+(xx+bw*.35)+'" y="'+(H-B+13)+'" font-size="9.5" text-anchor="middle" fill="#1f2933">'+esc(x.label.length>9?x.label.slice(0,8)+'.':x.label)+'</text>';});
   return s+'</svg>';
 }
@@ -334,7 +341,7 @@ function svgLine(d,v){
   let s='<svg viewBox="0 0 '+W+' '+H+'" font-family="Inter,Segoe UI,sans-serif">';
   for(let i=0;i<=4;i++){const y=T+(H-T-B)*(1-i/4);s+='<line x1="'+L+'" x2="'+(W-6)+'" y1="'+y+'" y2="'+y+'" stroke="#e6ecf2"/><text x="'+(L-5)+'" y="'+(y+3)+'" font-size="9" text-anchor="end" fill="#5b6b7b">'+fmt(Math.round(mx*i/4*10)/10)+'</text>';}
   const pts=d.map((x,i)=>[L+8+i*st,H-B-(H-T-B)*(x.val||0)/mx]);
-  s+='<polyline fill="none" stroke="#118dff" stroke-width="2.5" points="'+pts.map(p=>p.join(',')).join(' ')+'"/>';
+  s+='<polyline fill="none" stroke="'+PAL[0]+'" stroke-width="2.5" points="'+pts.map(p=>p.join(',')).join(' ')+'"/>';
   d.forEach((x,i)=>{const sel=cross&&cross.col===v.axis&&cross.val===x.key;s+='<circle data-k="'+esc(x.key)+'" cx="'+pts[i][0]+'" cy="'+pts[i][1]+'" r="'+(sel?6:4)+'" fill="'+(sel?'#e66c37':'#12239e')+'" style="cursor:pointer"><title>'+esc(x.label)+' : '+fmt(x.val)+'</title></circle><text x="'+pts[i][0]+'" y="'+(H-B+13)+'" font-size="9.5" text-anchor="middle" fill="#1f2933">'+esc(x.label.slice(0,6))+'</text>';});
   return s+'</svg>';
 }
@@ -348,7 +355,7 @@ function svgDonut(d,v){
   d.forEach((x,i)=>{const y=34+i*22;s+='<rect x="235" y="'+(y-9)+'" width="11" height="11" fill="'+PAL[i%PAL.length]+'"/><text x="252" y="'+y+'" font-size="11" fill="#1f2933">'+esc(x.label)+' ('+((Math.max(0,x.val||0)/tot)*100).toFixed(1)+' %)</text>';});
   return s+'</svg>';
 }
-function renderVisual(v,i){
+let renderVisual=function(v,i){
   const f=filtersFor(v);let body='',title=v.meas+(v.type==='card'?'':' par '+(v.axis==='Annee'?'année':v.axis.toLowerCase()));
   try{
     if(v.type==='card'){const val=measureValue(v.meas,f);body='<div class="pb-card-kpi">'+fmt(val)+'</div><div class="pb-kpi-sub">'+esc(v.meas)+(baseFilters().length||cross?' · filtres actifs':' · toutes les données')+'</div>';title=v.meas;}
@@ -360,14 +367,14 @@ function renderVisual(v,i){
     }
   }catch(e){body='<div class="pb-msg ko">'+esc(e.message)+'</div>';}
   return '<div class="pb-vis" data-i="'+i+'"><button class="x" title="Supprimer" data-x="'+i+'">&#10005;</button><h3>'+esc(title)+'</h3>'+body+'</div>';
-}
-function renderCanvas(){
+};
+let renderCanvas=function(){
   $('#canvas').innerHTML=visuals.length?visuals.map(renderVisual).join(''):'<p class="lab-small" style="color:#5b6b7b">Aucun visuel : ajoutez-en un ci-dessus.</p>';
   document.querySelectorAll('#canvas .x').forEach(b=>b.onclick=()=>{visuals.splice(+b.dataset.x,1);renderCanvas();});
   document.querySelectorAll('#canvas .pb-vis').forEach(el=>{const v=visuals[+el.dataset.i];
     el.querySelectorAll('[data-k]').forEach(m=>m.onclick=()=>{const raw=m.getAttribute('data-k');const val=DATA.find(r=>String(r[v.axis])===raw)[v.axis];
       cross=(cross&&cross.col===v.axis&&cross.val===val)?null:{col:v.axis,val};renderCanvas();});});
-}
+};
 
 /* ---------- Résultats DAX ---------- */
 function renderMeasures(){
@@ -446,7 +453,7 @@ buildSlicers();fillMeasureSelects();loadDefi();refresh();
 
 /* ---------- Habillage Power BI Desktop ---------- */
 function renderFields(){
-  const NUMCOLS=['Quantite','Prix','Montant'];
+  const NUMCOLS=COLS.filter(c=>DATA.length&&typeof DATA[0][c]==='number'&&DIMS.indexOf(c)<0||['Quantite','Prix','Montant'].indexOf(c)>=0);
   let h=COLS.map(c=>{const num=NUMCOLS.indexOf(c)>=0,dt=c==='Date',dim=DIMS.indexOf(c)>=0;
     return '<li data-dim="'+(dim?c:'')+'"><i class="fas '+(num?'fa-sigma':dt?'fa-calendar':'fa-font')+'"></i>'+(c==='Annee'?'Annee':c)+'</li>';}).join('');
   h=h.replace(/fa-sigma/g,'fa-hashtag');
@@ -461,13 +468,218 @@ function renderFields(){
 function syncVGrid(){document.querySelectorAll('#vgrid button').forEach(b=>b.classList.toggle('on',b.dataset.v===$('#v-type').value));$('#v-axis-w').style.display=$('#v-type').value==='card'?'none':'';}
 document.querySelectorAll('#vgrid button').forEach(b=>b.onclick=()=>{$('#v-type').value=b.dataset.v;syncVGrid();});
 syncVGrid();
-function goTab(t){const b=document.querySelector('.pb-tab[data-t='+t+']');if(b)b.click();}
-$('#rb-visual').onclick=()=>{goTab('rapport');$('#v-add').click();};
-$('#rb-clear').onclick=()=>{goTab('rapport');$('#v-clear').click();};
-$('#rb-measure').onclick=()=>{goTab('dax');$('#dax-in').focus();};
-$('#rb-quick').onclick=()=>goTab('defis');
-$('#rb-refresh').onclick=()=>refresh(true);
 renderFields();
+/* ===== Interface fonctionnelle : ruban, pages, import, transformation ===== */
+const AC=window.AppChrome;
+const SAMPLE={data:DATA.map(r=>Object.assign({},r)),cols:COLS.slice(),dims:DIMS.slice(),sl:JSON.parse(JSON.stringify(SL)),meas:MEASURES.map(m=>({name:m.name,expr:m.expr}))};
+let pages=[{name:'Page 1',visuals:visuals}],curPage=0,selVis=-1,theme='Par défaut',rls=null,gridOn=true,reportName='Rapport_Ventes';
+const THEMES={'Par défaut':['#118dff','#12239e','#e66c37','#6b007b','#e044a7','#744ec2'],'Océan':['#0b6e99','#1f9bcf','#56c1e0','#0b2a4a','#7fb3d5','#2c5f8a'],'Chaud':['#c0392b','#e67e22','#f1c40f','#8e44ad','#d35400','#7f8c8d'],'Forêt':['#1e8449','#27ae60','#82c341','#145a32','#b7950b','#52796f'],'Contraste':['#000000','#d4a017','#0057b8','#c0392b','#2e7d32','#6a1b9a']};
+const distinct=c=>{const v=[...new Set(DATA.map(r=>r[c]))];v.sort((a,b)=>a<b?-1:a>b?1:0);return v;};
+const _bf=baseFilters;
+baseFilters=function(){const f=_bf();if(rls)f.push({col:rls.col,test:v=>v===rls.val});return f;};
+function goTab(t){const b=document.querySelector('.pb-tab[data-t='+t+']');if(b)b.click();}
+function themeApply(n){theme=n;PAL.splice(0,PAL.length,...THEMES[n]);renderCanvas();}
+/* historique */
+const undo=[],redo=[];let restoring=false;
+const snap=()=>JSON.stringify({p:pages.map(x=>({n:x.name,v:x.visuals})),m:MEASURES.map(m=>({name:m.name,expr:m.expr})),c:curPage});
+let last=snap();
+function track(){const c=snap();if(c!==last){if(!restoring){undo.push(last);if(undo.length>60)undo.shift();redo.length=0;}last=c;}}
+function restore(s){restoring=true;const o=JSON.parse(s);pages=o.p.map(x=>({name:x.n,visuals:x.v}));curPage=Math.min(o.c,pages.length-1);visuals=pages[curPage].visuals;MEASURES=o.m;selVis=-1;pageTabs();refresh(true);restoring=false;last=snap();}
+function doUndo(){if(!undo.length)return AC.toast('Rien à annuler.');redo.push(last);restore(undo.pop());}
+function doRedo(){if(!redo.length)return AC.toast('Rien à rétablir.');undo.push(last);restore(redo.pop());}
+/* renderCanvas étendu */
+const renderCanvas0=renderCanvas;
+renderCanvas=function(){pages[curPage].visuals=visuals;renderCanvas0();decorate();track();};
+const renderVisual0=renderVisual;
+renderVisual=function(v,i){
+  if(v.type==='text')return '<div class="pb-vis txt" data-i="'+i+'"><button class="x" data-x="'+i+'" title="Supprimer">&#10005;</button><div class="tx" contenteditable="true" data-t="'+i+'">'+esc(v.text||'Zone de texte')+'</div></div>';
+  if(v.type==='slicer'){selected[v.axis]=selected[v.axis]||new Set();return '<div class="pb-vis" data-i="'+i+'"><button class="x" data-x="'+i+'" title="Supprimer">&#10005;</button><h3>Segment : '+esc(v.axis)+'</h3><div class="chips" data-sl="'+esc(v.axis)+'">'+distinct(v.axis).map(x=>'<span class="chip'+(selected[v.axis].has(x)?' on':'')+'" data-v="'+esc(x)+'">'+esc(x)+'</span>').join('')+'</div></div>';}
+  return renderVisual0(v,i);
+};
+function selectVis(i){selVis=i;const v=visuals[i];
+  if(v&&v.type!=='text'&&v.type!=='slicer'){$('#v-type').value=v.type;if(v.axis)$('#v-axis').value=v.axis;if(v.meas)$('#v-meas').value=v.meas;syncVGrid();}
+  document.querySelectorAll('#canvas .pb-vis').forEach(e=>e.classList.toggle('sel',+e.dataset.i===i));}
+function decorate(){
+  document.querySelectorAll('#canvas .pb-vis').forEach(el=>{
+    el.addEventListener('mousedown',e=>{if(e.target.closest('.x'))return;selectVis(+el.dataset.i);});
+    if(+el.dataset.i===selVis)el.classList.add('sel');
+  });
+  document.querySelectorAll('#canvas [data-t]').forEach(t=>t.addEventListener('blur',()=>{visuals[+t.dataset.t].text=t.textContent;track();}));
+  document.querySelectorAll('#canvas [data-sl] .chip').forEach(ch=>ch.onclick=()=>{const c=ch.parentNode.dataset.sl,v=distinct(c).find(x=>String(x)===ch.dataset.v);selected[c].has(v)?selected[c].delete(v):selected[c].add(v);buildSlicers();refresh();});
+  $('#canvas').parentNode.classList.toggle('grid',gridOn);
+}
+function addVisual(type,extra){
+  const v=Object.assign({type,axis:DIMS[0],meas:MEASURES[0].name},extra||{});
+  if(type==='bar'||type==='donut'||type==='table')v.axis=$('#v-axis').value||DIMS[0];
+  if(type==='line')v.axis=DIMS.indexOf('Mois')>=0?'Mois':DIMS[0];
+  if(['bar','line','donut','card','table'].indexOf(type)>=0)v.meas=$('#v-meas').value||MEASURES[0].name;
+  visuals.push(v);goTab('rapport');renderCanvas();selectVis(visuals.length-1);
+}
+/* modifier le visuel sélectionné */
+function applySel(){const v=visuals[selVis];if(!v||v.type==='text'||v.type==='slicer'||v.type==='')return;v.type=$('#v-type').value;v.axis=$('#v-axis').value;v.meas=$('#v-meas').value;renderCanvas();}
+document.querySelectorAll('#vgrid button').forEach(b=>b.addEventListener('click',applySel));
+$('#v-axis').addEventListener('change',applySel);$('#v-meas').addEventListener('change',applySel);
+$('#fieldlist').addEventListener('click',()=>{$('#v-axis').dispatchEvent(new Event('change'));});
+$('#fsearch').oninput=e=>{const q=e.target.value.toLowerCase();document.querySelectorAll('#fieldlist li').forEach(li=>li.style.display=li.textContent.toLowerCase().includes(q)?'':'none');};
+document.addEventListener('keydown',e=>{
+  const t=e.target,typing=t&&(/INPUT|TEXTAREA|SELECT/.test(t.tagName)||t.isContentEditable);if(typing)return;
+  if(e.key==='Delete'&&selVis>=0){visuals.splice(selVis,1);selVis=-1;renderCanvas();}
+  else if(e.ctrlKey&&e.key.toLowerCase()==='z'){e.preventDefault();doUndo();}
+  else if(e.ctrlKey&&e.key.toLowerCase()==='y'){e.preventDefault();doRedo();}
+  else if(e.ctrlKey&&e.key.toLowerCase()==='s'){e.preventDefault();ACT.save();}
+});
+/* pages */
+function pageTabs(){
+  $('#pagetabs').innerHTML=pages.map((p,i)=>'<span class="pg'+(i===curPage?' on':'')+'" data-i="'+i+'">'+esc(p.name)+(i===curPage&&pages.length>1?' <b class="px" title="Supprimer la page">&times;</b>':'')+'</span>').join('')+'<span class="add" id="pgadd" title="Nouvelle page">+</span>';
+  document.querySelectorAll('#pagetabs .pg').forEach(s=>{s.onclick=e=>{if(e.target.classList.contains('px')){ACT.delpage();return;}switchPage(+s.dataset.i);};s.ondblclick=()=>ACT.renamepage(+s.dataset.i);});
+  $('#pgadd').onclick=()=>ACT.newpage();$('#pgstat').textContent='Page '+(curPage+1)+' sur '+pages.length;
+}
+function switchPage(i){pages[curPage].visuals=visuals;curPage=i;visuals=pages[i].visuals;selVis=-1;goTab('rapport');pageTabs();renderCanvas();}
+/* modèle */
+function numeric(c){return DATA.length&&DATA.every(r=>r[c]===null||r[c]===''||typeof r[c]==='number');}
+function rebuildModel(name){
+  if(name)TBL=name;
+  DIMS=COLS.filter(c=>!numeric(c)&&distinct(c).length<=60&&c!=='Date'||/^(annee|année|mois|year|month)$/i.test(c));
+  const isV=SAMPLE.cols.every(c=>COLS.includes(c));
+  if(isV)DIMS=SAMPLE.dims.filter(c=>COLS.includes(c));
+  SL={};Object.keys(selected).forEach(k=>delete selected[k]);
+  (isV?Object.keys(SAMPLE.sl):DIMS.slice(0,3)).forEach(c=>{SL[c]=distinct(c);selected[c]=new Set();});
+  const nums=COLS.filter(c=>numeric(c)&&DIMS.indexOf(c)<0);
+  if(TBL!=='Ventes'||!COLS.includes('Montant')){
+    MEASURES=[{name:'Nb lignes',expr:'COUNTROWS('+TBL+')'}];
+    nums.slice(0,4).forEach(c=>{MEASURES.push({name:'Somme de '+c,expr:'SUM('+TBL+'['+c+'])'});MEASURES.push({name:'Moyenne de '+c,expr:'AVERAGE('+TBL+'['+c+'])'});});
+  }else{MEASURES=SAMPLE.meas.map(m=>({name:m.name,expr:m.expr}));}
+  rls=null;
+  $('#v-axis').innerHTML=DIMS.map(d=>'<option value="'+esc(d)+'">'+esc(d)+'</option>').join('');
+  $('#r-dim').innerHTML='<option>(aucun)</option>'+DIMS.map(d=>'<option>'+esc(d)+'</option>').join('');
+  const m0=MEASURES[0].name,d0=DIMS[0];
+  pages.forEach(p=>{p.visuals=p.visuals.filter(v=>v.type==='text'||(v.type==='slicer'?DIMS.includes(v.axis):true)).map(v=>{if(v.type==='text'||v.type==='slicer')return v;if(!DIMS.includes(v.axis))v.axis=d0;if(!MEASURES.some(m=>m.name===v.meas))v.meas=m0;return v;});});
+  if(!pages.some(p=>p.visuals.length)){pages[0].visuals=[{type:'card',axis:d0,meas:m0},{type:'bar',axis:d0,meas:m0},{type:'donut',axis:d0,meas:m0}];}
+  visuals=pages[curPage].visuals;cross=null;selVis=-1;
+  $('#nrows').textContent=DATA.length;$('#tblnm').textContent=TBL;
+  const w=$('#d-warn');if(w)w.style.display=(TBL==='Ventes'&&COLS.includes('Montant'))?'none':'';
+  buildSlicers();fillMeasureSelects();refresh(true);renderDonnees();renderModele();
+}
+function loadSample(){DATA.length=0;SAMPLE.data.forEach(r=>DATA.push(Object.assign({},r)));COLS=SAMPLE.cols.slice();TBL='Ventes';rebuildModel('Ventes');}
+function importCSV(text,fname){
+  const rows=AC.csvParse(text.replace(/^﻿/,''));if(rows.length<2)throw new Error('Le fichier est vide ou ne contient pas de lignes de données.');
+  const head=rows[0].map((h,i)=>(h||'Colonne'+(i+1)).trim());
+  const body=rows.slice(1,5001).filter(r=>r.some(x=>x!==''));
+  const isNum=j=>body.every(r=>r[j]===undefined||r[j]===''||!isNaN(parseFloat(String(r[j]).replace(/\s/g,'').replace(',','.')))&&/^-?[\d\s]*[.,]?\d+$/.test(String(r[j]).trim()));
+  const types=head.map((_,j)=>isNum(j));
+  DATA.length=0;body.forEach(r=>{const o={};head.forEach((h,j)=>{let v=r[j]===undefined?'':r[j];o[h]=types[j]?(v===''?null:parseFloat(String(v).replace(/\s/g,'').replace(',','.'))):v;});DATA.push(o);});
+  COLS=head;
+  const nm=(fname||'Table').replace(/\.[^.]+$/,'').replace(/[^A-Za-z0-9_]/g,'_').replace(/^(\d)/,'T$1')||'Table';
+  rebuildModel(nm);
+}
+/* Données & modèle */
+let dsort=null;
+function renderDonnees(){
+  let rows=DATA.slice();if(dsort)rows.sort((a,b)=>{const x=a[dsort.c],y=b[dsort.c];return (x<y?-1:x>y?1:0)*dsort.d;});
+  $('#dn-info').textContent='— '+TBL+' : '+DATA.length+' lignes, '+COLS.length+' colonnes';
+  $('#dn-tbl').innerHTML='<tr>'+COLS.map(c=>'<th data-c="'+esc(c)+'" style="cursor:pointer">'+esc(c)+(dsort&&dsort.c===c?(dsort.d>0?' ▲':' ▼'):'')+'</th>').join('')+'</tr>'+rows.slice(0,300).map(r=>'<tr>'+COLS.map(c=>'<td'+(typeof r[c]==='number'?' class="num"':'')+'>'+(r[c]===null?'':esc(typeof r[c]==='number'?fmt(r[c]):r[c]))+'</td>').join('')+'</tr>').join('');
+  document.querySelectorAll('#dn-tbl th').forEach(th=>th.onclick=()=>{dsort=dsort&&dsort.c===th.dataset.c?{c:th.dataset.c,d:-dsort.d}:{c:th.dataset.c,d:1};renderDonnees();});
+}
+function renderModele(){
+  $('#mdl').innerHTML='<div class="mdl-t"><div class="mdl-h">'+esc(TBL)+'</div>'+COLS.map(c=>'<div class="mdl-c"><i class="fas '+(numeric(c)&&DIMS.indexOf(c)<0?'fa-hashtag':c==='Date'?'fa-calendar':'fa-font')+'"></i> '+esc(c)+'</div>').join('')+MEASURES.map(m=>'<div class="mdl-c m"><i class="fas fa-calculator"></i> '+esc(m.name)+'</div>').join('')+'</div><p class="lab-small" style="color:#605e5c;margin-top:.8rem">Le modèle contient une seule table : aucune relation n\'est nécessaire. Les relations apparaissent lorsque plusieurs tables sont importées.</p>';
+}
+document.querySelectorAll('.pb-tab').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.t==='donnees')renderDonnees();if(b.dataset.t==='modele')renderModele();}));
+/* Power Query */
+function queryEditor(){
+  let WD=DATA.map(r=>Object.assign({},r)),WC=COLS.slice(),steps=['Source'];
+  const m=AC.modal({title:'Éditeur Power Query',wide:true,html:'<div id="pq"></div>',buttons:[{t:'Fermer et appliquer',primary:true,f:()=>{DATA.length=0;WD.forEach(r=>DATA.push(r));COLS=WC;rebuildModel(TBL);AC.toast('Modifications appliquées au modèle.');}},{t:'Annuler'}]});
+  const sel=(id)=>'<select id="'+id+'">'+WC.map(c=>'<option>'+esc(c)+'</option>').join('')+'</select>';
+  function draw(){
+    m.el.querySelector('#pq').innerHTML='<div style="display:grid;grid-template-columns:1fr 200px;gap:1rem"><div><div style="max-height:230px;overflow:auto;border:1px solid #d2d0ce"><table class="pb-res" style="margin:0"><tr>'+WC.map(c=>'<th>'+esc(c)+'</th>').join('')+'</tr>'+WD.slice(0,10).map(r=>'<tr>'+WC.map(c=>'<td>'+(r[c]===null?'':esc(r[c]))+'</td>').join('')+'</tr>').join('')+'</table></div><div class="lab-small" style="margin:.3rem 0;color:#605e5c">'+WD.length+' lignes · '+WC.length+' colonnes</div>'+
+      '<div class="pq-ops"><div>'+sel('q1')+' <button class="pb-btn" id="q-del">Supprimer la colonne</button></div>'+
+      '<div>'+sel('q2')+' <input type="text" id="q2n" placeholder="Nouveau nom" style="width:130px"> <button class="pb-btn" id="q-ren">Renommer</button></div>'+
+      '<div>'+sel('q3')+' <select id="q3o"><option value="=">égal à</option><option value="!=">différent de</option><option value=">">supérieur à</option><option value="<">inférieur à</option><option value="c">contient</option></select> <input type="text" id="q3v" style="width:110px"> <button class="pb-btn" id="q-fil">Filtrer les lignes</button></div>'+
+      '<div>'+sel('q4')+' <input type="text" id="q4a" placeholder="Valeur" style="width:90px"> → <input type="text" id="q4b" placeholder="Remplacer par" style="width:100px"> <button class="pb-btn" id="q-rep">Remplacer</button></div>'+
+      '<div>'+sel('q5')+' <select id="q5d"><option value="1">croissant</option><option value="-1">décroissant</option></select> <button class="pb-btn" id="q-sort">Trier</button> <button class="pb-btn" id="q-dup">Supprimer les doublons</button></div>'+
+      '<div><input type="text" id="q6n" placeholder="Nouvelle colonne" style="width:130px"> = <input type="text" id="q6e" placeholder="[Quantite] * [Prix]" style="width:170px"> <button class="pb-btn" id="q-add">Colonne personnalisée</button></div></div></div>'+
+      '<div><b style="font-size:.8rem">Étapes appliquées</b><ol class="pq-steps">'+steps.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ol></div></div>';
+    const $$=s=>m.el.querySelector(s),num=v=>v!==''&&!isNaN(+v);
+    $$('#q-del').onclick=()=>{const c=$$('#q1').value;if(WC.length<2)return AC.toast('Il faut conserver au moins une colonne.');WC=WC.filter(x=>x!==c);WD.forEach(r=>delete r[c]);steps.push('Colonne supprimée : '+c);draw();};
+    $$('#q-ren').onclick=()=>{const c=$$('#q2').value,n=$$('#q2n').value.trim();if(!n||WC.includes(n))return AC.toast('Nom vide ou déjà utilisé.');WC=WC.map(x=>x===c?n:x);WD.forEach(r=>{r[n]=r[c];delete r[c];});steps.push('Colonne renommée : '+c+' → '+n);draw();};
+    $$('#q-fil').onclick=()=>{const c=$$('#q3').value,o=$$('#q3o').value,v=$$('#q3v').value;const t=r=>{const x=r[c];if(o==='c')return String(x).toLowerCase().includes(v.toLowerCase());const a=num(v)&&typeof x==='number'?x:String(x),b=num(v)&&typeof x==='number'?+v:v;return o==='='?a==b:o==='!='?a!=b:o==='>'?a>b:a<b;};WD=WD.filter(t);steps.push('Lignes filtrées : '+c+' '+o+' '+v);draw();};
+    $$('#q-rep').onclick=()=>{const c=$$('#q4').value,a=$$('#q4a').value,b=$$('#q4b').value;WD.forEach(r=>{if(String(r[c])===a)r[c]=typeof r[c]==='number'&&num(b)?+b:b;});steps.push('Valeurs remplacées dans '+c);draw();};
+    $$('#q-sort').onclick=()=>{const c=$$('#q5').value,d=+$$('#q5d').value;WD.sort((x,y)=>(x[c]<y[c]?-1:x[c]>y[c]?1:0)*d);steps.push('Tri sur '+c);draw();};
+    $$('#q-dup').onclick=()=>{const s=new Set();WD=WD.filter(r=>{const k=JSON.stringify(WC.map(c=>r[c]));if(s.has(k))return false;s.add(k);return true;});steps.push('Doublons supprimés');draw();};
+    $$('#q-add').onclick=()=>{const n=$$('#q6n').value.trim(),e=$$('#q6e').value.trim();if(!n||!e||WC.includes(n))return AC.toast('Nom ou formule invalide.');
+      if(!/^[\w\s\[\]À-ſ+\-*/().,]+$/.test(e))return AC.toast('Formule non autorisée.');
+      try{const f=new Function('r','return '+e.replace(/\[([^\]]+)\]/g,(_,c)=>'r["'+c.replace(/"/g,'')+'"]'));const nd=WD.map(r=>{const o=Object.assign({},r);const v=f(r);o[n]=typeof v==='number'&&isFinite(v)?Math.round(v*1e6)/1e6:v;return o;});WD=nd;WC=WC.concat(n);steps.push('Colonne ajoutée : '+n);draw();}catch(x){AC.toast('Formule invalide.');}};
+  }
+  draw();
+}
+/* actions */
+const BASE_MEAS=()=>SAMPLE.meas.map(m=>({name:m.name,expr:m.expr}));
+function modalTxt(t,h,w){AC.modal({title:t,html:h,wide:w});}
+const DAXDOC='<table class="pb-res"><tr><th>Fonction</th><th>Rôle</th></tr><tr><td>SUM, AVERAGE, MIN, MAX</td><td>Agrégations d\'une colonne</td></tr><tr><td>COUNT, COUNTROWS, DISTINCTCOUNT</td><td>Comptages</td></tr><tr><td>DIVIDE(a, b)</td><td>Division sûre (gère le zéro)</td></tr><tr><td>CALCULATE(mesure, filtre...)</td><td>Évalue une mesure avec un contexte de filtre modifié</td></tr><tr><td>ALL, REMOVEFILTERS</td><td>Supprime les filtres d\'une colonne ou d\'une table</td></tr><tr><td>SUMX, AVERAGEX</td><td>Itérateurs ligne par ligne</td></tr><tr><td>IF, ROUND, ABS</td><td>Logique et arrondi</td></tr><tr><td>VAR ... RETURN</td><td>Variables</td></tr></table>';
+const ACT={
+  newrep(){AC.modal({title:'Nouveau rapport',html:'<p>Le rapport actuel sera remplacé. Les modifications non enregistrées seront perdues.</p>',buttons:[{t:'Nouveau rapport',primary:true,f:()=>{pages=[{name:'Page 1',visuals:[]}];curPage=0;theme='Par défaut';PAL.splice(0,PAL.length,...THEMES[theme]);reportName='Rapport_Ventes';$('#rptname').textContent=reportName;loadSample();pages[0].visuals=[{type:'card',axis:'Ville',meas:'CA'},{type:'bar',axis:'Ville',meas:'CA'},{type:'line',axis:'Mois',meas:'CA'},{type:'donut',axis:'Produit',meas:'CA'}];visuals=pages[0].visuals;pageTabs();renderCanvas();}},{t:'Annuler'}]});},
+  open(){AC.pick('.json,.pbi',t=>{try{const o=JSON.parse(t);if(!o.pages)throw 0;DATA.length=0;o.data.forEach(r=>DATA.push(r));COLS=o.cols;TBL=o.tbl;pages=o.pages.map(x=>({name:x.name,visuals:x.visuals}));curPage=0;reportName=o.name||reportName;$('#rptname').textContent=reportName;theme=o.theme||'Par défaut';PAL.splice(0,PAL.length,...(THEMES[theme]||THEMES['Par défaut']));rebuildModel(TBL);if(o.measures)MEASURES=o.measures;pages.forEach(p=>{p.visuals=p.visuals||[];});visuals=pages[0].visuals;pageTabs();refresh(true);AC.toast('Rapport ouvert.');}catch(e){AC.toast('Fichier de rapport invalide.');}});},
+  save(){AC.download(reportName+'.json',JSON.stringify({v:1,name:reportName,tbl:TBL,cols:COLS,data:DATA,pages:pages.map(p=>({name:p.name,visuals:p.visuals})),measures:MEASURES.map(m=>({name:m.name,expr:m.expr})),theme}),'application/json');AC.toast('Rapport enregistré : '+reportName+'.json');},
+  saveas(){AC.modal({title:'Enregistrer sous',html:'<label>Nom du rapport</label><input type="text" id="sn" value="'+esc(reportName)+'">',buttons:[{t:'Enregistrer',primary:true,f:w=>{const n=w.querySelector('#sn').value.trim().replace(/[^\w\-À-ſ ]/g,'');if(n){reportName=n;$('#rptname').textContent=n;ACT.save();}}},{t:'Annuler'}]});},
+  exportcsv(){const q=v=>'"'+String(v===null?'':v).replace(/"/g,'""')+'"';AC.download(TBL+'.csv','﻿'+[COLS.map(q).join(',')].concat(DATA.map(r=>COLS.map(c=>q(r[c])).join(','))).join('\n'),'text/csv;charset=utf-8');},
+  print(){window.print();},
+  quit(){location.href='/formations';},
+  options(){AC.modal({title:'Options',html:'<p>Thème des visuels</p>'+Object.keys(THEMES).map(n=>'<label style="display:block"><input type="radio" name="th" value="'+n+'"'+(n===theme?' checked':'')+'> '+n+'</label>').join(''),buttons:[{t:'OK',primary:true,f:w=>{const r=w.querySelector('input:checked');if(r)themeApply(r.value);}},{t:'Annuler'}]});},
+  getdata(){const m=AC.modal({title:'Obtenir les données',html:'<div class="gd"><button class="pb-btn" id="gd1"><b>Classeur d\'exemple (Ventes)</b><br><small>Jeu de données du laboratoire : 480 ventes 2024-2025</small></button><button class="pb-btn" id="gd2"><b>Texte/CSV</b><br><small>Importer un fichier .csv de votre ordinateur (séparateur , ou ;)</small></button></div>',buttons:[{t:'Annuler'}]});m.el.querySelector('#gd1').onclick=()=>{m.close();loadSample();AC.toast('Jeu de données d\'exemple chargé.');};m.el.querySelector('#gd2').onclick=()=>{m.close();AC.pick('.csv,.txt',(t,n)=>{try{importCSV(t,n);AC.toast('Table « '+TBL+' » importée ('+DATA.length+' lignes).');}catch(e){AC.toast(e.message);}});};},
+  transform(){queryEditor();},
+  refresh(){refresh(true);renderDonnees();AC.toast('Données actualisées.');},
+  newvisual(){addVisual($('#v-type').value);},
+  textbox(){addVisual('text',{text:'Zone de texte'});},
+  newmeasure(){goTab('dax');$('#dax-in').focus();},
+  newcol(){AC.modal({title:'Nouvelle colonne',html:'<label>Nom</label><input type="text" id="nc-n"><label>Formule (ex. [Quantite] * [Prix])</label><input type="text" id="nc-e" style="width:100%">',buttons:[{t:'Créer',primary:true,f:w=>{const n=w.querySelector('#nc-n').value.trim(),e=w.querySelector('#nc-e').value.trim();if(!n||!e||COLS.includes(n)){AC.toast('Nom ou formule invalide.');return false;}if(!/^[\w\s\[\]À-ſ+\-*/().,]+$/.test(e)){AC.toast('Formule non autorisée.');return false;}try{const f=new Function('r','return '+e.replace(/\[([^\]]+)\]/g,(_,c)=>'r["'+c.replace(/"/g,'')+'"]'));const vals=DATA.map(r=>f(r));DATA.forEach((r,i)=>{r[n]=typeof vals[i]==='number'&&isFinite(vals[i])?Math.round(vals[i]*1e6)/1e6:vals[i];});COLS=COLS.concat(n);rebuildModel(TBL);AC.toast('Colonne « '+n+' » ajoutée.');}catch(x){AC.toast('Formule invalide.');return false;}}},{t:'Annuler'}]});},
+  quickmeasure(){const opts=MEASURES.map(m=>'<option>'+esc(m.name)+'</option>').join('');AC.modal({title:'Mesure rapide',html:'<label>Calcul</label><select id="qm-t"><option value="pct">Pourcentage du total</option><option value="avg">Moyenne par groupe</option></select><label>Mesure de base</label><select id="qm-m">'+opts+'</select><label>Nom de la nouvelle mesure</label><input type="text" id="qm-n" value="Part du total">',buttons:[{t:'Créer',primary:true,f:w=>{const m=w.querySelector('#qm-m').value,n=w.querySelector('#qm-n').value.trim()||'Mesure rapide',t=w.querySelector('#qm-t').value;const ex=t==='pct'?'DIVIDE(['+m+'], CALCULATE(['+m+'], ALL('+TBL+')))':'DIVIDE(['+m+'], DISTINCTCOUNT('+TBL+'['+DIMS[0]+']))';goTab('dax');$('#dax-in').value=n+' = '+ex;$('#dax-in').focus();AC.toast('Formule générée : vérifiez puis enregistrez.');}},{t:'Annuler'}]});},
+  relations(){modalTxt('Gérer les relations','<p>Le modèle actuel ne contient qu\'une table (<b>'+esc(TBL)+'</b>). Aucune relation n\'est définie ni nécessaire.</p><p>Dans Power BI Desktop, une relation relie la colonne clé d\'une table de dimension (ex. Produits[Produit]) à la colonne correspondante d\'une table de faits, avec une cardinalité un-à-plusieurs et un sens de filtre croisé.</p>');},
+  roles(){const items=['<option value="">Aucun (toutes les données)</option>'].concat(DIMS.slice(0,3).flatMap(c=>distinct(c).map(v=>'<option value="'+esc(c)+'|'+esc(v)+'"'+(rls&&rls.col===c&&rls.val===v?' selected':'')+'>'+esc(c)+' = '+esc(v)+'</option>')));AC.modal({title:'Afficher en tant que (sécurité au niveau des lignes)',html:'<p>Testez ce qu\'un utilisateur limité à un périmètre verrait.</p><select id="rl">'+items.join('')+'</select>',buttons:[{t:'OK',primary:true,f:w=>{const v=w.querySelector('#rl').value;if(!v)rls=null;else{const i=v.indexOf('|'),c=v.slice(0,i),raw=v.slice(i+1);rls={col:c,val:distinct(c).find(x=>String(x)===raw)};}$('#modestat').textContent=rls?'Affichage en tant que : '+rls.col+' = '+rls.val:'Mode Importation';refresh();}},{t:'Annuler'}]});},
+  themes(){AC.modal({title:'Thèmes',html:Object.keys(THEMES).map(n=>'<button class="pb-btn thm" data-n="'+n+'" style="display:flex;gap:.4rem;align-items:center;width:100%;margin-bottom:.4rem"><span>'+n+'</span><span style="margin-left:auto;display:flex;gap:2px">'+THEMES[n].map(c=>'<i style="width:14px;height:14px;background:'+c+'"></i>').join('')+'</span></button>').join(''),buttons:[{t:'Fermer'}]}).el.querySelectorAll('.thm').forEach(b=>b.onclick=()=>themeApply(b.dataset.n));},
+  pagesize(){AC.modal({title:'Taille de la page',html:'<select id="ps"><option value="480">16:9 (par défaut)</option><option value="620">4:3</option><option value="720">Lettre</option><option value="360">Panoramique</option></select>',buttons:[{t:'OK',primary:true,f:w=>{document.querySelector('.pbd-page').style.minHeight=w.querySelector('#ps').value+'px';}},{t:'Annuler'}]});},
+  grid(){gridOn=!gridOn;$('#canvas').parentNode.classList.toggle('grid',gridOn);ribbon(curRib);},
+  pane(k){const el=document.querySelector(k==='f'?'.pbd-pane-f':'.pbd-pane-r');el.classList.toggle('hide');const r=!document.querySelector('.pbd-pane-r').classList.contains('hide'),f=!document.querySelector('.pbd-pane-f').classList.contains('hide');document.querySelector('.pbd-body').style.gridTemplateColumns='48px minmax(0,1fr)'+(r?' 238px':'')+(f?' 190px':'');ribbon(curRib);},
+  zoom(d){zoomV=Math.max(.6,Math.min(1.5,zoomV+d));document.querySelector('.pbd-page').style.zoom=zoomV;},
+  newpage(){pages[curPage].visuals=visuals;pages.push({name:'Page '+(pages.length+1),visuals:[]});switchPage(pages.length-1);},
+  dupepage(){pages[curPage].visuals=visuals;pages.push({name:pages[curPage].name+' (copie)',visuals:JSON.parse(JSON.stringify(visuals))});switchPage(pages.length-1);},
+  delpage(){if(pages.length<2)return AC.toast('Un rapport doit contenir au moins une page.');pages.splice(curPage,1);curPage=Math.max(0,curPage-1);visuals=pages[curPage].visuals;selVis=-1;pageTabs();renderCanvas();},
+  renamepage(i){AC.modal({title:'Renommer la page',html:'<input type="text" id="rn" value="'+esc(pages[i].name)+'">',buttons:[{t:'OK',primary:true,f:w=>{const n=w.querySelector('#rn').value.trim();if(n){pages[i].name=n;pageTabs();track();}}},{t:'Annuler'}]});},
+  delvisual(){if(selVis<0)return AC.toast('Sélectionnez d\'abord un visuel.');visuals.splice(selVis,1);selVis=-1;renderCanvas();},
+  publish(){AC.modal({title:'Publier',html:'<p>La publication vers le service Power BI exige un compte professionnel Microsoft : elle n\'est pas disponible dans ce laboratoire d\'entraînement.</p><p>Vous pouvez enregistrer votre rapport (fichier .json) pour le conserver ou le rouvrir plus tard.</p>',buttons:[{t:'Enregistrer le rapport',primary:true,f:()=>ACT.save()},{t:'Fermer'}]});},
+  defis(){goTab('defis');},
+  about(){modalTxt('À propos','<p><b>Laboratoire Power BI</b> — DataEcon.Ci</p><p>Environnement d\'entraînement reproduisant l\'organisation de Power BD Desktop : ruban, volets, pages, visuels, modèle de données et mesures DAX (sous-ensemble du langage évalué dans le navigateur).</p>'.replace('BD','BI'));},
+  daxdoc(){modalTxt('Référence DAX',DAXDOC,true);},
+  shortcuts(){modalTxt('Raccourcis','<table class="pb-res"><tr><td>Ctrl + Z / Ctrl + Y</td><td>Annuler / Rétablir</td></tr><tr><td>Suppr</td><td>Supprimer le visuel sélectionné</td></tr><tr><td>Ctrl + S</td><td>Enregistrer le rapport</td></tr><tr><td>Double-clic sur un onglet de page</td><td>Renommer la page</td></tr></table>');},
+  course(){location.href='/formations/cours/powerbi/debutant';},
+  vis(t){addVisual(t);}
+};
+let zoomV=1;
+const B=(i,l,a,arg,on)=>({i,l,a,arg,on});
+const RIB={
+  accueil:[{t:'Presse-papiers',b:[B('fa-rotate-left','Annuler','undo'),B('fa-rotate-right','Rétablir','redo')]},{t:'Données',b:[B('fa-database','Obtenir les<br>données','getdata'),B('fa-table-columns','Transformer<br>les données','transform'),B('fa-rotate','Actualiser','refresh')]},{t:'Insérer',b:[B('fa-chart-column','Nouveau<br>visuel','newvisual'),B('fa-font','Zone de<br>texte','textbox'),B('fa-file-circle-plus','Nouvelle<br>page','newpage')]},{t:'Calculs',b:[B('fa-calculator','Nouvelle<br>mesure','newmeasure'),B('fa-bolt','Défis<br>DAX','defis')]},{t:'Partager',b:[B('fa-cloud-arrow-up','Publier','publish')]}],
+  insertion:[{t:'Pages',b:[B('fa-file-circle-plus','Nouvelle<br>page','newpage'),B('fa-copy','Dupliquer<br>la page','dupepage'),B('fa-trash','Supprimer<br>la page','delpage')]},{t:'Visuels',b:[B('fa-chart-column','Histogramme','vis','bar'),B('fa-chart-line','Courbes','vis','line'),B('fa-chart-pie','Anneau','vis','donut'),B('fa-hashtag','Carte','vis','card'),B('fa-table','Tableau','vis','table'),B('fa-filter','Segment','vis','slicer')]},{t:'Éléments',b:[B('fa-font','Zone de<br>texte','textbox'),B('fa-trash','Supprimer<br>le visuel','delvisual')]}],
+  modelisation:[{t:'Relations',b:[B('fa-link','Gérer les<br>relations','relations')]},{t:'Calculs',b:[B('fa-calculator','Nouvelle<br>mesure','newmeasure'),B('fa-bolt','Mesure<br>rapide','quickmeasure'),B('fa-table-columns','Nouvelle<br>colonne','newcol')]},{t:'Sécurité',b:[B('fa-user-shield','Afficher en<br>tant que','roles')]}],
+  affichage:[{t:'Thèmes',b:[B('fa-palette','Thèmes','themes')]},{t:'Mise en page',b:[B('fa-ruler-combined','Taille de<br>la page','pagesize'),B('fa-border-all','Quadrillage','grid',null,()=>gridOn)]},{t:'Volets',b:[B('fa-chart-simple','Visualisations','pane','v',()=>!document.querySelector('.pbd-pane-r').classList.contains('hide')),B('fa-filter','Champs<br>et filtres','pane','f',()=>!document.querySelector('.pbd-pane-f').classList.contains('hide'))]},{t:'Zoom',b:[B('fa-magnifying-glass-plus','Zoom +','zoom',.1),B('fa-magnifying-glass-minus','Zoom -','zoom',-.1)]}],
+  aide:[{t:'Aide',b:[B('fa-graduation-cap','Cours<br>Power BI','course'),B('fa-book','Référence<br>DAX','daxdoc'),B('fa-keyboard','Raccourcis','shortcuts'),B('fa-circle-info','À propos','about')]}]
+};
+let curRib='accueil';
+const ACT2=Object.assign({},ACT,{undo:doUndo,redo:doRedo});
+function ribbon(k){
+  curRib=k;
+  document.querySelectorAll('#rtabs span').forEach(s=>s.classList.toggle('on',s.dataset.r===k));
+  $('#ribbon').innerHTML=RIB[k].map(g=>'<div class="pbd-grp">'+g.b.map(b=>'<button class="pbd-rb'+(b.on&&b.on()?' act':'')+'" type="button" data-a="'+b.a+'"'+(b.arg!=null?' data-g="'+b.arg+'"':'')+'><i class="fas '+b.i+'"></i>'+b.l+'</button>').join('')+'<small>'+g.t+'</small></div>').join('');
+  document.querySelectorAll('#ribbon .pbd-rb').forEach(btn=>btn.onclick=()=>{const g=btn.dataset.g,f=ACT2[btn.dataset.a];f(g===undefined?undefined:(isNaN(+g)?g:+g));});
+}
+function backstage(){
+  const items=[['newrep','fa-file','Nouveau'],['open','fa-folder-open','Ouvrir un rapport'],['save','fa-floppy-disk','Enregistrer'],['saveas','fa-floppy-disk','Enregistrer sous'],['exportcsv','fa-file-csv','Exporter les données (CSV)'],['print','fa-print','Imprimer'],['options','fa-gear','Options'],['quit','fa-right-from-bracket','Quitter']];
+  const m=AC.modal({title:'Fichier',html:'<div class="bs">'+items.map(x=>'<button class="pb-btn" data-a="'+x[0]+'"><i class="fas '+x[1]+'"></i> '+x[2]+'</button>').join('')+'</div>',buttons:[{t:'Fermer'}]});
+  m.el.querySelectorAll('.bs button').forEach(b=>b.onclick=()=>{m.close();ACT[b.dataset.a]();});
+}
+document.querySelectorAll('#rtabs span').forEach(s=>s.onclick=()=>{if(s.dataset.r==='fichier')backstage();else ribbon(s.dataset.r);});
+$('#rptname').style.cursor='pointer';$('#rptname').onclick=()=>ACT.saveas();
+$('#tsearch').onclick=()=>{const all=[];Object.keys(RIB).forEach(k=>RIB[k].forEach(g=>g.b.forEach(b=>all.push(b))));const m=AC.modal({title:'Rechercher une commande',html:'<input type="text" id="ts" placeholder="Tapez une commande (ex. thème, page, mesure)" style="width:100%"><div id="tl" style="margin-top:.6rem"></div>',buttons:[{t:'Fermer'}]});const draw=()=>{const q=m.el.querySelector('#ts').value.toLowerCase();const seen=new Set();m.el.querySelector('#tl').innerHTML=all.filter(b=>{const l=b.l.replace(/<br>/g,' ');if(seen.has(l)||!l.toLowerCase().includes(q))return false;seen.add(l);return true;}).slice(0,10).map(b=>'<button class="pb-btn" style="display:block;width:100%;text-align:left;margin-bottom:3px" data-l="'+esc(b.l)+'">'+b.l.replace(/<br>/g,' ')+'</button>').join('');m.el.querySelectorAll('#tl button').forEach(x=>x.onclick=()=>{const b=all.find(y=>y.l===x.dataset.l);m.close();ACT2[b.a](b.arg);});};m.el.querySelector('#ts').oninput=draw;draw();};
+pageTabs();ribbon('accueil');renderDonnees();renderModele();renderCanvas();
+const dw=document.createElement('div');dw.id='d-warn';dw.className='pb-msg info';dw.style.display='none';dw.textContent='Les défis utilisent le jeu de données d\'exemple Ventes : rechargez-le depuis Accueil > Obtenir les données.';$('#p-defis').prepend(dw);
+
 window.__pbi={evalExpr,DATA,DEFIS,parseMeasure};
 })();
 </script>

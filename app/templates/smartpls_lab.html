@@ -1,6 +1,8 @@
 {% extends "layout.html" %}
 {% block title %}Laboratoire SmartPLS - DataEcon.ci{% endblock %}
 {% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/appchrome.css') }}">
+<script src="{{ url_for('static', filename='js/appchrome.js') }}"></script>
 <style>
 .pl-lab{--navy:#0b2a4a;--steel:#1f5f99;--gold:#c2a15a;--line:#d9e2ec;max-width:1280px;margin:0 auto;padding:1.4rem 1rem 3rem;color:#1f2933}
 .pl-lab h1{font-size:1.5rem;color:var(--navy);font-weight:800;margin:0}
@@ -45,7 +47,7 @@
 
 .spw{max-width:1400px;margin:1rem auto 3rem;border:1px solid #b9c5d3;border-radius:6px;overflow:hidden;background:#fff;box-shadow:0 6px 24px rgba(11,42,74,.12);font-family:"Segoe UI",Inter,Arial,sans-serif}
 .spw-title{background:#1b3a5c;color:#fff;padding:.35rem .8rem;font-size:.8rem;display:flex;align-items:center;gap:.6rem}.spw-mark{background:#4aa3df;color:#0b2a4a;font-weight:800;font-size:.66rem;padding:.1rem .35rem;border-radius:3px}.spw-sp{flex:1}.spw-win{letter-spacing:.4rem;color:#cfe0f1}
-.spw-menu{display:flex;gap:1rem;padding:.3rem .8rem;background:#f3f5f8;border-bottom:1px solid #d5dde6;font-size:.78rem;color:#33414f}
+.spw-menu{display:flex;gap:0;padding:0 .4rem;background:#f3f5f8;border-bottom:1px solid #d5dde6;font-size:.78rem;color:#33414f}
 .spw-tool{display:flex;gap:.5rem;align-items:center;padding:.3rem .8rem;background:#fafbfc;border-bottom:1px solid #d5dde6;font-size:.78rem}
 .spw-ic{border:1px solid #c9d3de;border-radius:3px;width:26px;height:24px;display:inline-flex;align-items:center;justify-content:center;color:#52606d;background:#fff}
 .spw-sep{width:1px;height:20px;background:#d5dde6}.spw-calc{border:1px solid #9bc3e6;background:#e8f3fc;color:#1f5f99;border-radius:3px;padding:.15rem .6rem;font-weight:600}.spw-hint{margin-left:auto;color:#8795a4;font-size:.72rem}
@@ -56,15 +58,16 @@
 .spw-work{min-width:0;overflow:hidden}.spw-work .pl-lab{padding:1rem 1rem 1.5rem}
 .spw-work .lab-card{border-radius:3px;border-color:#c9d3de}.spw-work .lab-card h2 .n{background:#1b3a5c;border-radius:3px}
 .spw-status{display:flex;justify-content:space-between;background:#1b3a5c;color:#cfe0f1;padding:.25rem .8rem;font-size:.72rem}
+.spw-ic,.spw-calc{cursor:pointer;font-family:inherit;font-size:.78rem}.spw-menu .ac-m{padding:.32rem .65rem}.spw .hide{display:none!important}.spw-explorer .leaf{cursor:pointer}
 </style>
 
 <div class="spw">
   <div class="spw-title"><span class="spw-mark">PLS</span> SmartPLS 4 - Satisfaction.splsm <span class="spw-sp"></span><span class="spw-win">&#8211; &#9633; &#10005;</span></div>
-  <div class="spw-menu"><span>Fichier</span><span>Édition</span><span>Affichage</span><span>Calcul</span><span>Rapport</span><span>Fenêtre</span><span>Aide</span></div>
-  <div class="spw-tool"><span class="spw-ic" title="Nouveau">&#9633;</span><span class="spw-ic" title="Ouvrir">&#9644;</span><span class="spw-ic" title="Enregistrer">&#9635;</span><span class="spw-sep"></span><span class="spw-calc">Calculer</span><span class="spw-calc">Bootstrapping</span><span class="spw-sep"></span><span class="spw-hint">Les commandes de calcul se trouvent à l'étape 4</span></div>
+  <div class="spw-menu" id="spmenu"></div>
+  <div class="spw-tool"><button type="button" class="spw-ic" id="tb-new" title="Nouveau projet">N</button><button type="button" class="spw-ic" id="tb-open" title="Ouvrir un modèle">O</button><button type="button" class="spw-ic" id="tb-save" title="Enregistrer le modèle">S</button><span class="spw-sep"></span><button type="button" class="spw-calc" id="tb-calc">Calculer</button><button type="button" class="spw-calc" id="tb-boot">Bootstrapping</button><span class="spw-sep"></span><span class="spw-hint" id="sphint">Prêt</span></div>
   <div class="spw-body">
     <aside class="spw-explorer"><div class="spw-eh">Explorateur de projet</div>
-      <ul><li class="top">Satisfaction</li><li class="sub">Modèles</li><li class="leaf on">Modèle 1</li><li class="sub">Données</li><li class="leaf">enquete.csv</li><li class="sub">Rapports</li><li class="leaf">Résultats PLS-SEM</li><li class="leaf">Bootstrapping</li></ul></aside>
+      <ul id="spex"><li class="top">Satisfaction</li><li class="sub">Modèles</li><li class="leaf on" data-go="mod">Modèle 1</li><li class="sub">Données</li><li class="leaf" data-go="don">enquete.csv</li><li class="sub">Rapports</li><li class="leaf" data-go="res" data-t="diag">Résultats PLS-SEM</li><li class="leaf" data-go="res" data-t="path">Bootstrapping</li></ul></aside>
     <div class="spw-work">
 <div class="pl-lab">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
@@ -370,6 +373,39 @@
         return h + '<p class="crit">Médiation selon Zhao, Lynch et Chen (2010) : effet indirect significatif et effet direct non significatif = médiation indirecte seule (totale).</p>';
     }
     loadPreset();
+    window.__spls={state:state,render:render,show:function(t){tab=t;if(R)showResults();},hasR:function(){return !!R;}};
+})();
+</script>
+
+<script>
+(function(){
+var AC=window.AppChrome,$=function(i){return document.getElementById(i);};
+var cards=document.querySelectorAll('.spw-work .lab-card');
+function go(k,t){
+  var el=k==='don'?cards[0]:k==='mod'?cards[1]:k==='res'?$('results'):cards[3];
+  if(k==='res'){if(!window.__spls.hasR()){AC.toast('Calculez d\'abord le modèle pour afficher les résultats.');return;}if(t)window.__spls.show(t);}
+  if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+  document.querySelectorAll('#spex .leaf').forEach(function(l){l.classList.toggle('on',l.dataset.go===k&&(!t||l.dataset.t===t));});
+}
+function calc(boot){$('boot').value=String(boot);var b=$('run');if(!b)return;$('sphint').textContent='Calcul en cours...';b.click();setTimeout(function(){$('sphint').textContent='Calcul lancé';go('res');},900);}
+function newProj(){$('clear').click();AC.toast('Nouveau projet : modèle vide.');}
+function importData(){document.querySelector('input[name=src][value=file]').click();$('pick').click();}
+function saveModel(){var s=window.__spls.state;AC.download('modele.splsm.json',JSON.stringify({constructs:s.constructs,paths:s.paths},null,1),'application/json');AC.toast('Modèle enregistré.');}
+function openModel(){AC.pick('.json,.splsm',function(t){try{var o=JSON.parse(t);if(!o.constructs)throw 0;var s=window.__spls.state;s.constructs=o.constructs;s.paths=o.paths||[];window.__spls.render();AC.toast('Modèle chargé.');}catch(e){AC.toast('Fichier de modèle invalide.');}});}
+function exportCsv(){var tb=document.querySelector('#tabbody table');if(!tb){AC.toast('Aucun tableau à exporter dans l\'onglet affiché.');return;}var rows=[].map.call(tb.rows,function(r){return [].map.call(r.cells,function(c){return '"'+c.textContent.replace(/"/g,'""')+'"';}).join(';');});AC.download('resultats_pls.csv','\ufeff'+rows.join('\n'),'text/csv;charset=utf-8');}
+function tabItems(){return [['diag','Diagramme'],['load','Loadings'],['rel','Fiabilité et validité'],['disc','Validité discriminante'],['path','Chemins'],['r2','R², f² et VIF'],['ind','Effets indirects et totaux']].map(function(t){return {l:t[1],f:function(){go('res',t[0]);}};});}
+var zoom=1;
+AC.menubar($('spmenu'),{
+ 'Fichier':[{l:'Nouveau projet',f:newProj},{l:'Ouvrir un modèle...',f:openModel},{l:'Enregistrer le modèle',k:'Ctrl+S',f:saveModel},{sep:1},{l:'Importer des données...',f:importData},{l:'Charger l\'enquête d\'exemple',f:function(){document.querySelector('input[name=src][value=demo]').click();AC.toast('Données d\'exemple sélectionnées.');}},{sep:1},{l:'Quitter',f:function(){location.href='/formations';}}],
+ 'Édition':[{l:'Ajouter un construit',f:function(){$('addc').click();}},{l:'Ajouter une relation',f:function(){$('addp').click();}},{sep:1},{l:'Charger le modèle d\'exemple',f:function(){$('preset').click();}},{l:'Effacer le modèle',f:function(){$('clear').click();}}],
+ 'Affichage':[{l:'Explorateur de projet',chk:function(){return !document.querySelector('.spw-explorer').classList.contains('hide');},f:function(){document.querySelector('.spw-explorer').classList.toggle('hide');}},{l:'Barre d\'état',chk:function(){return !document.querySelector('.spw-status').classList.contains('hide');},f:function(){document.querySelector('.spw-status').classList.toggle('hide');}},{sep:1},{l:'Zoom avant',f:function(){zoom=Math.min(1.4,zoom+.1);document.querySelector('.spw-work').style.zoom=zoom;}},{l:'Zoom arrière',f:function(){zoom=Math.max(.7,zoom-.1);document.querySelector('.spw-work').style.zoom=zoom;}},{l:'Zoom 100 %',f:function(){zoom=1;document.querySelector('.spw-work').style.zoom=1;}}],
+ 'Calcul':[{l:'Algorithme PLS-SEM',f:function(){calc(0);}},{l:'Bootstrapping',sub:[{l:'200 rééchantillonnages',f:function(){calc(200);}},{l:'500 rééchantillonnages',f:function(){calc(500);}},{l:'1 000 rééchantillonnages',f:function(){calc(1000);}}]}],
+ 'Rapport':[{l:'Afficher les résultats',sub:tabItems()},{sep:1},{l:'Exporter le tableau affiché (CSV)',f:exportCsv},{l:'Imprimer',f:function(){window.print();}}],
+ 'Fenêtre':[{l:'Données',f:function(){go('don');}},{l:'Modèle',f:function(){go('mod');}},{l:'Calcul',f:function(){go('calc');}},{l:'Résultats',f:function(){go('res');}}],
+ 'Aide':[{l:'Guide du laboratoire',f:function(){AC.modal({title:'Guide',html:'<ol><li>Choisissez les données (exemple ou fichier .csv).</li><li>Définissez les construits et leurs indicateurs.</li><li>Dessinez les relations entre construits.</li><li>Lancez l\'algorithme PLS puis le bootstrapping.</li><li>Interprétez loadings, fiabilité, validité, chemins et R².</li></ol>',wide:true});}},{l:'Seuils usuels',f:function(){AC.modal({title:'Seuils usuels',html:'<table class="pb-res"><tr><td>Loadings</td><td>&ge; 0,708</td></tr><tr><td>Alpha de Cronbach, rho_A, fiabilité composite</td><td>0,70 à 0,95</td></tr><tr><td>AVE</td><td>&ge; 0,50</td></tr><tr><td>HTMT</td><td>&lt; 0,85 (0,90)</td></tr><tr><td>VIF</td><td>&lt; 3 (5)</td></tr><tr><td>Bootstrapping</td><td>|t| &gt; 1,96 pour p &lt; 0,05</td></tr></table>'});}},{l:'À propos',f:function(){AC.modal({title:'À propos',html:'<p>Laboratoire DataEcon.Ci reproduisant l\'organisation de SmartPLS 4. Le calcul PLS-SEM est réalisé par le serveur de la plateforme.</p>'});}}]
+});
+$('tb-new').onclick=newProj;$('tb-open').onclick=openModel;$('tb-save').onclick=saveModel;$('tb-calc').onclick=function(){calc(0);};$('tb-boot').onclick=function(){calc(500);};
+document.querySelectorAll('#spex .leaf').forEach(function(l){l.style.cursor='pointer';l.onclick=function(){go(l.dataset.go,l.dataset.t);};});
 })();
 </script>
 {% endblock %}
