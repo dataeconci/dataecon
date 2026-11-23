@@ -2,8 +2,9 @@ services:
   web:
     build: .
     container_name: dataecon_web
-    ports:
-      - "5000:10000"
+    restart: unless-stopped
+    expose:
+      - "10000"
     volumes:
       - ./app:/app
       - ./app/data:/app/data
@@ -11,20 +12,76 @@ services:
       - DATABASE_URL=postgresql://dataecon:dataecon123@db:5432/dataecon
       - SECRET_KEY=e0dcf3318668ef9c17aabdbcb5ba041d76b01e97c13567f6a24de8686c9a3411
       - GROQ_API_KEY=${GROQ_API_KEY}
+      - WEB_CONCURRENCY=4
+      - WEB_THREADS=8
+      - ANALYSIS_SLOTS=2
+      - DB_POOL_SIZE=10
+      - DB_MAX_OVERFLOW=10
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:10000/healthz', timeout=5).status == 200 else 1)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - dataecon_network
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: dataecon_nginx
+    restart: unless-stopped
+    ports:
+      - "5000:80"
+    volumes:
+      - ./deploy/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./deploy/proxy_params_dataecon:/etc/nginx/proxy_params_dataecon:ro
+      - ./app/static:/usr/share/nginx/static:ro
+    depends_on:
+      - web
     networks:
       - dataecon_network
 
   db:
     image: postgres:15
     container_name: dataecon_db
+    restart: unless-stopped
+    command: >
+      postgres
+      -c max_connections=200
+      -c shared_buffers=512MB
+      -c effective_cache_size=1536MB
+      -c work_mem=8MB
+      -c maintenance_work_mem=128MB
+      -c checkpoint_completion_target=0.9
     environment:
       - POSTGRES_USER=dataecon
       - POSTGRES_PASSWORD=dataecon123
       - POSTGRES_DB=dataecon
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dataecon -d dataecon"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - dataecon_network
+
+  backup:
+    image: postgres:15
+    container_name: dataecon_backup
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - PGPASSWORD=dataecon123
+    volumes:
+      - ./backups:/backups
+    entrypoint: ["/bin/sh", "-c", "while true; do pg_dump -h db -U dataecon dataecon | gzip > /backups/dataecon_$$(date +%Y%m%d).sql.gz; find /backups -name '*.sql.gz' -mtime +7 -delete; sleep 86400; done"]
     networks:
       - dataecon_network
 

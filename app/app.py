@@ -146,6 +146,12 @@ app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['REMEMBER_COOKIE_SAMESITE'] = 'Lax'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql://dataecon:dataecon123@db:5432/dataecon')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    'pool_size': int(os.environ.get('DB_POOL_SIZE', 10)),
+    'max_overflow': int(os.environ.get('DB_MAX_OVERFLOW', 10)),
+    'pool_pre_ping': True,
+    'pool_recycle': 1800,
+}
 app.config['UPLOAD_FOLDER'] = '/app/data'
 app.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024  # 500MB max
 app.config['SERVER_NAME'] = os.environ.get('SERVER_NAME')  # None en production, pas de restriction de domaine
@@ -154,6 +160,7 @@ app.config['SERVER_NAME'] = os.environ.get('SERVER_NAME')  # None en production,
 @app.after_request
 def add_no_cache_headers(response):
     if request.endpoint == 'static':
+        response.headers['Cache-Control'] = 'public, max-age=86400'
         return response
     response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
     response.headers['Pragma'] = 'no-cache'
@@ -1978,9 +1985,78 @@ import threading as _threading
 from types import SimpleNamespace as _NS
 from concurrent.futures import ThreadPoolExecutor as _TPE, TimeoutError as _FTimeout
 
-_JOBS = {}
+import pickle as _pickle
+import fcntl as _fcntl
+_JOBS_DIR = os.environ.get('JOBS_DIR', '/tmp/dataecon_jobs')
+_SLOTS_DIR = os.environ.get('SLOTS_DIR', '/tmp/dataecon_slots')
+ANALYSIS_SLOTS = max(1, int(os.environ.get('ANALYSIS_SLOTS', 2)))   # analyses lourdes simultanées (tous processus confondus)
+os.makedirs(_JOBS_DIR, exist_ok=True)
+os.makedirs(_SLOTS_DIR, exist_ok=True)
 _JOBS_LOCK = _threading.Lock()
-_RUN_LOCK = _threading.Lock()          # une seule analyse lourde à la fois (CPU et matplotlib)
+
+
+def _job_path(job_id):
+    return os.path.join(_JOBS_DIR, ''.join(ch for ch in str(job_id) if ch.isalnum()) + '.job')
+
+
+def _job_save(job):
+    path = _job_path(job['id'])
+    tmp = path + '.tmp%d' % os.getpid()
+    with open(tmp, 'wb') as fh:
+        _pickle.dump(job, fh, protocol=4)
+    os.replace(tmp, path)
+
+
+def _job_load(job_id):
+    try:
+        with open(_job_path(job_id), 'rb') as fh:
+            return _pickle.load(fh)
+    except Exception:
+        return None
+
+
+class _JobStore:
+    """Registre des analyses : partagé par tous les processus gunicorn via des fichiers."""
+    def get(self, job_id, default=None):
+        j = _job_load(job_id)
+        return default if j is None else j
+
+    def __setitem__(self, job_id, job):
+        _job_save(job)
+
+
+_JOBS = _JobStore()
+
+
+class _heavy_slot:
+    """Réserve l'un des ANALYSIS_SLOTS emplacements de calcul (verrous fichiers, valables entre processus)."""
+    def __init__(self, job=None):
+        self.job = job
+        self.fh = None
+
+    def __enter__(self):
+        while True:
+            for i in range(ANALYSIS_SLOTS):
+                fh = open(os.path.join(_SLOTS_DIR, 'slot%d.lock' % i), 'w')
+                try:
+                    _fcntl.flock(fh, _fcntl.LOCK_EX | _fcntl.LOCK_NB)
+                    self.fh = fh
+                    return self
+                except OSError:
+                    fh.close()
+            if self.job is not None and self.job.get('status') == 'queued':
+                _job_update(self.job, message="En file d'attente : toutes les places de calcul sont occupées, votre analyse démarrera dans un instant...")
+            _time.sleep(2)
+
+    def __exit__(self, *a):
+        try:
+            _fcntl.flock(self.fh, _fcntl.LOCK_UN)
+            self.fh.close()
+        except Exception:
+            pass
+        return False
+
+
 JOB_TOTAL_BUDGET = 900                 # secondes : durée maximale d'une analyse complète
 JOB_MODEL_TIMEOUT = 240                # secondes : durée maximale pour un modèle
 JOB_ROBUST_TIMEOUT = 120               # secondes : durée maximale pour les tests de robustesse d'un modèle
@@ -2000,19 +2076,27 @@ def _call_with_timeout(fn, seconds):
 
 def _jobs_cleanup():
     now = _time.time()
-    with _JOBS_LOCK:
-        for k in [k for k, j in _JOBS.items() if now - j['created'] > 3600]:
-            _JOBS.pop(k, None)
+    try:
+        for fn in os.listdir(_JOBS_DIR):
+            fp = os.path.join(_JOBS_DIR, fn)
+            if now - os.path.getmtime(fp) > 3600:
+                os.remove(fp)
+    except Exception:
+        pass
 
 
 def _job_update(job, **kw):
     with _JOBS_LOCK:
         job.update(kw)
+        try:
+            _job_save(job)
+        except Exception:
+            pass
 
 
 def _analysis_worker(job, P):
     """Exécute toute l'analyse (hors requête HTTP) et stocke le résultat dans le job."""
-    with _RUN_LOCK:
+    with _heavy_slot(job):
         try:
             t_start = _time.time()
             _job_update(job, status='running', message="Préparation des données...", started=t_start)
@@ -2165,7 +2249,7 @@ def _pls_worker(job, P):
     """Estimation PLS-SEM en arrière-plan + rapport Word."""
     from models.plssem import run_pls
     from models.report_word import build_pls_word
-    with _RUN_LOCK:
+    with _heavy_slot(job):
         try:
             _job_update(job, status='running', message="Estimation du modèle PLS-SEM...", started=_time.time(), total=P['n_boot'], done=0)
             def prog(i, n):
@@ -2237,6 +2321,15 @@ def _get_job_or_404(job_id):
     if job is None or job['user_id'] != current_user.id:
         abort(404)
     return job
+
+
+@app.route('/healthz')
+def healthz():
+    try:
+        db.session.execute(db.text('SELECT 1'))
+        return jsonify({'status': 'ok'}), 200
+    except Exception:
+        return jsonify({'status': 'db_error'}), 503
 
 
 @app.route('/models/job/<job_id>')
@@ -2474,6 +2567,15 @@ def init_db():
             db.session.execute(text('ALTER TABLE "user" ADD COLUMN IF NOT EXISTS reset_code_expires TIMESTAMP'))
             db.session.execute(text('ALTER TABLE "user" ADD COLUMN IF NOT EXISTS profile_picture VARCHAR(200)'))
             db.session.execute(text('ALTER TABLE dataset ADD COLUMN IF NOT EXISTS is_private BOOLEAN DEFAULT FALSE'))
+            for _ix in ('CREATE INDEX IF NOT EXISTS ix_dataset_uploaded_by ON dataset (uploaded_by)',
+                        'CREATE INDEX IF NOT EXISTS ix_progress_user_id ON progress (user_id)',
+                        'CREATE INDEX IF NOT EXISTS ix_progress_course_id ON progress (course_id)',
+                        'CREATE INDEX IF NOT EXISTS ix_paiement_user_id ON demandes_paiement (user_id)'):
+                try:
+                    db.session.execute(text(_ix))
+                    db.session.commit()
+                except Exception:
+                    db.session.rollback()
             db.session.commit()
             print("Migration des colonnes reset_code réussie", flush=True)
         except Exception as e:
@@ -2533,14 +2635,27 @@ def init_db():
             print(f"{len(existing_courses)} cours existent déjà.")
 
 # ==================== PLANIFICATEUR DE TÂCHES ====================
+def _acquire_singleton(name):
+    """Vrai pour un seul processus à la fois (verrou fichier conservé pendant toute la vie du processus)."""
+    try:
+        fh = open('/tmp/dataecon_%s.lock' % name, 'w')
+        _fcntl.flock(fh, _fcntl.LOCK_EX | _fcntl.LOCK_NB)
+        globals()['_singleton_' + name] = fh
+        return True
+    except Exception:
+        return False
+
+
 try:
+    if not _acquire_singleton('scheduler'):
+        raise RuntimeError('planificateur déjà actif dans un autre processus')
     scheduler = BackgroundScheduler()
     scheduler.add_job(func=check_subscription_reminders, trigger="interval", hours=24, id='reminder_job')
     scheduler.add_job(func=downgrade_expired_subscriptions, trigger="interval", hours=24, id='downgrade_job')
     scheduler.start()
     print("Scheduler démarré", flush=True)
 except Exception as e:
-    print(f"Erreur scheduler: {e}", flush=True)
+    print(f"Planificateur non démarré dans ce processus : {e}", flush=True)
 
 # Afficher le port que Render a attribué
 print(f"PORT = {os.environ.get('PORT', 'non défini')}", flush=True)
@@ -2548,10 +2663,13 @@ print(f"PORT = {os.environ.get('PORT', 'non défini')}", flush=True)
 # ==================== INITIALISATION AU CHARGEMENT (pour Gunicorn) ====================
 print("Démarrage de l'application...", flush=True)
 try:
+    _init_lock = open('/tmp/dataecon_init.lock', 'w')
+    _fcntl.flock(_init_lock, _fcntl.LOCK_EX)      # un seul processus initialise la base à la fois
     with app.app_context():
         print("Connexion à la base de données...", flush=True)
         init_db()
         print("Base de données initialisée avec succès !", flush=True)
+    _fcntl.flock(_init_lock, _fcntl.LOCK_UN)
 except Exception as e:
     import traceback
     print(f"ERREUR INITIALISATION BD: {e}", flush=True)

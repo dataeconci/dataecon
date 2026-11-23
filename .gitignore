@@ -7,4 +7,4 @@ app/data/pdfs/
 app/data/*.csv
 app/data/*.xlsx
 app/data/*.dta
-*.pdf
+*.pdfbackups/

@@ -13,4 +13,4 @@ COPY app/ .
 
 EXPOSE 10000
 
-CMD ["gunicorn", "--bind", "0.0.0.0:10000", "--timeout", "300", "--workers", "1", "--worker-class", "gthread", "--threads", "4", "--preload", "app:app"]
+CMD ["gunicorn", "-c", "gunicorn.conf.py", "app:app"]
