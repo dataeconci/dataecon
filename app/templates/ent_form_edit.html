@@ -1,0 +1,42 @@
+{% extends "ent_base.html" %}
+{% block title %}Constructeur de formulaire - DataEcon.Ci{% endblock %}
+{% block ent %}
+<div class="ent-head"><div><h1>{{ 'Modifier le formulaire' if form else 'Nouveau formulaire' }}</h1><div class="sub">Ajoutez vos questions : chaque réponse alimente directement vos tableaux de bord.</div></div></div>
+<div class="ent-split">
+ <div>
+  <div class="ent-card ent-form"><label>Titre du formulaire</label><input type="text" id="f-title" value="{{ form.title if form else '' }}" placeholder="Ex : Suivi mensuel des ventes">
+   <label>Description (facultatif)</label><textarea id="f-desc">{{ form.description if form and form.description else '' }}</textarea></div>
+  <div id="qs"></div>
+  <button class="ent-btn ghost" id="add-q" type="button"><i class="fas fa-plus"></i> Ajouter une question</button>
+ </div>
+ <div class="ent-card ent-form" style="align-self:start"><h2>Paramètres</h2>
+  <label><input type="checkbox" id="f-open" {{ 'checked' if not form or form.is_open }}> Formulaire ouvert aux réponses</label>
+  <label><input type="checkbox" id="f-public" {{ 'checked' if form and form.public_token }}> Activer un lien public (réponses sans compte)</label>
+  <p style="font-size:.8rem;color:#52606d">Le lien public permet à des clients ou partenaires de répondre sans se connecter. Les réponses restent visibles uniquement par votre équipe.</p>
+  <button class="ent-btn gold" id="save" type="button" style="width:100%;justify-content:center"><i class="fas fa-floppy-disk"></i> Enregistrer</button>
+  <div id="msg" style="color:#b03a2e;margin-top:.6rem;font-size:.85rem"></div></div>
+</div>
+<script>
+var TYPES={{ TYPES|tojson }};var fields={{ (form.champs() if form else [])|tojson }};
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function draw(){var h='';fields.forEach(function(f,i){
+ h+='<div class="qrow"><div class="top"><input type="text" data-i="'+i+'" data-k="label" value="'+esc(f.label)+'" placeholder="Votre question">'
+ +'<select data-i="'+i+'" data-k="type">'+Object.keys(TYPES).map(function(t){return '<option value="'+t+'"'+(f.type===t?' selected':'')+'>'+TYPES[t]+'</option>';}).join('')+'</select>'
+ +'<div class="tools"><label style="margin:0"><input type="checkbox" data-i="'+i+'" data-k="required"'+(f.required?' checked':'')+'> Obligatoire</label><button type="button" data-up="'+i+'">&uarr;</button><button type="button" data-dn="'+i+'">&darr;</button><button type="button" data-rm="'+i+'">&times;</button></div></div>';
+ if(f.type==='choice'||f.type==='multi')h+='<div class="opts"><textarea rows="3" data-i="'+i+'" data-k="options" placeholder="Une option par ligne (au moins 2)">'+esc((f.options||[]).join('\n'))+'</textarea></div>';
+ h+='</div>';});
+ document.getElementById('qs').innerHTML=h||'<div class="empty ent-card">Aucune question. Cliquez sur « Ajouter une question ».</div>';}
+document.getElementById('qs').addEventListener('input',function(e){var t=e.target,i=t.dataset.i;if(i===undefined)return;var f=fields[+i];
+ if(t.dataset.k==='required')f.required=t.checked;else if(t.dataset.k==='options')f.options=t.value.split('\n');else f[t.dataset.k]=t.value;});
+document.getElementById('qs').addEventListener('change',function(e){if(e.target.dataset.k==='type'){draw();}});
+document.getElementById('qs').addEventListener('click',function(e){var t=e.target;
+ if(t.dataset.rm!==undefined){fields.splice(+t.dataset.rm,1);draw();}
+ if(t.dataset.up!==undefined&&+t.dataset.up>0){var i=+t.dataset.up;fields.splice(i-1,0,fields.splice(i,1)[0]);draw();}
+ if(t.dataset.dn!==undefined&&+t.dataset.dn<fields.length-1){var j=+t.dataset.dn;fields.splice(j+1,0,fields.splice(j,1)[0]);draw();}});
+document.getElementById('add-q').onclick=function(){fields.push({label:'',type:'text',required:false,options:[]});draw();};
+document.getElementById('save').onclick=function(){var m=document.getElementById('msg');m.textContent='';
+ fetch(location.pathname,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:document.getElementById('f-title').value,description:document.getElementById('f-desc').value,fields:fields,is_open:document.getElementById('f-open').checked,public:document.getElementById('f-public').checked})})
+ .then(function(r){return r.json().then(function(j){return [r.ok,j];});}).then(function(x){if(x[0])location.href=x[1].url;else m.textContent=x[1].error||'Erreur.';});};
+if(!fields.length)fields.push({label:'',type:'text',required:false,options:[]});draw();
+</script>
+{% endblock %}

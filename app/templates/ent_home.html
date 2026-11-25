@@ -1,0 +1,50 @@
+{% extends "ent_base.html" %}
+{% block title %}Espace entreprise - DataEcon.Ci{% endblock %}
+{% block ent %}
+<div class="ent-head">
+  <div><h1>{{ org.name }}</h1><div class="sub">{{ org.sector or '' }}{% if org.city %} · {{ org.city }}{% endif %}{% if org.objectifs() %} · Objectifs : {{ org.objectifs()|join(', ') }}{% endif %}</div></div>
+  <div class="no-print"><a class="ent-btn gold" href="{{ url_for('ent.requests_page') }}"><i class="fas fa-handshake-angle"></i> Demander un service</a></div>
+</div>
+<div class="ent-grid g4" style="margin-bottom:1rem">
+  <div class="kpi"><div class="v">{{ n_members }}</div><div class="l">Membres de l'équipe</div></div>
+  <div class="kpi"><div class="v">{{ forms|length }}</div><div class="l">Formulaires ({{ forms|selectattr('is_open')|list|length }} ouverts)</div></div>
+  <div class="kpi"><div class="v">{{ total_resp }}</div><div class="l">Réponses collectées</div></div>
+  <div class="kpi"><div class="v">{{ tasks|rejectattr('status','equalto','termine')|list|length }}</div><div class="l">Tâches en cours ({{ mine|length }} pour vous)</div></div>
+  <div class="kpi"><div class="v">{% if pct is none %}-{% else %}{{ pct }} %{% endif %}</div><div class="l">Formations terminées</div></div>
+</div>
+<div class="ent-split">
+  <div>
+    <div class="ent-card"><h2>Réponses aux formulaires (14 derniers jours)</h2>
+      {% set mx = (series|max) or 1 %}
+      <svg viewBox="0 0 560 170" style="width:100%;height:auto" role="img" aria-label="Réponses par jour">
+        {% for v in series %}{% set h = (v / mx * 110) %}
+        <rect x="{{ 12 + loop.index0 * 39 }}" y="{{ 130 - h }}" width="28" height="{{ h }}" rx="3" fill="#1f5f99"/>
+        <text x="{{ 26 + loop.index0 * 39 }}" y="{{ 124 - h }}" text-anchor="middle" font-size="10" fill="#0b2a4a">{{ v if v else '' }}</text>
+        <text x="{{ 26 + loop.index0 * 39 }}" y="148" text-anchor="middle" font-size="9" fill="#52606d">{{ days[loop.index0] }}</text>
+        {% endfor %}
+      </svg>
+    </div>
+    <div class="ent-card"><h2>Annonces</h2>
+      {% for a in ann %}<div class="annc"><b>{{ a.title }}</b> <small>· {{ a.author }} · {{ a.created_at.strftime('%d/%m/%Y') }}</small><div>{{ a.body }}</div>
+        {% if ent_is_admin %}<form method="post" action="{{ url_for('ent.announce_delete', aid=a.id) }}" class="no-print"><button class="ent-btn danger sm" type="submit">Supprimer</button></form>{% endif %}</div>
+      {% else %}<div class="empty">Aucune annonce.</div>{% endfor %}
+      {% if ent_is_admin %}<form method="post" action="{{ url_for('ent.announce') }}" class="ent-form no-print"><label>Nouvelle annonce</label><input type="text" name="title" placeholder="Titre" required><textarea name="body" placeholder="Message pour toute l'équipe" required></textarea><button class="ent-btn" style="margin-top:.5rem">Publier</button></form>{% endif %}
+    </div>
+  </div>
+  <div>
+    <div class="ent-card"><h2>Accès rapide</h2>
+      <div style="display:grid;gap:.5rem">
+        <a class="ent-btn ghost" href="{{ url_for('ent.form_edit') }}"><i class="fas fa-plus"></i> Créer un formulaire</a>
+        <a class="ent-btn ghost" href="{{ url_for('ent.dash_list') }}"><i class="fas fa-chart-pie"></i> Tableaux de bord</a>
+        <a class="ent-btn ghost" href="{{ url_for('ent.tasks') }}"><i class="fas fa-list-check"></i> Tâches de l'équipe</a>
+        <a class="ent-btn ghost" href="{{ url_for('ent.messages_page') }}"><i class="fas fa-comments"></i> Écrire à DataEcon.Ci</a>
+      </div></div>
+    <div class="ent-card"><h2>Sessions de formation à venir</h2>
+      {% for s in sessions %}<div style="margin-bottom:.5rem"><b>{{ s.title }}</b><br><small>{{ s.starts_at.strftime('%d/%m/%Y à %H:%M') }}</small>{% if s.link %} · <a href="{{ s.link }}" target="_blank" rel="noopener">Rejoindre</a>{% endif %}</div>
+      {% else %}<div class="empty">Aucune session planifiée.</div>{% endfor %}</div>
+    <div class="ent-card"><h2>Dernières demandes</h2>
+      {% for r in reqs %}<div style="margin-bottom:.5rem"><b>{{ r.title }}</b><br><span class="tag">{{ KINDS[r.kind] }}</span> <span class="tag {{ 'ok' if r.status=='terminee' else 'warn' }}">{{ STATUTS[r.status] }}</span></div>
+      {% else %}<div class="empty">Aucune demande.</div>{% endfor %}</div>
+  </div>
+</div>
+{% endblock %}

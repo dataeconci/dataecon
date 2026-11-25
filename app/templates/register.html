@@ -53,6 +53,69 @@
 
                     <div class="register-card-body">
                         <form method="POST" class="needs-validation" novalidate>
+
+                            <div class="acct-q">
+                                <div class="acct-title">Vous inscrivez-vous en tant que :</div>
+                                <div class="acct-choices">
+                                    <label class="acct-card">
+                                        <input type="radio" name="account_type" value="particulier" {% if not join_code %}checked{% endif %}>
+                                        <span class="acct-body"><i class="fas fa-user"></i><b>Particulier</b><small>Étudiant, chercheur, professionnel : cours, pratique, certifications et modèles</small></span>
+                                    </label>
+                                    <label class="acct-card">
+                                        <input type="radio" name="account_type" value="entreprise" {% if join_code %}checked{% endif %}>
+                                        <span class="acct-body"><i class="fas fa-building"></i><b>Entreprise (TPE / PME)</b><small>Espace d'équipe : formulaires, tableaux de bord, formation, messagerie avec nos experts</small></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div id="ent-fields" class="ent-fields" style="display:none">
+                                <div class="ent-note"><i class="fas fa-circle-info"></i> Vous rejoignez une entreprise déjà inscrite ? Saisissez le code d'invitation fourni par votre responsable.</div>
+                                <div class="form-group-modern">
+                                    <label for="join_code"><i class="fas fa-key"></i> Code d'invitation (facultatif)</label>
+                                    <input type="text" class="form-control form-control-modern" id="join_code" name="join_code" value="{{ join_code }}" placeholder="Ex : 9F3A1C7E" autocomplete="off">
+                                </div>
+                                <div id="ent-new">
+                                    <div class="form-group-modern">
+                                        <label for="company_name"><i class="fas fa-building"></i> Nom de l'entreprise</label>
+                                        <input type="text" class="form-control form-control-modern" id="company_name" name="company_name" placeholder="Ex : Coopérative Agro Sud">
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-7"><div class="form-group-modern">
+                                            <label for="sector"><i class="fas fa-industry"></i> Domaine d'activité</label>
+                                            <select class="form-control form-control-modern" id="sector" name="sector">
+                                                <option value="">Choisir...</option>
+                                                {% for sct in sectors %}<option>{{ sct }}</option>{% endfor %}
+                                            </select>
+                                        </div></div>
+                                        <div class="col-md-5"><div class="form-group-modern">
+                                            <label for="size"><i class="fas fa-users"></i> Taille</label>
+                                            <select class="form-control form-control-modern" id="size" name="size">
+                                                {% for k, v in sizes %}<option value="{{ k }}">{{ v }}</option>{% endfor %}
+                                            </select>
+                                        </div></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6"><div class="form-group-modern">
+                                            <label for="city"><i class="fas fa-location-dot"></i> Ville</label>
+                                            <input type="text" class="form-control form-control-modern" id="city" name="city" placeholder="Ex : Daloa">
+                                        </div></div>
+                                        <div class="col-md-6"><div class="form-group-modern">
+                                            <label for="country"><i class="fas fa-flag"></i> Pays</label>
+                                            <input type="text" class="form-control form-control-modern" id="country" name="country" value="Côte d'Ivoire">
+                                        </div></div>
+                                    </div>
+                                    <div class="form-group-modern">
+                                        <label><i class="fas fa-bullseye"></i> Objectif de la création du compte</label>
+                                        <div class="ent-purposes">
+                                            {% for k, v in objectifs.items() %}
+                                            <label class="ent-check"><input type="checkbox" name="purposes" value="{{ k }}"> <span>{{ v }}</span></label>
+                                            {% endfor %}
+                                        </div>
+                                        <div class="form-hint">Vous pouvez en choisir plusieurs.</div>
+                                    </div>
+                                </div>
+                            </div>
+
                             
                             <div class="form-group-modern">
                                 <label for="username">
@@ -554,6 +617,27 @@ document.addEventListener('DOMContentLoaded', function() {
             this.classList.add('was-validated');
         });
     }
+});
+</script>
+<style>
+.acct-q{margin-bottom:1.2rem}.acct-title{font-weight:600;color:#0b2a4a;margin-bottom:.5rem}
+.acct-choices{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}@media(max-width:576px){.acct-choices{grid-template-columns:1fr}}
+.acct-card{cursor:pointer;margin:0}.acct-card input{position:absolute;opacity:0}
+.acct-body{display:flex;flex-direction:column;gap:.2rem;border:2px solid #d5dde6;border-radius:10px;padding:.8rem .9rem;height:100%;background:#fff;transition:.15s}
+.acct-body i{color:#1f5f99;font-size:1.2rem}.acct-body b{color:#0b2a4a}.acct-body small{color:#52606d;line-height:1.3}
+.acct-card input:checked+.acct-body{border-color:#c2a15a;background:#fbf7ec;box-shadow:0 0 0 3px rgba(194,161,90,.18)}
+.ent-fields{border-left:3px solid #c2a15a;padding-left:1rem;margin-bottom:1rem}.ent-note{font-size:.85rem;color:#52606d;margin-bottom:.8rem}
+.ent-purposes{display:grid;gap:.4rem}.ent-check{display:flex;gap:.5rem;align-items:center;margin:0;font-weight:400}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  var radios=document.querySelectorAll('input[name=account_type]'),box=document.getElementById('ent-fields'),nw=document.getElementById('ent-new'),code=document.getElementById('join_code');
+  function upd(){var ent=document.querySelector('input[name=account_type]:checked').value==='entreprise';box.style.display=ent?'block':'none';
+    var join=ent&&code.value.trim()!=='';nw.style.display=join?'none':'block';
+    document.getElementById('company_name').required=ent&&!join;document.getElementById('sector').required=ent&&!join;}
+  radios.forEach(function(r){r.addEventListener('change',upd);});code.addEventListener('input',upd);upd();
+  var f=document.querySelector('form.needs-validation');if(f)f.addEventListener('submit',function(e){
+    if(document.querySelector('input[name=account_type]:checked').value==='entreprise'&&code.value.trim()===''&&!document.querySelector('input[name=purposes]:checked')){e.preventDefault();alert("Choisissez au moins un objectif : formation, analyse de données ou consulting.");}});
 });
 </script>
 {% endblock %}

@@ -1,0 +1,13 @@
+{% extends "ent_base.html" %}
+{% block title %}Formulaires - DataEcon.Ci{% endblock %}
+{% block ent %}
+<div class="ent-head"><div><h1>Formulaires</h1><div class="sub">Collectez des données directement auprès de votre équipe (ou du public) et analysez-les en temps réel.</div></div>
+<a class="ent-btn gold" href="{{ url_for('ent.form_edit') }}"><i class="fas fa-plus"></i> Nouveau formulaire</a></div>
+<div class="ent-card"><div class="ent-scroll"><table class="ent-table"><tr><th>Titre</th><th>Questions</th><th>Réponses</th><th>État</th><th>Lien public</th><th></th></tr>
+{% for f in forms %}<tr><td><b>{{ f.title }}</b><br><small style="color:#7b8794">{{ f.created_at.strftime('%d/%m/%Y') }}</small></td><td>{{ f.champs()|length }}</td><td>{{ counts[f.id] }}</td>
+<td><span class="tag {{ 'ok' if f.is_open else 'bad' }}">{{ 'Ouvert' if f.is_open else 'Fermé' }}</span></td><td>{{ 'Oui' if f.public_token else 'Non' }}</td>
+<td style="white-space:nowrap"><a class="ent-btn sm" href="{{ url_for('ent.form_fill', fid=f.id) }}">Remplir</a> <a class="ent-btn ghost sm" href="{{ url_for('ent.form_responses', fid=f.id) }}">Réponses</a> <a class="ent-btn ghost sm" href="{{ url_for('ent.form_edit', fid=f.id) }}">Modifier</a>
+<form method="post" action="{{ url_for('ent.form_toggle', fid=f.id) }}" style="display:inline"><button class="ent-btn ghost sm">{{ 'Fermer' if f.is_open else 'Rouvrir' }}</button></form>
+{% if ent_is_admin %}<form method="post" action="{{ url_for('ent.form_delete', fid=f.id) }}" style="display:inline" onsubmit="return confirm('Supprimer ce formulaire et toutes ses réponses ?')"><button class="ent-btn danger sm">Supprimer</button></form>{% endif %}</td></tr>
+{% else %}<tr><td colspan="6" class="empty">Aucun formulaire. Créez le premier pour commencer à collecter des données.</td></tr>{% endfor %}</table></div></div>
+{% endblock %}

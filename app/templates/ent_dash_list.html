@@ -1,0 +1,19 @@
+{% extends "ent_base.html" %}
+{% block title %}Tableaux de bord - DataEcon.Ci{% endblock %}
+{% block ent %}
+<h1>Tableaux de bord interactifs</h1><div class="sub">Indicateurs clés, graphiques et filtres construits à partir de vos formulaires ou de vos fichiers.</div>
+<div class="ent-split">
+<div class="ent-card"><h2>Vos tableaux de bord</h2>
+{% for d in dashboards %}<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #edf1f5;padding:.55rem 0">
+<div><b>{{ d.title }}</b><br><small style="color:#7b8794">Source : {{ names.get((d.source_kind, d.source_id), 'supprimée') }} · modifié le {{ d.updated_at.strftime('%d/%m/%Y') }}</small></div>
+<div><a class="ent-btn sm" href="{{ url_for('ent.dash_view', did=d.id) }}">Ouvrir</a>
+{% if ent_is_admin %}<form method="post" action="{{ url_for('ent.dash_delete', did=d.id) }}" style="display:inline" onsubmit="return confirm('Supprimer ce tableau de bord ?')"><button class="ent-btn danger sm">Supprimer</button></form>{% endif %}</div></div>
+{% else %}<div class="empty">Aucun tableau de bord. Créez-en un à partir d'une source de données.</div>{% endfor %}</div>
+<div class="ent-card ent-form"><h2>Nouveau tableau de bord</h2><form method="post" action="{{ url_for('ent.dash_create') }}">
+<label>Titre</label><input type="text" name="title" placeholder="Ex : Suivi des ventes">
+<label>Source de données</label><select name="source" required><option value="">Choisir...</option>
+{% if forms %}<optgroup label="Formulaires">{% for f in forms %}<option value="form:{{ f.id }}">{{ f.title }}</option>{% endfor %}</optgroup>{% endif %}
+{% if sets %}<optgroup label="Fichiers importés">{% for s in sets %}<option value="dataset:{{ s.id }}">{{ s.name }}</option>{% endfor %}</optgroup>{% endif %}</select>
+<button class="ent-btn gold" style="margin-top:.7rem">Créer</button></form></div>
+</div>
+{% endblock %}

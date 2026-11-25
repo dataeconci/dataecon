@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/enterprise.css') }}">{% endblock %}
+{% block content %}
+{% set ep = request.endpoint or '' %}
+<div class="ent-wrap">
+  <aside class="ent-side no-print">
+    {% set _org = ent_org if ent_org is defined else None %}
+    <div class="ent-org"><small>Espace entreprise</small><b>{{ org_name or 'Mon entreprise' }}</b></div>
+    <a href="{{ url_for('ent.home') }}" class="{{ 'on' if ep=='ent.home' }}"><i class="fas fa-gauge-high"></i> Vue d'ensemble</a>
+    <a href="{{ url_for('ent.forms_list') }}" class="{{ 'on' if ep.startswith('ent.form') or ep.startswith('ent.response') }}"><i class="fas fa-clipboard-list"></i> Formulaires</a>
+    <a href="{{ url_for('ent.datasets') }}" class="{{ 'on' if ep.startswith('ent.dataset') }}"><i class="fas fa-database"></i> Données</a>
+    <a href="{{ url_for('ent.dash_list') }}" class="{{ 'on' if ep.startswith('ent.dash') }}"><i class="fas fa-chart-pie"></i> Tableaux de bord</a>
+    <a href="{{ url_for('ent.tasks') }}" class="{{ 'on' if ep.startswith('ent.task') }}"><i class="fas fa-list-check"></i> Tâches</a>
+    <a href="{{ url_for('ent.documents') }}" class="{{ 'on' if ep.startswith('ent.document') }}"><i class="fas fa-folder-open"></i> Documents</a>
+    <a href="{{ url_for('ent.training') }}" class="{{ 'on' if ep.startswith('ent.training') or ep.startswith('ent.session') }}"><i class="fas fa-graduation-cap"></i> Salle de formation</a>
+    <a href="{{ url_for('ent.messages_page') }}" class="{{ 'on' if ep=='ent.messages_page' }}"><i class="fas fa-comments"></i> Messages{% if ent_unread_support + ent_unread_team %}<span class="bd">{{ ent_unread_support + ent_unread_team }}</span>{% endif %}</a>
+    <a href="{{ url_for('ent.requests_page') }}" class="{{ 'on' if ep=='ent.requests_page' }}"><i class="fas fa-handshake-angle"></i> Demandes de services</a>
+    <a href="{{ url_for('ent.team') }}" class="{{ 'on' if ep.startswith('ent.team') }}"><i class="fas fa-users"></i> Équipe</a>
+  </aside>
+  <section class="ent-main">
+    {% block ent %}{% endblock %}
+  </section>
+</div>
+{% endblock %}

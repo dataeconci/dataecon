@@ -1,0 +1,16 @@
+{% extends "ent_base.html" %}
+{% block title %}Données - DataEcon.Ci{% endblock %}
+{% block ent %}
+<h1>Données de l'entreprise</h1><div class="sub">Importez vos fichiers (CSV, Excel) pour les analyser dans des tableaux de bord. Ils ne sont visibles que par votre équipe.</div>
+<div class="ent-split">
+<div class="ent-card"><h2>Jeux de données</h2><div class="ent-scroll"><table class="ent-table"><tr><th>Nom</th><th>Lignes</th><th>Importé le</th><th></th></tr>
+{% for d in items %}<tr><td><b>{{ d.name }}</b></td><td>{{ d.n_rows }}</td><td>{{ d.created_at.strftime('%d/%m/%Y') }}</td><td style="white-space:nowrap">
+<form method="post" action="{{ url_for('ent.dash_create') }}" style="display:inline"><input type="hidden" name="source" value="dataset:{{ d.id }}"><button class="ent-btn sm">Tableau de bord</button></form>
+{% if ent_is_admin %}<form method="post" action="{{ url_for('ent.dataset_delete', did=d.id) }}" style="display:inline" onsubmit="return confirm('Supprimer ce jeu de données ?')"><button class="ent-btn danger sm">Supprimer</button></form>{% endif %}</td></tr>
+{% else %}<tr><td colspan="4" class="empty">Aucun jeu de données importé.</td></tr>{% endfor %}</table></div></div>
+<div class="ent-card ent-form"><h2>Importer un fichier</h2><form method="post" enctype="multipart/form-data">
+<label>Nom (facultatif)</label><input type="text" name="name"><label>Fichier .csv ou .xlsx</label><input type="file" name="file" accept=".csv,.txt,.xlsx,.xls" required>
+<p style="font-size:.8rem;color:#52606d;margin-top:.5rem">Maximum 20 000 lignes et 60 colonnes.</p><button class="ent-btn gold">Importer</button></form>
+<p style="font-size:.82rem;margin-top:1rem">Besoin d'une analyse statistique ou d'un modèle ? <a href="{{ url_for('ent.requests_page', type='analyse') }}">Demandez une analyse à nos experts</a>.</p></div>
+</div>
+{% endblock %}

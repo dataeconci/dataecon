@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/enterprise.css') }}">{% endblock %}
+{% block title %}Entreprises - Administration{% endblock %}
+{% block content %}
+<div style="max-width:1200px;margin:1.5rem auto;padding:0 1rem 3rem"><h1 style="font-size:1.5rem;color:#0b2a4a">Entreprises inscrites ({{ rows|length }})</h1>
+<div class="ent-card"><div class="ent-scroll"><table class="ent-table"><tr><th>Entreprise</th><th>Domaine</th><th>Taille</th><th>Objectifs</th><th>Membres</th><th>Demandes ouvertes</th><th>Messages</th><th>Inscrite le</th><th></th></tr>
+{% for r in rows %}<tr><td><b>{{ r.org.name }}</b><br><small>{{ r.org.city or '' }} {{ r.org.country or '' }}</small></td><td>{{ r.org.sector }}</td><td>{{ r.org.size|upper }}</td><td>{{ r.org.objectifs()|join(', ') }}</td><td>{{ r.n }}</td>
+<td>{% if r.open %}<span class="tag warn">{{ r.open }}</span>{% else %}0{% endif %}</td><td>{% if r.unread %}<span class="tag bad">{{ r.unread }} non lu(s)</span>{% else %}-{% endif %}</td><td>{{ r.org.created_at.strftime('%d/%m/%Y') }}</td>
+<td><a class="ent-btn sm" href="{{ url_for('admin_entreprise', oid=r.org.id) }}">Ouvrir</a></td></tr>
+{% else %}<tr><td colspan="9" class="empty">Aucune entreprise inscrite.</td></tr>{% endfor %}</table></div></div></div>
+{% endblock %}

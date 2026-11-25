@@ -1,0 +1,18 @@
+{% extends "ent_base.html" %}
+{% block title %}Tâches - DataEcon.Ci{% endblock %}
+{% block ent %}
+<div class="ent-head"><div><h1>Tâches de l'équipe</h1><div class="sub">Répartissez le travail et suivez l'avancement. Glissez une carte d'une colonne à l'autre.</div></div></div>
+<div class="ent-card ent-form no-print"><form method="post" action="{{ url_for('ent.task_create') }}" style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:.5rem;align-items:end"><div><label>Nouvelle tâche</label><input type="text" name="title" required></div>
+<div><label>Responsable</label><select name="assignee"><option value="">Non assignée</option>{% for u in mem %}<option value="{{ u.id }}">{{ u.first_name }} {{ u.last_name }}</option>{% endfor %}</select></div><div><label>Échéance</label><input type="date" name="due"></div><button class="ent-btn gold">Ajouter</button></form></div>
+<div class="kb">{% for key, label in STATUTS %}<div class="kcol" data-status="{{ key }}"><h3>{{ label }} <span class="tag">{{ by[key]|length }}</span></h3>
+{% for t in by[key] %}<div class="kcard" draggable="true" data-id="{{ t.id }}"><b>{{ t.title }}</b>
+<small>{{ names.get(t.assignee_id, 'Non assignée') }}{% if t.due_date %} · <span style="color:{{ '#b03a2e' if t.due_date < today and key != 'termine' else '#52606d' }}">{{ t.due_date.strftime('%d/%m/%Y') }}</span>{% endif %}</small>
+<form method="post" action="{{ url_for('ent.task_delete', tid=t.id) }}" class="no-print" onsubmit="return confirm('Supprimer cette tâche ?')" style="margin-top:.3rem"><button class="ent-btn danger sm">Supprimer</button></form></div>{% endfor %}</div>{% endfor %}</div>
+<script>
+var cards=document.querySelectorAll('.kcard'),cols=document.querySelectorAll('.kcol'),drag=null;
+cards.forEach(function(c){c.addEventListener('dragstart',function(e){drag=c;e.dataTransfer.setData('text/plain',c.dataset.id);});});
+cols.forEach(function(col){col.addEventListener('dragover',function(e){e.preventDefault();col.classList.add('over');});col.addEventListener('dragleave',function(){col.classList.remove('over');});
+ col.addEventListener('drop',function(e){e.preventDefault();col.classList.remove('over');var id=e.dataTransfer.getData('text/plain');if(!id)return;col.appendChild(document.querySelector('.kcard[data-id="'+id+'"]'));
+  fetch('/entreprise/taches/'+id+'/statut',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:col.dataset.status})}).then(function(){location.reload();});});});
+</script>
+{% endblock %}

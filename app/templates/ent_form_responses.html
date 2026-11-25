@@ -1,0 +1,12 @@
+{% extends "ent_base.html" %}
+{% block title %}Réponses - DataEcon.Ci{% endblock %}
+{% block ent %}
+<div class="ent-head"><div><h1>{{ form.title }}</h1><div class="sub">{{ n }} réponse(s) collectée(s)</div></div>
+<div class="no-print" style="display:flex;gap:.4rem;flex-wrap:wrap"><a class="ent-btn" href="{{ url_for('ent.form_fill', fid=form.id) }}">Répondre</a>
+<a class="ent-btn ghost" href="{{ url_for('ent.form_export', fid=form.id) }}"><i class="fas fa-file-csv"></i> Exporter (CSV)</a>
+<form method="post" action="{{ url_for('ent.dash_create') }}" style="display:inline"><input type="hidden" name="source" value="form:{{ form.id }}"><input type="hidden" name="title" value="Tableau de bord : {{ form.title }}"><button class="ent-btn gold"><i class="fas fa-chart-pie"></i> Créer un tableau de bord</button></form></div></div>
+{% if public_url %}<div class="ent-card"><b>Lien public :</b> <input type="text" readonly value="{{ public_url }}" style="width:70%;border:1px solid #b9c5d2;border-radius:6px;padding:.3rem" onclick="this.select()"></div>{% endif %}
+<div class="ent-card"><div class="ent-scroll"><table class="ent-table"><tr>{% for c in cols %}<th>{{ c.name }}</th>{% endfor %}</tr>
+{% for r in rows %}<tr>{% for c in cols %}<td>{{ '' if r[c.name] is none else r[c.name] }}</td>{% endfor %}</tr>
+{% else %}<tr><td colspan="{{ cols|length }}" class="empty">Aucune réponse pour le moment.</td></tr>{% endfor %}</table></div></div>
+{% endblock %}

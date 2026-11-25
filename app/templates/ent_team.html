@@ -1,0 +1,29 @@
+{% extends "ent_base.html" %}
+{% block title %}Équipe - DataEcon.Ci{% endblock %}
+{% block ent %}
+<h1>Équipe</h1><div class="sub">Gérez les membres de votre entreprise et leurs rôles.</div>
+<div class="ent-split">
+ <div class="ent-card"><h2>Membres ({{ mem|length }})</h2>
+  <div class="ent-scroll"><table class="ent-table"><tr><th>Nom</th><th>Adresse e-mail</th><th>Rôle</th><th></th></tr>
+  {% for u in mem %}<tr><td>{{ u.first_name }} {{ u.last_name }}</td><td>{{ u.email }}</td>
+   <td>{% if ent_is_admin and u.org_role != 'owner' %}<form method="post" action="{{ url_for('ent.team_role', uid=u.id) }}" style="display:flex;gap:.3rem"><select name="role" style="border:1px solid #b9c5d2;border-radius:6px">{% for k in ['member','admin'] %}<option value="{{ k }}" {{ 'selected' if u.org_role==k }}>{{ ROLES[k] }}</option>{% endfor %}</select><button class="ent-btn ghost sm">OK</button></form>{% else %}<span class="tag">{{ ROLES.get(u.org_role, 'Membre') }}</span>{% endif %}</td>
+   <td>{% if ent_is_admin and u.org_role != 'owner' and u.id != current_user.id %}<form method="post" action="{{ url_for('ent.team_remove', uid=u.id) }}" onsubmit="return confirm('Retirer ce membre de l\'entreprise ?')"><button class="ent-btn danger sm">Retirer</button></form>{% endif %}</td></tr>{% endfor %}</table></div>
+ </div>
+ <div>
+  <div class="ent-card"><h2>Inviter des collègues</h2>
+   <p style="font-size:.88rem;color:#52606d">Transmettez ce code ou ce lien : vos collègues le saisissent à l'inscription (choix « Entreprise ») et rejoignent automatiquement votre espace.</p>
+   <div style="font-size:1.5rem;font-weight:700;letter-spacing:.12em;color:#0b2a4a;background:#f1f5f9;border-radius:8px;padding:.5rem;text-align:center" id="code">{{ org.invite_code }}</div>
+   <input type="text" readonly value="{{ url_for('register', code=org.invite_code, _external=True) }}" style="width:100%;margin:.6rem 0;border:1px solid #b9c5d2;border-radius:6px;padding:.35rem" onclick="this.select()">
+   {% if ent_is_admin %}<form method="post" action="{{ url_for('ent.team_code') }}" onsubmit="return confirm('Générer un nouveau code ? L\'ancien sera désactivé.')"><button class="ent-btn ghost sm">Générer un nouveau code</button></form>{% endif %}
+  </div>
+  {% if ent_is_admin %}<div class="ent-card ent-form"><h2>Informations de l'entreprise</h2>
+   <form method="post" action="{{ url_for('ent.team_profile') }}">
+    <label>Nom</label><input type="text" name="name" value="{{ org.name }}" required>
+    <label>Domaine d'activité</label><select name="sector">{% for s in SECTEURS %}<option {{ 'selected' if s==org.sector }}>{{ s }}</option>{% endfor %}</select>
+    <label>Taille</label><select name="size">{% for k,v in TAILLES %}<option value="{{ k }}" {{ 'selected' if k==org.size }}>{{ v }}</option>{% endfor %}</select>
+    <label>Ville</label><input type="text" name="city" value="{{ org.city or '' }}"><label>Pays</label><input type="text" name="country" value="{{ org.country or '' }}">
+    <label>Objectifs</label>{% for k,v in OBJECTIFS.items() %}<div><input type="checkbox" name="purposes" value="{{ k }}" {{ 'checked' if k in (org.purposes or '').split(',') }}> {{ v }}</div>{% endfor %}
+    <button class="ent-btn" style="margin-top:.7rem">Enregistrer</button></form></div>{% endif %}
+ </div>
+</div>
+{% endblock %}

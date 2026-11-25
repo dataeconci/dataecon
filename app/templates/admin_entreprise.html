@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/enterprise.css') }}">{% endblock %}
+{% block title %}{{ org.name }} - Administration{% endblock %}
+{% block content %}
+<div style="max-width:1200px;margin:1.5rem auto;padding:0 1rem 3rem">
+<p><a href="{{ url_for('admin_entreprises') }}">&larr; Toutes les entreprises</a></p>
+<h1 style="font-size:1.5rem;color:#0b2a4a">{{ org.name }}</h1><div style="color:#52606d;margin-bottom:1rem">{{ org.sector }} · {{ org.size|upper }} · {{ org.city or '' }} {{ org.country or '' }} · Objectifs : {{ org.objectifs()|join(', ') }}</div>
+<div class="ent-grid g4" style="margin-bottom:1rem">{% for k,l in [('forms','Formulaires'),('resp','Réponses'),('datasets','Fichiers'),('dash','Tableaux de bord'),('tasks','Tâches'),('docs','Documents')] %}<div class="kpi"><div class="v">{{ stats[k] }}</div><div class="l">{{ l }}</div></div>{% endfor %}</div>
+<div class="ent-split"><div>
+<div class="ent-card"><h2>Conversation avec l'entreprise</h2>
+<div class="chat" id="chat" data-channel="support" data-org="{{ org.id }}" data-url="{{ url_for('ent.api_messages') }}"><div class="chat-log" id="log"></div><div class="chat-in"><textarea id="txt" placeholder="Répondre à l'entreprise..."></textarea><button class="ent-btn" id="send"><i class="fas fa-paper-plane"></i></button></div></div></div>
+<div class="ent-card"><h2>Demandes de services</h2>
+{% for r in reqs %}<form method="post" class="ent-form" style="border-bottom:1px solid #edf1f5;padding:.6rem 0"><input type="hidden" name="act" value="request"><input type="hidden" name="rid" value="{{ r.id }}">
+<b>{{ r.title }}</b> <span class="tag">{{ KINDS[r.kind] }}</span> <small>{{ r.created_at.strftime('%d/%m/%Y') }}</small><div style="white-space:pre-wrap;font-size:.88rem">{{ r.description }}</div>
+<div style="display:grid;grid-template-columns:150px 1fr auto;gap:.4rem;margin-top:.4rem"><select name="status">{% for k,v in STATUTS.items() %}<option value="{{ k }}" {{ 'selected' if k==r.status }}>{{ v }}</option>{% endfor %}</select><input type="text" name="note" value="{{ r.admin_note or '' }}" placeholder="Note visible par l'entreprise"><button class="ent-btn sm">Mettre à jour</button></div></form>
+{% else %}<div class="empty">Aucune demande.</div>{% endfor %}</div></div>
+<div><div class="ent-card"><h2>Membres</h2>{% for u in mem %}<div style="padding:.3rem 0;border-bottom:1px solid #edf1f5"><b>{{ u.first_name }} {{ u.last_name }}</b> <span class="tag">{{ ROLES.get(u.org_role,'Membre') }}</span><br><small>{{ u.email }} · {{ u.phone or '' }}</small></div>{% endfor %}</div>
+<div class="ent-card ent-form"><h2>Planifier une session de formation</h2><form method="post"><input type="hidden" name="act" value="session"><input type="text" name="title" placeholder="Titre" required><input type="datetime-local" name="starts" required style="margin-top:.4rem"><input type="text" name="link" placeholder="Lien de visioconférence" style="margin-top:.4rem"><textarea name="description" style="min-height:60px;margin-top:.4rem" placeholder="Description"></textarea>
+<label><input type="checkbox" name="all" value="1"> Ouvrir à toutes les entreprises</label><button class="ent-btn" style="margin-top:.4rem">Planifier</button></form></div></div></div></div>
+<script src="{{ url_for('static', filename='js/ent_chat.js') }}"></script>
+{% endblock %}

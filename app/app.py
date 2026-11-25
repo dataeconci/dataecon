@@ -379,6 +379,9 @@ class User(UserMixin, db.Model):
     wave_payment_id = db.Column(db.String(100))
     is_subscription_active = db.Column(db.Boolean, default=False)
     reminder_sent = db.Column(db.Boolean, default=False)
+    account_type = db.Column(db.String(12), default='particulier')
+    org_id = db.Column(db.Integer, index=True)
+    org_role = db.Column(db.String(10))
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password, method='pbkdf2:sha256')
@@ -796,6 +799,11 @@ def index():
         latest_courses=latest_courses
     )
 
+def _register_page(**kw):
+    return render_template('register.html', sectors=ENT_SECTEURS, sizes=ENT_TAILLES, objectifs=ENT_OBJECTIFS,
+                           join_code=(request.values.get('code') or '').strip().upper(), **kw)
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -805,23 +813,43 @@ def register():
         first_name = request.form.get('first_name')
         last_name = request.form.get('last_name')
         phone = request.form.get('phone')
+        account_type = 'entreprise' if request.form.get('account_type') == 'entreprise' else 'particulier'
 
-        print(f"NOUVEL UTILISATEUR: {username} - {email}", flush=True)
+        print(f"NOUVEL UTILISATEUR: {username} - {email} ({account_type})", flush=True)
 
         if not is_valid_email(email):
             flash('Veuillez entrer un email valide.', 'danger')
-            return render_template('register.html')
+            return _register_page()
 
         user_exists = User.query.filter_by(username=username).first()
         email_exists = User.query.filter_by(email=email).first()
 
         if user_exists:
             flash('Ce nom d\'utilisateur est déjà pris.', 'danger')
-            return render_template('register.html')
+            return _register_page()
 
         if email_exists:
             flash('Cet email est déjà utilisé.', 'danger')
-            return render_template('register.html')
+            return _register_page()
+
+        company = (request.form.get('company_name') or '').strip()
+        join_code = (request.form.get('join_code') or '').strip()
+        purposes = request.form.getlist('purposes')
+        if account_type == 'entreprise':
+            if join_code:
+                if not Organization_exists(join_code):
+                    flash("Ce code d'invitation n'existe pas. Vérifiez-le auprès de votre responsable.", 'danger')
+                    return _register_page()
+            else:
+                if not company:
+                    flash("Indiquez le nom de votre entreprise.", 'danger')
+                    return _register_page()
+                if not request.form.get('sector'):
+                    flash("Indiquez le domaine d'activité de votre entreprise.", 'danger')
+                    return _register_page()
+                if not [p for p in purposes if p in ENT_OBJECTIFS]:
+                    flash("Indiquez l'objectif de la création du compte (formation, analyse de données ou consulting).", 'danger')
+                    return _register_page()
 
         user = User(
             username=username,
@@ -831,10 +859,18 @@ def register():
             phone=phone,
             email_confirmed=False,
             subscription_level='free',
-            is_subscription_active=False
+            is_subscription_active=False,
+            account_type='particulier'
         )
         user.set_password(password)
         db.session.add(user)
+        db.session.flush()
+        if account_type == 'entreprise':
+            if join_code:
+                app.config['ent_join_org'](user, join_code)
+            else:
+                app.config['ent_create_org'](user, company, request.form.get('sector'), request.form.get('size') or 'tpe',
+                                             purposes, (request.form.get('country') or '').strip()[:80], (request.form.get('city') or '').strip()[:80])
         db.session.commit()
         print(f"Utilisateur {username} créé en base de données", flush=True)
 
@@ -846,7 +882,11 @@ def register():
 
         return redirect(url_for('login'))
 
-    return render_template('register.html')
+    return _register_page()
+
+
+def Organization_exists(code):
+    return ENT_MODELS['Organization'].query.filter_by(invite_code=(code or '').strip().upper()).first() is not None
 
 @app.route('/confirm/<token>')
 def confirm_email(token):
@@ -976,6 +1016,8 @@ def login():
                 return render_template('login.html')
             login_user(user)
             flash(f'Bienvenue {user.first_name} !', 'success')
+            if getattr(user, 'account_type', None) == 'entreprise' and user.org_id and not user.is_admin:
+                return redirect(url_for('ent.home'))
             return redirect(url_for('dashboard'))
 
         flash('Identifiants incorrects.', 'danger')
@@ -2555,11 +2597,15 @@ def generate_chart(dataset_id, chart_type):
 from certification import init_certification
 ExamAttempt, Certificate = init_certification(app, db, User, notify=brevo_send_email)
 
+from enterprise import init_enterprise, SECTEURS as ENT_SECTEURS, TAILLES as ENT_TAILLES, OBJECTIFS as ENT_OBJECTIFS
+ENT_MODELS = init_enterprise(app, db, User, Course=Course, notify=brevo_send_email)
+
 
 def init_db():
     with app.app_context():
         db.create_all()
         app.config['migrer_paiement_certificat']()
+        app.config['migrer_entreprise']()
         # Migration automatique : ajouter les nouvelles colonnes si elles n'existent pas
         from sqlalchemy import text
         try:

@@ -1,0 +1,10 @@
+{% extends "ent_base.html" %}
+{% block title %}Documents - DataEcon.Ci{% endblock %}
+{% block ent %}
+<h1>Documents partagés</h1><div class="sub">Rapports, contrats, supports de formation : accessibles à toute l'équipe, privés pour les autres.</div>
+<div class="ent-split"><div class="ent-card"><div class="ent-scroll"><table class="ent-table"><tr><th>Document</th><th>Taille</th><th>Ajouté par</th><th>Date</th><th></th></tr>
+{% for d in docs %}<tr><td><i class="fas fa-file"></i> <b>{{ d.name }}</b></td><td>{{ (d.size/1024)|round|int }} Ko</td><td>{{ names.get(d.uploaded_by, '-') }}</td><td>{{ d.created_at.strftime('%d/%m/%Y') }}</td>
+<td style="white-space:nowrap"><a class="ent-btn sm" href="{{ url_for('ent.document_get', did=d.id) }}">Télécharger</a> <form method="post" action="{{ url_for('ent.document_delete', did=d.id) }}" style="display:inline" onsubmit="return confirm('Supprimer ce document ?')"><button class="ent-btn danger sm">Supprimer</button></form></td></tr>
+{% else %}<tr><td colspan="5" class="empty">Aucun document.</td></tr>{% endfor %}</table></div></div>
+<div class="ent-card ent-form"><h2>Ajouter un document</h2><form method="post" enctype="multipart/form-data"><input type="file" name="file" required><p style="font-size:.8rem;color:#52606d;margin-top:.4rem">PDF, Word, Excel, PowerPoint, CSV, images, ZIP. 25 Mo maximum.</p><button class="ent-btn gold">Téléverser</button></form></div></div>
+{% endblock %}

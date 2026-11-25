@@ -1,0 +1,23 @@
+{% extends "ent_base.html" %}
+{% block title %}{{ dash.title }} - DataEcon.Ci{% endblock %}
+{% block ent %}
+<div id="app" class="{{ 'editing' if request.args.get('edit') }}">
+<div class="ent-head"><div><h1 id="d-title">{{ dash.title }}</h1><div class="sub" id="d-sub"></div></div>
+<div class="no-print" style="display:flex;gap:.4rem;flex-wrap:wrap"><button class="ent-btn ghost" id="b-edit"><i class="fas fa-pen"></i> <span>Modifier</span></button><button class="ent-btn ghost" onclick="window.print()"><i class="fas fa-print"></i> Imprimer / PDF</button><a class="ent-btn ghost" href="{{ url_for('ent.dash_list') }}">Retour</a></div></div>
+<div class="editor-panel no-print">
+ <div class="row2"><div><label>Titre du tableau de bord</label><input type="text" id="e-title" value="{{ dash.title }}"></div>
+ <div><label>Filtres (champs)</label><select id="e-filters" multiple size="4"></select></div></div>
+ <hr><b style="font-size:.85rem">Ajouter un élément</b>
+ <div class="row2" style="margin-top:.4rem"><div><label>Type</label><select id="a-type"><option value="kpi">Indicateur (KPI)</option><option value="bar">Histogramme</option><option value="line">Courbe</option><option value="pie">Secteurs</option><option value="table">Tableau</option></select></div>
+ <div><label>Titre</label><input type="text" id="a-title"></div><div><label>Calcul</label><select id="a-agg"><option value="count">Nombre de lignes</option><option value="sum">Somme</option><option value="avg">Moyenne</option><option value="min">Minimum</option><option value="max">Maximum</option><option value="distinct">Valeurs distinctes</option></select></div>
+ <div><label>Champ numérique</label><select id="a-field"></select></div><div><label>Regrouper par</label><select id="a-group"></select></div>
+ <div><label>Largeur</label><select id="a-w"><option value="1">1/3</option><option value="2">2/3</option><option value="3">Pleine</option></select></div></div>
+ <div style="margin-top:.7rem;display:flex;gap:.4rem"><button class="ent-btn" id="a-add" type="button">Ajouter</button><button class="ent-btn gold" id="a-save" type="button">Enregistrer</button><span id="a-msg" style="align-self:center;color:#176a3d;font-size:.85rem"></span></div></div>
+<div class="dash-filters" id="filters" style="display:none"></div>
+<div class="dash-grid" id="grid"></div>
+</div>
+<script>
+var SRC={kind:{{ dash.source_kind|tojson }},id:{{ dash.source_id }}},CONFIG={{ config|tojson }},SAVE_URL={{ url_for('ent.dash_save', did=dash.id)|tojson }},DATA_URL={{ url_for('ent.api_source', kind=dash.source_kind, sid=dash.source_id)|tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/ent_dash.js') }}"></script>
+{% endblock %}

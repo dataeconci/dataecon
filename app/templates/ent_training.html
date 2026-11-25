@@ -1,0 +1,27 @@
+{% extends "ent_base.html" %}
+{% block title %}Salle de formation - DataEcon.Ci{% endblock %}
+{% block ent %}
+<h1>Salle de formation</h1><div class="sub">Formez votre équipe en ligne : cours, formations pratiques (Python, R, SQL, Tableau, Power BI, SmartPLS), certifications et sessions en direct.</div>
+<div class="ent-card"><h2>Mes formations assignées</h2>
+{% for t in mine %}{% set ok = (t.id, current_user.id) in done %}<div style="display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;border-bottom:1px solid #edf1f5;padding:.55rem 0">
+<div><b>{{ t.title }}</b> {% if ok %}<span class="tag ok">Terminée</span>{% elif t.due_date and t.due_date < now.date() %}<span class="tag bad">En retard</span>{% else %}<span class="tag warn">À faire</span>{% endif %}<br><small style="color:#7b8794">{% if t.due_date %}Échéance : {{ t.due_date.strftime('%d/%m/%Y') }}{% else %}Sans échéance{% endif %}{% if t.assigned_to is none %} · toute l'équipe{% endif %}</small></div>
+<div><a class="ent-btn sm" href="{{ training_url(t) }}">Ouvrir</a> <form method="post" action="{{ url_for('ent.training_done', tid=t.id) }}" style="display:inline"><button class="ent-btn ghost sm">{{ 'Marquer à refaire' if ok else 'Marquer terminée' }}</button></form></div></div>
+{% else %}<div class="empty">Aucune formation assignée pour le moment.</div>{% endfor %}
+<p style="margin-top:.8rem;font-size:.85rem"><a href="{{ url_for('certification_hub') }}">Passer une certification</a> · <a href="{{ url_for('ent.requests_page', type='formation') }}">Demander une formation sur mesure</a></p></div>
+<div class="ent-split">
+<div class="ent-card"><h2>Sessions en direct</h2>
+{% for s in sessions %}<div style="border-bottom:1px solid #edf1f5;padding:.5rem 0"><b>{{ s.title }}</b> {% if s.org_id is none %}<span class="tag">DataEcon.Ci</span>{% endif %}<br><small>{{ s.starts_at.strftime('%d/%m/%Y à %H:%M') }}</small>{% if s.description %}<div style="font-size:.85rem;color:#52606d">{{ s.description }}</div>{% endif %}{% if s.link and s.starts_at >= now %}<a href="{{ s.link }}" target="_blank" rel="noopener">Rejoindre la session</a>{% endif %}</div>
+{% else %}<div class="empty">Aucune session planifiée.</div>{% endfor %}
+{% if ent_is_admin %}<form method="post" action="{{ url_for('ent.session_create') }}" class="ent-form no-print"><label>Planifier une session interne</label><input type="text" name="title" placeholder="Titre" required><input type="datetime-local" name="starts" required style="margin-top:.4rem"><input type="text" name="link" placeholder="Lien de visioconférence (Meet, Zoom...)" style="margin-top:.4rem"><textarea name="description" placeholder="Description" style="min-height:60px;margin-top:.4rem"></textarea><button class="ent-btn" style="margin-top:.4rem">Planifier</button></form>{% endif %}</div>
+<div>{% if ent_is_admin %}<div class="ent-card ent-form"><h2>Assigner une formation</h2><form method="post" action="{{ url_for('ent.training_assign') }}">
+<label>Formation</label><select name="item" required>{% for c in catalogue %}<option value="{{ c.kind }}|{{ c.ref }}">{{ c.title }}{% if c.kind=='course' and c.level %} ({{ c.level }}){% endif %}</option>{% endfor %}</select>
+<label>Pour</label><select name="who"><option value="all">Toute l'équipe</option>{% for u in mem %}<option value="{{ u.id }}">{{ u.first_name }} {{ u.last_name }}</option>{% endfor %}</select>
+<label>Échéance</label><input type="date" name="due"><button class="ent-btn gold" style="margin-top:.7rem">Assigner</button></form></div>{% endif %}</div>
+</div>
+{% if ent_is_admin %}<div class="ent-card"><h2>Suivi de l'équipe</h2><div class="ent-scroll"><table class="ent-table"><tr><th>Formation</th><th>Avancement</th><th>Terminée par</th><th></th></tr>
+{% for t in ts %}{% set targets = mem if t.assigned_to is none else mem|selectattr('id','equalto',t.assigned_to)|list %}{% set finished = targets|selectattr('id','in',(done|selectattr(0,'equalto',t.id)|map(attribute=1)|list))|list %}
+<tr><td><b>{{ t.title }}</b></td><td style="min-width:140px"><div class="bar"><i style="width:{{ (100*finished|length/targets|length)|round if targets else 0 }}%"></i></div><small>{{ finished|length }} / {{ targets|length }}</small></td>
+<td>{{ finished|map(attribute='first_name')|join(', ') }}</td><td><form method="post" action="{{ url_for('ent.training_delete', tid=t.id) }}" onsubmit="return confirm('Retirer cette assignation ?')"><button class="ent-btn danger sm">Retirer</button></form></td></tr>
+{% else %}<tr><td colspan="4" class="empty">Aucune assignation.</td></tr>{% endfor %}</table></div></div>{% endif %}
+<div class="ent-card"><h2>Catalogue</h2><div class="ent-grid g2">{% for c in catalogue %}<div style="border:1px solid #e3e9ef;border-radius:10px;padding:.6rem .8rem"><b style="font-size:.9rem">{{ c.title }}</b><br><a href="{{ c.url }}" class="ent-btn ghost sm" style="margin-top:.4rem">Découvrir</a></div>{% endfor %}</div></div>
+{% endblock %}

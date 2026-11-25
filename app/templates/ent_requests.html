@@ -1,0 +1,13 @@
+{% extends "ent_base.html" %}
+{% block title %}Demandes de services - DataEcon.Ci{% endblock %}
+{% block ent %}
+<h1>Demandes de services</h1><div class="sub">Formation sur mesure, analyse de vos données ou mission de consulting : décrivez votre besoin, nous revenons vers vous.</div>
+<div class="ent-split"><div class="ent-card"><h2>Suivi de vos demandes</h2>
+{% for r in items %}<div style="border-bottom:1px solid #edf1f5;padding:.6rem 0"><b>{{ r.title }}</b> <span class="tag">{{ KINDS[r.kind] }}</span> <span class="tag {{ 'ok' if r.status=='terminee' else ('bad' if r.status=='annulee' else 'warn') }}">{{ STATUTS[r.status] }}</span>
+<br><small style="color:#7b8794">{{ r.created_at.strftime('%d/%m/%Y') }}</small><div style="font-size:.88rem;color:#3d4852;white-space:pre-wrap">{{ r.description }}</div>
+{% if r.admin_note %}<div class="annc" style="margin-top:.4rem"><b>Réponse DataEcon.Ci :</b> {{ r.admin_note }}</div>{% endif %}</div>
+{% else %}<div class="empty">Aucune demande envoyée.</div>{% endfor %}</div>
+<div class="ent-card ent-form"><h2>Nouvelle demande</h2><form method="post"><label>Type de service</label><select name="kind">{% for k,v in KINDS.items() %}<option value="{{ k }}" {{ 'selected' if k==kind }}>{{ v }}</option>{% endfor %}</select>
+<label>Titre</label><input type="text" name="title" required placeholder="Ex : Former 5 agents à Power BI"><label>Description du besoin</label><textarea name="description" required placeholder="Contexte, objectifs, délais, données disponibles..."></textarea>
+<button class="ent-btn gold" style="margin-top:.7rem">Envoyer la demande</button></form></div></div>
+{% endblock %}

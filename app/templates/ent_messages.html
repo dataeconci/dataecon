@@ -1,0 +1,10 @@
+{% extends "ent_base.html" %}
+{% block title %}Messages - DataEcon.Ci{% endblock %}
+{% block ent %}
+<h1>Messagerie</h1><div class="sub">Échangez avec l'équipe DataEcon.Ci (formations, analyses, consulting) ou avec vos collègues.</div>
+<div class="tabsx"><a href="?canal=support" class="{{ 'on' if channel=='support' }}"><i class="fas fa-headset"></i> Support DataEcon.Ci{% if ent_unread_support %} ({{ ent_unread_support }}){% endif %}</a><a href="?canal=team" class="{{ 'on' if channel=='team' }}"><i class="fas fa-users"></i> Canal de l'équipe{% if ent_unread_team %} ({{ ent_unread_team }}){% endif %}</a></div>
+<div class="chat" id="chat" data-channel="{{ channel }}" data-url="{{ url_for('ent.api_messages') }}"><div class="chat-log" id="log"><div class="empty">Chargement...</div></div>
+<div class="chat-in"><textarea id="txt" placeholder="{{ 'Écrivez à l\'équipe DataEcon.Ci...' if channel=='support' else 'Écrivez à votre équipe...' }}"></textarea><button class="ent-btn" id="send"><i class="fas fa-paper-plane"></i></button></div></div>
+{% if channel=='support' %}<p style="font-size:.85rem;margin-top:.7rem">Pour une demande structurée : <a href="{{ url_for('ent.requests_page', type='formation') }}">formation</a> · <a href="{{ url_for('ent.requests_page', type='analyse') }}">analyse de données</a> · <a href="{{ url_for('ent.requests_page', type='consulting') }}">consulting</a>.</p>{% endif %}
+<script src="{{ url_for('static', filename='js/ent_chat.js') }}"></script>
+{% endblock %}

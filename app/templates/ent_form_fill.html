@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/enterprise.css') }}">{% endblock %}
+{% block title %}{{ form.title }}{% endblock %}
+{% block content %}
+<div style="max-width:720px;margin:1.5rem auto;padding:0 1rem 3rem">
+ <div class="ent-card">
+ {% if closed %}<h1 style="font-size:1.4rem;color:#0b2a4a">{{ form.title }}</h1><p>Ce formulaire n'accepte plus de réponses.</p>
+ {% elif done %}<h1 style="font-size:1.4rem;color:#0b2a4a">Merci !</h1><p>Votre réponse a bien été enregistrée.</p>
+ {% else %}
+ <h1 style="font-size:1.4rem;color:#0b2a4a">{{ form.title }}</h1>{% if form.description %}<p style="color:#52606d">{{ form.description }}</p>{% endif %}
+ <form method="post" class="ent-form" novalidate>
+  {% if public %}<div class="fill-q"><label>Votre nom (facultatif)</label><input type="text" name="__nom" value="{{ values.get('__nom','') }}"></div><div style="position:absolute;left:-9999px"><input type="text" name="website" tabindex="-1" autocomplete="off"></div>{% endif %}
+  {% for c in form.champs() %}<div class="fill-q"><label for="{{ c.id }}">{{ c.label }}{% if c.required %} <span class="req">*</span>{% endif %}</label>
+   {% if c.type == 'text' %}<input type="text" id="{{ c.id }}" name="{{ c.id }}" value="{{ values.get(c.id,'') }}">
+   {% elif c.type == 'textarea' %}<textarea id="{{ c.id }}" name="{{ c.id }}">{{ values.get(c.id,'') }}</textarea>
+   {% elif c.type == 'number' %}<input type="text" inputmode="decimal" id="{{ c.id }}" name="{{ c.id }}" value="{{ values.get(c.id,'') }}">
+   {% elif c.type == 'date' %}<input type="date" id="{{ c.id }}" name="{{ c.id }}" value="{{ values.get(c.id,'') }}">
+   {% elif c.type == 'choice' %}{% for o in c.options %}<label class="opt"><input type="radio" name="{{ c.id }}" value="{{ o }}" {{ 'checked' if values.get(c.id)==o }}> {{ o }}</label>{% endfor %}
+   {% elif c.type == 'yesno' %}{% for o in ['Oui','Non'] %}<label class="opt"><input type="radio" name="{{ c.id }}" value="{{ o }}" {{ 'checked' if values.get(c.id)==o }}> {{ o }}</label>{% endfor %}
+   {% elif c.type == 'multi' %}{% for o in c.options %}<label class="opt"><input type="checkbox" name="{{ c.id }}" value="{{ o }}"> {{ o }}</label>{% endfor %}
+   {% elif c.type == 'rating' %}<div class="stars">{% for n in range(1,6) %}<label><input type="radio" name="{{ c.id }}" value="{{ n }}" {{ 'checked' if values.get(c.id)==n|string }}> {{ n }}</label>{% endfor %}</div>{% endif %}
+  </div>{% endfor %}
+  <button class="ent-btn gold" type="submit">Envoyer ma réponse</button>
+ </form>{% endif %}
+ </div>
+</div>
+{% endblock %}
