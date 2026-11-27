@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block title %}{{ titre }} - DataEcon.Ci{% endblock %}
+{% block content %}
+<section class="pro-legal">
+  <div class="container">
+    <nav class="pro-legal-nav" aria-label="Informations légales">
+      <a href="{{ url_for('legal_mentions_legales') }}" {% if slug=='mentions-legales' %}class="active"{% endif %}>Mentions légales</a>
+      <a href="{{ url_for('legal_confidentialite') }}" {% if slug=='confidentialite' %}class="active"{% endif %}>Confidentialité</a>
+      <a href="{{ url_for('legal_conditions') }}" {% if slug=='conditions' %}class="active"{% endif %}>Conditions d'utilisation</a>
+      <a href="{{ url_for('contact') }}">Contact</a>
+    </nav>
+    <article class="pro-legal-body">
+      <h1>{{ titre }}</h1>
+      <p class="pro-legal-date">Dernière mise à jour : novembre 2026</p>
+      {% include tpl %}
+    </article>
+  </div>
+</section>
+{% endblock %}

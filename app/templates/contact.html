@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block title %}Contact - DataEcon.Ci{% endblock %}
+{% block content %}
+<section class="pro-legal">
+  <div class="container">
+    <div class="pro-contact">
+      <div>
+        <h1>Nous contacter</h1>
+        <p>Une question sur les formations, les certificats, l'espace entreprise ou une demande d'accompagnement ? Écrivez-nous, nous répondons dans les meilleurs délais.</p>
+        <p><strong>E-mail :</strong> <a href="mailto:{{ contact_email }}">{{ contact_email }}</a><br>
+        <strong>Localisation :</strong> Daloa, Côte d'Ivoire</p>
+      </div>
+      <form method="post" class="pro-contact-form" novalidate>
+        <label for="nom">Nom complet</label>
+        <input id="nom" name="nom" class="form-control" required maxlength="120" autocomplete="name">
+        <label for="email">Adresse e-mail</label>
+        <input id="email" name="email" type="email" class="form-control" required maxlength="160" autocomplete="email">
+        <label for="sujet">Sujet</label>
+        <input id="sujet" name="sujet" class="form-control" maxlength="160">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" class="form-control" rows="6" required maxlength="4000"></textarea>
+        <input type="text" name="website" tabindex="-1" autocomplete="off" class="pro-hp" aria-hidden="true">
+        <button class="btn btn-primary mt-3" type="submit">Envoyer</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

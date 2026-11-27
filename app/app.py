@@ -2598,7 +2598,9 @@ from certification import init_certification
 ExamAttempt, Certificate = init_certification(app, db, User, notify=brevo_send_email)
 
 from enterprise import init_enterprise, SECTEURS as ENT_SECTEURS, TAILLES as ENT_TAILLES, OBJECTIFS as ENT_OBJECTIFS
+from pro import init_pro
 ENT_MODELS = init_enterprise(app, db, User, Course=Course, notify=brevo_send_email)
+init_pro(app, notify=brevo_send_email)
 
 
 def init_db():

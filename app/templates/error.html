@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block title %}{{ titre }} - DataEcon.Ci{% endblock %}
+{% block content %}
+<section class="pro-error">
+  <div class="container text-center">
+    <div class="pro-error-code">{{ code }}</div>
+    <h1>{{ titre }}</h1>
+    <p>{{ texte }}</p>
+    <div class="pro-error-actions">
+      <a class="btn btn-primary" href="{{ url_for('index') }}">Retour à l'accueil</a>
+      <a class="btn btn-outline-secondary" href="{{ url_for('contact') }}">Nous contacter</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
